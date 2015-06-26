@@ -1,0 +1,5 @@
+* Event Engine desarrollado por fissban.
+* Reporte de bugs, consultas y/o quejas realizarlas en http://l2devsadmins.com/
+
+¡¡IMPORTANTE!!
+Es importante que copien esta carpeta dentro de la carpeta de los configs del servidor.
