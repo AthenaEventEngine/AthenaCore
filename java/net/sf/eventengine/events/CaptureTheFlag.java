@@ -18,11 +18,13 @@
  */
 package net.sf.eventengine.events;
 
+import net.sf.eventengine.configs.Configs;
 import net.sf.eventengine.enums.EventState;
 import net.sf.eventengine.enums.EventType;
 import net.sf.eventengine.handler.AbstractEvent;
 import net.sf.eventengine.holder.PlayerHolder;
 
+import com.l2jserver.gameserver.model.Location;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.skills.Skill;
 
@@ -95,7 +97,27 @@ public class CaptureTheFlag extends AbstractEvent
 	public void onInteract(PlayerHolder player, L2Npc npc)
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 
+	/**
+	 * Teletransportamos a un player especifico a su localizacion inicial dentro del evento.
+	 * @param player
+	 */
+	@Override
+	public void teleportPlayer(PlayerHolder player)
+	{
+		// TODO terminar los configs
+		switch (player.getPcInstance().getTeam())
+		{
+			case BLUE:
+				Location locBlue = Configs.TVT_LOC_TEAM_BLUE;
+				player.getPcInstance().teleToLocation(locBlue.getX(), locBlue.getY(), locBlue.getZ(), locBlue.getHeading(), player.getDinamicInstanceId());
+				break;
+			case RED:
+				Location locRed = Configs.TVT_LOC_TEAM_RED;
+				player.getPcInstance().teleToLocation(locRed.getX(), locRed.getY(), locRed.getZ(), locRed.getHeading(), player.getDinamicInstanceId());
+				break;
+		}
+	}
 }
