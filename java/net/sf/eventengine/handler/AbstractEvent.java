@@ -34,7 +34,6 @@ import net.sf.eventengine.util.EventUtil;
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.data.xml.impl.NpcData;
 import com.l2jserver.gameserver.model.L2Spawn;
-import com.l2jserver.gameserver.model.Location;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2CubicInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
@@ -51,7 +50,7 @@ import com.l2jserver.util.Rnd;
 public abstract class AbstractEvent
 {
 	private static final Logger LOG = Logger.getLogger(AbstractEvent.class.getName());
-
+	
 	/**
 	 * Constructor.
 	 */
@@ -62,17 +61,17 @@ public abstract class AbstractEvent
 		// Arrancamos el reloj para controlar la secuencia de eventos internos del evento.
 		controlTimeEvent();
 	}
-
+	
 	/** Metodo necesario para llevar el control de los estados del evento */
 	public abstract void runEventState(EventState state);
-
-	public abstract EventType getEventType();
 	
-	// NPC IN EVENT --------------------------------------------------------------------------------- //
+	public abstract EventType getEventType();
 
+	// NPC IN EVENT --------------------------------------------------------------------------------- //
+	
 	// Lista de npc en el evento.
 	private final Map<Integer, L2Npc> _eventNpc = new HashMap<>();
-	
+
 	/**
 	 * Obetenemos la lista completa de todos los npc dentro del evento.<br>
 	 * @return Collection<PlayerHolder>
@@ -81,7 +80,7 @@ public abstract class AbstractEvent
 	{
 		return _eventNpc.values();
 	}
-	
+
 	/**
 	 * Generamos un nuevo spawn dentro de nuestro evento y lo agregamos a la lista.
 	 * @param npcId
@@ -105,7 +104,7 @@ public abstract class AbstractEvent
 					x += Rnd.get(-100, 100);
 					y += Rnd.get(-100, 100);
 				}
-				
+
 				L2Spawn spawn = new L2Spawn(template);
 				spawn.setHeading(heading);
 				spawn.setX(x);
@@ -115,7 +114,7 @@ public abstract class AbstractEvent
 				spawn.getLastSpawn().setEventMob(true);
 				spawn.setInstanceId(1); // indicar bien la instancia
 				npc = spawn.doSpawn();// isSummonSpawn
-				
+
 				spawn.init();
 				spawn.getLastSpawn().setCurrentHp(999999999);
 				spawn.getLastSpawn().setEventMob(true);
@@ -131,7 +130,7 @@ public abstract class AbstractEvent
 		// agregamos nuestro npc a la lista
 		_eventNpc.put(npc.getId(), npc);
 	}
-	
+
 	/**
 	 * Borramos todos los npc generados dentro de nuestro evento.
 	 */
@@ -144,16 +143,16 @@ public abstract class AbstractEvent
 			{
 				continue;
 			}
-			
+
 			// Paramos el respawn del npc
 			npc.getSpawn().stopRespawn();
 			// Borramos al npc
 			npc.deleteMe();
 		}
-		
+
 		_eventNpc.clear();
 	}
-	
+
 	/**
 	 * Verificamos si un npc pertenece a nuestro evento.
 	 * @param npcId
@@ -163,10 +162,10 @@ public abstract class AbstractEvent
 	{
 		return _eventNpc.containsValue(npc);
 	}
-	
+
 	// PLAYERS IN EVENT ----------------------------------------------------------------------------- //
 	private final Map<Integer, PlayerHolder> _eventPlayers = new HashMap<>();
-
+	
 	/**
 	 * Obetenemos la lista completa de todos los players dentro de un evento.<br>
 	 * @return Collection<PlayerHolder>
@@ -175,7 +174,7 @@ public abstract class AbstractEvent
 	{
 		return _eventPlayers.values();
 	}
-	
+
 	/**
 	 * Agregamos todos los personajes registrado a nuestra lista de personajes dentro del evento
 	 */
@@ -185,11 +184,11 @@ public abstract class AbstractEvent
 		{
 			_eventPlayers.put(player.getObjectId(), new PlayerHolder(player));
 		}
-		
+
 		// limpiamos la lista, ya no la necesitaremos
 		EventEngineManager.getAllRegisterPlayers().clear();
 	}
-	
+
 	/**
 	 * Verificamos si un player esta participando de algun evento.
 	 * @param player
@@ -199,7 +198,7 @@ public abstract class AbstractEvent
 	{
 		return _eventPlayers.containsKey(player.getObjectId());
 	}
-
+	
 	/**
 	 * Verificamos si un player esta participando de algun evento.
 	 * @param player
@@ -211,37 +210,37 @@ public abstract class AbstractEvent
 		{
 			return null;
 		}
-
+		
 		return _eventPlayers.get(player.getObjectId());
 	}
-
+	
 	// LISTENERS ------------------------------------------------------------------------------------ //
 	// Obs -> solo definiremos aqui algunas pequeñas acciones generales.
-
+	
 	/**
 	 * @param player
 	 * @param npc
 	 */
 	public abstract void onInteract(PlayerHolder player, L2Npc npc);
-
+	
 	/**
 	 * @param player
 	 * @param target
 	 */
 	public abstract void onKill(PlayerHolder player, PlayerHolder target);
-
+	
 	/**
 	 * @param player
 	 */
 	public abstract void onDeath(PlayerHolder player);
-
+	
 	/**
 	 * @param player
 	 * @param target
 	 * @return true -> solo en el caso de que no queremos q un ataque continue su progeso normal.
 	 */
 	public abstract boolean onAttack(PlayerHolder player, PlayerHolder target);
-
+	
 	/**
 	 * @param player
 	 * @param target
@@ -249,9 +248,9 @@ public abstract class AbstractEvent
 	 * @return true -> solo en el caso de no queremos de una habilidad no continue su progrso normal.
 	 */
 	public abstract boolean onUseSkill(PlayerHolder player, PlayerHolder target, Skill skill);
-
+	
 	// METODOS VARIOS -------------------------------------------------------------------------------- //
-
+	
 	/**
 	 * Teletransportamos a los players de cada team a su respectivos puntos de inicio.<br>
 	 */
@@ -259,58 +258,16 @@ public abstract class AbstractEvent
 	{
 		for (PlayerHolder player : getAllEventPlayers())
 		{
-			teleportPlayer(player, player.getDinamicInstanceId());
+			teleportPlayer(player);
 		}
 	}
-
+	
 	/**
 	 * Teletransportamos a un player especifico a su localizacion inicial dentro del evento.
 	 * @param player
 	 */
-	public void teleportPlayer(PlayerHolder player, int instanceId)
-	{
-		switch (getEventType())
-		{
-			case TVT:
-			{
-				switch (player.getPcInstance().getTeam())
-				{
-					case BLUE:
-						Location locBlue = Configs.TVT_LOC_TEAM_BLUE;
-						player.getPcInstance().teleToLocation(locBlue.getX(), locBlue.getY(), locBlue.getZ(), locBlue.getHeading(), instanceId);
-						break;
-					case RED:
-						Location locRed = Configs.TVT_LOC_TEAM_RED;
-						player.getPcInstance().teleToLocation(locRed.getX(), locRed.getY(), locRed.getZ(), locRed.getHeading(), instanceId);
-						break;
-				}
-				break;
-			}
-			case CTF:
-			{
-				// TODO terminar los configs
-				switch (player.getPcInstance().getTeam())
-				{
-					case BLUE:
-						Location locBlue = Configs.TVT_LOC_TEAM_BLUE;
-						player.getPcInstance().teleToLocation(locBlue.getX(), locBlue.getY(), locBlue.getZ(), locBlue.getHeading(), instanceId);
-						break;
-					case RED:
-						Location locRed = Configs.TVT_LOC_TEAM_RED;
-						player.getPcInstance().teleToLocation(locRed.getX(), locRed.getY(), locRed.getZ(), locRed.getHeading(), instanceId);
-						break;
-				}
-				break;
-			}
-			case AVA:
-			{
-				Location loc = Configs.AVA_LOC_PLAYER;
-				player.getPcInstance().teleToLocation(loc.getX() + Rnd.get(200), loc.getY() + Rnd.get(200), loc.getZ(), 0, instanceId);
-				break;
-			}
-		}
-	}
-
+	public abstract void teleportPlayer(PlayerHolder player);
+	
 	/**
 	 * Preparamos a los players para iniciar el eventos<br>
 	 * <ul>
@@ -338,13 +295,13 @@ public abstract class AbstractEvent
 			player.getPcInstance().breakCast();
 			// paramos todos los effectos del evento.
 			player.getPcInstance().stopAllEffects();
-
+			
 			if (player.getPcInstance().hasPet())
 			{
 				player.getPcInstance().getSummon().stopAllEffects();// paramos todos los effectos del pet
 				player.getPcInstance().getSummon().unSummon(player.getPcInstance());// cancelamos el summon del pet
 			}
-
+			
 			// cancelamos todos los cubics
 			for (L2CubicInstance cubic : player.getPcInstance().getCubics().values())
 			{
@@ -352,7 +309,7 @@ public abstract class AbstractEvent
 			}
 		}
 	}
-
+	
 	/**
 	 * Preparamos al player para la pelea.<br>
 	 * <ul>
@@ -368,7 +325,7 @@ public abstract class AbstractEvent
 			giveBuffPlayer(player.getPcInstance()); // entregamos buffs
 		}
 	}
-
+	
 	/**
 	 * Preparamos al player para el fin del evento<br>
 	 * <ul>
@@ -400,7 +357,7 @@ public abstract class AbstractEvent
 			player.getPcInstance().teleToLocation(83437, 148634, -3403, 0, 0);// GIRAN CENTER
 		}
 	}
-
+	
 	/**
 	 * Generamos un task para revivir a un personaje.<br>
 	 * <ul>
@@ -430,15 +387,15 @@ public abstract class AbstractEvent
 					player.getPcInstance().setCurrentCp(player.getPcInstance().getMaxCp());
 					player.getPcInstance().setCurrentHp(player.getPcInstance().getMaxHp());
 					player.getPcInstance().setCurrentMp(player.getPcInstance().getMaxMp());
-
+					
 					DecayTaskManager.getInstance().cancel(player.getPcInstance());
 					player.getPcInstance().doRevive();
 					// lo teletransportamos
-					EventEngineManager.getCurrentEvent().teleportPlayer(player, player.getDinamicInstanceId());
+					EventEngineManager.getCurrentEvent().teleportPlayer(player);
 					// le entregamos los buffs
 					EventEngineManager.getCurrentEvent().giveBuffPlayer(player.getPcInstance());
 				}
-
+				
 			}, time * 1000);
 		}
 		catch (Exception e)
@@ -447,7 +404,7 @@ public abstract class AbstractEvent
 			e.printStackTrace();
 		}
 	}
-
+	
 	/**
 	 * Le damos los buff a un player seteados dentro de los configs
 	 * @param player
@@ -465,9 +422,9 @@ public abstract class AbstractEvent
 					}
 					break;
 				case CTF:
-
+					
 					break;
-
+				
 				case AVA:
 					for (SkillHolder sh : Configs.AVA_BUFF_PLAYER_MAGE)
 					{
@@ -475,7 +432,7 @@ public abstract class AbstractEvent
 					}
 					break;
 			}
-
+			
 		}
 		else
 		{
@@ -488,9 +445,9 @@ public abstract class AbstractEvent
 					}
 					break;
 				case CTF:
-
+					
 					break;
-
+				
 				case AVA:
 					for (SkillHolder sh : Configs.AVA_BUFF_PLAYER_WARRIOR)
 					{
@@ -500,7 +457,7 @@ public abstract class AbstractEvent
 			}
 		}
 	}
-
+	
 	/**
 	 * Controlamos los tiempo de los eventos<br>
 	 * <ul>
