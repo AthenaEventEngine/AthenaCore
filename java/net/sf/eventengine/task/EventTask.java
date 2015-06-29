@@ -1,14 +1,14 @@
 /*
- * Copyright (C) 2014-2015 L2jAdmins
+ * Copyright (C) 2015-2015 L2J EventEngine
  *
- * This file is part of L2jAdmins.
+ * This file is part of L2J EventEngine.
  *
  * L2jAdmins is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * L2jAdmins is distributed in the hope that it will be useful,
+ * L2J EventEngine is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
@@ -46,7 +46,7 @@ public class EventTask implements Runnable
 		{
 			case 1:
 				// Anunciamos a los players q pronto seran teletransportados
-				EventUtil.announceToAllPlayersInEvent(Say2.CRITICAL_ANNOUNCE, "They will be teleported in 10 seconds.");
+				EventUtil.announceToAllPlayersInEvent(Say2.CRITICAL_ANNOUNCE, "They will be teleported in 3 seconds.");
 				break;
 
 			case 2:
@@ -68,7 +68,7 @@ public class EventTask implements Runnable
 			case 4:
 				/** Se ejecutan acciones dentro de cada evento */
 				EventEngineManager.getCurrentEvent().runEventState(EventState.END);
-				
+
 				// Borramos todos los spawns de npc
 				EventEngineManager.getCurrentEvent().removeAllEventNpc();
 
@@ -77,7 +77,7 @@ public class EventTask implements Runnable
 				{
 					EventUtil.sendEventSpecialMessage(player, 1, "Finish");
 				}
-				
+
 				EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "The event ended!.");
 				break;
 

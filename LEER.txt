@@ -1,0 +1,15 @@
+#---------------------------------------------------------------------------#
+#                            L2J_EventEngine                                #
+#                          Creado por Fissban                               #
+#---------------------------------------------------------------------------#
+
+Para poder aplicar este event engine a sus servidores deberan seguir unos pocos pasos.
+
+1_ Click derecho sobre el proyecto.
+2_ L2J_EventEngine -> export.
+3_ En la nueva ventana seleccion la opcion "java" y luego "JAR File".
+4_ Indican una direccion que les sea familiar y lo guardan bajo el nombre "L2J_EventEngine.jar" apretan "finalizar".
+5_ Ahora toman este nuevo "jar" y lo guardan dentro de la carpeta "lib" de sus proyecto.
+6_ Luego tomaran los patch que se adjuntan junto a este tutorial y lo aplican al servidor.
+7_ Ahora solo les queda tomar la carpeta "dist" y pegarla dentro de la carpeta "raiz" de sus servidores.
+8_ Felicitaciones, ya tienen su servidor con nuestro EventEngine.

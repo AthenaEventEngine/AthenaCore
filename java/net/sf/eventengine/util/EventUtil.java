@@ -1,14 +1,14 @@
 /*
- * Copyright (C) 2014-2015 L2jAdmins
+ * Copyright (C) 2015-2015 L2J EventEngine
  *
- * This file is part of L2jAdmins.
+ * This file is part of L2J EventEngine.
  *
  * L2jAdmins is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * L2jAdmins is distributed in the hope that it will be useful,
+ * L2J EventEngine is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
@@ -41,7 +41,7 @@ public class EventUtil
 	{
 		player.getPcInstance().sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", "[EventEngine]" + text));
 	}
-
+	
 	/**
 	 * Create an event match message. type
 	 * @param type -> 0 - gm, 1 - finish, 2 - start, 3 - game over, 4 - 1, 5 - 2, 6 - 3, 7 - 4, 8 - 5
@@ -61,7 +61,7 @@ public class EventUtil
 	{
 		player.getPcInstance().sendPacket(new ExShowScreenMessage(text, 2000));
 	}
-
+	
 	/**
 	 * Enviamos un mensaje por pantalla a un personaje dentro del evento
 	 * @param player
@@ -85,7 +85,7 @@ public class EventUtil
 			player.sendPacket(new CreatureSay(0, say2, "", "[EventEngine]" + text));
 		}
 	}
-
+	
 	/**
 	 * Enviamos un mensaje a todos los usuarios del servidor
 	 * @param say2
@@ -98,7 +98,7 @@ public class EventUtil
 			player.sendPacket(new CreatureSay(0, say2, "", "[EventEngine]" + text));
 		}
 	}
-
+	
 	/**
 	 * Generamos el ID de la imagen de un skill a partir de su ID
 	 * @param id

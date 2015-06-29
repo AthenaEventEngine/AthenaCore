@@ -1,0 +1,210 @@
+diff --git a/L2J_Server/.classpath b/L2J_Server/.classpath
+index 05e3150..0057726 100644
+--- a/L2J_Server/.classpath
++++ b/L2J_Server/.classpath
+@@ -1,13 +1,14 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <classpath>
+-	<classpathentry kind="src" path="java" />
+-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8" />
+-	<classpathentry kind="lib" path="dist/libs/c3p0-0.9.5.jar" />
+-	<classpathentry kind="lib" path="dist/libs/jython.jar" />
+-	<classpathentry kind="lib" path="dist/libs/jython-engine-2.2.1.jar" />
+-	<classpathentry kind="lib" path="dist/libs/L2J_GeoDriver.jar" />
+-	<classpathentry kind="lib" path="dist/libs/mail-1.5.2.jar" />
+-	<classpathentry kind="lib" path="dist/libs/mmocore.jar" />
+-	<classpathentry kind="lib" path="dist/libs/weupnp-0.1.3.jar" />
+-	<classpathentry kind="output" path="bin" />
+-</classpath>
+\ No newline at end of file
++	<classpathentry kind="src" path="java"/>
++	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
++	<classpathentry kind="lib" path="dist/libs/c3p0-0.9.5.jar"/>
++	<classpathentry kind="lib" path="dist/libs/jython.jar"/>
++	<classpathentry kind="lib" path="dist/libs/jython-engine-2.2.1.jar"/>
++	<classpathentry kind="lib" path="dist/libs/L2J_GeoDriver.jar"/>
++	<classpathentry kind="lib" path="dist/libs/mail-1.5.2.jar"/>
++	<classpathentry kind="lib" path="dist/libs/mmocore.jar"/>
++	<classpathentry kind="lib" path="dist/libs/weupnp-0.1.3.jar"/>
++	<classpathentry kind="lib" path="dist/libs/L2J_EventEngine.jar"/>
++	<classpathentry kind="output" path="bin"/>
++</classpath>
+diff --git a/L2J_Server/dist/libs/L2J_EventEngine.jar b/L2J_Server/dist/libs/L2J_EventEngine.jar
+new file mode 100644
+index 0000000..bea682a
+--- /dev/null
++++ b/L2J_Server/dist/libs/L2J_EventEngine.jar
+Binary files differ
+diff --git a/L2J_Server/java/com/l2jserver/gameserver/GameServer.java b/L2J_Server/java/com/l2jserver/gameserver/GameServer.java
+index 25de90c..00b82d8 100644
+--- a/L2J_Server/java/com/l2jserver/gameserver/GameServer.java
++++ b/L2J_Server/java/com/l2jserver/gameserver/GameServer.java
+@@ -30,6 +30,8 @@
+ import java.util.logging.LogManager;
+ import java.util.logging.Logger;
+ 
++import net.sf.eventengine.EventEngineManager;
++
+ import com.l2jserver.Config;
+ import com.l2jserver.L2DatabaseFactory;
+ import com.l2jserver.Server;
+@@ -391,6 +393,11 @@
+ 		{
+ 			_deadDetectThread = null;
+ 		}
++		
++		// EventEngine
++		printSection("EventEngine");
++		EventEngineManager.getInstance();
++		
+ 		System.gc();
+ 		// maxMemory is the upper limit the jvm can use, totalMemory the size of
+ 		// the current allocation pool, freeMemory the unused memory in the allocation pool
+diff --git a/L2J_Server/java/com/l2jserver/gameserver/model/actor/L2Character.java b/L2J_Server/java/com/l2jserver/gameserver/model/actor/L2Character.java
+index 9bb51e3..08ce929 100644
+--- a/L2J_Server/java/com/l2jserver/gameserver/model/actor/L2Character.java
++++ b/L2J_Server/java/com/l2jserver/gameserver/model/actor/L2Character.java
+@@ -36,6 +36,8 @@
+ import java.util.logging.Level;
+ import java.util.logging.Logger;
+ 
++import net.sf.eventengine.EventEngineManager;
++
+ import com.l2jserver.Config;
+ import com.l2jserver.gameserver.GameTimeController;
+ import com.l2jserver.gameserver.GeoData;
+@@ -826,6 +828,15 @@
+ 	 */
+ 	public void doAttack(L2Character target)
+ 	{
++		// EventEngine
++		if (isPlayable() && (getTarget() instanceof L2Character))
++		{
++			if (EventEngineManager.listenerOnAttack((L2Playable) this, (L2Character) getTarget()))
++			{
++				return;
++			}
++		}
++		
+ 		final long stamp = _attackLock.tryWriteLock();
+ 		try
+ 		{
+@@ -1768,6 +1779,21 @@
+ 			return;
+ 		}
+ 		
++		// EventEngine
++		if (isPlayable())
++		{
++			if (EventEngineManager.listenerOnUseSkill((L2Playable) this, (L2Character) getTarget(), skill))
++			{
++				if (isPlayer())
++				{
++					sendPacket(ActionFailed.STATIC_PACKET);
++					getAI().setIntention(AI_INTENTION_ACTIVE);
++				}
++				
++				return;
++			}
++		}
++		
+ 		final TerminateReturn term = EventDispatcher.getInstance().notifyEvent(new OnCreatureSkillUse(this, skill, simultaneously, target, targets), this, TerminateReturn.class);
+ 		if ((term != null) && term.terminate())
+ 		{
+diff --git a/L2J_Server/java/com/l2jserver/gameserver/model/actor/instance/L2PcInstance.java b/L2J_Server/java/com/l2jserver/gameserver/model/actor/instance/L2PcInstance.java
+index ebe0026..2eecbe7 100644
+--- a/L2J_Server/java/com/l2jserver/gameserver/model/actor/instance/L2PcInstance.java
++++ b/L2J_Server/java/com/l2jserver/gameserver/model/actor/instance/L2PcInstance.java
+@@ -48,6 +48,8 @@
+ import java.util.concurrent.locks.ReentrantLock;
+ import java.util.logging.Level;
+ 
++import net.sf.eventengine.EventEngineManager;
++
+ import com.l2jserver.Config;
+ import com.l2jserver.L2DatabaseFactory;
+ import com.l2jserver.gameserver.GameTimeController;
+@@ -5110,6 +5112,15 @@
+ 	{
+ 		if (killer != null)
+ 		{
++			// EventEngine
++			if (killer.isPlayable())
++			{
++				EventEngineManager.listenerOnKill((L2Playable) killer, this);
++			}
++			
++			// EventEngine
++			EventEngineManager.listenerOnDeath(this);
++			
+ 			final L2PcInstance pk = killer.getActingPlayer();
+ 			if (pk != null)
+ 			{
+@@ -8254,6 +8265,12 @@
+ 				return true;
+ 			}
+ 			return false;
++		}
++		
++		// EventEngine
++		if (EventEngineManager.isPlayerInEvent(this))
++		{
++			return true;
+ 		}
+ 		
+ 		// Check if the attacker is in TvT and TvT is started
+@@ -11430,6 +11447,9 @@
+ 			_log.log(Level.SEVERE, "deleteMe()", e);
+ 		}
+ 		
++		// EventEngine
++		EventEngineManager.listenerOnLogout(this);
++		
+ 		// TvT Event removal
+ 		try
+ 		{
+diff --git a/L2J_Server/java/com/l2jserver/gameserver/network/serverpackets/Die.java b/L2J_Server/java/com/l2jserver/gameserver/network/serverpackets/Die.java
+index 108ae76..638ef54 100644
+--- a/L2J_Server/java/com/l2jserver/gameserver/network/serverpackets/Die.java
++++ b/L2J_Server/java/com/l2jserver/gameserver/network/serverpackets/Die.java
+@@ -18,6 +18,8 @@
+  */
+ package com.l2jserver.gameserver.network.serverpackets;
+ 
++import net.sf.eventengine.EventEngineManager;
++
+ import com.l2jserver.gameserver.data.xml.impl.AdminData;
+ import com.l2jserver.gameserver.instancemanager.CHSiegeManager;
+ import com.l2jserver.gameserver.instancemanager.CastleManager;
+@@ -36,7 +38,7 @@
+ public class Die extends L2GameServerPacket
+ {
+ 	private final int _charObjId;
+-	private final boolean _canTeleport;
++	private boolean _canTeleport;
+ 	private final boolean _sweepable;
+ 	private L2AccessLevel _access = AdminData.getInstance().getAccessLevel(0);
+ 	private L2Clan _clan;
+@@ -64,11 +66,21 @@
+ 	{
+ 		writeC(0x00);
+ 		writeD(_charObjId);
++		
++		// EventEngine
++		// -> Evitamos que durante un evento usen alguna opcion de esta ventana antes de ser revividos
++		if (_activeChar.isPlayer())
++		{
++			if (EventEngineManager.isPlayerInEvent((L2PcInstance) _activeChar))
++			{
++				_canTeleport = false;
++			}
++		}
++		
+ 		writeD(_canTeleport ? 0x01 : 0);
+ 		
+ 		if (_activeChar.isPlayer() && !OlympiadManager.getInstance().isRegistered(_activeChar.getActingPlayer()) && !_activeChar.isOnEvent())
+ 		{
+-			
+ 			_staticRes = _activeChar.getInventory().haveItemForSelfResurrection();
+ 		}
+ 		

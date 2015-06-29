@@ -1,14 +1,14 @@
 /*
- * Copyright (C) 2014-2015 L2jAdmins
+ * Copyright (C) 2015-2015 L2J EventEngine
  *
- * This file is part of L2jAdmins.
+ * This file is part of L2J EventEngine.
  *
  * L2jAdmins is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * L2jAdmins is distributed in the hope that it will be useful,
+ * L2J EventEngine is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
@@ -36,11 +36,15 @@ import net.sf.eventengine.task.EventEngineTask;
 
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.instancemanager.InstanceManager;
+import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
+import com.l2jserver.gameserver.model.actor.L2Playable;
 import com.l2jserver.gameserver.model.actor.instance.L2DoorInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 import com.l2jserver.gameserver.model.skills.Skill;
+import com.l2jserver.gameserver.network.clientpackets.Say2;
+import com.l2jserver.gameserver.network.serverpackets.CreatureSay;
 
 /**
  * @author fissban
@@ -66,8 +70,10 @@ public class EventEngineManager
 		{
 			// Cargamos los configs de los eventos.
 			Configs.load();
+			LOG.info("EventEngineManager: Configs cargados con exito");
 			// Cargamos los AI
 			NpcManager.class.newInstance();
+			LOG.info("EventEngineManager: AI's cargados con exito");
 			// lanzamos el task principal
 			ThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(new EventEngineTask(), 10 * 1000, 1000);
 			// inicializamos el tiempo para los eventos en minutos
@@ -99,10 +105,7 @@ public class EventEngineManager
 	}
 
 	// XXX DINAMIC INSTANCE ------------------------------------------------------------------------------
-
-	private static final String INSTANCE_FILE = "coliseum.xml";
-
-	private static final List<Integer> _instancesIds = new ArrayList<>();
+	private static final List<InstanceWorld> _instancesWorlds = new ArrayList<>();
 
 	/**
 	 * Creamos instancias dinamicas y un mundo para ella
@@ -114,37 +117,36 @@ public class EventEngineManager
 		InstanceWorld world = null;
 		try
 		{
-			_instancesIds.add(InstanceManager.getInstance().createDynamicInstance(INSTANCE_FILE));
-
-			int instanceId = _instancesIds.get(_instancesIds.size() - 1);
+			int instanceId = InstanceManager.getInstance().createDynamicInstance(Configs.INSTANCE_FILE);
 			InstanceManager.getInstance().getInstance(instanceId).setAllowSummon(false);
 			InstanceManager.getInstance().getInstance(instanceId).setPvPInstance(true);
-			InstanceManager.getInstance().getInstance(instanceId).setEmptyDestroyTime((Configs.EVENT_DURATION * 60 * 1000) + 60000L);
+			InstanceManager.getInstance().getInstance(instanceId).setEmptyDestroyTime(1000 + 60000L);
 			// Cerramos las puertas de la instancia si es q existen
 			for (L2DoorInstance door : InstanceManager.getInstance().getInstance(instanceId).getDoors())
 			{
 				door.closeMe();
 			}
-			
+
 			world = new EventEngineWorld();
 			world.setInstanceId(instanceId);
 			world.setTemplateId(100); // TODO hardcode
 			world.setStatus(0);
 			InstanceManager.getInstance().addWorld(world);
-			
+			_instancesWorlds.add(world);
+
 		}
 		catch (Exception e)
 		{
 			LOG.warning(EventEngineManager.class.getSimpleName() + ": -> createDynamicInstances() " + e);
 			e.printStackTrace();
 		}
-		
+
 		return world;
 	}
 
-	public static List<Integer> getDinamicInstances()
+	public static List<InstanceWorld> getInstancesWorlds()
 	{
-		return _instancesIds;
+		return _instancesWorlds;
 	}
 
 	// XXX CURRENT EVENT ---------------------------------------------------------------------------------
@@ -172,27 +174,21 @@ public class EventEngineManager
 
 	// XXX LISTENERS -------------------------------------------------------------------------------------
 	/**
-	 * @param player
-	 * @param target -> puede ser null
+	 * @param player -> personaje o summon
+	 * @param target -> NO puede ser null
 	 * @return true -> solo en el caso de que no queremos q un ataque continue su progeso normal.
 	 */
-	public static boolean listenerOnAttack(L2PcInstance player, L2PcInstance target)
+	public static boolean listenerOnAttack(L2Playable player, L2Character target)
 	{
+		// Si no se esta corriendo no continuar el listener.
 		if (_currentEvent == null)
-		{
-			return false;
-		}
-
-		// TODO falta el soporte para los summons o pets
-		if (!_currentEvent.isPlayerInEvent(player) && !_currentEvent.isPlayerInEvent(target))
 		{
 			return false;
 		}
 
 		try
 		{
-			System.out.println("listenerOnAttack");
-			return _currentEvent.onAttack(_currentEvent.getEventPlayer(player), _currentEvent.getEventPlayer(target));
+			return _currentEvent.listenerOnAttack(player, target);
 		}
 		catch (Exception e)
 		{
@@ -204,27 +200,21 @@ public class EventEngineManager
 	}
 
 	/**
-	 * @param player
+	 * @param player -> personaje o summon
 	 * @param target -> puede ser null
-	 * @return true -> solo en el caso de que no queremos de una habilidad no continue su progrso normal.
+	 * @return true -> solo en el caso de que no queremos de una habilidad no continue su progreso normal.
 	 */
-	public static boolean listenerOnUseSkill(L2PcInstance player, L2PcInstance target, Skill skill)
+	public static boolean listenerOnUseSkill(L2Playable player, L2Character target, Skill skill)
 	{
+		// Si no se esta corriendo no continuar el listener.
 		if (_currentEvent == null)
-		{
-			return false;
-		}
-
-		// TODO falta el soporte para los summons o pets
-		if (!_currentEvent.isPlayerInEvent(player) && !_currentEvent.isPlayerInEvent(target))
 		{
 			return false;
 		}
 
 		try
 		{
-			System.out.println("listenerOnUseSkill");
-			return _currentEvent.onUseSkill(_currentEvent.getEventPlayer(player), _currentEvent.getEventPlayer(target), skill);
+			return _currentEvent.listenerOnUseSkill(player, target, skill);
 		}
 		catch (Exception e)
 		{
@@ -236,26 +226,20 @@ public class EventEngineManager
 	}
 
 	/**
-	 * @param player
-	 * @param target
+	 * @param player -> personaje o summon
+	 * @param target -> No puede ser null
 	 */
-	public static void listenerOnKill(L2PcInstance player, L2PcInstance target)
+	public static void listenerOnKill(L2Playable player, L2Character target)
 	{
+		// Si no se esta corriendo no continuar el listener.
 		if (_currentEvent == null)
-		{
-			return;
-		}
-
-		// TODO falta el soporte para los summons o pets
-		if (!_currentEvent.isPlayerInEvent(player) && !_currentEvent.isPlayerInEvent(target))
 		{
 			return;
 		}
 
 		try
 		{
-			System.out.println("listenerOnKill");
-			_currentEvent.onKill(_currentEvent.getEventPlayer(player), _currentEvent.getEventPlayer(target));
+			_currentEvent.listenerOnKill(player, target);
 		}
 		catch (Exception e)
 		{
@@ -270,20 +254,15 @@ public class EventEngineManager
 	 */
 	public static void listenerOnInteract(L2PcInstance player, L2Npc target)
 	{
+		// Si no se esta corriendo no continuar el listener.
 		if (_currentEvent == null)
-		{
-			return;
-		}
-
-		if (!_currentEvent.isPlayerInEvent(player) && !_currentEvent.isNpcInEvent(target))
 		{
 			return;
 		}
 
 		try
 		{
-			System.out.println("listenerOnInteract");
-			_currentEvent.onInteract(_currentEvent.getEventPlayer(player), target);
+			_currentEvent.listenerOnInteract(player, target);
 		}
 		catch (Exception e)
 		{
@@ -297,20 +276,15 @@ public class EventEngineManager
 	 */
 	public static void listenerOnDeath(L2PcInstance player)
 	{
+		// Si no se esta corriendo no continuar el listener.
 		if (_currentEvent == null)
-		{
-			return;
-		}
-
-		if (!_currentEvent.isPlayerInEvent(player))
 		{
 			return;
 		}
 
 		try
 		{
-			System.out.println("listenerOnDeath");
-			_currentEvent.onDeath(_currentEvent.getEventPlayer(player));
+			_currentEvent.listenerOnDeath(player);
 		}
 		catch (Exception e)
 		{
@@ -321,10 +295,10 @@ public class EventEngineManager
 
 	/**
 	 * @param player
-	 * @return true -> solo si no queremos q el personaje pueda deslogear
 	 */
 	public static void listenerOnLogout(L2PcInstance player)
 	{
+		// Si no se esta corriendo no continuar el listener.
 		if (_currentEvent == null)
 		{
 			return;
@@ -334,11 +308,9 @@ public class EventEngineManager
 		{
 			return;
 		}
-		
+
 		try
 		{
-			System.out.println("listenerOnLogout");
-			
 			PlayerHolder ph = _currentEvent.getEventPlayer(player);
 			// recobramos el color del titulo original
 			ph.recoverOriginalColorTitle();
@@ -346,7 +318,7 @@ public class EventEngineManager
 			ph.recoverOriginalTitle();
 			// remobemos al personaje del mundo creado
 			InstanceManager.getInstance().getWorld(ph.getDinamicInstanceId()).removeAllowed(ph.getPcInstance().getObjectId());
-			
+
 			_currentEvent.getAllEventPlayers().remove(ph);
 		}
 		catch (Exception e)
@@ -354,6 +326,23 @@ public class EventEngineManager
 			LOG.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnLogout() " + e);
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * @param player
+	 */
+	public static void listenerOnLogin(L2PcInstance player)
+	{
+		player.sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", "[EventEngine] Participa de nuestros eventos"));
+		player.sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", "[EventEngine] y vota por el que mas te guste"));
+	}
+
+	/**
+	 * @param player
+	 */
+	public static void listenerOnUseItem(L2PcInstance player)
+	{
+		// Sin desarrollar
 	}
 
 	// XXX EVENT VOTE ------------------------------------------------------------------------------------
@@ -555,7 +544,7 @@ public class EventEngineManager
 
 		return true;
 	}
-	
+
 	// XXX MISC ---------------------------------------------------------------------------------------
 
 	/**
@@ -569,7 +558,7 @@ public class EventEngineManager
 		{
 			return false;
 		}
-		
+
 		return _currentEvent.isPlayerInEvent(player);
 	}
 

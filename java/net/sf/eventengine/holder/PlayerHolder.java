@@ -1,14 +1,14 @@
 /*
- * Copyright (C) 2014-2015 L2jAdmins
+ * Copyright (C) 2015-2015 L2J EventEngine
  *
- * This file is part of L2jAdmins.
+ * This file is part of L2J EventEngine.
  *
  * L2jAdmins is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * L2jAdmins is distributed in the hope that it will be useful,
+ * L2J EventEngine is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
@@ -40,7 +40,7 @@ public class PlayerHolder
 	private int _oriColorTitle = Integer.decode("0xFFFFFF");
 	// Titulo original de un personaje por si en algun evento es cambiado.
 	private String _oriTitle = "";
-
+	
 	private int _dinamicInstanceId = 0;
 	
 	public PlayerHolder(L2PcInstance player)
@@ -58,7 +58,7 @@ public class PlayerHolder
 	{
 		return _player;
 	}
-
+	
 	public int getDinamicInstanceId()
 	{
 		return _dinamicInstanceId;
