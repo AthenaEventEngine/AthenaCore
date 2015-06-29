@@ -28,6 +28,7 @@ import net.sf.eventengine.holder.PlayerHolder;
 import net.sf.eventengine.util.EventUtil;
 
 import com.l2jserver.gameserver.enums.Team;
+import com.l2jserver.gameserver.model.Location;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
 import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
@@ -136,6 +137,26 @@ public class TeamVsTeam extends AbstractEvent
 
 	// METODOS VARIOS -------------------------------------------------
 
+	/**
+	 * Teletransportamos a un player especifico a su localizacion inicial dentro del evento.
+	 * @param player
+	 */
+	@Override
+	public void teleportPlayer(PlayerHolder player)
+	{
+		switch (player.getPcInstance().getTeam())
+		{
+			case BLUE:
+				Location locBlue = Configs.TVT_LOC_TEAM_BLUE;
+				player.getPcInstance().teleToLocation(locBlue.getX(), locBlue.getY(), locBlue.getZ(), locBlue.getHeading(), player.getDinamicInstanceId());
+				break;
+			case RED:
+				Location locRed = Configs.TVT_LOC_TEAM_RED;
+				player.getPcInstance().teleToLocation(locRed.getX(), locRed.getY(), locRed.getZ(), locRed.getHeading(), player.getDinamicInstanceId());
+				break;
+		}
+	}
+	
 	/**
 	 * Tomamos todos los players que estan registrados en el evento y generamos los teams
 	 */

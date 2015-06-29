@@ -46,18 +46,18 @@ import com.l2jserver.gameserver.model.skills.Skill;
 public class OneVsOne extends AbstractEvent
 {
 	private static List<InstancesTeams> _instancesTeams = new ArrayList<>();
-	
+
 	public OneVsOne()
 	{
 		super();
 	}
-	
+
 	@Override
 	public EventType getEventType()
 	{
 		return EventType.OVO;
 	}
-	
+
 	@Override
 	public void runEventState(EventState state)
 	{
@@ -68,18 +68,18 @@ public class OneVsOne extends AbstractEvent
 				createTeams();
 				teleportAllPlayers();
 				break;
-			
+
 			case FIGHT:
 				prepareToFight(); // Metodo general
 				break;
-			
+
 			case END:
 				prepareToEnd(); // Metodo general
 				giveRewardsTeams();
 				break;
 		}
 	}
-	
+
 	// LISTENERS ------------------------------------------------------
 	@Override
 	public boolean onUseSkill(PlayerHolder player, PlayerHolder target, Skill skill)
@@ -91,10 +91,10 @@ public class OneVsOne extends AbstractEvent
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
-	
+
 	@Override
 	public boolean onAttack(PlayerHolder player, PlayerHolder target)
 	{
@@ -105,33 +105,43 @@ public class OneVsOne extends AbstractEvent
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	@Override
 	public void onKill(PlayerHolder player, PlayerHolder target)
 	{
 		// XXX En este caso el control es individual y solo tendremos en cuenta los kills
-
+		
 		// incrementamos en uno la cantidad de kills q tiene el participantes
 		player.increaseKills();
 	}
-	
+
 	@Override
 	public void onDeath(PlayerHolder player)
 	{
 		giveResurectPlayer(player, 10);
 	}
-	
+
 	@Override
 	public void onInteract(PlayerHolder player, L2Npc npc)
 	{
 		// TODO Auto-generated method stub
 	}
-	
+
 	// METODOS VARIOS -------------------------------------------------
 	
+	/**
+	 * Teletransportamos a un player especifico a su localizacion inicial dentro del evento.
+	 * @param player
+	 */
+	@Override
+	public void teleportPlayer(PlayerHolder player)
+	{
+		// TODO: Implementar
+	}
+
 	/**
 	 * Tomamos todos los players que estan registrados en el evento y generamos los teams
 	 */
@@ -141,17 +151,17 @@ public class OneVsOne extends AbstractEvent
 		{
 			return;
 		}
-		
+
 		// control para saber en q equipo estara el jugador.
 		boolean blueOrRed = true;
 		// control para saber la cantidad de jugadores por equipo.
 		int countPlayer = 0;
-		
+
 		PlayerHolder playerBlue = null;
 		PlayerHolder playerRed = null;
-		
-		InstanceWorld world = null;
 
+		InstanceWorld world = null;
+		
 		for (PlayerHolder player : getAllEventPlayers())
 		{
 			if (countPlayer < 2)
@@ -161,7 +171,7 @@ public class OneVsOne extends AbstractEvent
 				{
 					world = EventEngineManager.createNewInstanceWorld();
 				}
-
+				
 				// Repartimos uno para cada team
 				if (blueOrRed)
 				{
@@ -183,13 +193,13 @@ public class OneVsOne extends AbstractEvent
 					// Asignamos a la instancia q pertenecera el player.
 					player.setDinamicInstanceId(world.getInstanceId());
 				}
-				
+
 				// alternamos entre true y false
 				blueOrRed = !blueOrRed;
 				// incrementamos en uno la cant de players
 				countPlayer++;
 			}
-
+			
 			if (playerRed != null && playerBlue != null)
 			{
 				// cargamos los diferentes teams
@@ -197,12 +207,12 @@ public class OneVsOne extends AbstractEvent
 				// inicilizamos la variable
 				countPlayer = 0;
 			}
-			
+
 			// Actualizamos al personaje frente a lo de su alrededor y a si mismo
 			player.getPcInstance().updateAndBroadcastStatus(2);
 		}
 	}
-	
+
 	/**
 	 * Entregamos los rewards, por el momento solo tenemos soporte para 1 o 2 teams.
 	 */
@@ -211,10 +221,10 @@ public class OneVsOne extends AbstractEvent
 		for (InstancesTeams team : _instancesTeams)
 		{
 			// Averiguamos q jugador tiene la mayor cant de kills de este equipo
-
+			
 			int pointsBlue = team._playerBlue.getKills();
 			int pointsRed = team._playerRed.getKills();
-			
+
 			if (pointsBlue == pointsRed)// Si ambos tienen la misma cantidad de kills reciviran ambos el premio de perdedor.
 			{
 				/** Aun sin desarrollar */
@@ -228,9 +238,9 @@ public class OneVsOne extends AbstractEvent
 				/** Aun sin desarrollar */
 			}
 		}
-		
+
 	}
-	
+
 	/**
 	 * Clase encargada de administrar los puntos de los teams de cada instancia
 	 * @author fissban
@@ -239,7 +249,7 @@ public class OneVsOne extends AbstractEvent
 	{
 		public PlayerHolder _playerRed;
 		public PlayerHolder _playerBlue;
-		
+
 		public InstancesTeams(PlayerHolder playerRed, PlayerHolder playerBlue)
 		{
 			_playerRed = playerRed;

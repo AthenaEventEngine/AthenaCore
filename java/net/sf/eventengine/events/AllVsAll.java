@@ -32,10 +32,12 @@ import net.sf.eventengine.holder.PlayerHolder;
 import net.sf.eventengine.util.EventUtil;
 
 import com.l2jserver.gameserver.enums.Team;
+import com.l2jserver.gameserver.model.Location;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
 import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 import com.l2jserver.gameserver.model.skills.Skill;
+import com.l2jserver.util.Rnd;
 
 /**
  * @author fissban
@@ -117,6 +119,17 @@ public class AllVsAll extends AbstractEvent
 
 	// METODOS VARIOS ------------------------------------------------------------------
 
+	/**
+	 * Teletransportamos a un player especifico a su localizacion inicial dentro del evento.
+	 * @param player
+	 */
+	@Override
+	public void teleportPlayer(PlayerHolder player)
+	{
+		Location loc = Configs.AVA_LOC_PLAYER;
+		player.getPcInstance().teleToLocation(loc.getX() + Rnd.get(200), loc.getY() + Rnd.get(200), loc.getZ(), 0, player.getDinamicInstanceId());
+	}
+	
 	/**
 	 * Creamos el equipo donde jugaran los personajes
 	 */
