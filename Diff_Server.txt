@@ -61,7 +61,7 @@ index 25de90c..00b82d8 100644
  		// maxMemory is the upper limit the jvm can use, totalMemory the size of
  		// the current allocation pool, freeMemory the unused memory in the allocation pool
 diff --git a/L2J_Server/java/com/l2jserver/gameserver/model/actor/L2Character.java b/L2J_Server/java/com/l2jserver/gameserver/model/actor/L2Character.java
-index 9bb51e3..08ce929 100644
+index 9bb51e3..436f7cc 100644
 --- a/L2J_Server/java/com/l2jserver/gameserver/model/actor/L2Character.java
 +++ b/L2J_Server/java/com/l2jserver/gameserver/model/actor/L2Character.java
 @@ -36,6 +36,8 @@
@@ -89,10 +89,10 @@ index 9bb51e3..08ce929 100644
  		final long stamp = _attackLock.tryWriteLock();
  		try
  		{
-@@ -1768,6 +1779,21 @@
- 			return;
- 		}
- 		
+@@ -1656,6 +1667,21 @@
+ 	
+ 	private void beginCast(Skill skill, boolean simultaneously)
+ 	{
 +		// EventEngine
 +		if (isPlayable())
 +		{
@@ -108,9 +108,9 @@ index 9bb51e3..08ce929 100644
 +			}
 +		}
 +		
- 		final TerminateReturn term = EventDispatcher.getInstance().notifyEvent(new OnCreatureSkillUse(this, skill, simultaneously, target, targets), this, TerminateReturn.class);
- 		if ((term != null) && term.terminate())
+ 		if (!checkDoCastConditions(skill))
  		{
+ 			if (simultaneously)
 diff --git a/L2J_Server/java/com/l2jserver/gameserver/model/actor/instance/L2PcInstance.java b/L2J_Server/java/com/l2jserver/gameserver/model/actor/instance/L2PcInstance.java
 index ebe0026..2eecbe7 100644
 --- a/L2J_Server/java/com/l2jserver/gameserver/model/actor/instance/L2PcInstance.java
