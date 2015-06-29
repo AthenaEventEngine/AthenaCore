@@ -47,7 +47,9 @@ public class Configs
 	private static final String SURVIVE_CONFIG = "./config/EventEngine/Survive.properties";
 
 	// lista de configs generales
-
+	
+	/** Definimos ID del npc del engine */
+	public static int NPC_MANAGER_ID;
 	/** Definimos cada cuanto se ejecutara algun evento en hs */
 	public static int EVENT_TASK;
 	/** Definimos el tiempo que durara cada evento en minutos */
@@ -134,6 +136,7 @@ public class Configs
 			LOG.warning("Failed to Load " + EVENT_CONFIG + " File.");
 		}
 
+		NPC_MANAGER_ID = Integer.parseInt(settingsEventEngine.getProperty("NpcManagerId", "36600"));
 		EVENT_TASK = Integer.parseInt(settings.getProperty("EventTask", "60"));
 		EVENT_DURATION = Integer.parseInt(settings.getProperty("EventDuration", "20"));
 		FRIENDLY_FIRE = Boolean.parseBoolean(settings.getProperty("FriendlyFire", "False"));;

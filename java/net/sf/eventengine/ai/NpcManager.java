@@ -34,7 +34,7 @@ import com.l2jserver.gameserver.model.quest.Quest;
  */
 public class NpcManager extends Quest
 {
-	private static int NPC = 36600;
+	private static int NPC = Configs.NPC_MANAGER_ID;
 	
 	public NpcManager()
 	{
