@@ -3,7 +3,7 @@
  *
  * This file is part of L2J EventEngine.
  *
- * L2jAdmins is free software: you can redistribute it and/or modify
+ * L2J EventEngine is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -48,13 +48,13 @@ public class EventEngineTask implements Runnable
 				if (EventEngineManager.getCurrentEvent() != null)
 				{
 					EventEngineManager.setCurrentEvent(null);
-
+					
 					// Reiniciamos el mapa con los votos
 					EventEngineManager.clearVotes();
 					// Reiniciamos nuestras instancias
 					EventEngineManager.getInstancesWorlds().clear();
 				}
-
+				
 				announceNextEvent();
 				break;
 			}
@@ -66,42 +66,42 @@ public class EventEngineTask implements Runnable
 					EventEngineManager.setTime(Configs.EVENT_TASK * 60);
 					// Volvemos a abrir el registro
 					EventEngineManager.setEventEngineState(EventEngineState.REGISTER);
-
+					
 					EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "Evento cancelado por falta de participantes.");
 					EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "Se vuelve e habilitar el registro");
 					break;
 				}
 				// Averiguamos el evento con mas votos y lo ejecutamos
 				EventType event = EventEngineManager.getEventMoreVotes();
-
+				
 				// Iniciamos el evento.
 				switch (event)
 				{
 					case AVA:
 						EventEngineManager.setCurrentEvent(new AllVsAll());
 						break;
-
+					
 					case CTF:
 						EventEngineManager.setCurrentEvent(new CaptureTheFlag());
 						break;
-
+					
 					case TVT:
 						EventEngineManager.setCurrentEvent(new TeamVsTeam());
 						break;
-					
+
 					case OVO:
 						EventEngineManager.setCurrentEvent(new OneVsOne());
 						break;
-					
+
 					case SURVIVE:
 						EventEngineManager.setCurrentEvent(new Survive());
 						break;
-				
-				}
 
+				}
+				
 				// Tiempo para el proximo evento en minutos.
 				EventEngineManager.setTime(Configs.EVENT_TASK * 60);
-
+				
 				EventEngineManager.setEventEngineState(EventEngineState.RUNNING_EVENT);
 				break;
 			}
@@ -111,7 +111,7 @@ public class EventEngineTask implements Runnable
 		}
 		EventEngineManager.decreaseTime();
 	}
-
+	
 	/**
 	 * Anunciamos cuando falta para el proximo Evento.<br>
 	 */

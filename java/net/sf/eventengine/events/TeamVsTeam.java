@@ -3,7 +3,7 @@
  *
  * This file is part of L2J EventEngine.
  *
- * L2jAdmins is free software: you can redistribute it and/or modify
+ * L2J EventEngine is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -46,11 +46,11 @@ public class TeamVsTeam extends AbstractEvent
 	// Puntos que tiene cada team.
 	private int _pointsRed = 0;
 	private int _pointsBlue = 0;
-
+	
 	public TeamVsTeam()
 	{
 		super();
-		
+
 		// Definimos los spawns de cada team
 		setTeamSpawn(Team.RED, Configs.TVT_LOC_TEAM_RED);
 		setTeamSpawn(Team.BLUE, Configs.TVT_LOC_TEAM_BLUE);
@@ -58,13 +58,13 @@ public class TeamVsTeam extends AbstractEvent
 		setPlayerBuffs(PlayerClassType.MAGE, Configs.TVT_BUFF_PLAYER_MAGE);
 		setPlayerBuffs(PlayerClassType.WARRIOR, Configs.TVT_BUFF_PLAYER_WARRIOR);
 	}
-
+	
 	@Override
 	public EventType getEventType()
 	{
 		return EventType.TVT;
 	}
-
+	
 	@Override
 	public void runEventState(EventState state)
 	{
@@ -75,12 +75,12 @@ public class TeamVsTeam extends AbstractEvent
 				createTeams();
 				teleportAllPlayers();
 				break;
-
+			
 			case FIGHT:
 				prepareToFight(); // Metodo general
 				showPoint();
 				break;
-
+			
 			case END:
 				// showResult();
 				giveRewardsTeams();
@@ -88,20 +88,20 @@ public class TeamVsTeam extends AbstractEvent
 				break;
 		}
 	}
-
+	
 	// LISTENERS ------------------------------------------------------
 	@Override
 	public boolean onUseSkill(PlayerHolder player, L2Character target, Skill skill)
 	{
 		return false;
 	}
-
+	
 	@Override
 	public boolean onAttack(PlayerHolder player, L2Character target)
 	{
 		return false;
 	}
-
+	
 	@Override
 	public void onKill(PlayerHolder player, L2Character target)
 	{
@@ -115,10 +115,10 @@ public class TeamVsTeam extends AbstractEvent
 				_pointsBlue++;
 				break;
 		}
-
+		
 		showPoint();
 	}
-
+	
 	@Override
 	public void onDeath(PlayerHolder player)
 	{
@@ -127,15 +127,15 @@ public class TeamVsTeam extends AbstractEvent
 		// solo es usado al final del evento para mostrar los resultados
 		player.increaseDeaths();
 	}
-
+	
 	@Override
 	public void onInteract(PlayerHolder player, L2Npc npc)
 	{
 		return;
 	}
-
-	// METODOS VARIOS -------------------------------------------------
 	
+	// METODOS VARIOS -------------------------------------------------
+
 	/**
 	 * Tomamos todos los players que estan registrados en el evento y generamos los teams
 	 */
@@ -143,9 +143,9 @@ public class TeamVsTeam extends AbstractEvent
 	{
 		// Creamos la instancia y el mundo
 		InstanceWorld world = EventEngineManager.createNewInstanceWorld();
-
+		
 		int aux = 0;
-
+		
 		for (PlayerHolder player : getAllEventPlayers())
 		{
 			if ((aux % 2) == 0)
@@ -162,18 +162,18 @@ public class TeamVsTeam extends AbstractEvent
 				player.setNewColorTitle(PlayerColorType.RED);
 				player.setNewTitle("[ RED ]");
 			}
-
+			
 			// Agregamos el personaje al mundo para luego ser teletransportado
 			world.addAllowed(player.getPcInstance().getObjectId());
 			// Actualizamos al personaje frente a lo de su alrededor y a si mismo
 			player.getPcInstance().updateAndBroadcastStatus(2);
 			// Ajustamos la instancia a al que perteneceran los personaje
 			player.setDinamicInstanceId(world.getInstanceId());
-
+			
 			aux++;
 		}
 	}
-
+	
 	/**
 	 * Entregamos los rewards, por el momento solo tenemos soporte para 1 o 2 teams.
 	 */
@@ -183,16 +183,16 @@ public class TeamVsTeam extends AbstractEvent
 		{
 			return;
 		}
-
+		
 		Team ganador = getWinTeam();
-
+		
 		for (PlayerHolder player : getAllEventPlayers())
 		{
 			if (ganador == Team.NONE)
 			{
 				// Anunciamos el resultado del evento
 				EventUtil.sendEventScreenMessage(player, "El evento resulto en un empate entre ambos teams!");
-
+				
 				// Ambos equipos empataron asique le entregamos a ambos el premio de los perdedores xD
 				// Entregamos los rewards
 				giveItems(player, Configs.TVT_REWARD_TEAM_LOSE);
@@ -201,7 +201,7 @@ public class TeamVsTeam extends AbstractEvent
 			{
 				// Anunciamos el resultado del evento
 				EventUtil.sendEventScreenMessage(player, "Equipo ganador -> " + ganador.getClass().getCanonicalName() + "!");
-
+				
 				// Entregamos los rewards
 				if (player.getPcInstance().getTeam() == ganador)
 				{
@@ -213,9 +213,9 @@ public class TeamVsTeam extends AbstractEvent
 				}
 			}
 		}
-
+		
 	}
-
+	
 	/**
 	 * Pequeño codigo para obtener al team ganador<br>
 	 * Solo es usado para ahorrar codigo.
@@ -224,7 +224,7 @@ public class TeamVsTeam extends AbstractEvent
 	{
 		// Si ambos equipos tienen la misma cant de puntos creo q lo justo es q ambos son perdedores :P
 		Team ganador;
-
+		
 		if (_pointsRed == _pointsBlue)
 		{
 			ganador = Team.NONE;
@@ -237,24 +237,24 @@ public class TeamVsTeam extends AbstractEvent
 		{
 			ganador = Team.BLUE;
 		}
-
+		
 		return ganador;
 	}
-
+	
 	/**
 	 * Mostramos por pantalla la canidad de puntos q tiene cada team
 	 */
 	private void showPoint()
 	{
 		// Enviamos por pantalla los puntajes a todos en el evento
-		
+
 		for (PlayerHolder ph : getAllEventPlayers())
 		{
 			EventUtil.sendEventScreenMessage(ph, "RED " + _pointsRed + " | " + _pointsBlue + " BLUE", 10000);
 			// ph.getPcInstance().sendPacket(new EventParticipantStatus(_pointsRed, _pointsBlue));
 		}
 	}
-
+	
 	/**
 	 * Creamos listados con todos los participantes y le enviamos a cada uno los resultados finales del evento
 	 */
@@ -262,7 +262,7 @@ public class TeamVsTeam extends AbstractEvent
 	{
 		List<PlayerHolder> teamBlue = new ArrayList<>();
 		List<PlayerHolder> teamRed = new ArrayList<>();
-
+		
 		// Creamos listamos con los jugadores de cada team
 		for (PlayerHolder ph : getAllEventPlayers())
 		{
@@ -275,7 +275,7 @@ public class TeamVsTeam extends AbstractEvent
 				teamRed.add(ph);
 			}
 		}
-
+		
 		// Enviamos a todos los resultados finales del evento
 		for (PlayerHolder ph : getAllEventPlayers())
 		{

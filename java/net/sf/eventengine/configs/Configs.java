@@ -3,7 +3,7 @@
  *
  * This file is part of L2J EventEngine.
  *
- * L2jAdmins is free software: you can redistribute it and/or modify
+ * L2J EventEngine is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -38,16 +38,16 @@ import com.l2jserver.gameserver.model.holders.SkillHolder;
 public class Configs
 {
 	private static final Logger LOG = Logger.getLogger(Configs.class.getName());
-	
+
 	private static final String EVENT_CONFIG = "./config/EventEngine/EventEngine.properties";
 	private static final String TVT_CONFIG = "./config/EventEngine/TeamVsTeam.properties";
 	private static final String AVA_CONFIG = "./config/EventEngine/AllVsAll.properties";
 	// private static final String CTF_CONFIG = "./config/EventEngine/CTF.properties";
 	private static final String OVO_CONFIG = "./config/EventEngine/OneVsOne.properties";
 	private static final String SURVIVE_CONFIG = "./config/EventEngine/Survive.properties";
-	
+
 	// lista de configs generales
-	
+
 	/** Definimos ID del npc del engine */
 	public static int NPC_MANAGER_ID;
 	/** Definimos cada cuanto se ejecutara algun evento en hs */
@@ -69,7 +69,7 @@ public class Configs
 	public static int MIN_LVL_IN_EVENT;
 	/** Definimos el xml q usaremos para nuestras instancias. */
 	public static String INSTANCE_FILE;
-	
+
 	// -------------------------------------------------------------------------------
 	// Configs Team Vs Team
 	// -------------------------------------------------------------------------------
@@ -120,9 +120,9 @@ public class Configs
 	public static List<Integer> SURVIVE_MOSNTERS_SPAWN = new ArrayList<>();
 	/** Definimos la cantidad de monsters que spawnaran por stage */
 	public static int SURVIVE_MONSTER_SPAWN_FOR_STAGE;
-	
+
 	// lista de configs de cada evento.
-	
+
 	// metodo encargado de leer los configs
 	public static void load()
 	{
@@ -130,7 +130,7 @@ public class Configs
 		// XXX EventEngine.properties
 		// ------------------------------------------------------------------------------------- //
 		EventProperties settings = new EventProperties();
-
+		
 		try (InputStream is = new FileInputStream(new File(EVENT_CONFIG)))
 		{
 			settings.load(is);
@@ -139,7 +139,7 @@ public class Configs
 		{
 			LOG.warning("Failed to Load " + EVENT_CONFIG + " File.");
 		}
-		
+
 		NPC_MANAGER_ID = Integer.parseInt(settings.getProperty("NpcManagerId", "36600"));
 		EVENT_TASK = Integer.parseInt(settings.getProperty("EventTask", "60"));
 		EVENT_DURATION = Integer.parseInt(settings.getProperty("EventDuration", "20"));
@@ -153,7 +153,7 @@ public class Configs
 		MAX_LVL_IN_EVENT = Integer.parseInt(settings.getProperty("MaxLvlInEvent", "78"));;
 		MIN_LVL_IN_EVENT = Integer.parseInt(settings.getProperty("MinLvlInEvent", "40"));;
 		INSTANCE_FILE = settings.getProperty("InstanceFile", "EventEngine.xml");
-		
+
 		StringTokenizer st;
 		// ------------------------------------------------------------------------------------- //
 		// XXX TeamVsTeam.properties
@@ -167,7 +167,7 @@ public class Configs
 		{
 			LOG.warning("Failed to Load " + TVT_CONFIG + " File.");
 		}
-		
+
 		st = new StringTokenizer(settings.getProperty("RewardTeamWin", "57,10000"), ";");
 		while (st.hasMoreTokens())
 		{
@@ -192,12 +192,12 @@ public class Configs
 			StringTokenizer st1 = new StringTokenizer(st.nextToken(), ",");
 			TVT_BUFF_PLAYER_WARRIOR.add(new SkillHolder(Integer.parseInt(st1.nextToken()), Integer.parseInt(st1.nextToken())));
 		}
-		
+
 		st = new StringTokenizer(settings.getProperty("LocTeamBlue", "0,0,0"), ",");
 		TVT_LOC_TEAM_BLUE = new Location(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
 		st = new StringTokenizer(settings.getProperty("LocTeamRed", "0,0,0"), ",");
 		TVT_LOC_TEAM_RED = new Location(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
-		
+
 		// ------------------------------------------------------------------------------------- //
 		// XXX AllVsAll.properties
 		// ------------------------------------------------------------------------------------- //
@@ -210,7 +210,7 @@ public class Configs
 		{
 			LOG.warning("Failed to Load " + AVA_CONFIG + " File.");
 		}
-		
+
 		st = new StringTokenizer(settings.getProperty("RewardPlayerWin", "57,10000"), ";");
 		while (st.hasMoreTokens())
 		{
@@ -235,14 +235,14 @@ public class Configs
 			StringTokenizer st1 = new StringTokenizer(st.nextToken(), ",");
 			AVA_BUFF_PLAYER_WARRIOR.add(new SkillHolder(Integer.parseInt(st1.nextToken()), Integer.parseInt(st1.nextToken())));
 		}
-		
+
 		st = new StringTokenizer(settings.getProperty("LocPlayer", "0,0,0"), ",");
 		AVA_LOC_PLAYER = new Location(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
-		
+
 		// ------------------------------------------------------------------------------------- //
 		// XXX OneVsOne.properties
 		// ------------------------------------------------------------------------------------- //
-		
+
 		settings = new EventProperties();
 		try (InputStream is = new FileInputStream(new File(OVO_CONFIG)))
 		{
@@ -252,7 +252,7 @@ public class Configs
 		{
 			LOG.warning("Failed to Load " + OVO_CONFIG + " File.");
 		}
-		
+
 		st = new StringTokenizer(settings.getProperty("RewardPlayerWin", "57,10000"), ";");
 		while (st.hasMoreTokens())
 		{
@@ -277,16 +277,16 @@ public class Configs
 			StringTokenizer st1 = new StringTokenizer(st.nextToken(), ",");
 			OVO_BUFF_PLAYER_WARRIOR.add(new SkillHolder(Integer.parseInt(st1.nextToken()), Integer.parseInt(st1.nextToken())));
 		}
-		
+
 		st = new StringTokenizer(settings.getProperty("LocTeamBlue", "0,0,0"), ",");
 		OVO_LOC_TEAM_BLUE = new Location(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
 		st = new StringTokenizer(settings.getProperty("LocTeamRed", "0,0,0"), ",");
 		OVO_LOC_TEAM_RED = new Location(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
-		
+
 		// ------------------------------------------------------------------------------------- //
 		// XXX Survive.properties
 		// ------------------------------------------------------------------------------------- //
-
+		
 		settings = new EventProperties();
 		try (InputStream is = new FileInputStream(new File(SURVIVE_CONFIG)))
 		{
@@ -296,7 +296,7 @@ public class Configs
 		{
 			LOG.warning("Failed to Load " + SURVIVE_CONFIG + " File.");
 		}
-		
+
 		st = new StringTokenizer(settings.getProperty("RewardPlayerWin", "57,10000"), ";");
 		while (st.hasMoreTokens())
 		{
@@ -321,16 +321,16 @@ public class Configs
 			StringTokenizer st1 = new StringTokenizer(st.nextToken(), ",");
 			SURVIVE_BUFF_PLAYER_WARRIOR.add(new SkillHolder(Integer.parseInt(st1.nextToken()), Integer.parseInt(st1.nextToken())));
 		}
-		
+
 		st = new StringTokenizer(settings.getProperty("LocPlayer", "0,0,0"), ",");
 		SURVIVE_LOC_PLAYER = new Location(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
-
+		
 		st = new StringTokenizer(settings.getProperty("MonsterSpawn", "22839,22840,22843"), ",");
 		while (st.hasMoreTokens())
 		{
 			SURVIVE_MOSNTERS_SPAWN.add(Integer.parseInt(st.nextToken()));
 		}
-		
+
 		SURVIVE_MONSTER_SPAWN_FOR_STAGE = Integer.parseInt(settings.getProperty("MonsterSpawnForStager", "5"));
 	}
 }

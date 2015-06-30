@@ -3,7 +3,7 @@
  *
  * This file is part of L2J EventEngine.
  *
- * L2jAdmins is free software: you can redistribute it and/or modify
+ * L2J EventEngine is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -38,7 +38,7 @@ public class CaptureTheFlag extends AbstractEvent
 	public CaptureTheFlag()
 	{
 		super();
-
+		
 		// Definimos los spawns de cada team
 		setTeamSpawn(Team.RED, Configs.TVT_LOC_TEAM_RED);
 		setTeamSpawn(Team.BLUE, Configs.TVT_LOC_TEAM_BLUE);
@@ -46,13 +46,13 @@ public class CaptureTheFlag extends AbstractEvent
 		setPlayerBuffs(PlayerClassType.MAGE, Configs.TVT_BUFF_PLAYER_MAGE);
 		setPlayerBuffs(PlayerClassType.WARRIOR, Configs.TVT_BUFF_PLAYER_WARRIOR);
 	}
-
+	
 	@Override
 	public EventType getEventType()
 	{
 		return EventType.CTF;
 	}
-	
+
 	@Override
 	public void runEventState(EventState state)
 	{
@@ -63,44 +63,44 @@ public class CaptureTheFlag extends AbstractEvent
 				// createTeam();
 				teleportAllPlayers();
 				break;
-			
+
 			case FIGHT:
 				prepareToFight(); // Metodo general
 				break;
-			
+
 			case END:
 				// giveRewardsTeams();
 				prepareToEnd(); // Metodo general
 				break;
 		}
-		
+
 	}
-	
+
 	@Override
 	public void onInteract(PlayerHolder player, L2Npc npc)
 	{
 		// TODO Auto-generated method stub
 	}
-	
+
 	@Override
 	public void onKill(PlayerHolder player, L2Character target)
 	{
 		// TODO Auto-generated method stub
 	}
-	
+
 	@Override
 	public void onDeath(PlayerHolder player)
 	{
 		// TODO Auto-generated method stub
 	}
-	
+
 	@Override
 	public boolean onAttack(PlayerHolder player, L2Character target)
 	{
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 	@Override
 	public boolean onUseSkill(PlayerHolder player, L2Character target, Skill skill)
 	{

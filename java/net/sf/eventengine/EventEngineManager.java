@@ -3,7 +3,7 @@
  *
  * This file is part of L2J EventEngine.
  *
- * L2jAdmins is free software: you can redistribute it and/or modify
+ * L2J EventEngine is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -53,7 +53,7 @@ import com.l2jserver.gameserver.network.serverpackets.CreatureSay;
 public class EventEngineManager
 {
 	private static final Logger LOG = Logger.getLogger(EventEngineManager.class.getName());
-
+	
 	/**
 	 * Constructor
 	 */
@@ -61,7 +61,7 @@ public class EventEngineManager
 	{
 		load();
 	}
-
+	
 	/**
 	 * Metodo encargado de cargar todo lo necesario para el evento
 	 */
@@ -86,28 +86,28 @@ public class EventEngineManager
 			e.printStackTrace();
 		}
 	}
-
+	
 	// XXX EventEngineTask ------------------------------------------------------------------------------------
 	private static int _time;
-
+	
 	public static int getTime()
 	{
 		return _time;
 	}
-
+	
 	public static void setTime(int time)
 	{
 		_time = time;
 	}
-
+	
 	public static void decreaseTime()
 	{
 		_time--;
 	}
-
+	
 	// XXX DINAMIC INSTANCE ------------------------------------------------------------------------------
 	private static final List<InstanceWorld> _instancesWorlds = new ArrayList<>();
-
+	
 	/**
 	 * Creamos instancias dinamicas y un mundo para ella
 	 * @param count
@@ -127,34 +127,34 @@ public class EventEngineManager
 			{
 				door.closeMe();
 			}
-
+			
 			world = new EventEngineWorld();
 			world.setInstanceId(instanceId);
 			world.setTemplateId(100); // TODO hardcode
 			world.setStatus(0);
 			InstanceManager.getInstance().addWorld(world);
 			_instancesWorlds.add(world);
-
+			
 		}
 		catch (Exception e)
 		{
 			LOG.warning(EventEngineManager.class.getSimpleName() + ": -> createDynamicInstances() " + e);
 			e.printStackTrace();
 		}
-
+		
 		return world;
 	}
-
+	
 	public static List<InstanceWorld> getInstancesWorlds()
 	{
 		return _instancesWorlds;
 	}
-
+	
 	// XXX CURRENT EVENT ---------------------------------------------------------------------------------
-
+	
 	// Evento que esta corriendo.
 	private static AbstractEvent _currentEvent;
-
+	
 	/**
 	 * Obtenemos el evento q esta corriendo actualmente.
 	 * @return
@@ -163,7 +163,7 @@ public class EventEngineManager
 	{
 		return _currentEvent;
 	}
-
+	
 	/**
 	 * Definimos el evento q comenzara a correr.
 	 * @param event
@@ -172,7 +172,7 @@ public class EventEngineManager
 	{
 		_currentEvent = event;
 	}
-
+	
 	// XXX LISTENERS -------------------------------------------------------------------------------------
 	/**
 	 * @param player -> personaje o summon
@@ -186,7 +186,7 @@ public class EventEngineManager
 		{
 			return false;
 		}
-
+		
 		try
 		{
 			return _currentEvent.listenerOnAttack(player, target);
@@ -196,10 +196,10 @@ public class EventEngineManager
 			LOG.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnAttack() " + e);
 			e.printStackTrace();
 		}
-
+		
 		return false;
 	}
-
+	
 	/**
 	 * @param player -> personaje o summon
 	 * @param target -> puede ser null
@@ -212,7 +212,7 @@ public class EventEngineManager
 		{
 			return false;
 		}
-
+		
 		try
 		{
 			return _currentEvent.listenerOnUseSkill(player, target, skill);
@@ -222,10 +222,10 @@ public class EventEngineManager
 			LOG.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnUseSkill() " + e);
 			e.printStackTrace();
 		}
-
+		
 		return false;
 	}
-
+	
 	/**
 	 * @param player -> personaje o summon
 	 * @param target -> No puede ser null
@@ -237,7 +237,7 @@ public class EventEngineManager
 		{
 			return;
 		}
-
+		
 		try
 		{
 			_currentEvent.listenerOnKill(player, target);
@@ -248,7 +248,7 @@ public class EventEngineManager
 			e.printStackTrace();
 		}
 	}
-
+	
 	/**
 	 * @param player
 	 * @param target
@@ -260,7 +260,7 @@ public class EventEngineManager
 		{
 			return;
 		}
-
+		
 		try
 		{
 			_currentEvent.listenerOnInteract(player, target);
@@ -271,7 +271,7 @@ public class EventEngineManager
 			e.printStackTrace();
 		}
 	}
-
+	
 	/**
 	 * @param player
 	 */
@@ -282,7 +282,7 @@ public class EventEngineManager
 		{
 			return;
 		}
-
+		
 		try
 		{
 			_currentEvent.listenerOnDeath(player);
@@ -293,7 +293,7 @@ public class EventEngineManager
 			e.printStackTrace();
 		}
 	}
-
+	
 	/**
 	 * @param player
 	 */
@@ -304,12 +304,12 @@ public class EventEngineManager
 		{
 			return;
 		}
-
+		
 		if (!_currentEvent.isPlayerInEvent(player))
 		{
 			return;
 		}
-
+		
 		try
 		{
 			PlayerHolder ph = _currentEvent.getEventPlayer(player);
@@ -319,7 +319,7 @@ public class EventEngineManager
 			ph.recoverOriginalTitle();
 			// remobemos al personaje del mundo creado
 			InstanceManager.getInstance().getWorld(ph.getDinamicInstanceId()).removeAllowed(ph.getPcInstance().getObjectId());
-
+			
 			_currentEvent.getAllEventPlayers().remove(ph);
 		}
 		catch (Exception e)
@@ -328,7 +328,7 @@ public class EventEngineManager
 			e.printStackTrace();
 		}
 	}
-
+	
 	/**
 	 * @param player
 	 */
@@ -337,7 +337,7 @@ public class EventEngineManager
 		player.sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", "[EventEngine] Participa de nuestros eventos"));
 		player.sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", "[EventEngine] y vota por el que mas te guste"));
 	}
-
+	
 	/**
 	 * @param player
 	 */
@@ -345,9 +345,9 @@ public class EventEngineManager
 	{
 		// Sin desarrollar
 	}
-
+	
 	// XXX EVENT VOTE ------------------------------------------------------------------------------------
-
+	
 	// Votos de cada Evento
 	private static Map<EventType, Integer> _currentEventVotes = new HashMap<>();
 	{
@@ -356,10 +356,10 @@ public class EventEngineManager
 			_currentEventVotes.put(event, 0);
 		}
 	}
-
+	
 	// Lista para controlar los personajes q ya votaron
 	private static List<Integer> _currentPlayersVotes = new ArrayList<>();
-
+	
 	/**
 	 * Clase encargada de inicializar los votos de cada evento.
 	 * @return Map<EventType, Integer>
@@ -373,10 +373,10 @@ public class EventEngineManager
 		}
 		// borramos la lista con los usuarios q han votado
 		_currentPlayersVotes.clear();
-
+		
 		return _currentEventVotes;
 	}
-
+	
 	/**
 	 * Incrementamos en uno la cantidad de votos
 	 * @param player -> personaje q esta votando
@@ -390,7 +390,7 @@ public class EventEngineManager
 			// Si el personaje esta en esta lista es porq ya voto.
 			return false;
 		}
-
+		
 		// Agregamos al personaje a nuestra lista de votantes
 		_currentPlayersVotes.add(player.getObjectId());
 		// Obtenemos la cantidad de votos de un determinado evento.
@@ -398,10 +398,10 @@ public class EventEngineManager
 		votes++;
 		// Incrementamos en uno la cantdad de votos del mismo
 		_currentEventVotes.put(event, votes);
-
+		
 		return true;
 	}
-
+	
 	/**
 	 * Obtenemos la cantidad de votos q tiene un determinado evento.
 	 * @param event -> AVA, TVT, CFT.
@@ -414,7 +414,7 @@ public class EventEngineManager
 			return _currentEventVotes.get(event);
 		}
 	}
-
+	
 	/**
 	 * Obtenemos todos los eventos y la cantidad de votos q tienen los mismos.
 	 * @return
@@ -426,7 +426,7 @@ public class EventEngineManager
 			return _currentEventVotes;
 		}
 	}
-
+	
 	/**
 	 * Obtenemos el evento con mayor votos<br>
 	 * En caso de tener todos la misma cant de votos devolvera EventType.TVT<br>
@@ -436,7 +436,7 @@ public class EventEngineManager
 	{
 		EventType eventType = EventType.TVT;
 		int currentVotes = 0;
-
+		
 		for (Entry<EventType, Integer> event : _currentEventVotes.entrySet())
 		{
 			if (currentVotes < event.getValue())
@@ -445,15 +445,15 @@ public class EventEngineManager
 				currentVotes = event.getValue();
 			}
 		}
-
+		
 		return eventType;
 	}
-
+	
 	// XXX EVENT STATE -----------------------------------------------------------------------------------
-
+	
 	// variable encargada de controlar en que momento se podran registrar los usuarios a los eventos.
 	private static EventEngineState _state = EventEngineState.REGISTER;
-
+	
 	/**
 	 * Revisamos en q estado se encuentra el engine
 	 * @return EventState
@@ -462,7 +462,7 @@ public class EventEngineManager
 	{
 		return _state;
 	}
-
+	
 	/**
 	 * Definimos el estado en q se encuentra el evento<br>
 	 * <u>Observaciones:</u><br>
@@ -479,7 +479,7 @@ public class EventEngineManager
 	{
 		_state = state;
 	}
-
+	
 	/**
 	 * Verificamos si se pueden seguir registrando mas usuarios a los eventos.
 	 * @return boolean
@@ -488,7 +488,7 @@ public class EventEngineManager
 	{
 		return _state == EventEngineState.REGISTER;
 	}
-
+	
 	/**
 	 * Verificamos si se pueden seguir registrando mas usuarios a los eventos.
 	 * @return boolean
@@ -497,12 +497,12 @@ public class EventEngineManager
 	{
 		return _state == EventEngineState.REGISTER;
 	}
-
+	
 	// XXX PLAYERS REGISTER -----------------------------------------------------------------------------
-
+	
 	// Lista de players en el evento.
 	private static final Map<Integer, L2PcInstance> _eventRegisterPlayers = new ConcurrentHashMap<>();
-
+	
 	/**
 	 * Obetenemos la lista completa de todos los players registrados en el evento.<br>
 	 * @return Collection<PlayerHolder>
@@ -511,7 +511,7 @@ public class EventEngineManager
 	{
 		return _eventRegisterPlayers.values();
 	}
-
+	
 	/**
 	 * Agregamos un player al registro
 	 * @param player
@@ -524,12 +524,12 @@ public class EventEngineManager
 		{
 			return false;
 		}
-
+		
 		_eventRegisterPlayers.put(player.getObjectId(), player);
-
+		
 		return true;
 	}
-
+	
 	/**
 	 * Eliminamos un player del registro
 	 * @param player
@@ -542,19 +542,19 @@ public class EventEngineManager
 		{
 			return false;
 		}
-
+		
 		if (!_eventRegisterPlayers.containsKey(player.getObjectId()))
 		{
 			return false;
 		}
-
+		
 		_eventRegisterPlayers.remove(player.getObjectId());
-
+		
 		return true;
 	}
-
+	
 	// XXX MISC ---------------------------------------------------------------------------------------
-
+	
 	/**
 	 * Verificamos si un player participa de algun evento
 	 * @param player
@@ -566,15 +566,15 @@ public class EventEngineManager
 		{
 			return false;
 		}
-
+		
 		return _currentEvent.isPlayerInEvent(player);
 	}
-
+	
 	public static EventEngineManager getInstance()
 	{
 		return SingletonHolder._instance;
 	}
-
+	
 	private static class SingletonHolder
 	{
 		protected static final EventEngineManager _instance = new EventEngineManager();

@@ -3,7 +3,7 @@
  *
  * This file is part of L2J EventEngine.
  *
- * L2jAdmins is free software: you can redistribute it and/or modify
+ * L2J EventEngine is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -40,14 +40,14 @@ public class EventParticipantStatus extends L2GameServerPacket
 		RESULT,
 		PVP_KILL,
 	}
-
+	
 	private EventState _eventState = null;
 	private int _pointsBlue = 0;
 	private int _pointsRed = 0;
-
+	
 	private List<PlayerHolder> _teamBlue = new ArrayList<>();
 	private List<PlayerHolder> _teamRed = new ArrayList<>();
-	
+
 	/**
 	 * Aqui mostramos cuantos puntos lleva cada team y el tiempo q falta para finalizar el evento
 	 * @param pointsRed
@@ -60,7 +60,7 @@ public class EventParticipantStatus extends L2GameServerPacket
 		_pointsBlue = pointsBlue;
 		_eventState = EventState.PVP_KILL;
 	}
-
+	
 	/**
 	 * Aqui mostramos el resultado final del evento en una nueva ventana
 	 * @param pointsRed
@@ -75,18 +75,18 @@ public class EventParticipantStatus extends L2GameServerPacket
 		_teamBlue = teamBlue;
 		_eventState = EventState.TOTAL;
 	}
-	
+
 	public EventParticipantStatus()
 	{
 		_eventState = EventState.TOTAL;
 	}
-
+	
 	@Override
 	protected void writeImpl()
 	{
 		writeC(0xfe);
 		writeH(0x95);
-
+		
 		writeD(_eventState.ordinal());
 		switch (_eventState)
 		{
@@ -98,7 +98,7 @@ public class EventParticipantStatus extends L2GameServerPacket
 				writeD(2); // Equipo 2
 				writeS("Blue Team");
 				writeS("Red Team");
-
+				
 				writeD(_teamBlue.size());
 				for (PlayerHolder info : _teamBlue)
 				{
@@ -107,7 +107,7 @@ public class EventParticipantStatus extends L2GameServerPacket
 					writeD(info.getDeaths());
 					writeD(0x00);// special kills
 				}
-				
+
 				writeD(_teamRed.size());
 				for (PlayerHolder info : _teamRed)
 				{
@@ -117,27 +117,27 @@ public class EventParticipantStatus extends L2GameServerPacket
 					writeD(0x00);// special kills
 				}
 				break;
-			
+
 			case TOWER_DESTROY:
 				break;
-			
+
 			case CATEGORY_UPDATE:
 				break;
-			
+
 			case RESULT:
 				break;
-			
+
 			case PVP_KILL:
 				writeD(EventEngineManager.getTime());
 				writeD(_pointsBlue);
 				writeD(_pointsRed);
-				
+
 				writeD(1);// teamId
 				writeD(0x00);// playerObjectId
 				writeD(0x00);// kills
 				writeD(0x00);// deaths
 				writeD(0x00);// special kills
-				
+
 				writeD(2);// teamId
 				writeD(0x00);// playerObjectId
 				writeD(0x00);// kills

@@ -3,7 +3,7 @@
  *
  * This file is part of L2J EventEngine.
  *
- * L2jAdmins is free software: you can redistribute it and/or modify
+ * L2J EventEngine is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -36,14 +36,14 @@ import java.util.logging.Logger;
 public final class EventProperties extends Properties
 {
 	private static final long serialVersionUID = 1L;
-	
+
 	private static final Logger LOG = Logger.getLogger(EventProperties.class.getName());
-	
+
 	public EventProperties()
 	{
-		
+
 	}
-	
+
 	public EventProperties(String name) throws IOException
 	{
 		try (FileInputStream fis = new FileInputStream(name))
@@ -51,7 +51,7 @@ public final class EventProperties extends Properties
 			load(fis);
 		}
 	}
-	
+
 	public EventProperties(File file) throws IOException
 	{
 		try (FileInputStream fis = new FileInputStream(file))
@@ -59,17 +59,17 @@ public final class EventProperties extends Properties
 			load(fis);
 		}
 	}
-	
+
 	public EventProperties(InputStream inStream) throws IOException
 	{
 		load(inStream);
 	}
-	
+
 	public EventProperties(Reader reader) throws IOException
 	{
 		load(reader);
 	}
-	
+
 	public void load(String name) throws IOException
 	{
 		try (FileInputStream fis = new FileInputStream(name))
@@ -77,7 +77,7 @@ public final class EventProperties extends Properties
 			load(fis);
 		}
 	}
-	
+
 	public void load(File file) throws IOException
 	{
 		try (FileInputStream fis = new FileInputStream(file))
@@ -85,7 +85,7 @@ public final class EventProperties extends Properties
 			load(fis);
 		}
 	}
-	
+
 	@Override
 	public void load(InputStream inStream) throws IOException
 	{
@@ -98,7 +98,7 @@ public final class EventProperties extends Properties
 			inStream.close();
 		}
 	}
-	
+
 	@Override
 	public void load(Reader reader) throws IOException
 	{
@@ -111,19 +111,19 @@ public final class EventProperties extends Properties
 			reader.close();
 		}
 	}
-	
+
 	@Override
 	public String getProperty(String key, String defaultValue)
 	{
 		String property = super.getProperty(key, defaultValue);
-		
+
 		if (property == null)
 		{
 			LOG.warning("L2Properties: Missing defaultValue for key - " + key);
-			
+
 			return defaultValue;
 		}
-		
+
 		return property.trim();
 	}
 }

@@ -3,7 +3,7 @@
  *
  * This file is part of L2J EventEngine.
  *
- * L2jAdmins is free software: you can redistribute it and/or modify
+ * L2J EventEngine is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -50,10 +50,10 @@ public class Survive extends AbstractEvent
 	private int _stage = 1;
 	// Variable que nos ayudara a llevar el control de la cantidad de mobs muertos.
 	private int _auxKillMonsters = 0;
-
+	
 	// Id de los monsters
 	private static final List<Integer> MONSTERS_ID = Configs.SURVIVE_MOSNTERS_SPAWN;
-	
+
 	public Survive()
 	{
 		super();
@@ -63,13 +63,13 @@ public class Survive extends AbstractEvent
 		setPlayerBuffs(PlayerClassType.MAGE, Configs.SURVIVE_BUFF_PLAYER_MAGE);
 		setPlayerBuffs(PlayerClassType.WARRIOR, Configs.SURVIVE_BUFF_PLAYER_WARRIOR);
 	}
-
+	
 	@Override
 	public EventType getEventType()
 	{
 		return EventType.SURVIVE;
 	}
-
+	
 	@Override
 	public void runEventState(EventState state)
 	{
@@ -80,12 +80,12 @@ public class Survive extends AbstractEvent
 				createTeam();
 				teleportAllPlayers();
 				break;
-			
+
 			case FIGHT:
 				prepareToFight(); // Metodo general
 				spawnsMobs();
 				break;
-			
+
 			case END:
 				// showResult();
 				giveRewardsTeams();
@@ -93,18 +93,18 @@ public class Survive extends AbstractEvent
 				break;
 		}
 	}
-	
+
 	@Override
 	public void onInteract(PlayerHolder player, L2Npc npc)
 	{
 		// TODO Auto-generated method stub
 	}
-	
+
 	@Override
 	public void onKill(PlayerHolder player, L2Character target)
 	{
 		// La instancia al ser "NO PVP" no hace falta tener en cuenta q maten a un compañero.
-
+		
 		// Nos servira para llevar el recuento de cuantos mobs mato.
 		player.increaseKills();
 		// Actualizamos el titulo de un personaje
@@ -122,13 +122,13 @@ public class Survive extends AbstractEvent
 			spawnsMobs();
 		}
 	}
-	
+
 	@Override
 	public void onDeath(PlayerHolder player)
 	{
 		//
 	}
-	
+
 	@Override
 	public boolean onAttack(PlayerHolder player, L2Character target)
 	{
@@ -138,13 +138,13 @@ public class Survive extends AbstractEvent
 		}
 		return false;
 	}
-	
+
 	@Override
 	public boolean onUseSkill(PlayerHolder player, L2Character target, Skill skill)
 	{
 		return false;
 	}
-
+	
 	// MISC ---------------------------------------------------------------------------------------
 	public void giveRewardsTeams()
 	{
@@ -152,7 +152,7 @@ public class Survive extends AbstractEvent
 		{
 			return;
 		}
-		
+
 		// Entregamos los rewards y anunciamos los ganadores.
 		for (PlayerHolder player : getAllEventPlayers())
 		{
@@ -162,11 +162,11 @@ public class Survive extends AbstractEvent
 			giveItems(player, Configs.AVA_REWARD_PLAYER_LOSE);
 		}
 	}
-
+	
 	private void spawnsMobs()
 	{
 		EventUtil.announceToAllPlayersInEvent(Say2.BATTLEFIELD, "Ya llegan, preparate!");
-
+		
 		// Transcurridos 5 segs se ejecutara el spawn.
 		ThreadPoolManager.getInstance().scheduleGeneral(new Runnable()
 		{
@@ -178,18 +178,18 @@ public class Survive extends AbstractEvent
 				{
 					addEventNpc(MONSTERS_ID.get(Rnd.get(MONSTERS_ID.size() - 1)), 149539, 46712, -3411, 0, true, EventEngineManager.getInstancesWorlds().get(0).getInstanceId());
 				}
-
+				
 				// Avisamos a los personajes del evento en q stage estan actualmente.
 				for (PlayerHolder ph : getAllEventPlayers())
 				{
 					EventUtil.sendEventScreenMessage(ph, "Stage " + _stage, 5000);
 				}
 			}
-
+			
 		}, 5000L);
-		
+
 	}
-	
+
 	/**
 	 * Creamos el equipo donde jugaran los personajes
 	 */
@@ -197,7 +197,7 @@ public class Survive extends AbstractEvent
 	{
 		// Creamos la instancia y el mundo
 		InstanceWorld world = EventEngineManager.createNewInstanceWorld();
-		
+
 		for (PlayerHolder ph : getAllEventPlayers())
 		{
 			// Agregamos el personaje al mundo para luego ser teletransportado
@@ -212,7 +212,7 @@ public class Survive extends AbstractEvent
 			updateTitle(ph);
 		}
 	}
-
+	
 	/**
 	 * Actualizamos el titulo de un personaje dependiendo de la cantidad de kills q tenga
 	 * @param player

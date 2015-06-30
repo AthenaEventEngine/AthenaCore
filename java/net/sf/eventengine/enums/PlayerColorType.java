@@ -3,7 +3,7 @@
  *
  * This file is part of L2J EventEngine.
  *
- * L2jAdmins is free software: you can redistribute it and/or modify
+ * L2J EventEngine is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -37,14 +37,14 @@ public enum PlayerColorType
 	YELLOW_OCHRE(Integer.decode("0x7898AF")),
 	CHOCOLATE(Integer.decode("0x486295")),
 	SILVER(Integer.decode("0x999999"));
-	
+
 	private int _color;
-	
+
 	PlayerColorType(int color)
 	{
 		_color = color;
 	}
-	
+
 	public int getColor()
 	{
 		return _color;
