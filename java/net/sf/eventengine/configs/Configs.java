@@ -38,16 +38,17 @@ import com.l2jserver.gameserver.model.holders.SkillHolder;
 public class Configs
 {
 	private static final Logger LOG = Logger.getLogger(Configs.class.getName());
-	
+
 	public static final String EVENT_CONFIG = "./config/EventEngine/EventEngine.properties";
 	public static final String TVT_CONFIG = "./config/EventEngine/TeamVsTeam.properties";
 	public static final String AVA_CONFIG = "./config/EventEngine/AllVsAll.properties";
 	public static final String DM_CONFIG = "./config/EventEngine/DM.properties";
 	public static final String CTF_CONFIG = "./config/EventEngine/CTF.properties";
 	public static final String OVO_CONFIG = "./config/EventEngine/CTF.properties";
-	
+
 	// lista de configs generales
-	
+	/** Definimos ID del npc del engine */
+	public static int NPC_MANAGER_ID;
 	/** Definimos cada cuanto se ejecutara algun evento en hs */
 	public static int EVENT_TASK;
 	/** Definimos el tiempo que durara cada evento en minutos */
@@ -65,7 +66,7 @@ public class Configs
 	/** Definimos el lvl maximo/minimo que podran participar de los eventos. */
 	public static int MAX_LVL_IN_EVENT;
 	public static int MIN_LVL_IN_EVENT;
-	
+
 	// ------------------------------------------------------------------------------
 	// Configs Team Vs Team
 	// -------------------------------------------------------------------------------
@@ -101,11 +102,11 @@ public class Configs
 	/** Definimos a donde teletransportaremos a los players al iniciar el evento */
 	public static Location OVO_LOC_TEAM_BLUE;
 	public static Location OVO_LOC_TEAM_RED;
-
+	
 	// public static Location LOC_TEAM_NONE = new Location(0, 0, 0);// a partir de este valor se spawnea a todos los usuarios en un radio de 200
-	
+
 	// lista de configs de cada evento.
-	
+
 	// metodo encargado de leer los configs
 	public static void load()
 	{
@@ -121,7 +122,8 @@ public class Configs
 		{
 			LOG.warning("Failed to Load " + EVENT_CONFIG + " File.");
 		}
-		
+
+		NPC_MANAGER_ID = Integer.parseInt(settingsEventEngine.getProperty("NpcManagerId", "36600"));
 		EVENT_TASK = Integer.parseInt(settingsEventEngine.getProperty("EventTask", "60"));
 		EVENT_DURATION = Integer.parseInt(settingsEventEngine.getProperty("EventDuration", "20"));
 		FRIENDLY_FIRE = Boolean.parseBoolean(settingsEventEngine.getProperty("FriendlyFire", "False"));;
@@ -133,7 +135,7 @@ public class Configs
 		MIN_PLAYERS_IN_EVENT = Integer.parseInt(settingsEventEngine.getProperty("MinPlayersInEvent", "2"));;
 		MAX_LVL_IN_EVENT = Integer.parseInt(settingsEventEngine.getProperty("MaxLvlInEvent", "78"));;
 		MIN_LVL_IN_EVENT = Integer.parseInt(settingsEventEngine.getProperty("MinLvlInEvent", "40"));;
-		
+
 		StringTokenizer st;
 		// ------------------------------------------------------------------------------------- //
 		// XXX TeamVsTeam.properties
@@ -147,7 +149,7 @@ public class Configs
 		{
 			LOG.warning("Failed to Load " + TVT_CONFIG + " File.");
 		}
-		
+
 		st = new StringTokenizer(settingsTvT.getProperty("RewardTeamWin", "57,10000"), ";");
 		while (st.hasMoreTokens())
 		{
@@ -172,12 +174,12 @@ public class Configs
 			StringTokenizer st1 = new StringTokenizer(st.nextToken(), ",");
 			TVT_BUFF_PLAYER_WARRIOR.add(new SkillHolder(Integer.parseInt(st1.nextToken()), Integer.parseInt(st1.nextToken())));
 		}
-		
+
 		st = new StringTokenizer(settingsTvT.getProperty("LocTeamBlue", "0,0,0"), ",");
 		TVT_LOC_TEAM_BLUE = new Location(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
 		st = new StringTokenizer(settingsTvT.getProperty("LocTeamRed", "0,0,0"), ",");
 		TVT_LOC_TEAM_RED = new Location(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
-		
+
 		// ------------------------------------------------------------------------------------- //
 		// XXX AllVsAll.properties
 		// ------------------------------------------------------------------------------------- //
@@ -190,7 +192,7 @@ public class Configs
 		{
 			LOG.warning("Failed to Load " + AVA_CONFIG + " File.");
 		}
-		
+
 		st = new StringTokenizer(settingsAvA.getProperty("RewardPlayerWin", "57,10000"), ";");
 		while (st.hasMoreTokens())
 		{
@@ -215,13 +217,13 @@ public class Configs
 			StringTokenizer st1 = new StringTokenizer(st.nextToken(), ",");
 			AVA_BUFF_PLAYER_WARRIOR.add(new SkillHolder(Integer.parseInt(st1.nextToken()), Integer.parseInt(st1.nextToken())));
 		}
-		
+
 		st = new StringTokenizer(settingsAvA.getProperty("LocPlayer", "0,0,0"), ",");
 		AVA_LOC_PLAYER = new Location(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
-		
+
 		// ------------------------------------------------------------------------------------- //
 		// XXX CaptureTheFlag.properties
 		// ------------------------------------------------------------------------------------- //
-
+		
 	}
 }
