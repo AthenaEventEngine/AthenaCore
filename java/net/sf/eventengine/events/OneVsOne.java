@@ -29,10 +29,12 @@ import net.sf.eventengine.enums.PlayerClassType;
 import net.sf.eventengine.enums.PlayerColorType;
 import net.sf.eventengine.handler.AbstractEvent;
 import net.sf.eventengine.holder.PlayerHolder;
+import net.sf.eventengine.util.EventUtil;
 
 import com.l2jserver.gameserver.enums.Team;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
+import com.l2jserver.gameserver.model.holders.ItemHolder;
 import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 import com.l2jserver.gameserver.model.skills.Skill;
 
@@ -213,15 +215,46 @@ public class OneVsOne extends AbstractEvent
 
 			if (pointsBlue == pointsRed)// Si ambos tienen la misma cantidad de kills reciviran ambos el premio de perdedor.
 			{
-				/** Aun sin desarrollar */
+				// Anunciamos el resultado del evento
+				EventUtil.sendEventScreenMessage(team._playerBlue, "El evento resulto en un empate entre ambos teams!");
+				EventUtil.sendEventScreenMessage(team._playerRed, "El evento resulto en un empate entre ambos teams!");
+
+				// Ambos equipos empataron asique le entregamos a ambos el premio de los perdedores xD
+				for (ItemHolder reward : Configs.OVO_REWARD_PLAYER_LOSE)
+				{
+					team._playerRed.getPcInstance().addItem("eventReward", reward.getId(), reward.getCount(), null, true);
+					team._playerBlue.getPcInstance().addItem("eventReward", reward.getId(), reward.getCount(), null, true);
+				}
 			}
 			else if (pointsBlue < pointsRed)// ganador red
 			{
-				/** Aun sin desarrollar */
+				// Anunciamos el resultado del evento
+				EventUtil.sendEventScreenMessage(team._playerBlue, "El evento fue ganado por el jugador RED!");
+				EventUtil.sendEventScreenMessage(team._playerRed, "El evento fue ganado por el jugador BLUE!");
+				
+				for (ItemHolder reward : Configs.OVO_REWARD_PLAYER_LOSE)
+				{
+					team._playerBlue.getPcInstance().addItem("eventReward", reward.getId(), reward.getCount(), null, true);
+				}
+				for (ItemHolder reward : Configs.OVO_REWARD_PLAYER_WIN)
+				{
+					team._playerRed.getPcInstance().addItem("eventReward", reward.getId(), reward.getCount(), null, true);
+				}
 			}
 			else if (pointsBlue > pointsRed)// ganador blue
 			{
-				/** Aun sin desarrollar */
+				// Anunciamos el resultado del evento
+				EventUtil.sendEventScreenMessage(team._playerBlue, "El evento fue ganado por el jugador RED!");
+				EventUtil.sendEventScreenMessage(team._playerRed, "El evento fue ganado por el jugador BLUE!");
+				
+				for (ItemHolder reward : Configs.OVO_REWARD_PLAYER_WIN)
+				{
+					team._playerBlue.getPcInstance().addItem("eventReward", reward.getId(), reward.getCount(), null, true);
+				}
+				for (ItemHolder reward : Configs.OVO_REWARD_PLAYER_LOSE)
+				{
+					team._playerRed.getPcInstance().addItem("eventReward", reward.getId(), reward.getCount(), null, true);
+				}
 			}
 		}
 	}
