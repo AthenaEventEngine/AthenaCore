@@ -46,6 +46,7 @@ import com.l2jserver.gameserver.model.actor.L2Summon;
 import com.l2jserver.gameserver.model.actor.instance.L2CubicInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
+import com.l2jserver.gameserver.model.holders.ItemHolder;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 import com.l2jserver.gameserver.model.skills.Skill;
@@ -639,6 +640,20 @@ public abstract class AbstractEvent
 			{
 				sh.getSkill().applyEffects(player, player);
 			}
+		}
+	}
+	
+	/**
+	 * Entrgamos los items definidos ya en alguna lista<br>
+	 * Creado con el fin de entregar los rewards dentro de los eventos
+	 * @param ph
+	 * @param items
+	 */
+	public void giveItems(PlayerHolder ph, List<ItemHolder> items)
+	{
+		for (ItemHolder reward : items)
+		{
+			ph.getPcInstance().addItem("eventReward", reward.getId(), reward.getCount(), null, true);
 		}
 	}
 

@@ -35,7 +35,6 @@ import net.sf.eventengine.util.EventUtil;
 import com.l2jserver.gameserver.enums.Team;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
-import com.l2jserver.gameserver.model.holders.ItemHolder;
 import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 import com.l2jserver.gameserver.model.skills.Skill;
 
@@ -53,13 +52,13 @@ public class AllVsAll extends AbstractEvent
 		setPlayerBuffs(PlayerClassType.MAGE, Configs.AVA_BUFF_PLAYER_MAGE);
 		setPlayerBuffs(PlayerClassType.WARRIOR, Configs.AVA_BUFF_PLAYER_WARRIOR);
 	}
-	
+
 	@Override
 	public EventType getEventType()
 	{
 		return EventType.AVA;
 	}
-	
+
 	@Override
 	public void runEventState(EventState state)
 	{
@@ -70,19 +69,19 @@ public class AllVsAll extends AbstractEvent
 				createTeam();
 				teleportAllPlayers();
 				break;
-			
+
 			case FIGHT:
 				prepareToFight(); // Metodo general
 				break;
-			
+
 			case END:
 				giveRewardsTeams();
 				prepareToEnd(); // Metodo general
 				break;
 		}
-		
+
 	}
-	
+
 	// LISTENERS -----------------------------------------------------------------------
 	@Override
 	public void onKill(PlayerHolder player, L2Character target)
@@ -92,19 +91,19 @@ public class AllVsAll extends AbstractEvent
 		// Actualizamos el titulo del personaje
 		updateTitle(player);
 	}
-	
+
 	@Override
 	public boolean onAttack(PlayerHolder player, L2Character target)
 	{
 		return false;
 	}
-	
+
 	@Override
 	public boolean onUseSkill(PlayerHolder player, L2Character target, Skill skill)
 	{
 		return false;
 	}
-	
+
 	@Override
 	public void onDeath(PlayerHolder player)
 	{
@@ -115,15 +114,15 @@ public class AllVsAll extends AbstractEvent
 		// Actualizamos el titulo del personaje
 		updateTitle(player);
 	}
-	
+
 	@Override
 	public void onInteract(PlayerHolder player, L2Npc npc)
 	{
 		return;
 	}
-	
-	// METODOS VARIOS ------------------------------------------------------------------
 
+	// METODOS VARIOS ------------------------------------------------------------------
+	
 	/**
 	 * Creamos el equipo donde jugaran los personajes
 	 */
@@ -131,7 +130,7 @@ public class AllVsAll extends AbstractEvent
 	{
 		// Creamos la instancia y el mundo
 		InstanceWorld world = EventEngineManager.createNewInstanceWorld();
-		
+
 		for (PlayerHolder player : getAllEventPlayers())
 		{
 			// Agregamos el personaje al mundo para luego ser teletransportado
@@ -146,7 +145,7 @@ public class AllVsAll extends AbstractEvent
 			updateTitle(player);
 		}
 	}
-	
+
 	/**
 	 * Actualizamos el titulo de un personaje dependiendo de la cantidad de muertes o kills q tenga
 	 * @param player
@@ -158,7 +157,7 @@ public class AllVsAll extends AbstractEvent
 		// Actualizamos el status del personaje
 		player.getPcInstance().updateAndBroadcastStatus(2);
 	}
-	
+
 	/**
 	 * Entregamos los rewards.<br>
 	 * <u>Acciones:</u> <li>Ordenamos la lista dependiendo de la cant de puntos de cada player</li><br>
@@ -171,9 +170,9 @@ public class AllVsAll extends AbstractEvent
 		{
 			return;
 		}
-		
+
 		// Le daremos por default reward de ganador al 50% de los mejores participantes y a los demas le damos reward de perdedor :P
-		
+
 		// Lista auxiliar
 		List<PlayerHolder> playersInEvent = new ArrayList<>();
 		//
@@ -184,28 +183,22 @@ public class AllVsAll extends AbstractEvent
 		for (PlayerHolder player : playersInEvent)
 		{
 			int aux = 0;
-			
+
 			if (aux <= (playersInEvent.size() / 2))
 			{
 				// Enviamos un mensaje al ganador
 				EventUtil.sendEventScreenMessage(player, "Ganador " + player.getPcInstance().getName() + " con " + player.getPoints());
-				
-				for (ItemHolder reward : Configs.AVA_REWARD_PLAYER_WIN)
-				{
-					player.getPcInstance().addItem("eventReward", reward.getId(), reward.getCount(), null, true);
-				}
+				// Entregamos los rewards
+				giveItems(player, Configs.AVA_REWARD_PLAYER_WIN);
 			}
 			else
 			{
 				// Enviamos un mensaje al ganador
 				EventUtil.sendEventScreenMessage(player, "Perdedor " + player.getPcInstance().getName() + " con " + player.getPoints());
-				
-				for (ItemHolder reward : Configs.AVA_REWARD_PLAYER_LOSE)
-				{
-					player.getPcInstance().addItem("eventReward", reward.getId(), reward.getCount(), null, true);
-				}
+				// Entregamos los rewards
+				giveItems(player, Configs.AVA_REWARD_PLAYER_LOSE);
 			}
-			
+
 			aux++;
 		}
 	}

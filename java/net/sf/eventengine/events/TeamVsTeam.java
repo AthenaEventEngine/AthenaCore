@@ -35,7 +35,6 @@ import net.sf.eventengine.util.EventUtil;
 import com.l2jserver.gameserver.enums.Team;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
-import com.l2jserver.gameserver.model.holders.ItemHolder;
 import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 import com.l2jserver.gameserver.model.skills.Skill;
 
@@ -195,30 +194,22 @@ public class TeamVsTeam extends AbstractEvent
 				EventUtil.sendEventScreenMessage(player, "El evento resulto en un empate entre ambos teams!");
 
 				// Ambos equipos empataron asique le entregamos a ambos el premio de los perdedores xD
-				for (ItemHolder reward : Configs.TVT_REWARD_TEAM_LOSE)
-				{
-					player.getPcInstance().addItem("eventReward", reward.getId(), reward.getCount(), null, true);
-				}
+				// Entregamos los rewards
+				giveItems(player, Configs.TVT_REWARD_TEAM_LOSE);
 			}
 			else
 			{
 				// Anunciamos el resultado del evento
 				EventUtil.sendEventScreenMessage(player, "Equipo ganador -> " + ganador.getClass().getCanonicalName() + "!");
 
-				// Entregamo los premios segun el equipo q gano
+				// Entregamos los rewards
 				if (player.getPcInstance().getTeam() == ganador)
 				{
-					for (ItemHolder reward : Configs.TVT_REWARD_TEAM_WIN)
-					{
-						player.getPcInstance().addItem("eventReward", reward.getId(), reward.getCount(), null, true);
-					}
+					giveItems(player, Configs.TVT_REWARD_TEAM_WIN);
 				}
 				else
 				{
-					for (ItemHolder reward : Configs.TVT_REWARD_TEAM_LOSE)
-					{
-						player.getPcInstance().addItem("eventReward", reward.getId(), reward.getCount(), null, true);
-					}
+					giveItems(player, Configs.TVT_REWARD_TEAM_LOSE);
 				}
 			}
 		}
