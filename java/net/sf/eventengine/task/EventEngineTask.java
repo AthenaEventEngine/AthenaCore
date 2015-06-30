@@ -24,6 +24,8 @@ import net.sf.eventengine.enums.EventEngineState;
 import net.sf.eventengine.enums.EventType;
 import net.sf.eventengine.events.AllVsAll;
 import net.sf.eventengine.events.CaptureTheFlag;
+import net.sf.eventengine.events.OneVsOne;
+import net.sf.eventengine.events.Survive;
 import net.sf.eventengine.events.TeamVsTeam;
 import net.sf.eventengine.util.EventUtil;
 
@@ -46,13 +48,13 @@ public class EventEngineTask implements Runnable
 				if (EventEngineManager.getCurrentEvent() != null)
 				{
 					EventEngineManager.setCurrentEvent(null);
-					
+
 					// Reiniciamos el mapa con los votos
 					EventEngineManager.clearVotes();
 					// Reiniciamos nuestras instancias
 					EventEngineManager.getInstancesWorlds().clear();
 				}
-				
+
 				announceNextEvent();
 				break;
 			}
@@ -64,33 +66,42 @@ public class EventEngineTask implements Runnable
 					EventEngineManager.setTime(Configs.EVENT_TASK * 60);
 					// Volvemos a abrir el registro
 					EventEngineManager.setEventEngineState(EventEngineState.REGISTER);
-					
+
 					EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "Evento cancelado por falta de participantes.");
 					EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "Se vuelve e habilitar el registro");
 					break;
 				}
 				// Averiguamos el evento con mas votos y lo ejecutamos
 				EventType event = EventEngineManager.getEventMoreVotes();
-				
+
 				// Iniciamos el evento.
 				switch (event)
 				{
 					case AVA:
 						EventEngineManager.setCurrentEvent(new AllVsAll());
 						break;
-					
+
 					case CTF:
 						EventEngineManager.setCurrentEvent(new CaptureTheFlag());
 						break;
-					
+
 					case TVT:
 						EventEngineManager.setCurrentEvent(new TeamVsTeam());
 						break;
-				}
+					
+					case OVO:
+						EventEngineManager.setCurrentEvent(new OneVsOne());
+						break;
+					
+					case SURVIVE:
+						EventEngineManager.setCurrentEvent(new Survive());
+						break;
 				
+				}
+
 				// Tiempo para el proximo evento en minutos.
 				EventEngineManager.setTime(Configs.EVENT_TASK * 60);
-				
+
 				EventEngineManager.setEventEngineState(EventEngineState.RUNNING_EVENT);
 				break;
 			}
@@ -100,7 +111,7 @@ public class EventEngineTask implements Runnable
 		}
 		EventEngineManager.decreaseTime();
 	}
-	
+
 	/**
 	 * Anunciamos cuando falta para el proximo Evento.<br>
 	 */

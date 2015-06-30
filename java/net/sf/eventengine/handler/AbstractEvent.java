@@ -35,6 +35,7 @@ import net.sf.eventengine.util.EventUtil;
 
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.data.xml.impl.NpcData;
+import com.l2jserver.gameserver.datatables.SpawnTable;
 import com.l2jserver.gameserver.enums.Team;
 import com.l2jserver.gameserver.model.L2Spawn;
 import com.l2jserver.gameserver.model.Location;
@@ -118,14 +119,12 @@ public abstract class AbstractEvent
 				spawn.setX(x);
 				spawn.setY(y);
 				spawn.setZ(z + 20);
-				spawn.stopRespawn();
-				spawn.getLastSpawn().setEventMob(true);
+				spawn.setAmount(1);
 				spawn.setInstanceId(instanceId);
 				npc = spawn.doSpawn();// isSummonSpawn.
 
+				SpawnTable.getInstance().addNewSpawn(spawn, false);
 				spawn.init();
-				spawn.getLastSpawn().setCurrentHp(999999999);
-				spawn.getLastSpawn().setEventMob(true);
 				// Animacion.
 				spawn.getLastSpawn().broadcastPacket(new MagicSkillUse(spawn.getLastSpawn(), spawn.getLastSpawn(), 1034, 1, 1, 1));
 			}
@@ -314,14 +313,6 @@ public abstract class AbstractEvent
 	 */
 	public void listenerOnKill(L2Playable player, L2Character target)
 	{
-		if (target instanceof L2Playable)
-		{
-			if (!isPlayerInEvent(target))
-			{
-				return;
-			}
-		}
-
 		if (!isPlayerInEvent(player))
 		{
 			return;

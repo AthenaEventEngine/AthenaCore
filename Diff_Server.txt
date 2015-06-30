@@ -61,7 +61,7 @@ index 25de90c..00b82d8 100644
  		// maxMemory is the upper limit the jvm can use, totalMemory the size of
  		// the current allocation pool, freeMemory the unused memory in the allocation pool
 diff --git a/L2J_Server/java/com/l2jserver/gameserver/model/actor/L2Character.java b/L2J_Server/java/com/l2jserver/gameserver/model/actor/L2Character.java
-index 9bb51e3..436f7cc 100644
+index 9bb51e3..ff55317 100644
 --- a/L2J_Server/java/com/l2jserver/gameserver/model/actor/L2Character.java
 +++ b/L2J_Server/java/com/l2jserver/gameserver/model/actor/L2Character.java
 @@ -36,6 +36,8 @@
@@ -89,30 +89,37 @@ index 9bb51e3..436f7cc 100644
  		final long stamp = _attackLock.tryWriteLock();
  		try
  		{
-@@ -1656,6 +1667,21 @@
- 	
- 	private void beginCast(Skill skill, boolean simultaneously)
+@@ -1611,6 +1622,15 @@
+ 	 */
+ 	public void doCast(Skill skill)
  	{
 +		// EventEngine
 +		if (isPlayable())
 +		{
 +			if (EventEngineManager.listenerOnUseSkill((L2Playable) this, (L2Character) getTarget(), skill))
 +			{
-+				if (isPlayer())
-+				{
-+					sendPacket(ActionFailed.STATIC_PACKET);
-+					getAI().setIntention(AI_INTENTION_ACTIVE);
-+				}
-+				
 +				return;
 +			}
 +		}
 +		
- 		if (!checkDoCastConditions(skill))
+ 		beginCast(skill, false);
+ 	}
+ 	
+@@ -2502,6 +2522,12 @@
+ 	 */
+ 	public boolean doDie(L2Character killer)
+ 	{
++		// EventEngine
++		if (killer.isPlayable())
++		{
++			EventEngineManager.listenerOnKill((L2Playable) killer, this);
++		}
++		
+ 		final TerminateReturn returnBack = EventDispatcher.getInstance().notifyEvent(new OnCreatureKill(killer, this), this, TerminateReturn.class);
+ 		if ((returnBack != null) && returnBack.terminate())
  		{
- 			if (simultaneously)
 diff --git a/L2J_Server/java/com/l2jserver/gameserver/model/actor/instance/L2PcInstance.java b/L2J_Server/java/com/l2jserver/gameserver/model/actor/instance/L2PcInstance.java
-index ebe0026..2eecbe7 100644
+index ebe0026..3fe9604 100644
 --- a/L2J_Server/java/com/l2jserver/gameserver/model/actor/instance/L2PcInstance.java
 +++ b/L2J_Server/java/com/l2jserver/gameserver/model/actor/instance/L2PcInstance.java
 @@ -48,6 +48,8 @@
@@ -124,23 +131,17 @@ index ebe0026..2eecbe7 100644
  import com.l2jserver.Config;
  import com.l2jserver.L2DatabaseFactory;
  import com.l2jserver.gameserver.GameTimeController;
-@@ -5110,6 +5112,15 @@
+@@ -5110,6 +5112,9 @@
  	{
  		if (killer != null)
  		{
-+			// EventEngine
-+			if (killer.isPlayable())
-+			{
-+				EventEngineManager.listenerOnKill((L2Playable) killer, this);
-+			}
-+			
 +			// EventEngine
 +			EventEngineManager.listenerOnDeath(this);
 +			
  			final L2PcInstance pk = killer.getActingPlayer();
  			if (pk != null)
  			{
-@@ -8254,6 +8265,12 @@
+@@ -8254,6 +8259,12 @@
  				return true;
  			}
  			return false;
@@ -153,7 +154,7 @@ index ebe0026..2eecbe7 100644
  		}
  		
  		// Check if the attacker is in TvT and TvT is started
-@@ -11430,6 +11447,9 @@
+@@ -11430,6 +11441,9 @@
  			_log.log(Level.SEVERE, "deleteMe()", e);
  		}
  		

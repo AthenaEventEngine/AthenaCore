@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import net.sf.eventengine.ai.NpcManager;
@@ -350,9 +351,10 @@ public class EventEngineManager
 	// Votos de cada Evento
 	private static Map<EventType, Integer> _currentEventVotes = new HashMap<>();
 	{
-		_currentEventVotes.put(EventType.AVA, 0);
-		_currentEventVotes.put(EventType.CTF, 0);
-		_currentEventVotes.put(EventType.TVT, 0);
+		for (EventType event : EventType.values())
+		{
+			_currentEventVotes.put(event, 0);
+		}
 	}
 
 	// Lista para controlar los personajes q ya votaron
@@ -365,10 +367,10 @@ public class EventEngineManager
 	public static Map<EventType, Integer> clearVotes()
 	{
 		// inicializamos el mapa con todos los votos a 0
-		_currentEventVotes.put(EventType.AVA, 0);
-		_currentEventVotes.put(EventType.CTF, 0);
-		_currentEventVotes.put(EventType.TVT, 0);
-
+		for (EventType event : EventType.values())
+		{
+			_currentEventVotes.put(event, 0);
+		}
 		// borramos la lista con los usuarios q han votado
 		_currentPlayersVotes.clear();
 
@@ -407,7 +409,10 @@ public class EventEngineManager
 	 */
 	public static int getCurrentVotesInEvent(EventType event)
 	{
-		return _currentEventVotes.get(event);
+		synchronized (_currentEventVotes)
+		{
+			return _currentEventVotes.get(event);
+		}
 	}
 
 	/**
@@ -416,7 +421,10 @@ public class EventEngineManager
 	 */
 	public static Map<EventType, Integer> getAllCurrentVotesInEvents()
 	{
-		return _currentEventVotes;
+		synchronized (_currentEventVotes)
+		{
+			return _currentEventVotes;
+		}
 	}
 
 	/**
@@ -493,7 +501,7 @@ public class EventEngineManager
 	// XXX PLAYERS REGISTER -----------------------------------------------------------------------------
 
 	// Lista de players en el evento.
-	private static final Map<Integer, L2PcInstance> _eventRegisterPlayers = new HashMap<>();
+	private static final Map<Integer, L2PcInstance> _eventRegisterPlayers = new ConcurrentHashMap<>();
 
 	/**
 	 * Obetenemos la lista completa de todos los players registrados en el evento.<br>
