@@ -32,6 +32,7 @@ import net.sf.eventengine.configs.Configs;
 import net.sf.eventengine.enums.EventEngineState;
 import net.sf.eventengine.enums.EventType;
 import net.sf.eventengine.handler.AbstractEvent;
+import net.sf.eventengine.handler.MsgHandler;
 import net.sf.eventengine.holder.PlayerHolder;
 import net.sf.eventengine.task.EventEngineTask;
 
@@ -72,6 +73,9 @@ public class EventEngineManager
 			// Cargamos los configs de los eventos.
 			Configs.load();
 			LOG.info("EventEngineManager: Configs cargados con exito");
+			// Language Engine
+			MsgHandler.init();
+			LOG.info("EventEngineManager: Language Engine cargados con exito.");
 			// Cargamos los AI
 			NpcManager.class.newInstance();
 			LOG.info("EventEngineManager: AI's cargados con exito");
