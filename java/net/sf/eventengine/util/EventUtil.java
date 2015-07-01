@@ -32,6 +32,8 @@ import com.l2jserver.gameserver.network.serverpackets.ExShowScreenMessage;
  */
 public class EventUtil
 {
+	public static final String ENGINE_TAG = "[EventEngine] ";
+	
 	/**
 	 * Enviamos un mensaje a un personaje dentro del evento
 	 * @param player
@@ -39,7 +41,7 @@ public class EventUtil
 	 */
 	public static void sendEventMessage(PlayerHolder player, String text)
 	{
-		player.getPcInstance().sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", "[EventEngine]" + text));
+		player.getPcInstance().sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", ENGINE_TAG + text));
 	}
 	
 	/**
@@ -82,7 +84,7 @@ public class EventUtil
 	{
 		for (L2PcInstance player : L2World.getInstance().getPlayers())
 		{
-			player.sendPacket(new CreatureSay(0, say2, "", "[EventEngine]" + text));
+			player.sendPacket(new CreatureSay(0, say2, "", ENGINE_TAG + text));
 		}
 	}
 	
@@ -95,7 +97,7 @@ public class EventUtil
 	{
 		for (L2PcInstance player : L2World.getInstance().getPlayers())
 		{
-			player.sendPacket(new CreatureSay(0, say2, "", "[EventEngine]" + text));
+			player.sendPacket(new CreatureSay(0, say2, "", ENGINE_TAG + text));
 		}
 	}
 }

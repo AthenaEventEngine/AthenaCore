@@ -19,11 +19,13 @@
 package net.sf.eventengine.ai;
 
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import net.sf.eventengine.EventEngineManager;
 import net.sf.eventengine.configs.Configs;
 import net.sf.eventengine.enums.EventType;
+import net.sf.eventengine.handler.MsgHandler;
 
 import com.l2jserver.gameserver.datatables.ItemTable;
 import com.l2jserver.gameserver.model.actor.L2Npc;
@@ -31,6 +33,7 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
 import com.l2jserver.gameserver.model.items.L2Item;
 import com.l2jserver.gameserver.model.quest.Quest;
+import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
 
 /**
  * @author fissban
@@ -180,6 +183,38 @@ public class NpcManager extends Quest
 					sb.append("<br><br><br><br><font color=LEVEL>Tu registro fue borrado!</font>");
 				}
 				break;
+			
+			// Multi-Language System menu
+			case "menulang":
+				final NpcHtmlMessage html = new NpcHtmlMessage();
+				html.setFile(player.getHtmlPrefix(), "data/html/events/event_lang.htm");
+				
+				// Info menu
+				html.replace("%settingTitle%", MsgHandler.getMsg("lang_menu_title"));
+				html.replace("%languageTitle%", MsgHandler.getMsg("lang_language_title"));
+				html.replace("%languageDescription%", MsgHandler.getMsg("lang_language_description"));
+				
+				// Info lang
+				html.replace("%currentLanguage%", MsgHandler.getMsg("lang_current_language"));
+				html.replace("%getLanguage%", MsgHandler.getLanguage());
+				
+				// Buttons
+				for (Map.Entry<String, String> e : MsgHandler.getLanguages().entrySet())
+				{
+					sb.append("<button value=\"" + e.getValue() + "\" action=\"bypass -h Quest setlang " + e.getKey() + "\" width=50 height=20 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\">");
+				}
+				html.replace("%botonLanguage%", sb.toString());
+				
+				// Send
+				player.sendPacket(html);
+				break;
+			// Multi-Language System set language
+			case "setlang":
+				String lang = st.nextToken();
+				MsgHandler.setLanguage(lang);
+				player.sendMessage(MsgHandler.getMsg("lang_current_successfully") + " " + lang);
+				index(player);
+				break;
 		}
 		
 		sb.append("</center>");
@@ -252,6 +287,8 @@ public class NpcManager extends Quest
 			sb.append("un evento en curso.");
 		}
 		
+		sb.append("<br>");
+		sb.append("<button value=Setting action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " menulang\" width=65 height=21 back=L2UI_CT1.Button_DF_Down fore=L2UI_CT1.Button_DF>");
 		sb.append("</center>");
 		sb.append("</body></html>");
 		
