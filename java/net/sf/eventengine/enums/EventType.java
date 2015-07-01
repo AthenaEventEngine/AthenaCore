@@ -27,15 +27,16 @@ public enum EventType
 	CTF("Capture The Flag"),
 	TVT("Team Vs Team"),
 	OVO("One Vs One"),
-	SURVIVE("Survive");
-
+	SURVIVE("Survive"),
+	PA("Present Arms");
+	
 	private final String _eventName;
-
+	
 	EventType(String eventName)
 	{
 		_eventName = eventName;
 	}
-
+	
 	public String getEventName()
 	{
 		return _eventName;

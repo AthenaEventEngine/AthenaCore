@@ -50,7 +50,7 @@ public class TeamVsTeam extends AbstractEvent
 	public TeamVsTeam()
 	{
 		super();
-
+		
 		// Definimos los spawns de cada team
 		setTeamSpawn(Team.RED, Configs.TVT_LOC_TEAM_RED);
 		setTeamSpawn(Team.BLUE, Configs.TVT_LOC_TEAM_BLUE);
@@ -135,7 +135,7 @@ public class TeamVsTeam extends AbstractEvent
 	}
 	
 	// METODOS VARIOS -------------------------------------------------
-
+	
 	/**
 	 * Tomamos todos los players que estan registrados en el evento y generamos los teams
 	 */
@@ -195,7 +195,7 @@ public class TeamVsTeam extends AbstractEvent
 				
 				// Ambos equipos empataron asique le entregamos a ambos el premio de los perdedores xD
 				// Entregamos los rewards
-				giveItems(player, Configs.TVT_REWARD_TEAM_LOSE);
+				giveItems(player, Configs.TVT_REWARD_TEAM_LOSER);
 			}
 			else
 			{
@@ -209,7 +209,7 @@ public class TeamVsTeam extends AbstractEvent
 				}
 				else
 				{
-					giveItems(player, Configs.TVT_REWARD_TEAM_LOSE);
+					giveItems(player, Configs.TVT_REWARD_TEAM_LOSER);
 				}
 			}
 		}
@@ -247,7 +247,7 @@ public class TeamVsTeam extends AbstractEvent
 	private void showPoint()
 	{
 		// Enviamos por pantalla los puntajes a todos en el evento
-
+		
 		for (PlayerHolder ph : getAllEventPlayers())
 		{
 			EventUtil.sendEventScreenMessage(ph, "RED " + _pointsRed + " | " + _pointsBlue + " BLUE", 10000);

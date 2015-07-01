@@ -61,19 +61,19 @@ public class NpcManager extends Quest
 		
 		sb.append("<html><body>");
 		sb.append("<center>");
-
+		
 		StringTokenizer st = new StringTokenizer(event, " ");
-
+		
 		switch (st.nextToken())
 		{
 			case "index":
 				return index(player);
-
+				
 			case "vote":
 				// Incrementamos en uno el voto del evento seleccionado por el personaje
 				EventEngineManager.increaseVote(player, EventType.valueOf(st.nextToken()));
 				return index(player);
-
+				
 			case "info":
 				List<ItemHolder> holderWin = null;
 				List<ItemHolder> holderLose = null;
@@ -83,31 +83,31 @@ public class NpcManager extends Quest
 					case AVA:
 						sb.append("<font name=hs12 color=LEVEL>All Vs All</font><br><br>");
 						holderWin = Configs.AVA_REWARD_PLAYER_WIN;
-						holderLose = Configs.AVA_REWARD_PLAYER_LOSE;
+						holderLose = Configs.AVA_REWARD_PLAYER_LOSER;
 						break;
 					case TVT:
 						sb.append("<font name=hs12 color=LEVEL>Team Vs Team</font><br><br>");
 						holderWin = Configs.TVT_REWARD_TEAM_WIN;
-						holderLose = Configs.TVT_REWARD_TEAM_LOSE;
+						holderLose = Configs.TVT_REWARD_TEAM_LOSER;
 						break;
 					case CTF:
 						sb.append("<font name=hs12 color=LEVEL>Capture The Flag</font><br><br>");
 						// TODO ajustar los configs una ves creados
 						holderWin = Configs.TVT_REWARD_TEAM_WIN;
-						holderLose = Configs.TVT_REWARD_TEAM_LOSE;
+						holderLose = Configs.TVT_REWARD_TEAM_LOSER;
 						break;
 					case OVO:
 						sb.append("<font name=hs12 color=LEVEL>One Vs One</font><br><br>");
 						holderWin = Configs.OVO_REWARD_PLAYER_WIN;
-						holderLose = Configs.OVO_REWARD_PLAYER_LOSE;
+						holderLose = Configs.OVO_REWARD_PLAYER_LOSER;
 						break;
 					case SURVIVE:
 						sb.append("<font name=hs12 color=LEVEL>Survive</font><br<br>>");
 						holderWin = Configs.SURVIVE_REWARD_PLAYER_WIN;
-						holderLose = Configs.SURVIVE_REWARD_PLAYER_LOSE;
+						holderLose = Configs.SURVIVE_REWARD_PLAYER_LOSER;
 						break;
 				}
-
+				
 				sb.append("<font name=hs12 color=00FF3C>WINNER</font><br1>");
 				sb.append("<table bgcolor=E9E9E9>");
 				sb.append("<tr>");
@@ -116,7 +116,7 @@ public class NpcManager extends Quest
 				sb.append("<td align=center width=50>count</td>");
 				sb.append("</tr>");
 				sb.append("</table>");
-
+				
 				int color = 0;
 				for (ItemHolder holder : holderWin)
 				{
@@ -130,9 +130,9 @@ public class NpcManager extends Quest
 					sb.append("</table>");
 					color++;
 				}
-
+				
 				sb.append("<br>");
-
+				
 				sb.append("<font name=hs12 color=FF0000>LOSER</font><br1>");
 				sb.append("<table bgcolor=E9E9E9>");
 				sb.append("<tr>");
@@ -144,7 +144,7 @@ public class NpcManager extends Quest
 				color = 0;
 				for (ItemHolder holder : holderLose)
 				{
-
+					
 					L2Item item = ItemTable.getInstance().getTemplate(holder.getId());
 					sb.append("<table bgcolor=" + colorTable(color) + ">");
 					sb.append("<tr>");
@@ -221,7 +221,7 @@ public class NpcManager extends Quest
 			sb.append("Aun no esta habilitado<br1>");
 			sb.append("el registro para los eventos<br>");
 		}
-
+		
 		if (EventEngineManager.isOpenVote())
 		{
 			sb.append("<font color=LEVEL>Vota por el proximo evento!.</font><br>");
@@ -229,7 +229,7 @@ public class NpcManager extends Quest
 			sb.append("mayor cantidad de votos<br1>");
 			sb.append("sera el proximo en ejecutarse.<br>");
 			sb.append("<table width=100% cellspacing=1 cellpadding=2 bgcolor=111111>");
-
+			
 			// Generamos una tabla con:
 			// -> un boton para votar por el evento.
 			// -> la cantidad de votos q tiene dicho evento.
@@ -251,7 +251,7 @@ public class NpcManager extends Quest
 			sb.append("No puedes registrarte mientra tenemos<br1>");
 			sb.append("un evento en curso.");
 		}
-
+		
 		sb.append("</center>");
 		sb.append("</body></html>");
 		
@@ -269,7 +269,7 @@ public class NpcManager extends Quest
 		sb.append("<button value=Volver action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " index\" width=90 height=21 back=L2UI_CT1.Button_DF_Down fore=L2UI_CT1.Button_DF><br>");
 		return sb.toString();
 	}
-
+	
 	/**
 	 * Podemos asignar un color a la tabla dependiendo si es par o impar
 	 * @param color

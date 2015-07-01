@@ -37,14 +37,14 @@ public enum PlayerColorType
 	YELLOW_OCHRE(Integer.decode("0x7898AF")),
 	CHOCOLATE(Integer.decode("0x486295")),
 	SILVER(Integer.decode("0x999999"));
-
+	
 	private int _color;
-
+	
 	PlayerColorType(int color)
 	{
 		_color = color;
 	}
-
+	
 	public int getColor()
 	{
 		return _color;

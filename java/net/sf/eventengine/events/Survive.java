@@ -53,12 +53,12 @@ public class Survive extends AbstractEvent
 	
 	// Id de los monsters
 	private static final List<Integer> MONSTERS_ID = Configs.SURVIVE_MOSNTERS_SPAWN;
-
+	
 	public Survive()
 	{
 		super();
 		// Definimos los spawns de cada team
-		setTeamSpawn(Team.NONE, Configs.SURVIVE_LOC_PLAYER);
+		setTeamSpawn(Team.BLUE, Configs.SURVIVE_LOC_PLAYER);
 		// Definimos los buffs de los personajes
 		setPlayerBuffs(PlayerClassType.MAGE, Configs.SURVIVE_BUFF_PLAYER_MAGE);
 		setPlayerBuffs(PlayerClassType.WARRIOR, Configs.SURVIVE_BUFF_PLAYER_WARRIOR);
@@ -80,26 +80,25 @@ public class Survive extends AbstractEvent
 				createTeam();
 				teleportAllPlayers();
 				break;
-
+			
 			case FIGHT:
 				prepareToFight(); // Metodo general
 				spawnsMobs();
 				break;
-
+			
 			case END:
 				// showResult();
-				giveRewardsTeams();
 				prepareToEnd(); // Metodo general
 				break;
 		}
 	}
-
+	
 	@Override
 	public void onInteract(PlayerHolder player, L2Npc npc)
 	{
 		// TODO Auto-generated method stub
 	}
-
+	
 	@Override
 	public void onKill(PlayerHolder player, L2Character target)
 	{
@@ -112,7 +111,7 @@ public class Survive extends AbstractEvent
 		// Incrementamos en uno la cantidad de mobs muertos
 		_auxKillMonsters++;
 		// Verificamos la cantidad de mobs muertos, de haberlos matados a todos aumentamos en uno el stage.
-		if (_auxKillMonsters >= _stage * Configs.SURVIVE_MONSTER_SPAWN_FOR_STAGE)
+		if (_auxKillMonsters >= (_stage * Configs.SURVIVE_MONSTER_SPAWN_FOR_STAGE))
 		{
 			// aumentamos en uno el stage.
 			_stage++;
@@ -120,15 +119,17 @@ public class Survive extends AbstractEvent
 			_auxKillMonsters = 0;
 			// spawneamos mas mobs
 			spawnsMobs();
+			// Entregamos los rewards por haber pasado de stage
+			giveRewardsTeams();
 		}
 	}
-
+	
 	@Override
 	public void onDeath(PlayerHolder player)
 	{
 		//
 	}
-
+	
 	@Override
 	public boolean onAttack(PlayerHolder player, L2Character target)
 	{
@@ -138,7 +139,7 @@ public class Survive extends AbstractEvent
 		}
 		return false;
 	}
-
+	
 	@Override
 	public boolean onUseSkill(PlayerHolder player, L2Character target, Skill skill)
 	{
@@ -152,14 +153,14 @@ public class Survive extends AbstractEvent
 		{
 			return;
 		}
-
+		
 		// Entregamos los rewards y anunciamos los ganadores.
 		for (PlayerHolder player : getAllEventPlayers())
 		{
 			// Enviamos un mensaje al ganador
 			EventUtil.sendEventScreenMessage(player, "Felicitaciones sobreviviente");
 			// Entregamos los rewards
-			giveItems(player, Configs.AVA_REWARD_PLAYER_LOSE);
+			giveItems(player, Configs.AVA_REWARD_PLAYER_LOSER);
 		}
 	}
 	
@@ -174,9 +175,12 @@ public class Survive extends AbstractEvent
 			public void run()
 			{
 				// Spawneamos los mobs dependiendo del nivel del stage dentro de la unica instancia creada.
-				for (int i = 0; i < _stage * Configs.SURVIVE_MONSTER_SPAWN_FOR_STAGE; i++)
+				for (int i = 0; i < (_stage * Configs.SURVIVE_MONSTER_SPAWN_FOR_STAGE); i++)
 				{
-					addEventNpc(MONSTERS_ID.get(Rnd.get(MONSTERS_ID.size() - 1)), 149539, 46712, -3411, 0, true, EventEngineManager.getInstancesWorlds().get(0).getInstanceId());
+					L2Npc eventNpc = addEventNpc(MONSTERS_ID.get(Rnd.get(MONSTERS_ID.size() - 1)), 149539, 46712, -3411, 0, true, EventEngineManager.getInstancesWorlds().get(0).getInstanceId());
+					// Definimos un team para el monster.
+					// Solo usado como un efecto.
+					eventNpc.setTeam(Team.RED);
 				}
 				
 				// Avisamos a los personajes del evento en q stage estan actualmente.
@@ -187,9 +191,9 @@ public class Survive extends AbstractEvent
 			}
 			
 		}, 5000L);
-
+		
 	}
-
+	
 	/**
 	 * Creamos el equipo donde jugaran los personajes
 	 */
@@ -197,13 +201,13 @@ public class Survive extends AbstractEvent
 	{
 		// Creamos la instancia y el mundo
 		InstanceWorld world = EventEngineManager.createNewInstanceWorld();
-
+		
 		for (PlayerHolder ph : getAllEventPlayers())
 		{
 			// Agregamos el personaje al mundo para luego ser teletransportado
 			world.addAllowed(ph.getPcInstance().getObjectId());
 			// Ajustamos el team de los personaje
-			ph.getPcInstance().setTeam(Team.NONE);
+			ph.getPcInstance().setTeam(Team.BLUE);
 			// Ajustamos la instancia a al que perteneceran los personaje
 			ph.setDinamicInstanceId(world.getInstanceId());
 			// Ajustamos el color del titulo

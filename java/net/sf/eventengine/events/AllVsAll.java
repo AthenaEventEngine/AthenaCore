@@ -122,7 +122,7 @@ public class AllVsAll extends AbstractEvent
 	}
 	
 	// METODOS VARIOS ------------------------------------------------------------------
-
+	
 	/**
 	 * Creamos el equipo donde jugaran los personajes
 	 */
@@ -196,7 +196,7 @@ public class AllVsAll extends AbstractEvent
 				// Enviamos un mensaje al ganador
 				EventUtil.sendEventScreenMessage(player, "Perdedor " + player.getPcInstance().getName() + " con " + player.getPoints());
 				// Entregamos los rewards
-				giveItems(player, Configs.AVA_REWARD_PLAYER_LOSE);
+				giveItems(player, Configs.AVA_REWARD_PLAYER_LOSER);
 			}
 			
 			aux++;

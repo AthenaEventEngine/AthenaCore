@@ -100,7 +100,7 @@ public abstract class AbstractEvent
 	 * @param heading
 	 * @param randomOffset -> si queremos generar un spawn aleatorio en un radio de 100 de la posicion indicada
 	 */
-	public void addEventNpc(int npcId, int x, int y, int z, int heading, boolean randomOffset, int instanceId)
+	public L2Npc addEventNpc(int npcId, int x, int y, int z, int heading, boolean randomOffset, int instanceId)
 	{
 		// Generamos el spawn de nuestro npc -> sacado de la clase Quest
 		L2Npc npc = null;
@@ -133,10 +133,12 @@ public abstract class AbstractEvent
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			return;
+			return null;
 		}
 		// Agregamos nuestro npc a la lista.
 		_eventNpc.put(npc.getId(), npc);
+		
+		return npc;
 	}
 	
 	/**
@@ -172,7 +174,7 @@ public abstract class AbstractEvent
 	
 	// BUFFS TEAMS ---------------------------------------------------------------------------------- //
 	private final Map<PlayerClassType, List<SkillHolder>> _playerBuffs = new HashMap<>();
-
+	
 	/**
 	 * Definimos el listado de buffs de los personajes dependiendo si son magos o warriors.
 	 * @param type
@@ -182,7 +184,7 @@ public abstract class AbstractEvent
 	{
 		_playerBuffs.put(type, list);
 	}
-
+	
 	/**
 	 * Obtenemos un listado con los buffs de un personaje dependiendo si es mago o warrior.
 	 * @param type
@@ -642,7 +644,7 @@ public abstract class AbstractEvent
 			}
 		}
 	}
-
+	
 	/**
 	 * Entrgamos los items definidos ya en alguna lista<br>
 	 * Creado con el fin de entregar los rewards dentro de los eventos

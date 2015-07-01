@@ -88,15 +88,15 @@ public class EventEngineTask implements Runnable
 					case TVT:
 						EventEngineManager.setCurrentEvent(new TeamVsTeam());
 						break;
-
+					
 					case OVO:
 						EventEngineManager.setCurrentEvent(new OneVsOne());
 						break;
-
+					
 					case SURVIVE:
 						EventEngineManager.setCurrentEvent(new Survive());
 						break;
-
+				
 				}
 				
 				// Tiempo para el proximo evento en minutos.

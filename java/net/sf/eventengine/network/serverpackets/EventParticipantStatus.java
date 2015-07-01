@@ -47,7 +47,7 @@ public class EventParticipantStatus extends L2GameServerPacket
 	
 	private List<PlayerHolder> _teamBlue = new ArrayList<>();
 	private List<PlayerHolder> _teamRed = new ArrayList<>();
-
+	
 	/**
 	 * Aqui mostramos cuantos puntos lleva cada team y el tiempo q falta para finalizar el evento
 	 * @param pointsRed
@@ -75,7 +75,7 @@ public class EventParticipantStatus extends L2GameServerPacket
 		_teamBlue = teamBlue;
 		_eventState = EventState.TOTAL;
 	}
-
+	
 	public EventParticipantStatus()
 	{
 		_eventState = EventState.TOTAL;
@@ -107,7 +107,7 @@ public class EventParticipantStatus extends L2GameServerPacket
 					writeD(info.getDeaths());
 					writeD(0x00);// special kills
 				}
-
+				
 				writeD(_teamRed.size());
 				for (PlayerHolder info : _teamRed)
 				{
@@ -117,27 +117,27 @@ public class EventParticipantStatus extends L2GameServerPacket
 					writeD(0x00);// special kills
 				}
 				break;
-
+			
 			case TOWER_DESTROY:
 				break;
-
+			
 			case CATEGORY_UPDATE:
 				break;
-
+			
 			case RESULT:
 				break;
-
+			
 			case PVP_KILL:
 				writeD(EventEngineManager.getTime());
 				writeD(_pointsBlue);
 				writeD(_pointsRed);
-
+				
 				writeD(1);// teamId
 				writeD(0x00);// playerObjectId
 				writeD(0x00);// kills
 				writeD(0x00);// deaths
 				writeD(0x00);// special kills
-
+				
 				writeD(2);// teamId
 				writeD(0x00);// playerObjectId
 				writeD(0x00);// kills

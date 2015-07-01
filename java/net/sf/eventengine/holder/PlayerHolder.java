@@ -31,25 +31,25 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 public class PlayerHolder
 {
 	private final L2PcInstance _player;
-
-	// Contador de kills realizados -> usado en eventos de 1 solo Team (AvA .. )
+	
+	// Contador de kills realizados.
 	private int _kills = 0;
-	// Contador de deaths obtenidas -> usado en eventos de 1 solo Team (AvA .. )
+	// Contador de deaths obtenidas.
 	private int _deaths = 0;
 	// Color original de un personaje por si en algun evento es cambiado.
 	private int _oriColorTitle = Integer.decode("0xFFFFFF");
 	// Titulo original de un personaje por si en algun evento es cambiado.
 	private String _oriTitle = "";
-
+	
 	private int _dinamicInstanceId = 0;
-
+	
 	public PlayerHolder(L2PcInstance player)
 	{
 		_player = player;
 	}
-
+	
 	// METODOS VARIOS -----------------------------------------------------------
-
+	
 	/**
 	 * Aacceso directo a todos los metodos de L2PcInstance.
 	 * @return
@@ -58,17 +58,17 @@ public class PlayerHolder
 	{
 		return _player;
 	}
-
+	
 	public int getDinamicInstanceId()
 	{
 		return _dinamicInstanceId;
 	}
-
+	
 	public void setDinamicInstanceId(int dinamicInstanceId)
 	{
 		_dinamicInstanceId = dinamicInstanceId;
 	}
-
+	
 	/**
 	 * Incrementamos en uno la cantidad de kills
 	 */
@@ -76,12 +76,12 @@ public class PlayerHolder
 	{
 		_kills++;
 	}
-
+	
 	public int getKills()
 	{
 		return _kills;
 	}
-
+	
 	/**
 	 * Incrementamos en uno la cantidad de muertes
 	 */
@@ -89,12 +89,12 @@ public class PlayerHolder
 	{
 		_deaths++;
 	}
-
+	
 	public int getDeaths()
 	{
 		return _deaths;
 	}
-
+	
 	/**
 	 * Obtenemos la cant de puntos de un player.<br>
 	 * La formula se obtiene a partir de: (_kills-_deaths)<br>
@@ -104,13 +104,13 @@ public class PlayerHolder
 	{
 		return _kills - _deaths;
 	}
-
+	
 	public void setNewTitle(String title)
 	{
 		_oriTitle = _player.getTitle();
 		_player.setTitle(title);
 	}
-
+	
 	/**
 	 * Recuperamos el titulo original de un player
 	 */
@@ -118,7 +118,7 @@ public class PlayerHolder
 	{
 		_player.setTitle(_oriTitle);
 	}
-
+	
 	/**
 	 * Disponemos un nuevo color del titulo para un player.
 	 * @param colorHex
@@ -128,7 +128,7 @@ public class PlayerHolder
 		_oriColorTitle = _player.getAppearance().getTitleColor();
 		_player.getAppearance().setTitleColor(colorHex.getColor());
 	}
-
+	
 	/**
 	 * Recuperamos el color original del titulo del player
 	 */
@@ -136,9 +136,9 @@ public class PlayerHolder
 	{
 		_player.getAppearance().setTitleColor(_oriColorTitle);
 	}
-
+	
 	// METODOS VARIOS --------------------------------------------------------------
-
+	
 	public static Comparator<PlayerHolder> _pointsComparator = new Comparator<PlayerHolder>()
 	{
 		@Override
