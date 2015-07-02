@@ -18,6 +18,8 @@
  */
 package net.sf.eventengine.task;
 
+import java.util.ArrayList;
+
 import net.sf.eventengine.EventEngineManager;
 import net.sf.eventengine.configs.Configs;
 import net.sf.eventengine.enums.EventEngineState;
@@ -27,6 +29,7 @@ import net.sf.eventengine.events.CaptureTheFlag;
 import net.sf.eventengine.events.OneVsOne;
 import net.sf.eventengine.events.Survive;
 import net.sf.eventengine.events.TeamVsTeam;
+import net.sf.eventengine.handler.MsgHandler;
 import net.sf.eventengine.util.EventUtil;
 
 import com.l2jserver.gameserver.network.clientpackets.Say2;
@@ -37,6 +40,26 @@ import com.l2jserver.gameserver.network.clientpackets.Say2;
  */
 public class EventEngineTask implements Runnable
 {
+	/**
+	 * Multi-Language System Contiene los tiempos para anunciar lo que falta para iniciar el evento
+	 */
+	private static final ArrayList<Integer> TIME_LEFT_TO_ANNOUNCE = new ArrayList<>();
+	{
+		TIME_LEFT_TO_ANNOUNCE.add(1800);
+		TIME_LEFT_TO_ANNOUNCE.add(1200);
+		TIME_LEFT_TO_ANNOUNCE.add(600);
+		TIME_LEFT_TO_ANNOUNCE.add(300);
+		TIME_LEFT_TO_ANNOUNCE.add(240);
+		TIME_LEFT_TO_ANNOUNCE.add(120);
+		TIME_LEFT_TO_ANNOUNCE.add(60);
+		TIME_LEFT_TO_ANNOUNCE.add(10);
+		TIME_LEFT_TO_ANNOUNCE.add(5);
+		TIME_LEFT_TO_ANNOUNCE.add(4);
+		TIME_LEFT_TO_ANNOUNCE.add(3);
+		TIME_LEFT_TO_ANNOUNCE.add(2);
+		TIME_LEFT_TO_ANNOUNCE.add(1);
+	}
+	
 	@Override
 	public void run()
 	{
@@ -60,15 +83,16 @@ public class EventEngineTask implements Runnable
 			}
 			case RUN_EVENT:
 			{
-				if (EventEngineManager.getAllRegisterPlayers().isEmpty())
+				if (EventEngineManager.isEmptyRegisteredPlayers())
 				{
 					// Tiempo para el proximo evento en minutos.
 					EventEngineManager.setTime(Configs.EVENT_TASK * 60);
 					// Volvemos a abrir el registro
 					EventEngineManager.setEventEngineState(EventEngineState.REGISTER);
 					
-					EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "Evento cancelado por falta de participantes.");
-					EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "Se vuelve e habilitar el registro");
+					// Messages
+					EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, MsgHandler.getMsg("event_aborted"));
+					EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, MsgHandler.getMsg("event_registration_on"));
 					break;
 				}
 				// Averiguamos el evento con mas votos y lo ejecutamos
@@ -118,59 +142,28 @@ public class EventEngineTask implements Runnable
 	public static void announceNextEvent()
 	{
 		// Generamos los anuncios dependiendo del tiempo q falta para iniciar
-		switch (EventEngineManager.getTime())
+		int time = EventEngineManager.getTime();
+		if (TIME_LEFT_TO_ANNOUNCE.contains(EventEngineManager.getTime()))
 		{
-			case 1800: // 30 min
-				EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "Event start in 30 minuts!");
-				break;
-			case 1200: // 20 min
-				EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "Next event start in 20 minuts!");
-				break;
-			case 600:
-				EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "Next event start in 10 minuts!");
-				break;
-			case 300:
-				EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "Next event start in 5 minuts!");
-				break;
-			case 240:
-				EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "Next event start in 4 minuts!");
-				break;
-			case 180:
-				EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "Next event start in 3 minuts!");
-				break;
-			case 120:
-				EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "Next event start in 2 minuts!");
-				break;
-			case 60:
-				EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "Next event start in 1 minuts!");
-				break;
-			case 10:
-				EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "Event start in 10 seconds!");
-				break;
-			case 5:
-				EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "Event start in 5 seconds!");
-				break;
-			case 4:
-				EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "Event start in 4 seconds!");
-				break;
-			case 3:
-				EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "Event start in 3 seconds!");
-				break;
-			case 2:
-				EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "Event start in 2 seconds!");
-				break;
-			case 1:
-				EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "Event start in 1 seconds!");
-				break;
-			case 0:
-				EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "¡¡¡ Event START !!!");
-				// Indicamos q un evento comenzara a correr
-				EventEngineManager.setEventEngineState(EventEngineState.RUN_EVENT);
-				break;
-			case -1:
-				// Indicamos q un evento comenzara a correr
-				EventEngineManager.setEventEngineState(EventEngineState.RUN_EVENT);// FIXME Solo por si se saltea el paso anterior.
-				break;
+			if (time > 60)
+			{
+				EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, MsgHandler.getMsg("event_start_time") + " " + (time / 60) + " " + MsgHandler.getMsg("time_minutes"));
+			}
+			else
+			{
+				EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, MsgHandler.getMsg("event_start_time") + " " + time + " " + MsgHandler.getMsg("time_seconds"));
+			}
+		}
+		else if (time == 0)
+		{
+			EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, MsgHandler.getMsg("event_started"));
+			// Indicamos q un evento comenzara a correr
+			EventEngineManager.setEventEngineState(EventEngineState.RUN_EVENT);
+		}
+		else if (time == -1)
+		{
+			// FIXME: Solo por si se saltea el paso anterior.
+			EventEngineManager.setEventEngineState(EventEngineState.RUN_EVENT);
 		}
 	}
 }

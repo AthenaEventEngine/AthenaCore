@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<localization lang="English" version="1.0" author="swarlog">
+
+	<!-- Events -->
+	<message id="event_aborted" text="The event has been aborted due to lack of participants."/>
+	<message id="event_registration_on" text="Registration for event has been opened." />
+	
+	<message id="event_started" text="The event has started!" />
+	<message id="event_end" text="The event has ended!" />
+	
+	<message id="event_start_time" text="Event starts in"/>
+	
+	
+	<!-- HTML: Lang Setting -->
+	<message id="lang_menu_title" text="Menu Setting"/>
+	<message id="lang_language_title" text="Language Setting"/>
+	<message id="lang_language_description" text="If you want to change the default language of the event engine, you only have to specify it. Choose your native language!"/>
+	<message id="lang_current_language" text="Current language:"/>
+	<message id="lang_current_successfully" text="Language successfully set to:"/>
+	
+	<!-- Teleport -->
+	<message id="teleport_10_seconds" text="You will be teleported to the event in 10 seconds." />
+	
+	<!-- Status -->
+	<message id="status_started" text="START" />
+	<message id="status_finished" text="FINISHED" />
+	
+	<!-- Titles -->
+	<message id="event_title_pvppk" text="Kills: %i Deaths: %i" />
+	<message id="event_title_scoredeath" text="Score: %i Deaths: %i" />
+	
+	<!-- Time -->
+	<message id="time_hours" text="minutes."/>
+	<message id="time_minutes" text="minutes."/>
+	<message id="time_seconds" text="seconds."/>
+	
+	<!-- Team -->
+	<message id="team_ffaevent" text="Players" />
+	<message id="team_blue" text="Blue" />
+	<message id="team_red" text="Red" />
+	<message id="team_green" text="Green" />
+	<message id="team_purple" text="Purple" />
+	<message id="team_yellow" text="Yellow" />
+	<message id="team_fullname_blue" text="Blue Team" />
+	<message id="team_fullname_red" text="Red Team" />
+	<message id="team_fullname_green" text="Green Team" />
+	<message id="team_fullname_purple" text="Purple Team" />
+	<message id="team_fullname_yellow" text="Yellow Team" />
+	
+	<!-- Rounds -->
+	<message id="round_1" text="1st" />
+	<message id="round_2" text="2nd" />
+	<message id="round_3" text="3rd" />
+	<message id="round_4" text="4th" />
+	<message id="round_5" text="5th" />
+	<message id="round_6" text="6th" />
+	<message id="round_7" text="7th" />
+	<message id="round_8" text="8th" />
+	<message id="round_9" text="9th" />
+	<message id="round_10" text="10th" />
+	<message id="round_final" text="Final" />
+
+</localization>
