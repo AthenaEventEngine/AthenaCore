@@ -179,7 +179,7 @@ public class TeamVsTeam extends AbstractEvent
 	 */
 	private void giveRewardsTeams()
 	{
-		if (EventEngineManager.getAllRegisterPlayers().isEmpty())
+		if (EventEngineManager.isEmptyRegisteredPlayers())
 		{
 			return;
 		}

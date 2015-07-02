@@ -174,13 +174,20 @@ public class NpcManager extends Quest
 				break;
 			
 			case "unregister":
-				if (EventEngineManager.unRegisterPlayer(player))
+				if (EventEngineManager.isOpenRegister())
 				{
-					sb.append("<br><br><br><br><font color=LEVEL>No estabas registrado!</font>");
+					if (EventEngineManager.unRegisterPlayer(player))
+					{
+						sb.append("<br><br><br><br><font color=LEVEL>Tu registro fue borrado!</font>");
+					}
+					else
+					{
+						sb.append("<br><br><br><br><font color=LEVEL>No estabas registrado!</font>");
+					}
 				}
 				else
 				{
-					sb.append("<br><br><br><br><font color=LEVEL>Tu registro fue borrado!</font>");
+					sb.append("<br><br><br><br><font color=LEVEL>El tiempo de registro terminó!</font>");
 				}
 				break;
 			
@@ -239,7 +246,7 @@ public class NpcManager extends Quest
 		
 		if (EventEngineManager.isOpenRegister())
 		{
-			if (EventEngineManager.getAllRegisterPlayers().contains(player.getObjectId()))
+			if (EventEngineManager.isRegistered(player))
 			{
 				sb.append("Cancela tu registro del proximo evento.<br>");
 				sb.append("<button value=Unregister action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " unregister\" width=65 height=21 back=L2UI_CT1.Button_DF_Down fore=L2UI_CT1.Button_DF>");
@@ -272,7 +279,8 @@ public class NpcManager extends Quest
 			for (EventType event : EventType.values())
 			{
 				sb.append("<tr>");
-				sb.append("<td align=center width=30% height=30><button value=\"" + event.getEventName() + "\" action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " vote " + event.toString() + "\" width=110 height=21 back=L2UI_CT1.Button_DF_Down fore=L2UI_CT1.Button_DF></td>");
+				sb.append("<td width=20%><font color=LEVEL>" + event.getEventName() + "</font></td>");
+				sb.append("<td align=center width=10% height=30><button value=\"Votar\" action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " vote " + event.toString() + "\" width=50 height=21 back=L2UI_CT1.Button_DF_Down fore=L2UI_CT1.Button_DF></td>");
 				sb.append("<td width=40%><font color=LEVEL>votos: </font>" + EventEngineManager.getCurrentVotesInEvent(event) + "</td>");
 				sb.append("<td width=30%><font color=7898AF><a action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " info " + event.toString() + "\">info</a></font></td>");
 				sb.append("</tr>");

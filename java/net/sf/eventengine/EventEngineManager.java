@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
@@ -354,6 +355,7 @@ public class EventEngineManager
 	// XXX EVENT VOTE ------------------------------------------------------------------------------------
 	
 	// Votos de cada Evento
+	// TODO: sincronizar
 	private static Map<EventType, Integer> _currentEventVotes = new HashMap<>();
 	{
 		for (EventType event : EventType.values())
@@ -363,6 +365,7 @@ public class EventEngineManager
 	}
 	
 	// Lista para controlar los personajes q ya votaron
+	// TODO: sincronizar
 	private static List<Integer> _currentPlayersVotes = new ArrayList<>();
 	
 	/**
@@ -506,15 +509,44 @@ public class EventEngineManager
 	// XXX PLAYERS REGISTER -----------------------------------------------------------------------------
 	
 	// Lista de players en el evento.
-	private static final Map<Integer, L2PcInstance> _eventRegisterPlayers = new ConcurrentHashMap<>();
+	private static final Set<L2PcInstance> EVENT_REGISTERED_PLAYERS = ConcurrentHashMap.newKeySet();
 	
 	/**
-	 * Obetenemos la lista completa de todos los players registrados en el evento.<br>
-	 * @return Collection<PlayerHolder>
+	 * Obtenemos la colección de jugadores registrados
+	 * @return Collection<L2PcInstance>
 	 */
-	public static Collection<L2PcInstance> getAllRegisterPlayers()
+	public static Collection<L2PcInstance> getAllRegisteredPlayers()
 	{
-		return _eventRegisterPlayers.values();
+		return EVENT_REGISTERED_PLAYERS;
+	}
+	
+	/**
+	 * Limpia la colección de jugadores
+	 * @return
+	 */
+	public static void clearRegisteredPlayers()
+	{
+		EVENT_REGISTERED_PLAYERS.clear();
+	}
+	
+	/**
+	 * Obtenemos si la cantidad de jugadores registrados es 0
+	 * @return <li>True - > no hay jugadores registrados.</li><br>
+	 *         <li>False - > hay al menos un jugador registrado.</li><br>
+	 */
+	public static boolean isEmptyRegisteredPlayers()
+	{
+		return EVENT_REGISTERED_PLAYERS.isEmpty();
+	}
+	
+	/**
+	 * Obtenemos si el jugador se encuentra registrado
+	 * @return <li>True - > Está registrado.</li><br>
+	 *         <li>False - > No está registrado.</li><br>
+	 */
+	public static boolean isRegistered(L2PcInstance player)
+	{
+		return EVENT_REGISTERED_PLAYERS.contains(player);
 	}
 	
 	/**
@@ -525,14 +557,7 @@ public class EventEngineManager
 	 */
 	public static boolean registerPlayer(L2PcInstance player)
 	{
-		if (_eventRegisterPlayers.containsKey(player.getObjectId()))
-		{
-			return false;
-		}
-		
-		_eventRegisterPlayers.put(player.getObjectId(), player);
-		
-		return true;
+		return EVENT_REGISTERED_PLAYERS.add(player);
 	}
 	
 	/**
@@ -543,19 +568,7 @@ public class EventEngineManager
 	 */
 	public static boolean unRegisterPlayer(L2PcInstance player)
 	{
-		if (!isOpenRegister())
-		{
-			return false;
-		}
-		
-		if (!_eventRegisterPlayers.containsKey(player.getObjectId()))
-		{
-			return false;
-		}
-		
-		_eventRegisterPlayers.remove(player.getObjectId());
-		
-		return true;
+		return EVENT_REGISTERED_PLAYERS.remove(player);
 	}
 	
 	// XXX MISC ---------------------------------------------------------------------------------------
