@@ -18,23 +18,24 @@
  */
 package net.sf.eventengine.ai;
 
-import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import net.sf.eventengine.EventEngineManager;
 import net.sf.eventengine.configs.Configs;
 import net.sf.eventengine.enums.EventType;
+import net.sf.eventengine.handler.MsgHandler;
 
-import com.l2jserver.gameserver.datatables.ItemTable;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
-import com.l2jserver.gameserver.model.holders.ItemHolder;
-import com.l2jserver.gameserver.model.items.L2Item;
 import com.l2jserver.gameserver.model.quest.Quest;
+import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
+import com.l2jserver.util.StringUtil;
 
 /**
- * @author fissban
+ * @author swarlog
  */
+
 public class NpcManager extends Quest
 {
 	private static int NPC = Configs.NPC_MANAGER_ID;
@@ -57,135 +58,287 @@ public class NpcManager extends Quest
 	@Override
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
 	{
-		StringBuilder sb = new StringBuilder();
-		
-		sb.append("<html><body>");
-		sb.append("<center>");
-		
 		StringTokenizer st = new StringTokenizer(event, " ");
-		
+		final NpcHtmlMessage html = new NpcHtmlMessage();
 		switch (st.nextToken())
 		{
 			case "index":
 				return index(player);
 				
 			case "vote":
-				// Incrementamos en uno el voto del evento seleccionado por el personaje
+				// Add vote event
 				EventEngineManager.increaseVote(player, EventType.valueOf(st.nextToken()));
+				player.sendMessage(MsgHandler.getTag() + MsgHandler.getMsg("event_vote_done"));
 				return index(player);
 				
 			case "info":
-				List<ItemHolder> holderWin = null;
-				List<ItemHolder> holderLose = null;
-				
+				html.setFile(player.getHtmlPrefix(), "data/html/events/event_info.htm");
 				switch (EventType.valueOf(st.nextToken()))
 				{
 					case AVA:
-						sb.append("<font name=hs12 color=LEVEL>All Vs All</font><br><br>");
-						holderWin = Configs.AVA_REWARD_PLAYER_WIN;
-						holderLose = Configs.AVA_REWARD_PLAYER_LOSER;
+						// Info Event
+						html.replace("%eventName%", MsgHandler.getMsg("event_ava_name"));
+						html.replace("%textDescription%", MsgHandler.getMsg("text_description"));
+						html.replace("%eventDescription%", MsgHandler.getMsg("event_ava_description"));
+						
+						// Requirements
+						html.replace("%textRequirements%", MsgHandler.getMsg("text_requirements"));
+						html.replace("%textLevelMax%", MsgHandler.getMsg("text_level_max"));
+						html.replace("%textLevelMin%", MsgHandler.getMsg("text_level_min"));
+						
+						// Load Levels
+						html.replace("%levelMax%", Configs.MAX_LVL_IN_EVENT);
+						html.replace("%levelMin%", Configs.MIN_LVL_IN_EVENT);
+						
+						// Configuration
+						html.replace("%textCondiguration%", MsgHandler.getMsg("text_configuration"));
+						html.replace("%textTimeEvent%", MsgHandler.getMsg("text_time_event"));
+						html.replace("%timeEvent%", Configs.EVENT_DURATION);
+						html.replace("%timeMinutes%", MsgHandler.getMsg("time_minutes"));
+						
+						// Rewards
+						html.replace("%textRewards%", MsgHandler.getMsg("text_rewards"));
+						// TODO: html.replace("%eventRewards%", Configs.AVA_REWARD_LIST);
+						
+						// Button
+						html.replace("%buttonMain%", "bypass -h Quest " + NpcManager.class.getSimpleName() + " index");
+						
+						// Send
+						player.sendPacket(html);
 						break;
 					case TVT:
-						sb.append("<font name=hs12 color=LEVEL>Team Vs Team</font><br><br>");
-						holderWin = Configs.TVT_REWARD_TEAM_WIN;
-						holderLose = Configs.TVT_REWARD_TEAM_LOSER;
+						// Info Event
+						html.replace("%eventName%", MsgHandler.getMsg("event_tvt_name"));
+						html.replace("%textDescription%", MsgHandler.getMsg("text_description"));
+						html.replace("%eventDescription%", MsgHandler.getMsg("event_tvt_description"));
+						
+						// Requirements
+						html.replace("%textRequirements%", MsgHandler.getMsg("text_requirements"));
+						html.replace("%textLevelMax%", MsgHandler.getMsg("text_level_max"));
+						html.replace("%textLevelMin%", MsgHandler.getMsg("text_level_min"));
+						
+						// Load Levels
+						html.replace("%levelMax%", Configs.MAX_LVL_IN_EVENT);
+						html.replace("%levelMin%", Configs.MIN_LVL_IN_EVENT);
+						
+						// Configuration
+						html.replace("%textCondiguration%", MsgHandler.getMsg("text_configuration"));
+						html.replace("%textTimeEvent%", MsgHandler.getMsg("text_time_event"));
+						html.replace("%timeEvent%", Configs.EVENT_DURATION);
+						html.replace("%timeMinutes%", MsgHandler.getMsg("time_minutes"));
+						
+						// Rewards
+						html.replace("%textRewards%", MsgHandler.getMsg("text_rewards"));
+						// TODO: html.replace("%eventRewards%", Configs.TVT_REWARD_LIST);
+						
+						// Button
+						html.replace("%buttonMain%", "bypass -h Quest " + NpcManager.class.getSimpleName() + " index");
+						
+						// Send
+						player.sendPacket(html);
 						break;
 					case CTF:
-						sb.append("<font name=hs12 color=LEVEL>Capture The Flag</font><br><br>");
-						// TODO ajustar los configs una ves creados
-						holderWin = Configs.TVT_REWARD_TEAM_WIN;
-						holderLose = Configs.TVT_REWARD_TEAM_LOSER;
+						// Info Event
+						html.replace("%eventName%", MsgHandler.getMsg("event_ctf_name"));
+						html.replace("%textDescription%", MsgHandler.getMsg("text_description"));
+						html.replace("%eventDescription%", MsgHandler.getMsg("event_ctf_description"));
+						
+						// Requirements
+						html.replace("%textRequirements%", MsgHandler.getMsg("text_requirements"));
+						html.replace("%textLevelMax%", MsgHandler.getMsg("text_level_max"));
+						html.replace("%textLevelMin%", MsgHandler.getMsg("text_level_min"));
+						
+						// Load Levels
+						html.replace("%levelMax%", Configs.MAX_LVL_IN_EVENT);
+						html.replace("%levelMin%", Configs.MIN_LVL_IN_EVENT);
+						
+						// Configuration
+						html.replace("%textCondiguration%", MsgHandler.getMsg("text_configuration"));
+						html.replace("%textTimeEvent%", MsgHandler.getMsg("text_time_event"));
+						html.replace("%timeEvent%", Configs.EVENT_DURATION);
+						html.replace("%timeMinutes%", MsgHandler.getMsg("time_minutes"));
+						
+						// Rewards
+						html.replace("%textRewards%", MsgHandler.getMsg("text_rewards"));
+						// TODO: html.replace("%eventRewards%", Configs.CTF_REWARD_LIST);
+						
+						// Button
+						html.replace("%buttonMain%", "bypass -h Quest " + NpcManager.class.getSimpleName() + " index");
+						
+						// Send
+						player.sendPacket(html);
 						break;
 					case OVO:
-						sb.append("<font name=hs12 color=LEVEL>One Vs One</font><br><br>");
-						holderWin = Configs.OVO_REWARD_PLAYER_WIN;
-						holderLose = Configs.OVO_REWARD_PLAYER_LOSER;
+						// Info Event
+						html.replace("%eventName%", MsgHandler.getMsg("event_ovo_name"));
+						html.replace("%textDescription%", MsgHandler.getMsg("text_description"));
+						html.replace("%eventDescription%", MsgHandler.getMsg("event_ovo_description"));
+						
+						// Requirements
+						html.replace("%textRequirements%", MsgHandler.getMsg("text_requirements"));
+						html.replace("%textLevelMax%", MsgHandler.getMsg("text_level_max"));
+						html.replace("%textLevelMin%", MsgHandler.getMsg("text_level_min"));
+						
+						// Load Levels
+						html.replace("%levelMax%", Configs.MAX_LVL_IN_EVENT);
+						html.replace("%levelMin%", Configs.MIN_LVL_IN_EVENT);
+						
+						// Configuration
+						html.replace("%textCondiguration%", MsgHandler.getMsg("text_configuration"));
+						html.replace("%textTimeEvent%", MsgHandler.getMsg("text_time_event"));
+						html.replace("%timeEvent%", Configs.EVENT_DURATION);
+						html.replace("%timeMinutes%", MsgHandler.getMsg("time_minutes"));
+						
+						// Rewards
+						html.replace("%textRewards%", MsgHandler.getMsg("text_rewards"));
+						// TODO: html.replace("%eventRewards%", Configs.OVO_REWARD_LIST);
+						
+						// Button
+						html.replace("%buttonMain%", "bypass -h Quest " + NpcManager.class.getSimpleName() + " index");
+						
+						// Send
+						player.sendPacket(html);
 						break;
 					case SURVIVE:
-						sb.append("<font name=hs12 color=LEVEL>Survive</font><br<br>>");
-						holderWin = Configs.SURVIVE_REWARD_PLAYER_WIN;
-						holderLose = Configs.SURVIVE_REWARD_PLAYER_LOSER;
+						// Info Event
+						html.replace("%eventName%", MsgHandler.getMsg("event_survive_name"));
+						html.replace("%textDescription%", MsgHandler.getMsg("text_description"));
+						html.replace("%eventDescription%", MsgHandler.getMsg("event_survive_description"));
+						
+						// Requirements
+						html.replace("%textRequirements%", MsgHandler.getMsg("text_requirements"));
+						html.replace("%textLevelMax%", MsgHandler.getMsg("text_level_max"));
+						html.replace("%textLevelMin%", MsgHandler.getMsg("text_level_min"));
+						
+						// Load Levels
+						html.replace("%levelMax%", Configs.MAX_LVL_IN_EVENT);
+						html.replace("%levelMin%", Configs.MIN_LVL_IN_EVENT);
+						
+						// Configuration
+						html.replace("%textCondiguration%", MsgHandler.getMsg("text_configuration"));
+						html.replace("%textTimeEvent%", MsgHandler.getMsg("text_time_event"));
+						html.replace("%timeEvent%", Configs.EVENT_DURATION);
+						html.replace("%timeMinutes%", MsgHandler.getMsg("time_minutes"));
+						
+						// Rewards
+						html.replace("%textRewards%", MsgHandler.getMsg("text_rewards"));
+						// TODO: html.replace("%eventRewards%", Configs.SURVIVE_REWARD_LIST);
+						
+						// Button
+						html.replace("%buttonMain%", "bypass -h Quest " + NpcManager.class.getSimpleName() + " index");
+						
+						// Send
+						player.sendPacket(html);
+						break;
+					case PA:
+						// Info Event
+						html.replace("%eventName%", MsgHandler.getMsg("event_pa_name"));
+						html.replace("%textDescription%", MsgHandler.getMsg("text_description"));
+						html.replace("%eventDescription%", MsgHandler.getMsg("event_pa_description"));
+						
+						// Requirements
+						html.replace("%textRequirements%", MsgHandler.getMsg("text_requirements"));
+						html.replace("%textLevelMax%", MsgHandler.getMsg("text_level_max"));
+						html.replace("%textLevelMin%", MsgHandler.getMsg("text_level_min"));
+						
+						// Load Levels
+						html.replace("%levelMax%", Configs.MAX_LVL_IN_EVENT);
+						html.replace("%levelMin%", Configs.MIN_LVL_IN_EVENT);
+						
+						// Configuration
+						html.replace("%textCondiguration%", MsgHandler.getMsg("text_configuration"));
+						html.replace("%textTimeEvent%", MsgHandler.getMsg("text_time_event"));
+						html.replace("%timeEvent%", Configs.EVENT_DURATION);
+						html.replace("%timeMinutes%", MsgHandler.getMsg("time_minutes"));
+						
+						// Rewards
+						html.replace("%textRewards%", MsgHandler.getMsg("text_rewards"));
+						// TODO: html.replace("%eventRewards%", Configs.PA_REWARD_LIST);
+						
+						// Button
+						html.replace("%buttonMain%", "bypass -h Quest " + NpcManager.class.getSimpleName() + " index");
+						
+						// Send
+						player.sendPacket(html);
 						break;
 				}
-				
-				sb.append("<font name=hs12 color=00FF3C>WINNER</font><br1>");
-				sb.append("<table bgcolor=E9E9E9>");
-				sb.append("<tr>");
-				sb.append("<td align=center width=32></td>");
-				sb.append("<td align=center width=120>name</td>");
-				sb.append("<td align=center width=50>count</td>");
-				sb.append("</tr>");
-				sb.append("</table>");
-				
-				int color = 0;
-				for (ItemHolder holder : holderWin)
-				{
-					sb.append("<table bgcolor=" + colorTable(color) + ">");
-					L2Item item = ItemTable.getInstance().getTemplate(holder.getId());
-					sb.append("<tr>");
-					sb.append("<td align=center valign=center width=32 height=32><img src=" + item.getIcon() + " width=32 height=32></td>");
-					sb.append("<td align=center width=120 height=32><font name=hs12>" + item.getName() + "</font></td>");
-					sb.append("<td align=center width=50 height=32><font name=hs12>" + holder.getCount() + "</font></td>");
-					sb.append("</tr>");
-					sb.append("</table>");
-					color++;
-				}
-				
-				sb.append("<br>");
-				
-				sb.append("<font name=hs12 color=FF0000>LOSER</font><br1>");
-				sb.append("<table bgcolor=E9E9E9>");
-				sb.append("<tr>");
-				sb.append("<td align=center width=32></td>");
-				sb.append("<td align=center width=120>name</td>");
-				sb.append("<td align=center width=50>count</td>");
-				sb.append("</tr>");
-				sb.append("</table>");
-				color = 0;
-				for (ItemHolder holder : holderLose)
-				{
-					
-					L2Item item = ItemTable.getInstance().getTemplate(holder.getId());
-					sb.append("<table bgcolor=" + colorTable(color) + ">");
-					sb.append("<tr>");
-					sb.append("<td align=center valign=center width=32 height=32><img src=" + item.getIcon() + " width=32 height=32></td>");
-					sb.append("<td align=center width=120 height=32><font name=hs12>" + item.getName() + "</font></td>");
-					sb.append("<td align=center width=50 height=32><font name=hs12>" + holder.getCount() + "</font></td>");
-					sb.append("</tr>");
-					sb.append("</table>");
-					color++;
-				}
-				
 				break;
 			case "register":
 				if (EventEngineManager.registerPlayer(player))
 				{
-					sb.append("<br><br><br><br><font color=LEVEL>Registro exitoso!</font>");
-					sb.append("<button value=Volver action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " index\" width=90 height=21 back=L2UI_CT1.Button_DF_Down fore=L2UI_CT1.Button_DF><br>");
+					// Check for register
+					if (player.getLevel() < Configs.MIN_LVL_IN_EVENT)
+					{
+						player.sendMessage(MsgHandler.getTag() + MsgHandler.getMsg("registering_lowLevel"));
+					}
+					else if (player.getLevel() > Configs.MAX_LVL_IN_EVENT)
+					{
+						player.sendMessage(MsgHandler.getTag() + MsgHandler.getMsg("registering_highLevel"));
+					}
+					else
+					{
+						player.sendMessage(MsgHandler.getTag() + MsgHandler.getMsg("registering_registered"));
+					}
+					
+					return index(player);
 				}
 				else
 				{
-					sb.append("<br><br><br><br><font color=LEVEL>Ya estabas registrado!</font>");
-					sb.append("<button value=Volver action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " index\" width=90 height=21 back=L2UI_CT1.Button_DF_Down fore=L2UI_CT1.Button_DF><br>");
+					player.sendMessage(MsgHandler.getTag() + MsgHandler.getMsg("registering_already_registered"));
+					return index(player);
 				}
-				break;
-			
+				
 			case "unregister":
 				if (EventEngineManager.unRegisterPlayer(player))
 				{
-					sb.append("<br><br><br><br><font color=LEVEL>No estabas registrado!</font>");
+					player.sendMessage(MsgHandler.getTag() + MsgHandler.getMsg("unregistering_notRegistered"));
+					return index(player);
 				}
 				else
 				{
-					sb.append("<br><br><br><br><font color=LEVEL>Tu registro fue borrado!</font>");
+					player.sendMessage(MsgHandler.getTag() + MsgHandler.getMsg("unregistering_unregistered"));
+					return index(player);
 				}
+				
+				// Multi-Language System menu
+			case "menulang":
+				html.setFile(player.getHtmlPrefix(), "data/html/events/event_lang.htm");
+				
+				// Info menu
+				html.replace("%settingTitle%", MsgHandler.getMsg("lang_menu_title"));
+				html.replace("%languageTitle%", MsgHandler.getMsg("lang_language_title"));
+				html.replace("%languageDescription%", MsgHandler.getMsg("lang_language_description"));
+				
+				// Info lang
+				html.replace("%currentLanguage%", MsgHandler.getMsg("lang_current_language"));
+				html.replace("%getLanguage%", MsgHandler.getLanguage());
+				
+				// Buttons
+				final StringBuilder langList = new StringBuilder(500);
+				for (Map.Entry<String, String> e : MsgHandler.getLanguages().entrySet())
+				{
+					StringUtil.append(langList, "<tr>");
+					StringUtil.append(langList, "<td align=center width=30% height=30><button value=\"" + e.getValue() + "\" action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " setlang " + e.getKey() + "\" width=70 height=20 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\"></td>");
+					StringUtil.append(langList, "</tr>");
+				}
+				html.replace("%buttonLang%", langList.toString());
+				
+				// Button
+				html.replace("%buttonMain%", "bypass -h Quest " + NpcManager.class.getSimpleName() + " index");
+				
+				// Send
+				player.sendPacket(html);
+				break;
+			// Multi-Language System set language
+			case "setlang":
+				String lang = st.nextToken();
+				MsgHandler.setLanguage(lang);
+				player.sendMessage(MsgHandler.getTag() + MsgHandler.getMsg("lang_current_successfully") + " " + lang);
+				index(player);
 				break;
 		}
 		
-		sb.append("</center>");
-		sb.append("</body></html>");
-		
-		return sb.toString();
+		return event;
 	}
 	
 	/**
@@ -196,91 +349,58 @@ public class NpcManager extends Quest
 	 */
 	private static String index(L2PcInstance player)
 	{
-		StringBuilder sb = new StringBuilder();
+		final NpcHtmlMessage html = new NpcHtmlMessage();
+		html.setFile(player.getHtmlPrefix(), "data/html/events/event_main.htm");
 		
-		sb.append("<html><body>");
-		sb.append("<center>");
-		sb.append("Bienvenido <font color=LEVEL>" + player.getName() + "</font><br>");
+		// Info
+		html.replace("%namePlayer%", player.getName());
 		
+		// Check Status Event - Register
 		if (EventEngineManager.isOpenRegister())
 		{
+			html.replace("%menuInfo%", MsgHandler.getMsg("event_registration_on"));
 			if (EventEngineManager.getAllRegisterPlayers().contains(player.getObjectId()))
 			{
-				sb.append("Cancela tu registro del proximo evento.<br>");
-				sb.append("<button value=Unregister action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " unregister\" width=65 height=21 back=L2UI_CT1.Button_DF_Down fore=L2UI_CT1.Button_DF>");
+				html.replace("%buttonActionName%", MsgHandler.getMsg("button_unregister"));
+				html.replace("%buttonAction%", "bypass -h Quest " + NpcManager.class.getSimpleName() + " unregister");
 			}
 			else
 			{
-				sb.append("Registrate en nuestro proximo evento.<br>");
-				sb.append("<button value=Register action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " register\" width=65 height=21 back=L2UI_CT1.Button_DF_Down fore=L2UI_CT1.Button_DF>");
+				html.replace("%buttonActionName%", MsgHandler.getMsg("button_register"));
+				html.replace("%buttonAction%", "bypass -h Quest " + NpcManager.class.getSimpleName() + " register");
 			}
-			sb.append("<br>");
 		}
 		else
 		{
-			sb.append("Aun no esta habilitado<br1>");
-			sb.append("el registro para los eventos<br>");
+			html.replace("%buttonActionName%", MsgHandler.getMsg("button_spectator"));
+			// html.replace("%buttonAction%", "bypass -h Quest " + NpcManager.class.getSimpleName() + " spectator");
+			html.replace("%menuInfo%", MsgHandler.getMsg("event_registration_notRegState"));
 		}
 		
+		// Check Status Event - Vote
 		if (EventEngineManager.isOpenVote())
 		{
-			sb.append("<font color=LEVEL>Vota por el proximo evento!.</font><br>");
-			sb.append("El evento que consiga<br1>");
-			sb.append("mayor cantidad de votos<br1>");
-			sb.append("sera el proximo en ejecutarse.<br>");
-			sb.append("<table width=100% cellspacing=1 cellpadding=2 bgcolor=111111>");
-			
-			// Generamos una tabla con:
-			// -> un boton para votar por el evento.
-			// -> la cantidad de votos q tiene dicho evento.
-			// -> un link para poder ver mas info del mismo.
+			final StringBuilder eventList = new StringBuilder(500);
 			for (EventType event : EventType.values())
 			{
-				sb.append("<tr>");
-				sb.append("<td align=center width=30% height=30><button value=\"" + event.getEventName() + "\" action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " vote " + event.toString() + "\" width=110 height=21 back=L2UI_CT1.Button_DF_Down fore=L2UI_CT1.Button_DF></td>");
-				sb.append("<td width=40%><font color=LEVEL>votos: </font>" + EventEngineManager.getCurrentVotesInEvent(event) + "</td>");
-				sb.append("<td width=30%><font color=7898AF><a action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " info " + event.toString() + "\">info</a></font></td>");
-				sb.append("</tr>");
+				StringUtil.append(eventList, "<tr>");
+				StringUtil.append(eventList, "<td align=center width=30% height=30><button value=\"" + event.getEventName() + "\" action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " vote " + event.toString() + "\" width=110 height=21 back=L2UI_CT1.Button_DF_Down fore=L2UI_CT1.Button_DF></td>");
+				StringUtil.append(eventList, "<td width=40%><font color=LEVEL>" + MsgHandler.getMsg("button_votes") + ": </font>" + EventEngineManager.getCurrentVotesInEvent(event) + "</td>");
+				StringUtil.append(eventList, "<td width=30%><font color=7898AF><a action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " info " + event.toString() + "\">" + MsgHandler.getMsg("button_info") + "</a></font></td>");
+				StringUtil.append(eventList, "</tr>");
 			}
-			
-			sb.append("</table>");
+			html.replace("%menuInfo%", MsgHandler.getMsg("event_vote_info"));
+			html.replace("%buttonEventList%", eventList.toString());
 		}
 		else
 		{
-			sb.append("<br><br>");
-			sb.append("No puedes registrarte mientra tenemos<br1>");
-			sb.append("un evento en curso.");
+			html.replace("%menuInfo%", MsgHandler.getMsg("event_vote_notVoteState"));
 		}
 		
-		sb.append("</center>");
-		sb.append("</body></html>");
+		// Button
+		html.replace("%buttonLang%", "bypass -h Quest " + NpcManager.class.getSimpleName() + " menulang");
 		
-		return sb.toString();
-	}
-	
-	/**
-	 * Agradecemos al player por votar
-	 * @return
-	 */
-	public String votes()
-	{
-		StringBuilder sb = new StringBuilder();
-		sb.append("Gracias por votar!<br>");
-		sb.append("<button value=Volver action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " index\" width=90 height=21 back=L2UI_CT1.Button_DF_Down fore=L2UI_CT1.Button_DF><br>");
-		return sb.toString();
-	}
-	
-	/**
-	 * Podemos asignar un color a la tabla dependiendo si es par o impar
-	 * @param color
-	 * @return
-	 */
-	private String colorTable(int color)
-	{
-		if ((color % 2) == 0)
-		{
-			return "8B4513";
-		}
-		return "291405";
+		player.sendPacket(html);
+		return null;
 	}
 }

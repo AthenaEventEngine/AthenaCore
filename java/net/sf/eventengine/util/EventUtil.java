@@ -18,6 +18,7 @@
  */
 package net.sf.eventengine.util;
 
+import net.sf.eventengine.handler.MsgHandler;
 import net.sf.eventengine.holder.PlayerHolder;
 
 import com.l2jserver.gameserver.model.L2World;
@@ -39,7 +40,7 @@ public class EventUtil
 	 */
 	public static void sendEventMessage(PlayerHolder player, String text)
 	{
-		player.getPcInstance().sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", "[EventEngine]" + text));
+		player.getPcInstance().sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", MsgHandler.getTag() + text));
 	}
 	
 	/**
@@ -82,7 +83,7 @@ public class EventUtil
 	{
 		for (L2PcInstance player : L2World.getInstance().getPlayers())
 		{
-			player.sendPacket(new CreatureSay(0, say2, "", "[EventEngine]" + text));
+			player.sendPacket(new CreatureSay(0, say2, "", MsgHandler.getTag() + text));
 		}
 	}
 	
@@ -95,7 +96,7 @@ public class EventUtil
 	{
 		for (L2PcInstance player : L2World.getInstance().getPlayers())
 		{
-			player.sendPacket(new CreatureSay(0, say2, "", "[EventEngine]" + text));
+			player.sendPacket(new CreatureSay(0, say2, "", MsgHandler.getTag() + text));
 		}
 	}
 }

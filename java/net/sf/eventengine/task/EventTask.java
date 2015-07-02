@@ -21,6 +21,7 @@ package net.sf.eventengine.task;
 import net.sf.eventengine.EventEngineManager;
 import net.sf.eventengine.enums.EventEngineState;
 import net.sf.eventengine.enums.EventState;
+import net.sf.eventengine.handler.MsgHandler;
 import net.sf.eventengine.holder.PlayerHolder;
 import net.sf.eventengine.util.EventUtil;
 
@@ -46,7 +47,7 @@ public class EventTask implements Runnable
 		{
 			case 1:
 				// Anunciamos a los players q pronto seran teletransportados
-				EventUtil.announceToAllPlayersInEvent(Say2.CRITICAL_ANNOUNCE, "They will be teleported in 3 seconds.");
+				EventUtil.announceToAllPlayersInEvent(Say2.CRITICAL_ANNOUNCE, MsgHandler.getMsg("teleport_seconds"));
 				break;
 			
 			case 2:
@@ -61,7 +62,7 @@ public class EventTask implements Runnable
 				// Enviamos un mensaje especial para los participantes
 				for (PlayerHolder player : EventEngineManager.getCurrentEvent().getAllEventPlayers())
 				{
-					EventUtil.sendEventSpecialMessage(player, 2, "Start");
+					EventUtil.sendEventSpecialMessage(player, 2, MsgHandler.getMsg("status_started"));
 				}
 				break;
 			
@@ -75,10 +76,10 @@ public class EventTask implements Runnable
 				// Enviamos un mensaje especial para los participantes
 				for (PlayerHolder player : EventEngineManager.getCurrentEvent().getAllEventPlayers())
 				{
-					EventUtil.sendEventSpecialMessage(player, 1, "Finish");
+					EventUtil.sendEventSpecialMessage(player, 1, MsgHandler.getMsg("status_finished"));
 				}
 				
-				EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "The event ended!.");
+				EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, MsgHandler.getMsg("event_end"));
 				break;
 			
 			case 5:
