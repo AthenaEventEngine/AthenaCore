@@ -7,7 +7,8 @@
 	<!-- Events -->
 	<message id="event_aborted" text="The event has been aborted due to lack of participants."/>
 	<message id="event_registration_on" text="registration for event engine has been opened! Register now!" />
-	<message id="event_registration_notRegState" text="the event is no in the registration state, you cannot register now. Try the spectator mode, go!" />
+	<message id="event_registration_notRegState" text="the event is not in the registration state, you cannot register now. Try the spectator mode, go!" />
+	<message id="event_registration_notUnRegState" text="the event is not in the registration state, you cannot unregister now." />
 	<message id="event_vote_notVoteState" text="the event is no in the vote state, you cannot vote now." />
 	
 	<message id="event_login_participate" text="Come on! And participate!" />

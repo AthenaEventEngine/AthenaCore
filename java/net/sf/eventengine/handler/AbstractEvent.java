@@ -235,13 +235,13 @@ public abstract class AbstractEvent
 	 */
 	private void createEventPlayers()
 	{
-		for (L2PcInstance player : EventEngineManager.getAllRegisterPlayers())
+		for (L2PcInstance player : EventEngineManager.getAllRegisteredPlayers())
 		{
 			_eventPlayers.put(player.getObjectId(), new PlayerHolder(player));
 		}
 		
 		// Limpiamos la lista, ya no la necesitaremos.
-		EventEngineManager.getAllRegisterPlayers().clear();
+		EventEngineManager.clearRegisteredPlayers();
 	}
 	
 	/**
