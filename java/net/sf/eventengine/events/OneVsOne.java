@@ -134,7 +134,7 @@ public class OneVsOne extends AbstractEvent
 	 */
 	private void createTeams()
 	{
-		if (EventEngineManager.getAllRegisterPlayers().isEmpty())
+		if (EventEngineManager.isEmptyRegisteredPlayers())
 		{
 			return;
 		}

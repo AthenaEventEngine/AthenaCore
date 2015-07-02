@@ -289,17 +289,24 @@ public class NpcManager extends Quest
 				}
 				
 			case "unregister":
-				if (EventEngineManager.unRegisterPlayer(player))
+				if (EventEngineManager.isOpenRegister())
 				{
-					player.sendMessage(MsgHandler.getTag() + MsgHandler.getMsg("unregistering_notRegistered"));
-					return index(player);
+					if (EventEngineManager.unRegisterPlayer(player))
+					{
+						player.sendMessage(MsgHandler.getTag() + MsgHandler.getMsg("unregistering_unregistered"));
+						return index(player);
+					}
+					else
+					{
+						player.sendMessage(MsgHandler.getTag() + MsgHandler.getMsg("unregistering_notRegistered"));
+						return index(player);
+					}
 				}
 				else
 				{
-					player.sendMessage(MsgHandler.getTag() + MsgHandler.getMsg("unregistering_unregistered"));
+					player.sendMessage(MsgHandler.getTag() + MsgHandler.getMsg("event_registration_notUnRegState"));
 					return index(player);
 				}
-				
 				// Multi-Language System menu
 			case "menulang":
 				html.setFile(player.getHtmlPrefix(), "data/html/events/event_lang.htm");
@@ -359,7 +366,7 @@ public class NpcManager extends Quest
 		if (EventEngineManager.isOpenRegister())
 		{
 			html.replace("%menuInfo%", MsgHandler.getMsg("event_registration_on"));
-			if (EventEngineManager.getAllRegisterPlayers().contains(player.getObjectId()))
+			if (EventEngineManager.isRegistered(player))
 			{
 				html.replace("%buttonActionName%", MsgHandler.getMsg("button_unregister"));
 				html.replace("%buttonAction%", "bypass -h Quest " + NpcManager.class.getSimpleName() + " unregister");

@@ -83,7 +83,7 @@ public class EventEngineTask implements Runnable
 			}
 			case RUN_EVENT:
 			{
-				if (EventEngineManager.getAllRegisterPlayers().isEmpty())
+				if (EventEngineManager.isEmptyRegisteredPlayers())
 				{
 					// Tiempo para el proximo evento en minutos.
 					EventEngineManager.setTime(Configs.EVENT_TASK * 60);
