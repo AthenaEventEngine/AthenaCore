@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<localization lang="English" author="swarlog">
+
+	<!-- Event Engine Tag -->
+	<message id="event_engine_tag" text="[EventEngine]"/>
+	
+	<!-- Events -->
+	<message id="event_aborted" text="The event has been aborted due to lack of participants."/>
+	<message id="event_registration_on" text="registration for event engine has been opened! Register now!" />
+	<message id="event_registration_notRegState" text="the event is no in the registration state, you cannot register now. Try the spectator mode, go!" />
+	<message id="event_vote_notVoteState" text="the event is no in the vote state, you cannot vote now." />
+	
+	<message id="event_login_participate" text="Come on! And participate!" />
+	<message id="event_login_vote" text="Vote for the next event!" />
+	<message id="event_vote_done" text="Thank, event successfully voted!" />
+	<message id="event_vote_info" text="Vote for the desired event. The event with the most votes, will start!" />
+	
+	<message id="event_started" text="The event has started!" />
+	<message id="event_end" text="The event has ended!" />
+	<message id="event_start_time" text="Event starts in"/>
+	
+	<!-- Register -->
+	<message id="registering_highLevel" text="Your level is higher than the max allowed level." />
+	<message id="registering_lowLevel" text="Your level is lower than the min required level." />
+	<message id="registering_registered" text="You have successfully registered!" />
+	<message id="registering_already_registered" text="You are already registered." />
+	<message id="unregistering_unregistered" text="You have been unregistered." />
+	<message id="unregistering_notRegistered" text="You are not registered!" />
+	
+	<!-- Events Info -->
+	<message id="event_ava_name" text="All vs All" />
+	<message id="event_ava_description" text="Here information of event!" />
+	<message id="event_tvt_name" text="Team vs Team" />
+	<message id="event_tvt_description" text="Here information of event!" />
+	<message id="event_ctf_name" text="Capture the Flag" />
+	<message id="event_ctf_description" text="Here information of event!" />
+	<message id="event_ovo_name" text="One vs One" />
+	<message id="event_ovo_description" text="Here information of event!" />
+	<message id="event_survive_name" text="Survise" />
+	<message id="event_survive_description" text="Here information of event!" />
+	<message id="event_pa_name" text="Present Arms" />
+	<message id="event_pa_description" text="Here information of event!" />
+	
+	
+	<!-- General Text -->
+	<message id="text_description" text="Description"/>
+	<message id="text_requirements" text="Requirements"/>
+	<message id="text_level_max" text="Level Max"/>
+	<message id="text_level_min" text="Level Min"/>
+	<message id="text_rewards" text="Rewards" />
+	<message id="text_configuration" text="Configurations" />
+	<message id="text_time_event" text="Time Event" />
+	
+	<!-- HTML: Lang Setting -->
+	<message id="lang_menu_title" text="Menu Setting"/>
+	<message id="lang_language_title" text="Language Setting"/>
+	<message id="lang_language_description" text="If you want to change the default language of the event engine, you only have to specify it. Choose your first language, come on!"/>
+	<message id="lang_current_language" text="Current language:"/>
+	<message id="lang_current_successfully" text="Language successfully set to:"/>
+	
+	<!-- Teleport -->
+	<message id="teleport_seconds" text="You will be teleported to the event in seconds." />
+	
+	<!-- Status -->
+	<message id="status_started" text="START" />
+	<message id="status_finished" text="FINISHED" />
+	
+	<!-- Titles -->
+	<message id="event_title_pvppk" text="Kills: %i Deaths: %i" />
+	<message id="event_title_scoredeath" text="Score: %i Deaths: %i" />
+	
+	<!-- Buttons -->
+	<message id="button_votes" text="VOTES"/>
+	<message id="button_info" text="INFO"/>
+	<message id="button_register" text="Register"/>
+	<message id="button_unregister" text="Unregister"/>
+	<message id="button_spectator" text="Mode Spectator"/>
+	
+	<!-- Time -->
+	<message id="time_hours" text="hour(s)."/>
+	<message id="time_minutes" text="minute(s)."/>
+	<message id="time_seconds" text="second(s)."/>
+
+</localization>
