@@ -52,8 +52,8 @@ public class TeamVsTeam extends AbstractEvent
 		super();
 		
 		// Definimos los spawns de cada team
-		setTeamSpawn(Team.RED, Configs.TVT_LOC_TEAM_RED);
-		setTeamSpawn(Team.BLUE, Configs.TVT_LOC_TEAM_BLUE);
+		setTeamSpawn(Team.RED, Configs.TVT_COORDINATES_TEAM_1);
+		setTeamSpawn(Team.BLUE, Configs.TVT_COORDINATES_TEAM_2);
 		// Definimos los buffs de los personajes
 		setPlayerBuffs(PlayerClassType.MAGE, Configs.TVT_BUFF_PLAYER_MAGE);
 		setPlayerBuffs(PlayerClassType.WARRIOR, Configs.TVT_BUFF_PLAYER_WARRIOR);
@@ -193,9 +193,11 @@ public class TeamVsTeam extends AbstractEvent
 				// Anunciamos el resultado del evento
 				EventUtil.sendEventScreenMessage(player, "El evento resulto en un empate entre ambos teams!");
 				
-				// Ambos equipos empataron asique le entregamos a ambos el premio de los perdedores xD
 				// Entregamos los rewards
-				giveItems(player, Configs.TVT_REWARD_TEAM_LOSER);
+				if (Configs.OVO_REWARD_TEAM_TIE)
+				{
+					giveItems(player, Configs.TVT_REWARD_PLAYER_WIN);
+				}
 			}
 			else
 			{
@@ -205,11 +207,7 @@ public class TeamVsTeam extends AbstractEvent
 				// Entregamos los rewards
 				if (player.getPcInstance().getTeam() == ganador)
 				{
-					giveItems(player, Configs.TVT_REWARD_TEAM_WIN);
-				}
-				else
-				{
-					giveItems(player, Configs.TVT_REWARD_TEAM_LOSER);
+					giveItems(player, Configs.TVT_REWARD_PLAYER_WIN);
 				}
 			}
 		}

@@ -52,13 +52,13 @@ public class Survive extends AbstractEvent
 	private int _auxKillMonsters = 0;
 	
 	// Id de los monsters
-	private static final List<Integer> MONSTERS_ID = Configs.SURVIVE_MOSNTERS_SPAWN;
+	private static final List<Integer> MONSTERS_ID = Configs.SURVIVE_MONSTERS_ID;
 	
 	public Survive()
 	{
 		super();
 		// Definimos los spawns de cada team
-		setTeamSpawn(Team.BLUE, Configs.SURVIVE_LOC_PLAYER);
+		setTeamSpawn(Team.BLUE, Configs.SURVIVE_COORDINATES_PLAYER);
 		// Definimos los buffs de los personajes
 		setPlayerBuffs(PlayerClassType.MAGE, Configs.SURVIVE_BUFF_PLAYER_MAGE);
 		setPlayerBuffs(PlayerClassType.WARRIOR, Configs.SURVIVE_BUFF_PLAYER_WARRIOR);
@@ -160,7 +160,7 @@ public class Survive extends AbstractEvent
 			// Enviamos un mensaje al ganador
 			EventUtil.sendEventScreenMessage(player, "Felicitaciones sobreviviente");
 			// Entregamos los rewards
-			giveItems(player, Configs.AVA_REWARD_PLAYER_LOSER);
+			giveItems(player, Configs.SURVIVE_REWARD_PLAYER_WIN);
 		}
 	}
 	

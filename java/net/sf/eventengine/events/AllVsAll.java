@@ -47,7 +47,7 @@ public class AllVsAll extends AbstractEvent
 	{
 		super();
 		// Definimos el spawn del team
-		setTeamSpawn(Team.NONE, Configs.AVA_LOC_PLAYER);
+		setTeamSpawn(Team.NONE, Configs.AVA_COORDINATES_PLAYER);
 		// Definimos los buffs de los personajes
 		setPlayerBuffs(PlayerClassType.MAGE, Configs.AVA_BUFF_PLAYER_MAGE);
 		setPlayerBuffs(PlayerClassType.WARRIOR, Configs.AVA_BUFF_PLAYER_WARRIOR);
@@ -88,6 +88,8 @@ public class AllVsAll extends AbstractEvent
 	{
 		// Incrementamos en uno la cant de kills al player.
 		player.increaseKills();
+		// Entregamos la rewards
+		giveItems(player, Configs.AVA_REWARD_KILL_PLAYER);
 		// Actualizamos el titulo del personaje
 		updateTitle(player);
 	}
@@ -195,8 +197,6 @@ public class AllVsAll extends AbstractEvent
 			{
 				// Enviamos un mensaje al ganador
 				EventUtil.sendEventScreenMessage(player, "Perdedor " + player.getPcInstance().getName() + " con " + player.getPoints());
-				// Entregamos los rewards
-				giveItems(player, Configs.AVA_REWARD_PLAYER_LOSER);
 			}
 			
 			aux++;

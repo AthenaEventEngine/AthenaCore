@@ -55,8 +55,8 @@ public class OneVsOne extends AbstractEvent
 		super();
 		
 		// Definimos los spawns de cada team
-		setTeamSpawn(Team.RED, Configs.OVO_LOC_TEAM_RED);
-		setTeamSpawn(Team.BLUE, Configs.OVO_LOC_TEAM_BLUE);
+		setTeamSpawn(Team.RED, Configs.OVO_COORDINATES_TEAM_1);
+		setTeamSpawn(Team.BLUE, Configs.OVO_COORDINATES_TEAM_2);
 		// Definimos los buffs de los personajes
 		setPlayerBuffs(PlayerClassType.MAGE, Configs.OVO_BUFF_PLAYER_MAGE);
 		setPlayerBuffs(PlayerClassType.WARRIOR, Configs.OVO_BUFF_PLAYER_WARRIOR);
@@ -218,10 +218,12 @@ public class OneVsOne extends AbstractEvent
 				EventUtil.sendEventScreenMessage(team._playerBlue, "El evento resulto en un empate entre ambos teams!");
 				EventUtil.sendEventScreenMessage(team._playerRed, "El evento resulto en un empate entre ambos teams!");
 				
-				// Ambos equipos empataron asique le entregamos a ambos el premio de los perdedores xD
 				// Entregamos los rewards
-				giveItems(team._playerBlue, Configs.OVO_REWARD_PLAYER_LOSER);
-				giveItems(team._playerRed, Configs.OVO_REWARD_PLAYER_LOSER);
+				if (Configs.OVO_REWARD_TEAM_TIE)
+				{
+					giveItems(team._playerBlue, Configs.OVO_REWARD_PLAYER_WIN);
+					giveItems(team._playerRed, Configs.OVO_REWARD_PLAYER_WIN);
+				}
 			}
 			else if (pointsBlue < pointsRed)// ganador red
 			{
@@ -229,8 +231,6 @@ public class OneVsOne extends AbstractEvent
 				EventUtil.sendEventScreenMessage(team._playerBlue, "El evento fue ganado por el jugador RED!");
 				EventUtil.sendEventScreenMessage(team._playerRed, "El evento fue ganado por el jugador RED!");
 				
-				// Entregamos los rewards
-				giveItems(team._playerBlue, Configs.OVO_REWARD_PLAYER_LOSER);
 				// Entregamos los rewards
 				giveItems(team._playerRed, Configs.OVO_REWARD_PLAYER_WIN);
 			}
@@ -242,8 +242,6 @@ public class OneVsOne extends AbstractEvent
 				
 				// Entregamos los rewards
 				giveItems(team._playerBlue, Configs.OVO_REWARD_PLAYER_WIN);
-				// Entregamos los rewards
-				giveItems(team._playerRed, Configs.OVO_REWARD_PLAYER_LOSER);
 			}
 		}
 	}

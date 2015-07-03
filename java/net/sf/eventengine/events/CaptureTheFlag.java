@@ -40,8 +40,8 @@ public class CaptureTheFlag extends AbstractEvent
 		super();
 		
 		// Definimos los spawns de cada team
-		setTeamSpawn(Team.RED, Configs.TVT_LOC_TEAM_RED);
-		setTeamSpawn(Team.BLUE, Configs.TVT_LOC_TEAM_BLUE);
+		setTeamSpawn(Team.RED, Configs.TVT_COORDINATES_TEAM_1);
+		setTeamSpawn(Team.BLUE, Configs.TVT_COORDINATES_TEAM_2);
 		// Definimos los buffs de los personajes
 		setPlayerBuffs(PlayerClassType.MAGE, Configs.TVT_BUFF_PLAYER_MAGE);
 		setPlayerBuffs(PlayerClassType.WARRIOR, Configs.TVT_BUFF_PLAYER_WARRIOR);
