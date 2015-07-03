@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
@@ -48,6 +47,7 @@ import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
 import com.l2jserver.gameserver.network.serverpackets.CreatureSay;
+import com.l2jserver.util.Rnd;
 
 /**
  * @author fissban
@@ -300,6 +300,7 @@ public class EventEngineManager
 	}
 	
 	/**
+	 * Listener when the player logouts
 	 * @param player
 	 */
 	public static void listenerOnLogout(L2PcInstance player)
@@ -307,30 +308,35 @@ public class EventEngineManager
 		// Si no se esta corriendo no continuar el listener.
 		if (_currentEvent == null)
 		{
-			return;
+			if (_state == EventEngineState.REGISTER)
+			{
+				removeVote(player);
+				unRegisterPlayer(player);
+				return;
+			}
 		}
-		
-		if (!_currentEvent.isPlayerInEvent(player))
+		else
 		{
-			return;
-		}
-		
-		try
-		{
-			PlayerHolder ph = _currentEvent.getEventPlayer(player);
-			// recobramos el color del titulo original
-			ph.recoverOriginalColorTitle();
-			// recobramos el titulo original
-			ph.recoverOriginalTitle();
-			// remobemos al personaje del mundo creado
-			InstanceManager.getInstance().getWorld(ph.getDinamicInstanceId()).removeAllowed(ph.getPcInstance().getObjectId());
-			
-			_currentEvent.getAllEventPlayers().remove(ph);
-		}
-		catch (Exception e)
-		{
-			LOG.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnLogout() " + e);
-			e.printStackTrace();
+			if (_currentEvent.isPlayerInEvent(player))
+			{
+				try
+				{
+					PlayerHolder ph = _currentEvent.getEventPlayer(player);
+					// recobramos el color del titulo original
+					ph.recoverOriginalColorTitle();
+					// recobramos el titulo original
+					ph.recoverOriginalTitle();
+					// remobemos al personaje del mundo creado
+					InstanceManager.getInstance().getWorld(ph.getDinamicInstanceId()).removeAllowed(ph.getPcInstance().getObjectId());
+					
+					_currentEvent.getAllEventPlayers().remove(ph);
+				}
+				catch (Exception e)
+				{
+					LOG.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnLogout() " + e);
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 	
@@ -353,33 +359,30 @@ public class EventEngineManager
 	
 	// XXX EVENT VOTE ------------------------------------------------------------------------------------
 	
-	// Votos de cada Evento
-	private static Map<EventType, Integer> _currentEventVotes = new HashMap<>();
+	// Lista de id's de personajes que votaron
+	private static final Set<Integer> PLAYERS_ALREADY_VOTED = ConcurrentHashMap.newKeySet();
+	// Mapa de con los id's de los personajes que los votaron
+	private static final Map<EventType, Set<Integer>> CURRENT_EVENT_VOTES = new HashMap<>();
 	{
-		for (EventType event : EventType.values())
+		for (EventType type : EventType.values())
 		{
-			_currentEventVotes.put(event, 0);
+			CURRENT_EVENT_VOTES.put(type, ConcurrentHashMap.newKeySet());
 		}
 	}
-	
-	// Lista para controlar los personajes q ya votaron
-	private static List<Integer> _currentPlayersVotes = new ArrayList<>();
 	
 	/**
 	 * Clase encargada de inicializar los votos de cada evento.
 	 * @return Map<EventType, Integer>
 	 */
-	public static Map<EventType, Integer> clearVotes()
+	public static void clearVotes()
 	{
-		// inicializamos el mapa con todos los votos a 0
-		for (EventType event : EventType.values())
+		// Se reinicia el mapa
+		for (EventType event : CURRENT_EVENT_VOTES.keySet())
 		{
-			_currentEventVotes.put(event, 0);
+			CURRENT_EVENT_VOTES.get(event).clear();
 		}
-		// borramos la lista con los usuarios q han votado
-		_currentPlayersVotes.clear();
-		
-		return _currentEventVotes;
+		// Se limpia la lista de jugadores que votaron
+		PLAYERS_ALREADY_VOTED.clear();
 	}
 	
 	/**
@@ -388,23 +391,33 @@ public class EventEngineManager
 	 * @param event -> evento al q se vota
 	 * @return boolean
 	 */
-	public static boolean increaseVote(L2PcInstance player, EventType event)
+	public static void increaseVote(L2PcInstance player, EventType event)
 	{
-		if (_currentPlayersVotes.contains(player.getObjectId()))
+		// Agrega al personaje a la lista de los que votaron
+		// Si ya estaba, sigue de largo
+		// Sino, agrega un voto al evento
+		if (PLAYERS_ALREADY_VOTED.add(player.getObjectId()))
 		{
-			// Si el personaje esta en esta lista es porq ya voto.
-			return false;
+			CURRENT_EVENT_VOTES.get(event).add(player.getObjectId());
 		}
-		
-		// Agregamos al personaje a nuestra lista de votantes
-		_currentPlayersVotes.add(player.getObjectId());
-		// Obtenemos la cantidad de votos de un determinado evento.
-		int votes = _currentEventVotes.get(event);
-		votes++;
-		// Incrementamos en uno la cantdad de votos del mismo
-		_currentEventVotes.put(event, votes);
-		
-		return true;
+	}
+	
+	/**
+	 * Disminuímos la cantidad de votos
+	 * @param player -> personaje q esta votando
+	 * @return
+	 */
+	public static void removeVote(L2PcInstance player)
+	{
+		// Lo borra de la lista de jugadores que votaron
+		if (PLAYERS_ALREADY_VOTED.remove(player.getObjectId()))
+		{
+			// Si estaba en la lista, empieza a buscar para qué evento votó
+			for (EventType event : CURRENT_EVENT_VOTES.keySet())
+			{
+				CURRENT_EVENT_VOTES.get(event).remove(player.getObjectId());
+			}
+		}
 	}
 	
 	/**
@@ -414,44 +427,57 @@ public class EventEngineManager
 	 */
 	public static int getCurrentVotesInEvent(EventType event)
 	{
-		synchronized (_currentEventVotes)
-		{
-			return _currentEventVotes.get(event);
-		}
+		return CURRENT_EVENT_VOTES.get(event).size();
 	}
 	
 	/**
-	 * Obtenemos todos los eventos y la cantidad de votos q tienen los mismos.
+	 * Obtenemos la cantidad de votos totales.
 	 * @return
 	 */
-	public static Map<EventType, Integer> getAllCurrentVotesInEvents()
+	public static int getAllCurrentVotesInEvents()
 	{
-		synchronized (_currentEventVotes)
+		int count = 0;
+		for (Set<Integer> set : CURRENT_EVENT_VOTES.values())
 		{
-			return _currentEventVotes;
+			count += set.size();
 		}
+		
+		return count;
 	}
 	
 	/**
 	 * Obtenemos el evento con mayor votos<br>
-	 * En caso de tener todos la misma cant de votos devolvera EventType.TVT<br>
+	 * En caso de tener todos la misma cant de votos se hace un random<br>
+	 * entre los que más votos tienen<br>
 	 * @return
 	 */
 	public static EventType getEventMoreVotes()
 	{
-		EventType eventType = EventType.TVT;
-		int currentVotes = 0;
+		int maxVotes = 0;
+		List<EventType> topEvents = new ArrayList<>();
 		
-		for (Entry<EventType, Integer> event : _currentEventVotes.entrySet())
+		for (EventType event : CURRENT_EVENT_VOTES.keySet())
 		{
-			if (currentVotes < event.getValue())
+			int eventVotes = CURRENT_EVENT_VOTES.get(event).size();
+			if (eventVotes > maxVotes)
 			{
-				eventType = event.getKey();
-				currentVotes = event.getValue();
+				topEvents.clear();
+				topEvents.add(event);
+				maxVotes = eventVotes;
+			}
+			else if (eventVotes == maxVotes)
+			{
+				topEvents.add(event);
 			}
 		}
 		
-		return eventType;
+		int topEventsSize = topEvents.size();
+		if (topEventsSize > 1)
+		{
+			return topEvents.get(Rnd.get(0, topEventsSize - 1));
+		}
+		
+		return topEvents.get(0);
 	}
 	
 	// XXX EVENT STATE -----------------------------------------------------------------------------------
