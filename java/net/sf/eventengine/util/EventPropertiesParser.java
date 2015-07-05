@@ -251,7 +251,7 @@ public final class EventPropertiesParser
 	}
 	
 	/**
-	 * Custom parser by fissban Parseamos un config usando "," para diferenciar entre cada cordenada<br>
+	 * Parseamos un config usando "," para diferenciar entre cada cordenada<br>
 	 * Ejemplo -> "xx,xx,xx;xx,xx,xx ..."
 	 * @param key
 	 * @return List<SkillHolder>
@@ -259,10 +259,9 @@ public final class EventPropertiesParser
 	public List<SkillHolder> getSkillHolderList(String key)
 	{
 		List<SkillHolder> auxList = new ArrayList<>();
-		
-		StringTokenizer st = new StringTokenizer(key, ";");
 		try
 		{
+			StringTokenizer st = new StringTokenizer(getValue(key), ";");
 			while (st.hasMoreTokens())
 			{
 				StringTokenizer st1 = new StringTokenizer(st.nextToken(), ",");
@@ -278,7 +277,7 @@ public final class EventPropertiesParser
 	}
 	
 	/**
-	 * Custom parser by fissban Parseamos un config usando "," para diferenciar entre cada cordenada<br>
+	 * Parseamos un config usando "," para diferenciar entre cada cordenada<br>
 	 * Ejemplo -> "xx,xx,xx;xx,xx,xx ..."
 	 * @param key
 	 * @return List<ItemHolder>
@@ -286,10 +285,9 @@ public final class EventPropertiesParser
 	public List<ItemHolder> getItemHolderList(String key)
 	{
 		List<ItemHolder> auxList = new ArrayList<>();
-		
-		StringTokenizer st = new StringTokenizer(key, ";");
 		try
 		{
+			StringTokenizer st = new StringTokenizer(getValue(key), ";");
 			while (st.hasMoreTokens())
 			{
 				StringTokenizer st1 = new StringTokenizer(st.nextToken(), ",");
@@ -305,17 +303,16 @@ public final class EventPropertiesParser
 	}
 	
 	/**
-	 * Custom parser by fissban<br>
-	 * Parseamos un config usando "," para diferenciar entre cada cordenada<br>
+	 * Parseamos un config usando "," para diferenciar entre cada coordenada<br>
 	 * Ejemplo -> "xx,xx,xx"
 	 * @param key
 	 * @return Location
 	 */
 	public Location getLocation(String key)
 	{
-		StringTokenizer st = new StringTokenizer(key, ",");
 		try
 		{
+			StringTokenizer st = new StringTokenizer(getValue(key), ",");
 			return new Location(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
 		}
 		catch (Exception e)
@@ -327,7 +324,6 @@ public final class EventPropertiesParser
 	}
 	
 	/**
-	 * Custom parser by fissban<br>
 	 * Parseamos un config usando "," para diferenciar entre un valor y otro.<br>
 	 * Ejemplo -> xx,xx,xx,xx ....
 	 * @param key
@@ -336,10 +332,9 @@ public final class EventPropertiesParser
 	public List<Integer> getListInteger(String key)
 	{
 		List<Integer> auxList = new ArrayList<>();
-		
-		StringTokenizer st = new StringTokenizer(key, ",");
 		try
 		{
+			StringTokenizer st = new StringTokenizer(getValue(key), ",");
 			while (st.hasMoreTokens())
 			{
 				auxList.add(Integer.parseInt(st.nextToken()));

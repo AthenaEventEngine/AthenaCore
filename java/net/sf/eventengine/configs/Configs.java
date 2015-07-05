@@ -137,12 +137,10 @@ public class Configs
 		// OneVsOne.properties
 		// ------------------------------------------------------------------------------------- //
 		settings = new EventPropertiesParser(OVO_CONFIG);
-		OVO_EVENT_ENABLED = settings.getBoolean("OVOEventEnabled", false);
-		OVO_REWARD_TEAM_TIE = settings.getBoolean("OvORewardTeamTie", false);
+		OVO_EVENT_ENABLED = settings.getBoolean("OvOEventEnabled", false);
 		OVO_REWARD_PLAYER_WIN = settings.getItemHolderList("OvOEventReward");
 		OVO_REWARD_KILL_PLAYER = settings.getItemHolderList("OvOEventRewardKill");
-		OVO_REWARD_KILL_PLAYER = settings.getItemHolderList("OvOEventRewardTried");
-		OVO_BUFF_PLAYER_WARRIOR = settings.getSkillHolderList("OvOAvAEventFighterBuffs");
+		OVO_BUFF_PLAYER_WARRIOR = settings.getSkillHolderList("OvOEventFighterBuffs");
 		OVO_BUFF_PLAYER_MAGE = settings.getSkillHolderList("OvOEventMageBuffs");
 		OVO_COORDINATES_TEAM_1 = settings.getLocation("OvOEventTeam1Coordinates");
 		OVO_COORDINATES_TEAM_2 = settings.getLocation("OvOEventTeam2Coordinates");
@@ -152,12 +150,12 @@ public class Configs
 		// ------------------------------------------------------------------------------------- //
 		settings = new EventPropertiesParser(TVT_CONFIG);
 		TVT_EVENT_ENABLED = settings.getBoolean("TvTEventEnabled", false);
-		TVT_REWARD_PLAYER_WIN = settings.getItemHolderList("TVTEventReward");
-		TVT_REWARD_KILL_PLAYER = settings.getItemHolderList("TVTEventRewardKill");
-		TVT_BUFF_PLAYER_WARRIOR = settings.getSkillHolderList("TVTAvAEventFighterBuffs");
-		TVT_BUFF_PLAYER_MAGE = settings.getSkillHolderList("TVTEventMageBuffs");
-		TVT_COORDINATES_TEAM_1 = settings.getLocation("TVTEventTeam1Coordinates");
-		TVT_COORDINATES_TEAM_2 = settings.getLocation("TVTEventTeam2Coordinates");
+		TVT_REWARD_PLAYER_WIN = settings.getItemHolderList("TvTEventReward");
+		TVT_REWARD_KILL_PLAYER = settings.getItemHolderList("TvTEventRewardKill");
+		TVT_BUFF_PLAYER_WARRIOR = settings.getSkillHolderList("TvTEventFighterBuffs");
+		TVT_BUFF_PLAYER_MAGE = settings.getSkillHolderList("TvTEventMageBuffs");
+		TVT_COORDINATES_TEAM_1 = settings.getLocation("TvTEventTeam1Coordinates");
+		TVT_COORDINATES_TEAM_2 = settings.getLocation("TvTEventTeam2Coordinates");
 		
 		// ------------------------------------------------------------------------------------- //
 		// Survive.properties
