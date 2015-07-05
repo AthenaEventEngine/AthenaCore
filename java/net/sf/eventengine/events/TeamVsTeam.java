@@ -122,7 +122,7 @@ public class TeamVsTeam extends AbstractEvent
 	@Override
 	public void onDeath(PlayerHolder player)
 	{
-		giveResurectPlayer(player, 10);
+		giveResurrectPlayer(player, 10);
 		// incrementamos en uno la cantidad de muertes del personaje
 		// solo es usado al final del evento para mostrar los resultados
 		player.increaseDeaths();
