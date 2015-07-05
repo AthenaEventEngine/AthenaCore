@@ -110,7 +110,7 @@ public class AllVsAll extends AbstractEvent
 	public void onDeath(PlayerHolder player)
 	{
 		// generamos un task para revivir al player
-		giveResurectPlayer(player, 10); // TODO -> hardcode
+		giveResurrectPlayer(player, 10); // TODO -> hardcode
 		// Incrementamos en uno la cant de muertes al player.
 		player.increaseDeaths();
 		// Actualizamos el titulo del personaje

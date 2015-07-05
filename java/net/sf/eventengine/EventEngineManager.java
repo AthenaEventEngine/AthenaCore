@@ -180,28 +180,24 @@ public class EventEngineManager
 	
 	// XXX LISTENERS -------------------------------------------------------------------------------------
 	/**
-	 * @param player -> personaje o summon
+	 * @param playable -> personaje o summon
 	 * @param target -> NO puede ser null
 	 * @return true -> solo en el caso de que no queremos q un ataque continue su progeso normal.
 	 */
-	public static boolean listenerOnAttack(L2Playable player, L2Character target)
+	public static boolean listenerOnAttack(L2Playable playable, L2Character target)
 	{
-		// Si no se esta corriendo no continuar el listener.
-		if (_currentEvent == null)
+		if (_currentEvent != null && _currentEvent.isPlayableInEvent(playable))
 		{
-			return false;
+			try
+			{
+				return _currentEvent.listenerOnAttack(playable, target);
+			}
+			catch (Exception e)
+			{
+				LOG.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnAttack() " + e);
+				e.printStackTrace();
+			}
 		}
-		
-		try
-		{
-			return _currentEvent.listenerOnAttack(player, target);
-		}
-		catch (Exception e)
-		{
-			LOG.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnAttack() " + e);
-			e.printStackTrace();
-		}
-		
 		return false;
 	}
 	
@@ -210,47 +206,41 @@ public class EventEngineManager
 	 * @param target -> puede ser null
 	 * @return true -> solo en el caso de que no queremos de una habilidad no continue su progreso normal.
 	 */
-	public static boolean listenerOnUseSkill(L2Playable player, L2Character target, Skill skill)
+	public static boolean listenerOnUseSkill(L2Playable playable, L2Character target, Skill skill)
 	{
 		// Si no se esta corriendo no continuar el listener.
-		if (_currentEvent == null)
+		if (_currentEvent != null && _currentEvent.isPlayableInEvent(playable))
 		{
-			return false;
+			try
+			{
+				return _currentEvent.listenerOnUseSkill(playable, target, skill);
+			}
+			catch (Exception e)
+			{
+				LOG.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnUseSkill() " + e);
+				e.printStackTrace();
+			}
 		}
-		
-		try
-		{
-			return _currentEvent.listenerOnUseSkill(player, target, skill);
-		}
-		catch (Exception e)
-		{
-			LOG.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnUseSkill() " + e);
-			e.printStackTrace();
-		}
-		
 		return false;
 	}
 	
 	/**
-	 * @param player -> personaje o summon
+	 * @param playable -> personaje o summon
 	 * @param target -> No puede ser null
 	 */
-	public static void listenerOnKill(L2Playable player, L2Character target)
+	public static void listenerOnKill(L2Playable playable, L2Character target)
 	{
-		// Si no se esta corriendo no continuar el listener.
-		if (_currentEvent == null)
+		if (_currentEvent != null && _currentEvent.isPlayableInEvent(playable))
 		{
-			return;
-		}
-		
-		try
-		{
-			_currentEvent.listenerOnKill(player, target);
-		}
-		catch (Exception e)
-		{
-			LOG.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnKill() " + e);
-			e.printStackTrace();
+			try
+			{
+				_currentEvent.listenerOnKill(playable, target);
+			}
+			catch (Exception e)
+			{
+				LOG.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnKill() " + e);
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -260,20 +250,17 @@ public class EventEngineManager
 	 */
 	public static void listenerOnInteract(L2PcInstance player, L2Npc target)
 	{
-		// Si no se esta corriendo no continuar el listener.
-		if (_currentEvent == null)
+		if (_currentEvent != null && _currentEvent.isPlayerInEvent(player))
 		{
-			return;
-		}
-		
-		try
-		{
-			_currentEvent.listenerOnInteract(player, target);
-		}
-		catch (Exception e)
-		{
-			LOG.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnInteract() " + e);
-			e.printStackTrace();
+			try
+			{
+				_currentEvent.listenerOnInteract(player, target);
+			}
+			catch (Exception e)
+			{
+				LOG.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnInteract() " + e);
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -283,19 +270,17 @@ public class EventEngineManager
 	public static void listenerOnDeath(L2PcInstance player)
 	{
 		// Si no se esta corriendo no continuar el listener.
-		if (_currentEvent == null)
+		if (_currentEvent != null && _currentEvent.isPlayerInEvent(player))
 		{
-			return;
-		}
-		
-		try
-		{
-			_currentEvent.listenerOnDeath(player);
-		}
-		catch (Exception e)
-		{
-			LOG.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnDeath() " + e);
-			e.printStackTrace();
+			try
+			{
+				_currentEvent.listenerOnDeath(player);
+			}
+			catch (Exception e)
+			{
+				LOG.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnDeath() " + e);
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -609,6 +594,21 @@ public class EventEngineManager
 		}
 		
 		return _currentEvent.isPlayerInEvent(player);
+	}
+	
+	/**
+	 * Verificamos si un playable participa de algun evento
+	 * @param playable
+	 * @return
+	 */
+	public static boolean isPlayableInEvent(L2Playable playable)
+	{
+		if (_currentEvent == null)
+		{
+			return false;
+		}
+		
+		return _currentEvent.isPlayableInEvent(playable);
 	}
 	
 	public static EventEngineManager getInstance()

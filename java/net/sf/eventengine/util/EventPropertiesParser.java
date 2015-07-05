@@ -323,7 +323,7 @@ public final class EventPropertiesParser
 			_log.warning(getClass().getSimpleName() + ": fail to read config -> " + key);
 		}
 		
-		return new Location(0, 0, 0);
+		return new Location(167616, 20315, -3332);
 	}
 	
 	/**

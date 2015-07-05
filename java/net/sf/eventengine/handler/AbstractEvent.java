@@ -245,24 +245,35 @@ public abstract class AbstractEvent
 	}
 	
 	/**
-	 * Verificamos si un player esta participando de algun evento. En el caso de tratar de un summon verificamos al dueño.<br>
-	 * En el caso de no perticipar de un evento se retorna <u>false</u>
+	 * Verificamos si el playable esta participando de algun evento. En el caso de ser un summon, verifica que el dueño participe<br>
+	 * En el caso de no participar de un evento se retorna <u>false</u>
 	 * @param player
-	 * @return
+	 * @return boolean
 	 */
-	public boolean isPlayerInEvent(L2Character character)
+	public boolean isPlayableInEvent(L2Playable playable)
 	{
-		if (character.isSummon())
+		if (playable.isPlayer())
 		{
-			return _eventPlayers.containsKey(((L2Summon) character).getOwner().getObjectId());
+			return isPlayerInEvent((L2PcInstance) playable);
 		}
 		
-		if (character.isPlayer())
+		if (playable.isSummon())
 		{
-			return _eventPlayers.containsKey(character.getObjectId());
+			return _eventPlayers.containsKey(((L2Summon) playable).getOwner().getObjectId());
 		}
 		
 		return false;
+	}
+	
+	/**
+	 * Verificamos si un player esta participando de algun evento.<br>
+	 * En el caso de no participar de un evento se retorna <u>false</u>
+	 * @param player
+	 * @return boolean
+	 */
+	public boolean isPlayerInEvent(L2PcInstance player)
+	{
+		return _eventPlayers.containsKey(player.getObjectId());
 	}
 	
 	/**
@@ -316,11 +327,6 @@ public abstract class AbstractEvent
 	 */
 	public void listenerOnKill(L2Playable player, L2Character target)
 	{
-		if (!isPlayerInEvent(player))
-		{
-			return;
-		}
-		
 		onKill(getEventPlayer(player), target);
 	}
 	
@@ -335,11 +341,6 @@ public abstract class AbstractEvent
 	 */
 	public void listenerOnDeath(L2PcInstance player)
 	{
-		if (!isPlayerInEvent(player))
-		{
-			return;
-		}
-		
 		onDeath(getEventPlayer(player));
 	}
 	
@@ -348,16 +349,10 @@ public abstract class AbstractEvent
 	 */
 	public abstract void onDeath(PlayerHolder player);
 	
-	public boolean listenerOnAttack(L2Playable player, L2Character target)
+	public boolean listenerOnAttack(L2Playable playable, L2Character target)
 	{
-		// Si player no participa del evento terminar el listener.
-		if (!isPlayerInEvent(player))
-		{
-			return false;
-		}
-		
 		// Obtenemos el player en cuestion dentro de nuestro evento
-		PlayerHolder activePlayer = getEventPlayer(player);
+		PlayerHolder activePlayer = getEventPlayer(playable);
 		
 		// CHECK FRIENDLY_FIRE ----------------------------------------
 		if (Configs.FRIENDLY_FIRE)
@@ -396,12 +391,6 @@ public abstract class AbstractEvent
 	 */
 	public boolean listenerOnUseSkill(L2Playable player, L2Character target, Skill skill)
 	{
-		// Si el personaje/summon no esta participando del evento terminar el listener.
-		if (!isPlayerInEvent(player))
-		{
-			return false;
-		}
-		
 		// Si el personaje no tiene target terminar el listener.
 		// XXX quizas en algun evento pueda ser requerido el uso de habilidades sin necesidad de target....revisar.
 		if (target == null)
@@ -591,7 +580,7 @@ public abstract class AbstractEvent
 	 * @param player -> personaje a revivir
 	 * @param time -> tiempo antes de revivir a un personaje
 	 */
-	public void giveResurectPlayer(final PlayerHolder player, int time)
+	public void giveResurrectPlayer(final PlayerHolder player, int time)
 	{
 		try
 		{
