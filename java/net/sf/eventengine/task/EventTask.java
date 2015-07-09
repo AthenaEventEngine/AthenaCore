@@ -78,13 +78,11 @@ public class EventTask implements Runnable
 				{
 					EventUtil.sendEventSpecialMessage(player, 1, MsgHandler.getMsg("status_finished"));
 				}
-				
-				EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, MsgHandler.getMsg("event_end"));
 				break;
 			
 			case 5:
 				// Volvemos a habilitar el registro
-				EventEngineManager.setEventEngineState(EventEngineState.REGISTER);
+				EventEngineManager.setEventEngineState(EventEngineState.EVENT_ENDED);
 				break;
 		}
 	}

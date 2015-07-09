@@ -18,14 +18,13 @@
  */
 package net.sf.eventengine.task;
 
-import java.util.ArrayList;
-
 import net.sf.eventengine.EventEngineManager;
 import net.sf.eventengine.configs.Configs;
 import net.sf.eventengine.enums.EventEngineState;
 import net.sf.eventengine.enums.EventType;
 import net.sf.eventengine.events.AllVsAll;
 import net.sf.eventengine.events.CaptureTheFlag;
+import net.sf.eventengine.events.EventLoader;
 import net.sf.eventengine.events.OneVsOne;
 import net.sf.eventengine.events.Survive;
 import net.sf.eventengine.events.TeamVsTeam;
@@ -35,70 +34,91 @@ import net.sf.eventengine.util.EventUtil;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
 
 /**
- * Clase encarfada de correr los diferentes estados q sufre el event engine
- * @author fissban
+ * It handles the different state's behaviour of EventEngineManager
+ * @author fissban, Zephyr
  */
 public class EventEngineTask implements Runnable
 {
-	/**
-	 * Multi-Language System Contiene los tiempos para anunciar lo que falta para iniciar el evento
-	 */
-	private static final ArrayList<Integer> TIME_LEFT_TO_ANNOUNCE = new ArrayList<>();
-	{
-		TIME_LEFT_TO_ANNOUNCE.add(1800);
-		TIME_LEFT_TO_ANNOUNCE.add(1200);
-		TIME_LEFT_TO_ANNOUNCE.add(600);
-		TIME_LEFT_TO_ANNOUNCE.add(300);
-		TIME_LEFT_TO_ANNOUNCE.add(240);
-		TIME_LEFT_TO_ANNOUNCE.add(120);
-		TIME_LEFT_TO_ANNOUNCE.add(60);
-		TIME_LEFT_TO_ANNOUNCE.add(10);
-		TIME_LEFT_TO_ANNOUNCE.add(5);
-		TIME_LEFT_TO_ANNOUNCE.add(4);
-		TIME_LEFT_TO_ANNOUNCE.add(3);
-		TIME_LEFT_TO_ANNOUNCE.add(2);
-		TIME_LEFT_TO_ANNOUNCE.add(1);
-	}
-	
 	@Override
 	public void run()
 	{
-		// Solo registramos aqui los eventos fuera de los eventos, los demas se definiran dentro del mismo evento.
-		switch (EventEngineManager.getEventEngineState())
+		EventEngineState state = EventEngineManager.getEventEngineState();
+		switch (state)
 		{
-			case REGISTER:
+			case WAITING:
 			{
+				// Cleanup
 				if (EventEngineManager.getCurrentEvent() != null)
 				{
 					EventEngineManager.setCurrentEvent(null);
-					
-					// Reiniciamos el mapa con los votos
 					EventEngineManager.clearVotes();
-					// Reiniciamos nuestras instancias
 					EventEngineManager.getInstancesWorlds().clear();
 				}
 				
-				announceNextEvent();
+				if (EventEngineManager.getTime() <= 0)
+				{
+					if (Configs.EVENT_VOTING_ENABLED)
+					{
+						EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, MsgHandler.getMsg("event_voting_started"));
+						EventEngineManager.setTime(Configs.EVENT_VOTING_TIME * 60);
+						EventEngineManager.setEventEngineState(EventEngineState.VOTING);
+					}
+					else
+					{
+						EventEngineManager.setNextEvent(EventLoader.getRandomEventType());
+						EventEngineManager.setTime(Configs.EVENT_REGISTER_TIME * 60);
+						String msg = MsgHandler.getMsg("event_register_started").replace("%event%", EventEngineManager.getNextEvent().toString());
+						EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, msg);
+						EventEngineManager.setEventEngineState(EventEngineState.REGISTER);
+					}
+				}
+				break;
+			}
+			case VOTING:
+			{
+				if (EventEngineManager.getTime() > 0)
+				{
+					EventUtil.announceTimeLeft(EventEngineManager.getTime(), MsgHandler.getMsg("event_voting_state"), Say2.CRITICAL_ANNOUNCE, true);
+				}
+				else
+				{
+					EventType nextEvent = EventEngineManager.getEventMoreVotes();
+					EventEngineManager.setNextEvent(nextEvent);
+					EventEngineManager.setTime(Configs.EVENT_REGISTER_TIME * 60);
+					EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, MsgHandler.getMsg("event_voting_ended"));
+					EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, MsgHandler.getMsg("event_register_started").replace("%event%", nextEvent.toString()));
+					EventEngineManager.setEventEngineState(EventEngineState.REGISTER);
+				}
+				break;
+			}
+			case REGISTER:
+			{
+				if (EventEngineManager.getTime() > 0)
+				{
+					EventUtil.announceTimeLeft(EventEngineManager.getTime(), MsgHandler.getMsg("event_register_state").replace("%event%", EventEngineManager.getNextEvent().toString()), Say2.CRITICAL_ANNOUNCE, true);
+				}
+				else
+				{
+					if (EventEngineManager.isEmptyRegisteredPlayers()) // TODO: handle min register players
+					{
+						EventEngineManager.setTime(Configs.EVENT_TASK * 60);
+						EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, MsgHandler.getMsg("event_aborted"));
+						EventUtil.announceTimeLeft(EventEngineManager.getTime(), MsgHandler.getMsg("event_next"), Say2.CRITICAL_ANNOUNCE, true);
+						EventEngineManager.setEventEngineState(EventEngineState.WAITING);
+					}
+					else
+					{
+						EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, MsgHandler.getMsg("event_register_ended"));
+						EventEngineManager.setEventEngineState(EventEngineState.RUN_EVENT);
+					}
+				}
 				break;
 			}
 			case RUN_EVENT:
 			{
-				if (EventEngineManager.isEmptyRegisteredPlayers())
-				{
-					// Tiempo para el proximo evento en minutos.
-					EventEngineManager.setTime(Configs.EVENT_TASK * 60);
-					// Volvemos a abrir el registro
-					EventEngineManager.setEventEngineState(EventEngineState.REGISTER);
-					
-					// Messages
-					EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, MsgHandler.getMsg("event_aborted"));
-					EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, MsgHandler.getMsg("event_registration_on"));
-					break;
-				}
-				// Averiguamos el evento con mas votos y lo ejecutamos
-				EventType event = EventEngineManager.getEventMoreVotes();
+				EventType event = EventEngineManager.getNextEvent();
 				
-				// Iniciamos el evento.
+				// Initialize the event with more votes
 				switch (event)
 				{
 					case AVA:
@@ -123,47 +143,29 @@ public class EventEngineTask implements Runnable
 				
 				}
 				
-				// Tiempo para el proximo evento en minutos.
-				EventEngineManager.setTime(Configs.EVENT_TASK * 60);
-				
 				EventEngineManager.setEventEngineState(EventEngineState.RUNNING_EVENT);
+				EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, MsgHandler.getMsg("event_started"));
 				break;
 			}
 			case RUNNING_EVENT:
-				// sin accion
+				// Nothing
+				break;
+			case EVENT_ENDED:
+				// Cleanup
+				EventEngineManager.setCurrentEvent(null);
+				EventEngineManager.clearVotes();
+				EventEngineManager.getInstancesWorlds().clear();
+				
+				EventEngineManager.setTime(Configs.EVENT_TASK * 60);
+				EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, MsgHandler.getMsg("event_end"));
+				EventUtil.announceTimeLeft(Say2.CRITICAL_ANNOUNCE, MsgHandler.getMsg("event_next"), Say2.CRITICAL_ANNOUNCE, true);
+				EventEngineManager.setEventEngineState(EventEngineState.WAITING);
 				break;
 		}
-		EventEngineManager.decreaseTime();
-	}
-	
-	/**
-	 * Anunciamos cuando falta para el proximo Evento.<br>
-	 */
-	public static void announceNextEvent()
-	{
-		// Generamos los anuncios dependiendo del tiempo q falta para iniciar
-		int time = EventEngineManager.getTime();
-		if (TIME_LEFT_TO_ANNOUNCE.contains(EventEngineManager.getTime()))
+		
+		if (state != EventEngineState.RUNNING_EVENT)
 		{
-			if (time > 60)
-			{
-				EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, MsgHandler.getMsg("event_start_time") + " " + (time / 60) + " " + MsgHandler.getMsg("time_minutes"));
-			}
-			else
-			{
-				EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, MsgHandler.getMsg("event_start_time") + " " + time + " " + MsgHandler.getMsg("time_seconds"));
-			}
-		}
-		else if (time == 0)
-		{
-			EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, MsgHandler.getMsg("event_started"));
-			// Indicamos q un evento comenzara a correr
-			EventEngineManager.setEventEngineState(EventEngineState.RUN_EVENT);
-		}
-		else if (time == -1)
-		{
-			// FIXME Solo por si se saltea el paso anterior.
-			EventEngineManager.setEventEngineState(EventEngineState.RUN_EVENT);
+			EventEngineManager.decreaseTime();
 		}
 	}
 }

@@ -663,7 +663,7 @@ public abstract class AbstractEvent
 	 * <li>-> step 4: Ajustamos el estado del evento -> END</li><br>
 	 * <li>-> step 4: Enviamos un mensaje avisando de q termino el evento</li><br>
 	 * <li>Esperamos 1 seg</li><br>
-	 * <li>-> step 5: Volvemos a habilitar el registro</li><br>
+	 * <li>-> step 5: Le avisamos al EventEngineManager que termino el evento</li><br>
 	 */
 	private void controlTimeEvent()
 	{

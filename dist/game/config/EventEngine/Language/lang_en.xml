@@ -5,20 +5,29 @@
 	<message id="event_engine_tag" text="[EventEngine]"/>
 	
 	<!-- Events -->
+	<message id="event_waiting" text="in this moment, there isn't an event running. Try again later." />
 	<message id="event_aborted" text="The event has been aborted due to lack of participants."/>
 	<message id="event_registration_on" text="registration for event engine has been opened! Register now!" />
 	<message id="event_registration_notRegState" text="the event is not in the registration state, you cannot register now. Try the spectator mode, go!" />
 	<message id="event_registration_notUnRegState" text="the event is not in the registration state, you cannot unregister now." />
-	<message id="event_vote_notVoteState" text="the event is no in the vote state, you cannot vote now." />
+	<message id="event_vote_notVoteState" text="the event is not in the vote state, you cannot vote now." />
+	<message id="event_reloading" text="Reloading" />
 	
 	<message id="event_login_participate" text="Come on! And participate!" />
 	<message id="event_login_vote" text="Vote for the next event!" />
 	<message id="event_vote_done" text="Thank, event successfully voted!" />
-	<message id="event_vote_info" text="Vote for the desired event. The event with the most votes, will start!" />
+	<message id="event_vote_info" text="vote for the desired event. The event with the most votes, will start!" />
 	
 	<message id="event_started" text="The event has started!" />
 	<message id="event_end" text="The event has ended!" />
 	<message id="event_start_time" text="Event starts in"/>
+	<message id="event_voting_started" text="The voting time has started" />
+	<message id="event_register_started" text="The register time to %event% has started" />
+	<message id="event_voting_state" text="The voting time will end in" />
+	<message id="event_register_state" text="The register time to %event% will end in" />
+	<message id="event_voting_ended" text="The voting time has ended" />
+	<message id="event_register_ended" text="The register time has ended." />
+	<message id="event_next" text="The next event will start in" />
 	
 	<!-- Register -->
 	<message id="registering_highLevel" text="Your level is higher than the max allowed level." />

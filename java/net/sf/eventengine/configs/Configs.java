@@ -48,6 +48,12 @@ public class Configs
 	public static String INSTANCE_FILE;
 	/** Definimos cada cuanto se ejecutara algun evento en hs */
 	public static int EVENT_TASK;
+	/** Definimos si va a haber tiempo de votacion */
+	public static boolean EVENT_VOTING_ENABLED;
+	/** Definimos el tiempo que durara el periodo de votacion */
+	public static int EVENT_VOTING_TIME;
+	/** Definimos el tiempo que durara el periodo de registro */
+	public static int EVENT_REGISTER_TIME;
 	/** Definimos el tiempo que durara cada evento en minutos */
 	public static int EVENT_DURATION;
 	/** Definimos si permitimos o no el daño entre amigos. */
@@ -114,6 +120,9 @@ public class Configs
 		settings = new EventPropertiesParser(EVENT_CONFIG);
 		NPC_MANAGER_ID = settings.getInt("EventParticipationNpcId", 36600);
 		EVENT_TASK = settings.getInt("EventInterval", 10);
+		EVENT_VOTING_ENABLED = settings.getBoolean("EventVotingEnabled", true);
+		EVENT_VOTING_TIME = settings.getInt("EventVotingTime", 10);
+		EVENT_REGISTER_TIME = settings.getInt("EventRegisterTime", 10);
 		EVENT_DURATION = settings.getInt("EventRunningTime", 10);
 		FRIENDLY_FIRE = settings.getBoolean("EventFriendlyFire", false);
 		MIN_PLAYERS_IN_EVENT = settings.getInt("EventMinPlayers", 2);

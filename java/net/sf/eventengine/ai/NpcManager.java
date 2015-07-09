@@ -73,6 +73,7 @@ public class NpcManager extends Quest
 				
 			case "info":
 				html.setFile(player.getHtmlPrefix(), "data/html/events/event_info.htm");
+				// TODO: Move to events
 				switch (EventType.valueOf(st.nextToken()))
 				{
 					case AVA:
@@ -362,30 +363,12 @@ public class NpcManager extends Quest
 		// Info
 		html.replace("%namePlayer%", player.getName());
 		
-		// Check Status Event - Register
-		if (EventEngineManager.isOpenRegister())
+		if (EventEngineManager.isWaiting())
 		{
-			html.replace("%menuInfo%", MsgHandler.getMsg("event_registration_on"));
-			if (EventEngineManager.isRegistered(player))
-			{
-				html.replace("%buttonActionName%", MsgHandler.getMsg("button_unregister"));
-				html.replace("%buttonAction%", "bypass -h Quest " + NpcManager.class.getSimpleName() + " unregister");
-			}
-			else
-			{
-				html.replace("%buttonActionName%", MsgHandler.getMsg("button_register"));
-				html.replace("%buttonAction%", "bypass -h Quest " + NpcManager.class.getSimpleName() + " register");
-			}
+			html.replace("%menuInfo%", MsgHandler.getMsg("event_waiting"));
+			html.replace("%button%", "");
 		}
-		else
-		{
-			html.replace("%buttonActionName%", MsgHandler.getMsg("button_spectator"));
-			// html.replace("%buttonAction%", "bypass -h Quest " + NpcManager.class.getSimpleName() + " spectator");
-			html.replace("%menuInfo%", MsgHandler.getMsg("event_registration_notRegState"));
-		}
-		
-		// Check Status Event - Vote
-		if (EventEngineManager.isOpenVote())
+		else if (EventEngineManager.isOpenVote())
 		{
 			final StringBuilder eventList = new StringBuilder(500);
 			for (EventType event : EventType.values())
@@ -397,11 +380,36 @@ public class NpcManager extends Quest
 				StringUtil.append(eventList, "</tr>");
 			}
 			html.replace("%menuInfo%", MsgHandler.getMsg("event_vote_info"));
+			html.replace("%button%", "");
 			html.replace("%buttonEventList%", eventList.toString());
+		}
+		else if (EventEngineManager.isOpenRegister())
+		{
+			html.replace("%menuInfo%", MsgHandler.getMsg("event_registration_on"));
+			html.replace("%button%", "<button value=\"%buttonActionName%\" action=\"%buttonAction%\" width=150 height=27 back=\"L2UI_CT1.Button_DF_Down\" fore=\"L2UI_CT1.Button_DF\"/>");
+			if (EventEngineManager.isRegistered(player))
+			{
+				html.replace("%buttonActionName%", MsgHandler.getMsg("button_unregister"));
+				html.replace("%buttonAction%", "bypass -h Quest " + NpcManager.class.getSimpleName() + " unregister");
+			}
+			else
+			{
+				html.replace("%buttonActionName%", MsgHandler.getMsg("button_register"));
+				html.replace("%buttonAction%", "bypass -h Quest " + NpcManager.class.getSimpleName() + " register");
+			}
+		}
+		else if (EventEngineManager.isRunning())
+		{
+			html.replace("%menuInfo%", MsgHandler.getMsg("event_registration_notRegState"));
+			html.replace("%button%", "<button value=\"%buttonActionName%\" action=\"%buttonAction%\" width=150 height=27 back=\"L2UI_CT1.Button_DF_Down\" fore=\"L2UI_CT1.Button_DF\"/>");
+			html.replace("%buttonActionName%", MsgHandler.getMsg("button_spectator"));
+			// html.replace("%buttonAction%", "bypass -h Quest " + NpcManager.class.getSimpleName() + " spectator");
+			html.replace("%menuInfo%", MsgHandler.getMsg("event_registration_notRegState"));
 		}
 		else
 		{
-			html.replace("%menuInfo%", MsgHandler.getMsg("event_vote_notVoteState"));
+			html.replace("%menuInfo%", MsgHandler.getMsg("event_reloading"));
+			html.replace("%button%", "");
 		}
 		
 		// Button

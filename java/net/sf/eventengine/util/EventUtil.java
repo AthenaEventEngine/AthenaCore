@@ -18,6 +18,9 @@
  */
 package net.sf.eventengine.util;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import net.sf.eventengine.handler.MsgHandler;
 import net.sf.eventengine.holder.PlayerHolder;
 
@@ -29,12 +32,63 @@ import com.l2jserver.gameserver.network.serverpackets.ExEventMatchMessage;
 import com.l2jserver.gameserver.network.serverpackets.ExShowScreenMessage;
 
 /**
- * @author fissban
+ * @author fissban, Zephyr
  */
 public class EventUtil
 {
+	private static final Set<Integer> TIME_LEFT_TO_ANNOUNCE = new HashSet<>();
+	static
+	{
+		TIME_LEFT_TO_ANNOUNCE.add(1800);
+		TIME_LEFT_TO_ANNOUNCE.add(1200);
+		TIME_LEFT_TO_ANNOUNCE.add(600);
+		TIME_LEFT_TO_ANNOUNCE.add(300);
+		TIME_LEFT_TO_ANNOUNCE.add(240);
+		TIME_LEFT_TO_ANNOUNCE.add(120);
+		TIME_LEFT_TO_ANNOUNCE.add(60);
+		TIME_LEFT_TO_ANNOUNCE.add(30);
+		TIME_LEFT_TO_ANNOUNCE.add(10);
+		TIME_LEFT_TO_ANNOUNCE.add(5);
+		TIME_LEFT_TO_ANNOUNCE.add(4);
+		TIME_LEFT_TO_ANNOUNCE.add(3);
+		TIME_LEFT_TO_ANNOUNCE.add(2);
+		TIME_LEFT_TO_ANNOUNCE.add(1);
+	}
+	
 	/**
-	 * Enviamos un mensaje a un personaje dentro del evento
+	 * Do an announce with formated time left
+	 * @param time
+	 * @param text
+	 * @param say2
+	 * @param toAllPlayers
+	 */
+	public static void announceTimeLeft(int time, String text, int say2, boolean toAllPlayers)
+	{
+		if (TIME_LEFT_TO_ANNOUNCE.contains(time))
+		{
+			String announce;
+			if (time > 60)
+			{
+				announce = text + " " + (time / 60) + " " + MsgHandler.getMsg("time_minutes");
+			}
+			else
+			{
+				announce = text + " " + time + " " + MsgHandler.getMsg("time_seconds");
+			}
+			
+			if (toAllPlayers)
+			{
+				announceToAllPlayers(say2, announce);
+			}
+			else
+			{
+				announceToAllPlayersInEvent(say2, announce);
+			}
+		}
+	}
+	
+	/**
+	 * Send a message to a player inside the event
 	 * @param player
 	 * @param text
 	 */
@@ -54,7 +108,7 @@ public class EventUtil
 	}
 	
 	/**
-	 * Enviamos un mensaje por pantalla a un personaje dentro del evento
+	 * Send a screen message to player inside the event
 	 * @param player
 	 * @param text
 	 */
@@ -64,7 +118,7 @@ public class EventUtil
 	}
 	
 	/**
-	 * Enviamos un mensaje por pantalla a un personaje dentro del evento
+	 * Send a screen message to all players in the event
 	 * @param player
 	 * @param text
 	 * @param time
@@ -75,7 +129,7 @@ public class EventUtil
 	}
 	
 	/**
-	 * Enviamos un mensaje a todos los usuarios que participan de los eventos
+	 * Send a message to all players in the event
 	 * @param say2
 	 * @param text
 	 */
@@ -88,7 +142,7 @@ public class EventUtil
 	}
 	
 	/**
-	 * Enviamos un mensaje a todos los usuarios del servidor
+	 * Send a message to all online players
 	 * @param say2
 	 * @param text
 	 */

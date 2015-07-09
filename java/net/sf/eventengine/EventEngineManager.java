@@ -31,6 +31,7 @@ import net.sf.eventengine.ai.NpcManager;
 import net.sf.eventengine.configs.Configs;
 import net.sf.eventengine.enums.EventEngineState;
 import net.sf.eventengine.enums.EventType;
+import net.sf.eventengine.events.EventLoader;
 import net.sf.eventengine.handler.AbstractEvent;
 import net.sf.eventengine.handler.MsgHandler;
 import net.sf.eventengine.holder.PlayerHolder;
@@ -74,6 +75,7 @@ public class EventEngineManager
 			// Cargamos los configs de los eventos.
 			Configs.load();
 			LOG.info("EventEngineManager: Configs cargados con exito");
+			EventLoader.load();
 			// Multi-Language System
 			MsgHandler.init();
 			LOG.info("EventEngineManager: Multi-Language System cargado.");
@@ -81,9 +83,10 @@ public class EventEngineManager
 			NpcManager.class.newInstance();
 			LOG.info("EventEngineManager: AI's cargados con exito");
 			// lanzamos el task principal
+			_time = Configs.EVENT_TASK * 60;
+			_state = EventEngineState.WAITING;
 			ThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(new EventEngineTask(), 10 * 1000, 1000);
 			// inicializamos el tiempo para los eventos en minutos
-			_time = Configs.EVENT_TASK * 60;
 		}
 		catch (Exception e)
 		{
@@ -153,6 +156,28 @@ public class EventEngineManager
 	public static List<InstanceWorld> getInstancesWorlds()
 	{
 		return _instancesWorlds;
+	}
+	
+	// XXX NEXT EVENT ---------------------------------------------------------------------------------
+	
+	private static EventType _nextEvent;
+	
+	/**
+	 * Get the next event type
+	 * @return
+	 */
+	public static EventType getNextEvent()
+	{
+		return _nextEvent;
+	}
+	
+	/**
+	 * Set the next event type
+	 * @param event
+	 */
+	public static void setNextEvent(EventType event)
+	{
+		_nextEvent = event;
 	}
 	
 	// XXX CURRENT EVENT ---------------------------------------------------------------------------------
@@ -468,7 +493,7 @@ public class EventEngineManager
 	// XXX EVENT STATE -----------------------------------------------------------------------------------
 	
 	// variable encargada de controlar en que momento se podran registrar los usuarios a los eventos.
-	private static EventEngineState _state = EventEngineState.REGISTER;
+	private static EventEngineState _state = EventEngineState.WAITING;
 	
 	/**
 	 * Revisamos en q estado se encuentra el engine
@@ -483,17 +508,29 @@ public class EventEngineManager
 	 * Definimos el estado en q se encuentra el evento<br>
 	 * <u>Observaciones:</u><br>
 	 * <li>REGISTER -> Indicamos q se esta</li><br>
-	 * <li></li><br>
-	 * <li></li><br>
-	 * <li></li><br>
-	 * <li></li><br>
-	 * <li></li><br>
-	 * <li></li><br>
 	 * @param state
 	 */
 	public static void setEventEngineState(EventEngineState state)
 	{
 		_state = state;
+	}
+	
+	/**
+	 * Get if the EventEngine is waiting to start a register or voting time.
+	 * @return boolean
+	 */
+	public static boolean isWaiting()
+	{
+		return _state == EventEngineState.WAITING;
+	}
+	
+	/**
+	 * Get if the EventEngine is running an event.
+	 * @return boolean
+	 */
+	public static boolean isRunning()
+	{
+		return (_state == EventEngineState.RUNNING_EVENT) || (_state == EventEngineState.RUN_EVENT);
 	}
 	
 	/**
@@ -511,7 +548,7 @@ public class EventEngineManager
 	 */
 	public static boolean isOpenVote()
 	{
-		return _state == EventEngineState.REGISTER;
+		return _state == EventEngineState.VOTING;
 	}
 	
 	// XXX PLAYERS REGISTER -----------------------------------------------------------------------------
@@ -580,7 +617,6 @@ public class EventEngineManager
 	}
 	
 	// XXX MISC ---------------------------------------------------------------------------------------
-	
 	/**
 	 * Verificamos si un player participa de algun evento
 	 * @param player
