@@ -23,14 +23,26 @@ package net.sf.eventengine.enums;
  */
 public enum EventEngineState
 {
-	/** No se encuentro ningun evento corriendo */
-	/** Esta habilitado el registro de usuarios */
-	/** Esta habilitado el voto a los eventos */
+	/**
+	 * Esperando que comience la votación ó el registro al próximo evento
+	 */
+	WAITING,
+	/**
+	 * No se encuentra ningun evento corriendo Esta habilitado el registro de usuarios
+	 */
+	VOTING,
+	/**
+	 * No se encuentra ningun evento corriendo Esta habilitado el registro de usuarios
+	 */
 	REGISTER,
 	/** Ejecutamos el evento mas votado o uno al azar */
 	RUN_EVENT,
-	/** Tenemos un evento corriendo */
-	/** NO Esta habilitado el registro de usuarios */
-	/** NO Esta habilitado el voto a los eventos */
+	/**
+	 * Tenemos un evento corriendo NO Esta habilitado el registro de usuarios NO Esta habilitado el voto a los eventos
+	 */
 	RUNNING_EVENT,
+	/**
+	 * Finalizo el evento
+	 */
+	EVENT_ENDED
 }
