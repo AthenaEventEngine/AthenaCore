@@ -28,12 +28,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import net.sf.eventengine.ai.NpcManager;
-import net.sf.eventengine.configs.Configs;
+import net.sf.eventengine.datatables.ConfigData;
+import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.EventEngineState;
 import net.sf.eventengine.enums.EventType;
 import net.sf.eventengine.events.EventLoader;
 import net.sf.eventengine.handler.AbstractEvent;
-import net.sf.eventengine.handler.MsgHandler;
 import net.sf.eventengine.holder.PlayerHolder;
 import net.sf.eventengine.task.EventEngineTask;
 
@@ -73,17 +73,17 @@ public class EventEngineManager
 		try
 		{
 			// Cargamos los configs de los eventos.
-			Configs.load();
+			ConfigData.load();
 			LOG.info("EventEngineManager: Configs cargados con exito");
 			EventLoader.load();
 			// Multi-Language System
-			MsgHandler.init();
+			MessageData.init();
 			LOG.info("EventEngineManager: Multi-Language System cargado.");
 			// Cargamos los AI
 			NpcManager.class.newInstance();
 			LOG.info("EventEngineManager: AI's cargados con exito");
 			// lanzamos el task principal
-			_time = Configs.EVENT_TASK * 60;
+			_time = ConfigData.EVENT_TASK * 60;
 			_state = EventEngineState.WAITING;
 			ThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(new EventEngineTask(), 10 * 1000, 1000);
 			// inicializamos el tiempo para los eventos en minutos
@@ -126,7 +126,7 @@ public class EventEngineManager
 		InstanceWorld world = null;
 		try
 		{
-			int instanceId = InstanceManager.getInstance().createDynamicInstance(Configs.INSTANCE_FILE);
+			int instanceId = InstanceManager.getInstance().createDynamicInstance(ConfigData.INSTANCE_FILE);
 			InstanceManager.getInstance().getInstance(instanceId).setAllowSummon(false);
 			InstanceManager.getInstance().getInstance(instanceId).setPvPInstance(true);
 			InstanceManager.getInstance().getInstance(instanceId).setEmptyDestroyTime(1000 + 60000L);
@@ -355,8 +355,8 @@ public class EventEngineManager
 	 */
 	public static void listenerOnLogin(L2PcInstance player)
 	{
-		player.sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", MsgHandler.getTag() + MsgHandler.getMsg("event_login_participate")));
-		player.sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", MsgHandler.getTag() + MsgHandler.getMsg("event_login_vote")));
+		player.sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", MessageData.getTag() + MessageData.getMsg("event_login_participate")));
+		player.sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", MessageData.getTag() + MessageData.getMsg("event_login_vote")));
 	}
 	
 	/**

@@ -13,7 +13,7 @@
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.sf.eventengine.handler;
+package net.sf.eventengine.datatables;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -32,9 +32,9 @@ import org.w3c.dom.Node;
  * @author swarlog
  */
 
-public final class MsgHandler
+public final class MessageData
 {
-	private static final Logger LOG = Logger.getLogger(MsgHandler.class.getName());
+	private static final Logger LOG = Logger.getLogger(MessageData.class.getName());
 	private static final String DIRECTORY = "config/EventEngine/Language";
 	private static Map<String, String> MSG_MAP = new HashMap<>();
 	private static Map<String, String> LANGUAGES = new HashMap<>();
@@ -51,7 +51,7 @@ public final class MsgHandler
 		}
 		catch (Exception e)
 		{
-			LOG.warning(MsgHandler.class.getSimpleName() + ": -> Error while loading language files: " + e);
+			LOG.warning(MessageData.class.getSimpleName() + ": -> Error while loading language files: " + e);
 			e.printStackTrace();
 		}
 	}
@@ -107,7 +107,7 @@ public final class MsgHandler
 			}
 			catch (Exception e)
 			{
-				LOG.warning(MsgHandler.class.getSimpleName() + ": -> Could not load language (" + lang + ") file for event engine: " + e);
+				LOG.warning(MessageData.class.getSimpleName() + ": -> Could not load language (" + lang + ") file for event engine: " + e);
 				e.printStackTrace();
 			}
 			
