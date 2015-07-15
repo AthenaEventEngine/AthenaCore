@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import net.sf.eventengine.EventEngineManager;
-import net.sf.eventengine.configs.Configs;
+import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.enums.EventState;
 import net.sf.eventengine.enums.EventType;
 import net.sf.eventengine.enums.PlayerClassType;
@@ -355,7 +355,7 @@ public abstract class AbstractEvent
 		PlayerHolder activePlayer = getEventPlayer(playable);
 		
 		// CHECK FRIENDLY_FIRE ----------------------------------------
-		if (Configs.FRIENDLY_FIRE)
+		if (ConfigData.FRIENDLY_FIRE)
 		{
 			// Si nuestro target es de tipo L2Playable y esta dentro del evento hacemos el control.
 			PlayerHolder activeTarget = getEventPlayer(target);
@@ -408,7 +408,7 @@ public abstract class AbstractEvent
 		PlayerHolder activePlayer = getEventPlayer(player);
 		
 		// CHECK FRIENDLY_FIRE ----------------------------------------
-		if (Configs.FRIENDLY_FIRE)
+		if (ConfigData.FRIENDLY_FIRE)
 		{
 			// Si nuestro target es de tipo L2Playable y esta dentro del evento hacemos el control.
 			PlayerHolder activeTarget = getEventPlayer(target);
@@ -673,7 +673,7 @@ public abstract class AbstractEvent
 		ThreadPoolManager.getInstance().scheduleGeneral(new EventTask(2), time);
 		time += 1000;
 		ThreadPoolManager.getInstance().scheduleGeneral(new EventTask(3), time);
-		time += Configs.EVENT_DURATION * 60 * 1000;
+		time += ConfigData.EVENT_DURATION * 60 * 1000;
 		ThreadPoolManager.getInstance().scheduleGeneral(new EventTask(4), time);
 		time += 1000;
 		ThreadPoolManager.getInstance().scheduleGeneral(new EventTask(5), time);

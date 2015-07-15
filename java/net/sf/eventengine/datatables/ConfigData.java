@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package net.sf.eventengine.configs;
+package net.sf.eventengine.datatables;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,7 @@ import com.l2jserver.gameserver.model.holders.SkillHolder;
  * Clase encargada de leer todos los configs establecidos en los archivos de tipo "properties"
  * @author fissban
  */
-public class Configs
+public class ConfigData
 {
 	private static final String EVENT_CONFIG = "./config/EventEngine/EventEngine.properties";
 	private static final String TVT_CONFIG = "./config/EventEngine/TeamVsTeam.properties";

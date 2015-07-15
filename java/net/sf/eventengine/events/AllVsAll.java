@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 import net.sf.eventengine.EventEngineManager;
-import net.sf.eventengine.configs.Configs;
+import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.enums.EventState;
 import net.sf.eventengine.enums.EventType;
 import net.sf.eventengine.enums.PlayerClassType;
@@ -47,10 +47,10 @@ public class AllVsAll extends AbstractEvent
 	{
 		super();
 		// Definimos el spawn del team
-		setTeamSpawn(Team.NONE, Configs.AVA_COORDINATES_PLAYER);
+		setTeamSpawn(Team.NONE, ConfigData.AVA_COORDINATES_PLAYER);
 		// Definimos los buffs de los personajes
-		setPlayerBuffs(PlayerClassType.MAGE, Configs.AVA_BUFF_PLAYER_MAGE);
-		setPlayerBuffs(PlayerClassType.WARRIOR, Configs.AVA_BUFF_PLAYER_WARRIOR);
+		setPlayerBuffs(PlayerClassType.MAGE, ConfigData.AVA_BUFF_PLAYER_MAGE);
+		setPlayerBuffs(PlayerClassType.WARRIOR, ConfigData.AVA_BUFF_PLAYER_WARRIOR);
 	}
 	
 	@Override
@@ -89,7 +89,7 @@ public class AllVsAll extends AbstractEvent
 		// Incrementamos en uno la cant de kills al player.
 		player.increaseKills();
 		// Entregamos la rewards
-		giveItems(player, Configs.AVA_REWARD_KILL_PLAYER);
+		giveItems(player, ConfigData.AVA_REWARD_KILL_PLAYER);
 		// Actualizamos el titulo del personaje
 		updateTitle(player);
 	}
@@ -191,7 +191,7 @@ public class AllVsAll extends AbstractEvent
 				// Enviamos un mensaje al ganador
 				EventUtil.sendEventScreenMessage(player, "Ganador " + player.getPcInstance().getName() + " con " + player.getPoints());
 				// Entregamos los rewards
-				giveItems(player, Configs.AVA_REWARD_PLAYER_WIN);
+				giveItems(player, ConfigData.AVA_REWARD_PLAYER_WIN);
 			}
 			else
 			{
