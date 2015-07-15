@@ -18,7 +18,7 @@
  */
 package net.sf.eventengine.events;
 
-import net.sf.eventengine.configs.Configs;
+import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.enums.EventState;
 import net.sf.eventengine.enums.EventType;
 import net.sf.eventengine.enums.PlayerClassType;
@@ -40,11 +40,11 @@ public class CaptureTheFlag extends AbstractEvent
 		super();
 		
 		// Definimos los spawns de cada team
-		setTeamSpawn(Team.RED, Configs.TVT_COORDINATES_TEAM_1);
-		setTeamSpawn(Team.BLUE, Configs.TVT_COORDINATES_TEAM_2);
+		setTeamSpawn(Team.RED, ConfigData.TVT_COORDINATES_TEAM_1);
+		setTeamSpawn(Team.BLUE, ConfigData.TVT_COORDINATES_TEAM_2);
 		// Definimos los buffs de los personajes
-		setPlayerBuffs(PlayerClassType.MAGE, Configs.TVT_BUFF_PLAYER_MAGE);
-		setPlayerBuffs(PlayerClassType.WARRIOR, Configs.TVT_BUFF_PLAYER_WARRIOR);
+		setPlayerBuffs(PlayerClassType.MAGE, ConfigData.TVT_BUFF_PLAYER_MAGE);
+		setPlayerBuffs(PlayerClassType.WARRIOR, ConfigData.TVT_BUFF_PLAYER_WARRIOR);
 	}
 	
 	@Override

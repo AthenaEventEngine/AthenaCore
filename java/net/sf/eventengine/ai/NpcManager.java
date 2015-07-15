@@ -22,9 +22,9 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import net.sf.eventengine.EventEngineManager;
-import net.sf.eventengine.configs.Configs;
+import net.sf.eventengine.datatables.ConfigData;
+import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.EventType;
-import net.sf.eventengine.handler.MsgHandler;
 
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
@@ -38,7 +38,7 @@ import com.l2jserver.util.StringUtil;
 
 public class NpcManager extends Quest
 {
-	private static int NPC = Configs.NPC_MANAGER_ID;
+	private static int NPC = ConfigData.NPC_MANAGER_ID;
 	
 	public NpcManager()
 	{
@@ -68,7 +68,7 @@ public class NpcManager extends Quest
 			case "vote":
 				// Add vote event
 				EventEngineManager.increaseVote(player, EventType.valueOf(st.nextToken()));
-				player.sendMessage(MsgHandler.getTag() + MsgHandler.getMsg("event_vote_done"));
+				player.sendMessage(MessageData.getTag() + MessageData.getMsg("event_vote_done"));
 				return index(player);
 				
 			case "info":
@@ -78,27 +78,27 @@ public class NpcManager extends Quest
 				{
 					case AVA:
 						// Info Event
-						html.replace("%eventName%", MsgHandler.getMsg("event_ava_name"));
-						html.replace("%textDescription%", MsgHandler.getMsg("text_description"));
-						html.replace("%eventDescription%", MsgHandler.getMsg("event_ava_description"));
+						html.replace("%eventName%", MessageData.getMsg("event_ava_name"));
+						html.replace("%textDescription%", MessageData.getMsg("text_description"));
+						html.replace("%eventDescription%", MessageData.getMsg("event_ava_description"));
 						
 						// Requirements
-						html.replace("%textRequirements%", MsgHandler.getMsg("text_requirements"));
-						html.replace("%textLevelMax%", MsgHandler.getMsg("text_level_max"));
-						html.replace("%textLevelMin%", MsgHandler.getMsg("text_level_min"));
+						html.replace("%textRequirements%", MessageData.getMsg("text_requirements"));
+						html.replace("%textLevelMax%", MessageData.getMsg("text_level_max"));
+						html.replace("%textLevelMin%", MessageData.getMsg("text_level_min"));
 						
 						// Load Levels
-						html.replace("%levelMax%", Configs.MAX_LVL_IN_EVENT);
-						html.replace("%levelMin%", Configs.MIN_LVL_IN_EVENT);
+						html.replace("%levelMax%", ConfigData.MAX_LVL_IN_EVENT);
+						html.replace("%levelMin%", ConfigData.MIN_LVL_IN_EVENT);
 						
 						// Configuration
-						html.replace("%textCondiguration%", MsgHandler.getMsg("text_configuration"));
-						html.replace("%textTimeEvent%", MsgHandler.getMsg("text_time_event"));
-						html.replace("%timeEvent%", Configs.EVENT_DURATION);
-						html.replace("%timeMinutes%", MsgHandler.getMsg("time_minutes"));
+						html.replace("%textCondiguration%", MessageData.getMsg("text_configuration"));
+						html.replace("%textTimeEvent%", MessageData.getMsg("text_time_event"));
+						html.replace("%timeEvent%", ConfigData.EVENT_DURATION);
+						html.replace("%timeMinutes%", MessageData.getMsg("time_minutes"));
 						
 						// Rewards
-						html.replace("%textRewards%", MsgHandler.getMsg("text_rewards"));
+						html.replace("%textRewards%", MessageData.getMsg("text_rewards"));
 						// TODO: html.replace("%eventRewards%", Configs.AVA_REWARD_LIST);
 						
 						// Button
@@ -109,27 +109,27 @@ public class NpcManager extends Quest
 						break;
 					case TVT:
 						// Info Event
-						html.replace("%eventName%", MsgHandler.getMsg("event_tvt_name"));
-						html.replace("%textDescription%", MsgHandler.getMsg("text_description"));
-						html.replace("%eventDescription%", MsgHandler.getMsg("event_tvt_description"));
+						html.replace("%eventName%", MessageData.getMsg("event_tvt_name"));
+						html.replace("%textDescription%", MessageData.getMsg("text_description"));
+						html.replace("%eventDescription%", MessageData.getMsg("event_tvt_description"));
 						
 						// Requirements
-						html.replace("%textRequirements%", MsgHandler.getMsg("text_requirements"));
-						html.replace("%textLevelMax%", MsgHandler.getMsg("text_level_max"));
-						html.replace("%textLevelMin%", MsgHandler.getMsg("text_level_min"));
+						html.replace("%textRequirements%", MessageData.getMsg("text_requirements"));
+						html.replace("%textLevelMax%", MessageData.getMsg("text_level_max"));
+						html.replace("%textLevelMin%", MessageData.getMsg("text_level_min"));
 						
 						// Load Levels
-						html.replace("%levelMax%", Configs.MAX_LVL_IN_EVENT);
-						html.replace("%levelMin%", Configs.MIN_LVL_IN_EVENT);
+						html.replace("%levelMax%", ConfigData.MAX_LVL_IN_EVENT);
+						html.replace("%levelMin%", ConfigData.MIN_LVL_IN_EVENT);
 						
 						// Configuration
-						html.replace("%textCondiguration%", MsgHandler.getMsg("text_configuration"));
-						html.replace("%textTimeEvent%", MsgHandler.getMsg("text_time_event"));
-						html.replace("%timeEvent%", Configs.EVENT_DURATION);
-						html.replace("%timeMinutes%", MsgHandler.getMsg("time_minutes"));
+						html.replace("%textCondiguration%", MessageData.getMsg("text_configuration"));
+						html.replace("%textTimeEvent%", MessageData.getMsg("text_time_event"));
+						html.replace("%timeEvent%", ConfigData.EVENT_DURATION);
+						html.replace("%timeMinutes%", MessageData.getMsg("time_minutes"));
 						
 						// Rewards
-						html.replace("%textRewards%", MsgHandler.getMsg("text_rewards"));
+						html.replace("%textRewards%", MessageData.getMsg("text_rewards"));
 						// TODO: html.replace("%eventRewards%", Configs.TVT_REWARD_LIST);
 						
 						// Button
@@ -140,27 +140,27 @@ public class NpcManager extends Quest
 						break;
 					case CTF:
 						// Info Event
-						html.replace("%eventName%", MsgHandler.getMsg("event_ctf_name"));
-						html.replace("%textDescription%", MsgHandler.getMsg("text_description"));
-						html.replace("%eventDescription%", MsgHandler.getMsg("event_ctf_description"));
+						html.replace("%eventName%", MessageData.getMsg("event_ctf_name"));
+						html.replace("%textDescription%", MessageData.getMsg("text_description"));
+						html.replace("%eventDescription%", MessageData.getMsg("event_ctf_description"));
 						
 						// Requirements
-						html.replace("%textRequirements%", MsgHandler.getMsg("text_requirements"));
-						html.replace("%textLevelMax%", MsgHandler.getMsg("text_level_max"));
-						html.replace("%textLevelMin%", MsgHandler.getMsg("text_level_min"));
+						html.replace("%textRequirements%", MessageData.getMsg("text_requirements"));
+						html.replace("%textLevelMax%", MessageData.getMsg("text_level_max"));
+						html.replace("%textLevelMin%", MessageData.getMsg("text_level_min"));
 						
 						// Load Levels
-						html.replace("%levelMax%", Configs.MAX_LVL_IN_EVENT);
-						html.replace("%levelMin%", Configs.MIN_LVL_IN_EVENT);
+						html.replace("%levelMax%", ConfigData.MAX_LVL_IN_EVENT);
+						html.replace("%levelMin%", ConfigData.MIN_LVL_IN_EVENT);
 						
 						// Configuration
-						html.replace("%textCondiguration%", MsgHandler.getMsg("text_configuration"));
-						html.replace("%textTimeEvent%", MsgHandler.getMsg("text_time_event"));
-						html.replace("%timeEvent%", Configs.EVENT_DURATION);
-						html.replace("%timeMinutes%", MsgHandler.getMsg("time_minutes"));
+						html.replace("%textCondiguration%", MessageData.getMsg("text_configuration"));
+						html.replace("%textTimeEvent%", MessageData.getMsg("text_time_event"));
+						html.replace("%timeEvent%", ConfigData.EVENT_DURATION);
+						html.replace("%timeMinutes%", MessageData.getMsg("time_minutes"));
 						
 						// Rewards
-						html.replace("%textRewards%", MsgHandler.getMsg("text_rewards"));
+						html.replace("%textRewards%", MessageData.getMsg("text_rewards"));
 						// TODO: html.replace("%eventRewards%", Configs.CTF_REWARD_LIST);
 						
 						// Button
@@ -171,27 +171,27 @@ public class NpcManager extends Quest
 						break;
 					case OVO:
 						// Info Event
-						html.replace("%eventName%", MsgHandler.getMsg("event_ovo_name"));
-						html.replace("%textDescription%", MsgHandler.getMsg("text_description"));
-						html.replace("%eventDescription%", MsgHandler.getMsg("event_ovo_description"));
+						html.replace("%eventName%", MessageData.getMsg("event_ovo_name"));
+						html.replace("%textDescription%", MessageData.getMsg("text_description"));
+						html.replace("%eventDescription%", MessageData.getMsg("event_ovo_description"));
 						
 						// Requirements
-						html.replace("%textRequirements%", MsgHandler.getMsg("text_requirements"));
-						html.replace("%textLevelMax%", MsgHandler.getMsg("text_level_max"));
-						html.replace("%textLevelMin%", MsgHandler.getMsg("text_level_min"));
+						html.replace("%textRequirements%", MessageData.getMsg("text_requirements"));
+						html.replace("%textLevelMax%", MessageData.getMsg("text_level_max"));
+						html.replace("%textLevelMin%", MessageData.getMsg("text_level_min"));
 						
 						// Load Levels
-						html.replace("%levelMax%", Configs.MAX_LVL_IN_EVENT);
-						html.replace("%levelMin%", Configs.MIN_LVL_IN_EVENT);
+						html.replace("%levelMax%", ConfigData.MAX_LVL_IN_EVENT);
+						html.replace("%levelMin%", ConfigData.MIN_LVL_IN_EVENT);
 						
 						// Configuration
-						html.replace("%textCondiguration%", MsgHandler.getMsg("text_configuration"));
-						html.replace("%textTimeEvent%", MsgHandler.getMsg("text_time_event"));
-						html.replace("%timeEvent%", Configs.EVENT_DURATION);
-						html.replace("%timeMinutes%", MsgHandler.getMsg("time_minutes"));
+						html.replace("%textCondiguration%", MessageData.getMsg("text_configuration"));
+						html.replace("%textTimeEvent%", MessageData.getMsg("text_time_event"));
+						html.replace("%timeEvent%", ConfigData.EVENT_DURATION);
+						html.replace("%timeMinutes%", MessageData.getMsg("time_minutes"));
 						
 						// Rewards
-						html.replace("%textRewards%", MsgHandler.getMsg("text_rewards"));
+						html.replace("%textRewards%", MessageData.getMsg("text_rewards"));
 						// TODO: html.replace("%eventRewards%", Configs.OVO_REWARD_LIST);
 						
 						// Button
@@ -202,27 +202,27 @@ public class NpcManager extends Quest
 						break;
 					case SURVIVE:
 						// Info Event
-						html.replace("%eventName%", MsgHandler.getMsg("event_survive_name"));
-						html.replace("%textDescription%", MsgHandler.getMsg("text_description"));
-						html.replace("%eventDescription%", MsgHandler.getMsg("event_survive_description"));
+						html.replace("%eventName%", MessageData.getMsg("event_survive_name"));
+						html.replace("%textDescription%", MessageData.getMsg("text_description"));
+						html.replace("%eventDescription%", MessageData.getMsg("event_survive_description"));
 						
 						// Requirements
-						html.replace("%textRequirements%", MsgHandler.getMsg("text_requirements"));
-						html.replace("%textLevelMax%", MsgHandler.getMsg("text_level_max"));
-						html.replace("%textLevelMin%", MsgHandler.getMsg("text_level_min"));
+						html.replace("%textRequirements%", MessageData.getMsg("text_requirements"));
+						html.replace("%textLevelMax%", MessageData.getMsg("text_level_max"));
+						html.replace("%textLevelMin%", MessageData.getMsg("text_level_min"));
 						
 						// Load Levels
-						html.replace("%levelMax%", Configs.MAX_LVL_IN_EVENT);
-						html.replace("%levelMin%", Configs.MIN_LVL_IN_EVENT);
+						html.replace("%levelMax%", ConfigData.MAX_LVL_IN_EVENT);
+						html.replace("%levelMin%", ConfigData.MIN_LVL_IN_EVENT);
 						
 						// Configuration
-						html.replace("%textCondiguration%", MsgHandler.getMsg("text_configuration"));
-						html.replace("%textTimeEvent%", MsgHandler.getMsg("text_time_event"));
-						html.replace("%timeEvent%", Configs.EVENT_DURATION);
-						html.replace("%timeMinutes%", MsgHandler.getMsg("time_minutes"));
+						html.replace("%textCondiguration%", MessageData.getMsg("text_configuration"));
+						html.replace("%textTimeEvent%", MessageData.getMsg("text_time_event"));
+						html.replace("%timeEvent%", ConfigData.EVENT_DURATION);
+						html.replace("%timeMinutes%", MessageData.getMsg("time_minutes"));
 						
 						// Rewards
-						html.replace("%textRewards%", MsgHandler.getMsg("text_rewards"));
+						html.replace("%textRewards%", MessageData.getMsg("text_rewards"));
 						// TODO: html.replace("%eventRewards%", Configs.SURVIVE_REWARD_LIST);
 						
 						// Button
@@ -233,27 +233,27 @@ public class NpcManager extends Quest
 						break;
 					case PA:
 						// Info Event
-						html.replace("%eventName%", MsgHandler.getMsg("event_pa_name"));
-						html.replace("%textDescription%", MsgHandler.getMsg("text_description"));
-						html.replace("%eventDescription%", MsgHandler.getMsg("event_pa_description"));
+						html.replace("%eventName%", MessageData.getMsg("event_pa_name"));
+						html.replace("%textDescription%", MessageData.getMsg("text_description"));
+						html.replace("%eventDescription%", MessageData.getMsg("event_pa_description"));
 						
 						// Requirements
-						html.replace("%textRequirements%", MsgHandler.getMsg("text_requirements"));
-						html.replace("%textLevelMax%", MsgHandler.getMsg("text_level_max"));
-						html.replace("%textLevelMin%", MsgHandler.getMsg("text_level_min"));
+						html.replace("%textRequirements%", MessageData.getMsg("text_requirements"));
+						html.replace("%textLevelMax%", MessageData.getMsg("text_level_max"));
+						html.replace("%textLevelMin%", MessageData.getMsg("text_level_min"));
 						
 						// Load Levels
-						html.replace("%levelMax%", Configs.MAX_LVL_IN_EVENT);
-						html.replace("%levelMin%", Configs.MIN_LVL_IN_EVENT);
+						html.replace("%levelMax%", ConfigData.MAX_LVL_IN_EVENT);
+						html.replace("%levelMin%", ConfigData.MIN_LVL_IN_EVENT);
 						
 						// Configuration
-						html.replace("%textCondiguration%", MsgHandler.getMsg("text_configuration"));
-						html.replace("%textTimeEvent%", MsgHandler.getMsg("text_time_event"));
-						html.replace("%timeEvent%", Configs.EVENT_DURATION);
-						html.replace("%timeMinutes%", MsgHandler.getMsg("time_minutes"));
+						html.replace("%textCondiguration%", MessageData.getMsg("text_configuration"));
+						html.replace("%textTimeEvent%", MessageData.getMsg("text_time_event"));
+						html.replace("%timeEvent%", ConfigData.EVENT_DURATION);
+						html.replace("%timeMinutes%", MessageData.getMsg("time_minutes"));
 						
 						// Rewards
-						html.replace("%textRewards%", MsgHandler.getMsg("text_rewards"));
+						html.replace("%textRewards%", MessageData.getMsg("text_rewards"));
 						// TODO: html.replace("%eventRewards%", Configs.PA_REWARD_LIST);
 						
 						// Button
@@ -268,24 +268,24 @@ public class NpcManager extends Quest
 				if (EventEngineManager.registerPlayer(player))
 				{
 					// Check for register
-					if (player.getLevel() < Configs.MIN_LVL_IN_EVENT)
+					if (player.getLevel() < ConfigData.MIN_LVL_IN_EVENT)
 					{
-						player.sendMessage(MsgHandler.getTag() + MsgHandler.getMsg("registering_lowLevel"));
+						player.sendMessage(MessageData.getTag() + MessageData.getMsg("registering_lowLevel"));
 					}
-					else if (player.getLevel() > Configs.MAX_LVL_IN_EVENT)
+					else if (player.getLevel() > ConfigData.MAX_LVL_IN_EVENT)
 					{
-						player.sendMessage(MsgHandler.getTag() + MsgHandler.getMsg("registering_highLevel"));
+						player.sendMessage(MessageData.getTag() + MessageData.getMsg("registering_highLevel"));
 					}
 					else
 					{
-						player.sendMessage(MsgHandler.getTag() + MsgHandler.getMsg("registering_registered"));
+						player.sendMessage(MessageData.getTag() + MessageData.getMsg("registering_registered"));
 					}
 					
 					return index(player);
 				}
 				else
 				{
-					player.sendMessage(MsgHandler.getTag() + MsgHandler.getMsg("registering_already_registered"));
+					player.sendMessage(MessageData.getTag() + MessageData.getMsg("registering_already_registered"));
 					return index(player);
 				}
 				
@@ -294,18 +294,18 @@ public class NpcManager extends Quest
 				{
 					if (EventEngineManager.unRegisterPlayer(player))
 					{
-						player.sendMessage(MsgHandler.getTag() + MsgHandler.getMsg("unregistering_unregistered"));
+						player.sendMessage(MessageData.getTag() + MessageData.getMsg("unregistering_unregistered"));
 						return index(player);
 					}
 					else
 					{
-						player.sendMessage(MsgHandler.getTag() + MsgHandler.getMsg("unregistering_notRegistered"));
+						player.sendMessage(MessageData.getTag() + MessageData.getMsg("unregistering_notRegistered"));
 						return index(player);
 					}
 				}
 				else
 				{
-					player.sendMessage(MsgHandler.getTag() + MsgHandler.getMsg("event_registration_notUnRegState"));
+					player.sendMessage(MessageData.getTag() + MessageData.getMsg("event_registration_notUnRegState"));
 					return index(player);
 				}
 				// Multi-Language System menu
@@ -313,17 +313,17 @@ public class NpcManager extends Quest
 				html.setFile(player.getHtmlPrefix(), "data/html/events/event_lang.htm");
 				
 				// Info menu
-				html.replace("%settingTitle%", MsgHandler.getMsg("lang_menu_title"));
-				html.replace("%languageTitle%", MsgHandler.getMsg("lang_language_title"));
-				html.replace("%languageDescription%", MsgHandler.getMsg("lang_language_description"));
+				html.replace("%settingTitle%", MessageData.getMsg("lang_menu_title"));
+				html.replace("%languageTitle%", MessageData.getMsg("lang_language_title"));
+				html.replace("%languageDescription%", MessageData.getMsg("lang_language_description"));
 				
 				// Info lang
-				html.replace("%currentLanguage%", MsgHandler.getMsg("lang_current_language"));
-				html.replace("%getLanguage%", MsgHandler.getLanguage());
+				html.replace("%currentLanguage%", MessageData.getMsg("lang_current_language"));
+				html.replace("%getLanguage%", MessageData.getLanguage());
 				
 				// Buttons
 				final StringBuilder langList = new StringBuilder(500);
-				for (Map.Entry<String, String> e : MsgHandler.getLanguages().entrySet())
+				for (Map.Entry<String, String> e : MessageData.getLanguages().entrySet())
 				{
 					StringUtil.append(langList, "<tr>");
 					StringUtil.append(langList, "<td align=center width=30% height=30><button value=\"" + e.getValue() + "\" action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " setlang " + e.getKey() + "\" width=70 height=20 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\"></td>");
@@ -340,8 +340,8 @@ public class NpcManager extends Quest
 			// Multi-Language System set language
 			case "setlang":
 				String lang = st.nextToken();
-				MsgHandler.setLanguage(lang);
-				player.sendMessage(MsgHandler.getTag() + MsgHandler.getMsg("lang_current_successfully") + " " + lang);
+				MessageData.setLanguage(lang);
+				player.sendMessage(MessageData.getTag() + MessageData.getMsg("lang_current_successfully") + " " + lang);
 				index(player);
 				break;
 		}
@@ -365,7 +365,7 @@ public class NpcManager extends Quest
 		
 		if (EventEngineManager.isWaiting())
 		{
-			html.replace("%menuInfo%", MsgHandler.getMsg("event_waiting"));
+			html.replace("%menuInfo%", MessageData.getMsg("event_waiting"));
 			html.replace("%button%", "");
 		}
 		else if (EventEngineManager.isOpenVote())
@@ -375,40 +375,40 @@ public class NpcManager extends Quest
 			{
 				StringUtil.append(eventList, "<tr>");
 				StringUtil.append(eventList, "<td align=center width=30% height=30><button value=\"" + event.getEventName() + "\" action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " vote " + event.toString() + "\" width=110 height=21 back=L2UI_CT1.Button_DF_Down fore=L2UI_CT1.Button_DF></td>");
-				StringUtil.append(eventList, "<td width=40%><font color=LEVEL>" + MsgHandler.getMsg("button_votes") + ": </font>" + EventEngineManager.getCurrentVotesInEvent(event) + "</td>");
-				StringUtil.append(eventList, "<td width=30%><font color=7898AF><a action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " info " + event.toString() + "\">" + MsgHandler.getMsg("button_info") + "</a></font></td>");
+				StringUtil.append(eventList, "<td width=40%><font color=LEVEL>" + MessageData.getMsg("button_votes") + ": </font>" + EventEngineManager.getCurrentVotesInEvent(event) + "</td>");
+				StringUtil.append(eventList, "<td width=30%><font color=7898AF><a action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " info " + event.toString() + "\">" + MessageData.getMsg("button_info") + "</a></font></td>");
 				StringUtil.append(eventList, "</tr>");
 			}
-			html.replace("%menuInfo%", MsgHandler.getMsg("event_vote_info"));
+			html.replace("%menuInfo%", MessageData.getMsg("event_vote_info"));
 			html.replace("%button%", "");
 			html.replace("%buttonEventList%", eventList.toString());
 		}
 		else if (EventEngineManager.isOpenRegister())
 		{
-			html.replace("%menuInfo%", MsgHandler.getMsg("event_registration_on"));
+			html.replace("%menuInfo%", MessageData.getMsg("event_registration_on"));
 			html.replace("%button%", "<button value=\"%buttonActionName%\" action=\"%buttonAction%\" width=150 height=27 back=\"L2UI_CT1.Button_DF_Down\" fore=\"L2UI_CT1.Button_DF\"/>");
 			if (EventEngineManager.isRegistered(player))
 			{
-				html.replace("%buttonActionName%", MsgHandler.getMsg("button_unregister"));
+				html.replace("%buttonActionName%", MessageData.getMsg("button_unregister"));
 				html.replace("%buttonAction%", "bypass -h Quest " + NpcManager.class.getSimpleName() + " unregister");
 			}
 			else
 			{
-				html.replace("%buttonActionName%", MsgHandler.getMsg("button_register"));
+				html.replace("%buttonActionName%", MessageData.getMsg("button_register"));
 				html.replace("%buttonAction%", "bypass -h Quest " + NpcManager.class.getSimpleName() + " register");
 			}
 		}
 		else if (EventEngineManager.isRunning())
 		{
-			html.replace("%menuInfo%", MsgHandler.getMsg("event_registration_notRegState"));
+			html.replace("%menuInfo%", MessageData.getMsg("event_registration_notRegState"));
 			html.replace("%button%", "<button value=\"%buttonActionName%\" action=\"%buttonAction%\" width=150 height=27 back=\"L2UI_CT1.Button_DF_Down\" fore=\"L2UI_CT1.Button_DF\"/>");
-			html.replace("%buttonActionName%", MsgHandler.getMsg("button_spectator"));
+			html.replace("%buttonActionName%", MessageData.getMsg("button_spectator"));
 			// html.replace("%buttonAction%", "bypass -h Quest " + NpcManager.class.getSimpleName() + " spectator");
-			html.replace("%menuInfo%", MsgHandler.getMsg("event_registration_notRegState"));
+			html.replace("%menuInfo%", MessageData.getMsg("event_registration_notRegState"));
 		}
 		else
 		{
-			html.replace("%menuInfo%", MsgHandler.getMsg("event_reloading"));
+			html.replace("%menuInfo%", MessageData.getMsg("event_reloading"));
 			html.replace("%button%", "");
 		}
 		

@@ -21,7 +21,7 @@ package net.sf.eventengine.util;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.sf.eventengine.handler.MsgHandler;
+import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.holder.PlayerHolder;
 
 import com.l2jserver.gameserver.model.L2World;
@@ -69,11 +69,11 @@ public class EventUtil
 			String announce;
 			if (time > 60)
 			{
-				announce = text + " " + (time / 60) + " " + MsgHandler.getMsg("time_minutes");
+				announce = text + " " + (time / 60) + " " + MessageData.getMsg("time_minutes");
 			}
 			else
 			{
-				announce = text + " " + time + " " + MsgHandler.getMsg("time_seconds");
+				announce = text + " " + time + " " + MessageData.getMsg("time_seconds");
 			}
 			
 			if (toAllPlayers)
@@ -94,7 +94,7 @@ public class EventUtil
 	 */
 	public static void sendEventMessage(PlayerHolder player, String text)
 	{
-		player.getPcInstance().sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", MsgHandler.getTag() + text));
+		player.getPcInstance().sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", MessageData.getTag() + text));
 	}
 	
 	/**
@@ -137,7 +137,7 @@ public class EventUtil
 	{
 		for (L2PcInstance player : L2World.getInstance().getPlayers())
 		{
-			player.sendPacket(new CreatureSay(0, say2, "", MsgHandler.getTag() + text));
+			player.sendPacket(new CreatureSay(0, say2, "", MessageData.getTag() + text));
 		}
 	}
 	
@@ -150,7 +150,7 @@ public class EventUtil
 	{
 		for (L2PcInstance player : L2World.getInstance().getPlayers())
 		{
-			player.sendPacket(new CreatureSay(0, say2, "", MsgHandler.getTag() + text));
+			player.sendPacket(new CreatureSay(0, say2, "", MessageData.getTag() + text));
 		}
 	}
 }
