@@ -1,18 +1,21 @@
 /*
- * L2J EventEngine is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2015-2015 L2J EventEngine
  *
- * L2J EventEngine is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J EventEngine.
  *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J EventEngine is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * L2J EventEngine is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package net.sf.eventengine.datatables;
 
 import java.io.File;
@@ -31,7 +34,6 @@ import org.w3c.dom.Node;
 /**
  * @author swarlog
  */
-
 public final class MessageData
 {
 	private static final Logger LOG = Logger.getLogger(MessageData.class.getName());
@@ -46,7 +48,6 @@ public final class MessageData
 	{
 		try
 		{
-			prepare();
 			load();
 		}
 		catch (Exception e)
@@ -56,16 +57,7 @@ public final class MessageData
 		}
 	}
 	
-	public static void prepare() throws IOException
-	{
-		File folder = new File(DIRECTORY);
-		if ((!folder.exists()) || (folder.isDirectory()))
-		{
-			folder.mkdir();
-		}
-	}
-	
-	public static void load() throws IOException
+	private static void load() throws IOException
 	{
 		File dir = new File(DIRECTORY);
 		for (File file : dir.listFiles(new FileFilter()
