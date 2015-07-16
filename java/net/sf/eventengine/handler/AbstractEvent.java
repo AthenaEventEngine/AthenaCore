@@ -66,24 +66,25 @@ public abstract class AbstractEvent
 	 */
 	public AbstractEvent()
 	{
-		// Agregamos todos los player registrados al evento.
+		// We add every player registered for the event.
 		createEventPlayers();
-		// Arrancamos el reloj para controlar la secuencia de eventos internos del evento.
+		// We started the clock to control the sequence of internal events of the event.
 		controlTimeEvent();
 	}
 	
-	/** Metodo necesario para llevar el control de los estados del evento */
+	/** Necessary to keep track of the states of the event. */
 	public abstract void runEventState(EventState state);
 	
+	/** Necessary for the type of event. */
 	public abstract EventType getEventType();
 	
 	// NPC IN EVENT --------------------------------------------------------------------------------- //
 	
-	// Lista de npc en el evento.
+	// List of npc in the event.
 	private final Map<Integer, L2Npc> _eventNpc = new HashMap<>();
 	
 	/**
-	 * Obetenemos la lista completa de todos los npc dentro del evento.<br>
+	 * We get the complete list of all the NPC during the event.<br>
 	 * @return Collection<PlayerHolder>
 	 */
 	public Collection<L2Npc> getAllEventNpc()
@@ -92,13 +93,13 @@ public abstract class AbstractEvent
 	}
 	
 	/**
-	 * Generamos un nuevo spawn dentro de nuestro evento y lo agregamos a la lista.
+	 * We generate a new spawn in our event and added to the list.
 	 * @param npcId
 	 * @param x
 	 * @param y
 	 * @param z
 	 * @param heading
-	 * @param randomOffset -> si queremos generar un spawn aleatorio en un radio de 100 de la posicion indicada
+	 * @param randomOffset -> 100
 	 */
 	public L2Npc addEventNpc(int npcId, int x, int y, int z, int heading, boolean randomOffset, int instanceId)
 	{
@@ -126,7 +127,7 @@ public abstract class AbstractEvent
 				
 				SpawnTable.getInstance().addNewSpawn(spawn, false);
 				spawn.init();
-				// Animacion.
+				// animation.
 				spawn.getLastSpawn().broadcastPacket(new MagicSkillUse(spawn.getLastSpawn(), spawn.getLastSpawn(), 1034, 1, 1, 1));
 			}
 		}
@@ -135,14 +136,14 @@ public abstract class AbstractEvent
 			e.printStackTrace();
 			return null;
 		}
-		// Agregamos nuestro npc a la lista.
+		// We add our npc to the list.
 		_eventNpc.put(npc.getId(), npc);
 		
 		return npc;
 	}
 	
 	/**
-	 * Borramos todos los npc generados dentro de nuestro evento.
+	 * Clear all npc generated within our event.
 	 */
 	public void removeAllEventNpc()
 	{
@@ -153,9 +154,9 @@ public abstract class AbstractEvent
 				continue;
 			}
 			
-			// Paramos el respawn del npc.
+			// We stopped the npc spawn.
 			npc.getSpawn().stopRespawn();
-			// Borramos al npc.
+			// Delete the npc.
 			npc.deleteMe();
 		}
 		
@@ -163,7 +164,7 @@ public abstract class AbstractEvent
 	}
 	
 	/**
-	 * Verificamos si un npc pertenece a nuestro evento.
+	 * Check if a NPC belongs to our event.
 	 * @param npcId
 	 * @return
 	 */
@@ -176,7 +177,7 @@ public abstract class AbstractEvent
 	private final Map<PlayerClassType, List<SkillHolder>> _playerBuffs = new HashMap<>();
 	
 	/**
-	 * Definimos el listado de buffs de los personajes dependiendo si son magos o warriors.
+	 * We define the list of buffs depending on whether the characters are wizards or warriors.
 	 * @param type
 	 * @param list
 	 */
@@ -186,7 +187,7 @@ public abstract class AbstractEvent
 	}
 	
 	/**
-	 * Obtenemos un listado con los buffs de un personaje dependiendo si es mago o warrior.
+	 * We get a list buffs depending on whether a character is a wizard or warrior.
 	 * @param type
 	 * @return List<SkillHolder>
 	 */
@@ -199,7 +200,7 @@ public abstract class AbstractEvent
 	private final Map<Team, Location> _teamSapwn = new HashMap<>();
 	
 	/**
-	 * Definimos los spawns de un team.
+	 * We define a team spawns.
 	 * @param team
 	 * @param loc
 	 */
@@ -209,7 +210,7 @@ public abstract class AbstractEvent
 	}
 	
 	/**
-	 * Obtenemos el spawn de un team en particular.
+	 * We get the spawn of a particular team.
 	 * @param team
 	 * @return Location
 	 */
@@ -222,7 +223,7 @@ public abstract class AbstractEvent
 	private final Map<Integer, PlayerHolder> _eventPlayers = new HashMap<>();
 	
 	/**
-	 * Obetenemos la lista completa de todos los players dentro de un evento.<br>
+	 * We obtain the full list of all players within an event.<br>
 	 * @return Collection<PlayerHolder>
 	 */
 	public Collection<PlayerHolder> getAllEventPlayers()
@@ -231,7 +232,7 @@ public abstract class AbstractEvent
 	}
 	
 	/**
-	 * Agregamos todos los personajes registrado a nuestra lista de personajes dentro del evento
+	 * We add all the characters registered to our list of characters in the event.
 	 */
 	private void createEventPlayers()
 	{
@@ -240,13 +241,13 @@ public abstract class AbstractEvent
 			_eventPlayers.put(player.getObjectId(), new PlayerHolder(player));
 		}
 		
-		// Limpiamos la lista, ya no la necesitaremos.
+		// We clean the list, no longer we need it.
 		EventEngineManager.clearRegisteredPlayers();
 	}
 	
 	/**
-	 * Verificamos si el playable esta participando de algun evento. En el caso de ser un summon, verifica que el dueño participe<br>
-	 * En el caso de no participar de un evento se retorna <u>false</u>
+	 * Check if the playable is participating in any event. In the case of a summon, verify that the owner participates <br>
+	 * For not participate in an event is returned <u> false </ u>
 	 * @param player
 	 * @return boolean
 	 */
@@ -254,7 +255,7 @@ public abstract class AbstractEvent
 	{
 		if (playable.isPlayer())
 		{
-			return isPlayerInEvent((L2PcInstance) playable);
+			return _eventPlayers.containsKey(playable.getObjectId());
 		}
 		
 		if (playable.isSummon())
@@ -263,17 +264,6 @@ public abstract class AbstractEvent
 		}
 		
 		return false;
-	}
-	
-	/**
-	 * Verificamos si un player esta participando de algun evento.<br>
-	 * En el caso de no participar de un evento se retorna <u>false</u>
-	 * @param player
-	 * @return boolean
-	 */
-	public boolean isPlayerInEvent(L2PcInstance player)
-	{
-		return _eventPlayers.containsKey(player.getObjectId());
 	}
 	
 	/**
@@ -299,7 +289,6 @@ public abstract class AbstractEvent
 	}
 	
 	// LISTENERS ------------------------------------------------------------------------------------ //
-	// Obs -> solo definiremos aqui algunas pequeñas acciones generales.
 	
 	/**
 	 * @param player
@@ -307,7 +296,7 @@ public abstract class AbstractEvent
 	 */
 	public void listenerOnInteract(L2PcInstance player, L2Npc target)
 	{
-		if (!isPlayerInEvent(player) && !isNpcInEvent(target))
+		if (!isPlayableInEvent(player) && !isNpcInEvent(target))
 		{
 			return;
 		}
@@ -327,6 +316,11 @@ public abstract class AbstractEvent
 	 */
 	public void listenerOnKill(L2Playable player, L2Character target)
 	{
+		if (!isPlayableInEvent(player))
+		{
+			return;
+		}
+		
 		onKill(getEventPlayer(player), target);
 	}
 	
@@ -341,6 +335,11 @@ public abstract class AbstractEvent
 	 */
 	public void listenerOnDeath(L2PcInstance player)
 	{
+		if (!isPlayableInEvent(player))
+		{
+			return;
+		}
+		
 		onDeath(getEventPlayer(player));
 	}
 	
@@ -351,6 +350,11 @@ public abstract class AbstractEvent
 	
 	public boolean listenerOnAttack(L2Playable playable, L2Character target)
 	{
+		if (!isPlayableInEvent(playable))
+		{
+			return false;
+		}
+		
 		// Obtenemos el player en cuestion dentro de nuestro evento
 		PlayerHolder activePlayer = getEventPlayer(playable);
 		
@@ -385,12 +389,17 @@ public abstract class AbstractEvent
 	public abstract boolean onAttack(PlayerHolder player, L2Character target);
 	
 	/**
-	 * @param player -> personaje o summon
+	 * @param playable -> personaje o summon
 	 * @param target -> puede ser null
 	 * @return true -> solo en el caso de que no queremos de una habilidad no continue su progreso normal.
 	 */
-	public boolean listenerOnUseSkill(L2Playable player, L2Character target, Skill skill)
+	public boolean listenerOnUseSkill(L2Playable playable, L2Character target, Skill skill)
 	{
+		if (!isPlayableInEvent(playable))
+		{
+			return false;
+		}
+		
 		// Si el personaje no tiene target terminar el listener.
 		// XXX quizas en algun evento pueda ser requerido el uso de habilidades sin necesidad de target....revisar.
 		if (target == null)
@@ -399,13 +408,13 @@ public abstract class AbstractEvent
 		}
 		
 		// Si el personaje esta usando una habilidad sobre si mismo terminar el listener.
-		if (player.equals(target))
+		if (playable.equals(target))
 		{
 			return false;
 		}
 		
 		// Obtenemos el player en cuestion dentro de nuestro evento.
-		PlayerHolder activePlayer = getEventPlayer(player);
+		PlayerHolder activePlayer = getEventPlayer(playable);
 		
 		// CHECK FRIENDLY_FIRE ----------------------------------------
 		if (ConfigData.FRIENDLY_FIRE)
