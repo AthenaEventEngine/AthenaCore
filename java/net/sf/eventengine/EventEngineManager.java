@@ -77,16 +77,14 @@ public class EventEngineManager
 			LOG.info("EventEngineManager: Configs cargados con exito");
 			EventLoader.load();
 			// Multi-Language System
-			MessageData.init();
+			MessageData.load();
 			LOG.info("EventEngineManager: Multi-Language System cargado.");
 			// Cargamos los AI
 			NpcManager.class.newInstance();
 			LOG.info("EventEngineManager: AI's cargados con exito");
 			// lanzamos el task principal
-			_time = ConfigData.EVENT_TASK * 60;
-			_state = EventEngineState.WAITING;
+			_time = 0;
 			ThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(new EventEngineTask(), 10 * 1000, 1000);
-			// inicializamos el tiempo para los eventos en minutos
 		}
 		catch (Exception e)
 		{
@@ -355,8 +353,9 @@ public class EventEngineManager
 	 */
 	public static void listenerOnLogin(L2PcInstance player)
 	{
-		player.sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", MessageData.getTag() + MessageData.getMsg("event_login_participate")));
-		player.sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", MessageData.getTag() + MessageData.getMsg("event_login_vote")));
+		// TODO WTF para q quiere el getTag de nuevo?
+		player.sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", MessageData.getTag(player) + MessageData.getMsgByLang(player, "event_login_participate")));
+		player.sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", MessageData.getTag(player) + MessageData.getMsgByLang(player, "event_login_vote")));
 	}
 	
 	/**
