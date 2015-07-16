@@ -74,7 +74,6 @@ public final class MessageData
 			}
 			
 			LOG.info(MessageData.class.getSimpleName() + ": Loaded " + LANGUAGES.size() + " languages.");
-			
 		}
 		catch (Exception e)
 		{
