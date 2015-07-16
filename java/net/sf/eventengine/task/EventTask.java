@@ -19,7 +19,6 @@
 package net.sf.eventengine.task;
 
 import net.sf.eventengine.EventEngineManager;
-import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.EventEngineState;
 import net.sf.eventengine.enums.EventState;
 import net.sf.eventengine.holder.PlayerHolder;
@@ -47,7 +46,7 @@ public class EventTask implements Runnable
 		{
 			case 1:
 				// Anunciamos a los players q pronto seran teletransportados
-				EventUtil.announceToAllPlayersInEvent(Say2.CRITICAL_ANNOUNCE, MessageData.getMsg("teleport_seconds"));
+				EventUtil.announceToAllPlayersInEvent(Say2.CRITICAL_ANNOUNCE, "teleport_seconds");
 				break;
 			
 			case 2:
@@ -62,7 +61,7 @@ public class EventTask implements Runnable
 				// Enviamos un mensaje especial para los participantes
 				for (PlayerHolder player : EventEngineManager.getCurrentEvent().getAllEventPlayers())
 				{
-					EventUtil.sendEventSpecialMessage(player, 2, MessageData.getMsg("status_started"));
+					EventUtil.sendEventSpecialMessage(player, 2, "status_started");
 				}
 				break;
 			
@@ -76,7 +75,7 @@ public class EventTask implements Runnable
 				// Enviamos un mensaje especial para los participantes
 				for (PlayerHolder player : EventEngineManager.getCurrentEvent().getAllEventPlayers())
 				{
-					EventUtil.sendEventSpecialMessage(player, 1, MessageData.getMsg("status_finished"));
+					EventUtil.sendEventSpecialMessage(player, 1, "status_finished");
 				}
 				break;
 			

@@ -21,6 +21,7 @@ package net.sf.eventengine.util;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.sf.eventengine.EventEngineManager;
 import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.holder.PlayerHolder;
 
@@ -37,7 +38,6 @@ import com.l2jserver.gameserver.network.serverpackets.ExShowScreenMessage;
 public class EventUtil
 {
 	private static final Set<Integer> TIME_LEFT_TO_ANNOUNCE = new HashSet<>();
-	static
 	{
 		TIME_LEFT_TO_ANNOUNCE.add(1800);
 		TIME_LEFT_TO_ANNOUNCE.add(1200);
@@ -66,14 +66,16 @@ public class EventUtil
 	{
 		if (TIME_LEFT_TO_ANNOUNCE.contains(time))
 		{
+			text.replace("%event%", EventEngineManager.getNextEvent().getEventName());
+			
 			String announce;
 			if (time > 60)
 			{
-				announce = text + " " + (time / 60) + " " + MessageData.getMsg("time_minutes");
+				announce = text + " " + (time / 60) + " " + "time_minutes";
 			}
 			else
 			{
-				announce = text + " " + time + " " + MessageData.getMsg("time_seconds");
+				announce = text + " " + time + " " + "time_seconds";
 			}
 			
 			if (toAllPlayers)
@@ -94,7 +96,7 @@ public class EventUtil
 	 */
 	public static void sendEventMessage(PlayerHolder player, String text)
 	{
-		player.getPcInstance().sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", MessageData.getTag() + text));
+		player.getPcInstance().sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", MessageData.getTag(player.getPcInstance()) + text));
 	}
 	
 	/**
@@ -137,7 +139,7 @@ public class EventUtil
 	{
 		for (L2PcInstance player : L2World.getInstance().getPlayers())
 		{
-			player.sendPacket(new CreatureSay(0, say2, "", MessageData.getTag() + text));
+			player.sendPacket(new CreatureSay(0, say2, "", MessageData.getTag(player) + MessageData.getMsgByLang(player, text)));
 		}
 	}
 	
@@ -150,7 +152,22 @@ public class EventUtil
 	{
 		for (L2PcInstance player : L2World.getInstance().getPlayers())
 		{
-			player.sendPacket(new CreatureSay(0, say2, "", MessageData.getTag() + text));
+			player.sendPacket(new CreatureSay(0, say2, "", MessageData.getTag(player) + MessageData.getMsgByLang(player, text)));
+		}
+	}
+	
+	/**
+	 * Send a message to all online players
+	 * @param say2
+	 * @param text
+	 * @param replace
+	 * @param textReplace
+	 */
+	public static void announceToAllPlayers(int say2, String text, String replace, String textReplace)
+	{
+		for (L2PcInstance player : L2World.getInstance().getPlayers())
+		{
+			player.sendPacket(new CreatureSay(0, say2, "", MessageData.getTag(player) + MessageData.getMsgByLang(player, text).replace(replace, textReplace)));
 		}
 	}
 }
