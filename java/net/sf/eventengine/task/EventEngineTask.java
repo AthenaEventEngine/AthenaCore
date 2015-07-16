@@ -146,19 +146,18 @@ public class EventEngineTask implements Runnable
 				break;
 			}
 			case RUNNING_EVENT:
+			{
 				// Nothing
 				break;
+			}
 			case EVENT_ENDED:
-				// Cleanup
-				EventEngineManager.setCurrentEvent(null);
-				EventEngineManager.clearVotes();
-				EventEngineManager.getInstancesWorlds().clear();
-				
+			{
 				EventEngineManager.setTime(ConfigData.EVENT_TASK * 60);
 				EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "event_end");
 				EventUtil.announceTimeLeft(Say2.CRITICAL_ANNOUNCE, "event_next", Say2.CRITICAL_ANNOUNCE, true);
 				EventEngineManager.setEventEngineState(EventEngineState.WAITING);
 				break;
+			}
 		}
 		
 		if (state != EventEngineState.RUNNING_EVENT)
