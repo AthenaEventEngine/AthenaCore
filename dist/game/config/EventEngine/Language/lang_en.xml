@@ -60,6 +60,7 @@
 	<message id="text_rewards" text="Rewards" />
 	<message id="text_configuration" text="Configurations" />
 	<message id="text_time_event" text="Time Event" />
+	<message id="revive_in" text="You will be revived within %time% seconds." />
 	
 	<!-- HTML: Lang Setting -->
 	<message id="lang_menu_title" text="Menu Setting"/>

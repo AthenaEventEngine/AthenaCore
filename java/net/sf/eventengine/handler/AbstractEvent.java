@@ -26,6 +26,7 @@ import java.util.logging.Logger;
 
 import net.sf.eventengine.EventEngineManager;
 import net.sf.eventengine.datatables.ConfigData;
+import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.EventState;
 import net.sf.eventengine.enums.EventType;
 import net.sf.eventengine.enums.PlayerClassType;
@@ -590,8 +591,7 @@ public abstract class AbstractEvent
 	{
 		try
 		{
-			// TODO falta agregar este mensaje al sistema de "lang"
-			EventUtil.sendEventMessage(player, "En " + time + " segundos seras revivido");
+			EventUtil.sendEventMessage(player, MessageData.getMsgByLang(player.getPcInstance(), "revive_in").replace("%time%", time + ""));
 			
 			ThreadPoolManager.getInstance().scheduleGeneral(new Runnable()
 			{
