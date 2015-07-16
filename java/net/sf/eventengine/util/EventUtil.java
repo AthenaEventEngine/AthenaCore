@@ -18,7 +18,9 @@
  */
 package net.sf.eventengine.util;
 
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import net.sf.eventengine.EventEngineManager;
@@ -38,6 +40,7 @@ import com.l2jserver.gameserver.network.serverpackets.ExShowScreenMessage;
 public class EventUtil
 {
 	private static final Set<Integer> TIME_LEFT_TO_ANNOUNCE = new HashSet<>();
+	static
 	{
 		TIME_LEFT_TO_ANNOUNCE.add(1800);
 		TIME_LEFT_TO_ANNOUNCE.add(1200);
@@ -58,35 +61,60 @@ public class EventUtil
 	/**
 	 * Do an announce with formated time left
 	 * @param time
-	 * @param text
+	 * @param textId
 	 * @param say2
+	 * @param mapToReplace : for example, to change %event% with event name
 	 * @param toAllPlayers
 	 */
-	public static void announceTimeLeft(int time, String text, int say2, boolean toAllPlayers)
+	public static void announceTimeLeft(int time, String textId, int say2, Map<String, String> mapToReplace, boolean toAllPlayers)
 	{
 		if (TIME_LEFT_TO_ANNOUNCE.contains(time))
 		{
-			text.replace("%event%", EventEngineManager.getNextEvent().getEventName());
-			
 			String announce;
-			if (time > 60)
-			{
-				announce = text + " " + (time / 60) + " " + "time_minutes";
-			}
-			else
-			{
-				announce = text + " " + time + " " + "time_seconds";
-			}
-			
+			String timeLeft;
+			Collection<L2PcInstance> listPlayers;
 			if (toAllPlayers)
 			{
-				announceToAllPlayers(say2, announce);
+				listPlayers = L2World.getInstance().getPlayers();
 			}
 			else
 			{
-				announceToAllPlayersInEvent(say2, announce);
+				listPlayers = EventEngineManager.getAllRegisteredPlayers();
+			}
+			
+			for (L2PcInstance player : listPlayers)
+			{
+				if (time > 60)
+				{
+					timeLeft = (time / 60) + " " + MessageData.getMsgByLang(player, "time_minutes", false);
+				}
+				else
+				{
+					timeLeft = time + " " + MessageData.getMsgByLang(player, "time_seconds", false);
+				}
+				
+				announce = MessageData.getMsgByLang(player, textId, true);
+				
+				// Replace %time% with timeLeft
+				announce = announce.replace("%time%", timeLeft);
+				
+				// Replace other holders
+				if (mapToReplace != null)
+				{
+					for (String key : mapToReplace.keySet())
+					{
+						announce = announce.replace(key, mapToReplace.get(key));
+					}
+				}
+				
+				player.sendPacket(new CreatureSay(0, say2, "", announce));
 			}
 		}
+	}
+	
+	public static void announceTimeLeft(int time, String textId, int say2, boolean toAllPlayers)
+	{
+		announceTimeLeft(time, textId, say2, null, toAllPlayers);
 	}
 	
 	/**
@@ -96,7 +124,7 @@ public class EventUtil
 	 */
 	public static void sendEventMessage(PlayerHolder player, String text)
 	{
-		player.getPcInstance().sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", MessageData.getTag(player.getPcInstance()) + text));
+		player.getPcInstance().sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", text));
 	}
 	
 	/**
@@ -137,9 +165,9 @@ public class EventUtil
 	 */
 	public static void announceToAllPlayersInEvent(int say2, String text)
 	{
-		for (L2PcInstance player : L2World.getInstance().getPlayers())
+		for (L2PcInstance player : EventEngineManager.getAllRegisteredPlayers())
 		{
-			player.sendPacket(new CreatureSay(0, say2, "", MessageData.getTag(player) + MessageData.getMsgByLang(player, text)));
+			player.sendPacket(new CreatureSay(0, say2, "", MessageData.getMsgByLang(player, text, true)));
 		}
 	}
 	
@@ -152,7 +180,7 @@ public class EventUtil
 	{
 		for (L2PcInstance player : L2World.getInstance().getPlayers())
 		{
-			player.sendPacket(new CreatureSay(0, say2, "", MessageData.getTag(player) + MessageData.getMsgByLang(player, text)));
+			player.sendPacket(new CreatureSay(0, say2, "", MessageData.getMsgByLang(player, text, true)));
 		}
 	}
 	
@@ -167,7 +195,7 @@ public class EventUtil
 	{
 		for (L2PcInstance player : L2World.getInstance().getPlayers())
 		{
-			player.sendPacket(new CreatureSay(0, say2, "", MessageData.getTag(player) + MessageData.getMsgByLang(player, text).replace(replace, textReplace)));
+			player.sendPacket(new CreatureSay(0, say2, "", MessageData.getMsgByLang(player, text, true).replace(replace, textReplace)));
 		}
 	}
 }

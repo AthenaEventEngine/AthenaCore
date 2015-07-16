@@ -18,6 +18,9 @@
  */
 package net.sf.eventengine.task;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import net.sf.eventengine.EventEngineManager;
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.enums.EventEngineState;
@@ -93,11 +96,13 @@ public class EventEngineTask implements Runnable
 			{
 				if (EventEngineManager.getTime() > 0)
 				{
-					EventUtil.announceTimeLeft(EventEngineManager.getTime(), "event_register_state", Say2.CRITICAL_ANNOUNCE, true);
+					Map<String, String> holdersText = new HashMap<>();
+					holdersText.put("%event%", EventEngineManager.getNextEvent().toString());
+					EventUtil.announceTimeLeft(EventEngineManager.getTime(), "event_register_state", Say2.CRITICAL_ANNOUNCE, holdersText, true);
 				}
 				else
 				{
-					if (EventEngineManager.isEmptyRegisteredPlayers()) // TODO: handle min register players
+					if (EventEngineManager.getAllRegisteredPlayers().size() < ConfigData.MIN_PLAYERS_IN_EVENT)
 					{
 						EventEngineManager.setTime(ConfigData.EVENT_TASK * 60);
 						EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "event_aborted");
@@ -146,19 +151,18 @@ public class EventEngineTask implements Runnable
 				break;
 			}
 			case RUNNING_EVENT:
+			{
 				// Nothing
 				break;
+			}
 			case EVENT_ENDED:
-				// Cleanup
-				EventEngineManager.setCurrentEvent(null);
-				EventEngineManager.clearVotes();
-				EventEngineManager.getInstancesWorlds().clear();
-				
+			{
 				EventEngineManager.setTime(ConfigData.EVENT_TASK * 60);
 				EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "event_end");
-				EventUtil.announceTimeLeft(Say2.CRITICAL_ANNOUNCE, "event_next", Say2.CRITICAL_ANNOUNCE, true);
+				EventUtil.announceTimeLeft(EventEngineManager.getTime(), "event_next", Say2.CRITICAL_ANNOUNCE, true);
 				EventEngineManager.setEventEngineState(EventEngineState.WAITING);
 				break;
+			}
 		}
 		
 		if (state != EventEngineState.RUNNING_EVENT)

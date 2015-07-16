@@ -24,11 +24,11 @@
 	<message id="event_start_time" text="Event starts in"/>
 	<message id="event_voting_started" text="The voting time has started" />
 	<message id="event_register_started" text="The register time to %event% has started" />
-	<message id="event_voting_state" text="The voting time will end in" />
-	<message id="event_register_state" text="The register time to %event% will end in" />
+	<message id="event_voting_state" text="The voting time will end in %time%" />
+	<message id="event_register_state" text="The register time to %event% will end in %time%" />
 	<message id="event_voting_ended" text="The voting time has ended" />
 	<message id="event_register_ended" text="The register time has ended." />
-	<message id="event_next" text="The next event will start in" />
+	<message id="event_next" text="The next event will start in %time%" />
 	
 	<!-- Register -->
 	<message id="registering_highLevel" text="Your level is higher than the max allowed level." />
@@ -37,6 +37,7 @@
 	<message id="registering_already_registered" text="You are already registered." />
 	<message id="unregistering_unregistered" text="You have been unregistered." />
 	<message id="unregistering_notRegistered" text="You are not registered!" />
+	<message id="registering_maxPlayers" text="Sorry, since the maximum amount of players registered." />
 	
 	<!-- Events Info -->
 	<message id="event_ava_name" text="All vs All" />
@@ -60,6 +61,7 @@
 	<message id="text_rewards" text="Rewards" />
 	<message id="text_configuration" text="Configurations" />
 	<message id="text_time_event" text="Time Event" />
+	<message id="revive_in" text="You will be revived within %time% seconds." />
 	
 	<!-- HTML: Lang Setting -->
 	<message id="lang_menu_title" text="Menu Setting"/>
