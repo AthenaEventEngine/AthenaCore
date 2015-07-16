@@ -61,9 +61,6 @@ public abstract class AbstractEvent
 {
 	private static final Logger LOG = Logger.getLogger(AbstractEvent.class.getName());
 	
-	/**
-	 * Constructor.
-	 */
 	public AbstractEvent()
 	{
 		// We add every player registered for the event.
@@ -80,7 +77,7 @@ public abstract class AbstractEvent
 	
 	// NPC IN EVENT --------------------------------------------------------------------------------- //
 	
-	// List of npc in the event.
+	// List of NPC in the event.
 	private final Map<Integer, L2Npc> _eventNpc = new HashMap<>();
 	
 	/**
@@ -103,7 +100,7 @@ public abstract class AbstractEvent
 	 */
 	public L2Npc addEventNpc(int npcId, int x, int y, int z, int heading, boolean randomOffset, int instanceId)
 	{
-		// Generamos el spawn de nuestro npc -> sacado de la clase Quest
+		// We generate our npc spawn
 		L2Npc npc = null;
 		try
 		{
@@ -267,9 +264,9 @@ public abstract class AbstractEvent
 	}
 	
 	/**
-	 * Verificamos si un player esta participando de algun evento.<br>
-	 * En el caso de tratar de un summon verificamos al dueño.<br>
-	 * En el caso de no perticipar de un evento se retorna <u>null</u>
+	 * Check if a player is participating in any event. <br>
+	 * In the case of dealing with a summon you verify the owner. <br>
+	 * For an event not perticipar returns <u> null </ u>
 	 * @param character
 	 * @return PlayerHolder
 	 */
@@ -311,17 +308,17 @@ public abstract class AbstractEvent
 	public abstract void onInteract(PlayerHolder player, L2Npc npc);
 	
 	/**
-	 * @param player -> personaje o summon
-	 * @param target -> No puede ser null
+	 * @param playable
+	 * @param target
 	 */
-	public void listenerOnKill(L2Playable player, L2Character target)
+	public void listenerOnKill(L2Playable playable, L2Character target)
 	{
-		if (!isPlayableInEvent(player))
+		if (!isPlayableInEvent(playable))
 		{
 			return;
 		}
 		
-		onKill(getEventPlayer(player), target);
+		onKill(getEventPlayer(playable), target);
 	}
 	
 	/**
@@ -355,21 +352,21 @@ public abstract class AbstractEvent
 			return false;
 		}
 		
-		// Obtenemos el player en cuestion dentro de nuestro evento
+		// We get the player involved in our event.
 		PlayerHolder activePlayer = getEventPlayer(playable);
 		
 		// CHECK FRIENDLY_FIRE ----------------------------------------
 		if (ConfigData.FRIENDLY_FIRE)
 		{
-			// Si nuestro target es de tipo L2Playable y esta dentro del evento hacemos el control.
+			// If our target is L2Playable type and we do this in the event control.
 			PlayerHolder activeTarget = getEventPlayer(target);
 			
 			if (activeTarget != null)
 			{
-				// Los eventos estilo AllVsAll no tienen un team definido los players.
+				// AllVsAll style events do not have a defined team players.
 				if ((activePlayer.getPcInstance().getTeam() == Team.NONE) || (activeTarget.getPcInstance().getTeam() == Team.NONE))
 				{
-					// Sin accion, dejamos q se ejecute el listener.
+					// Nothing
 				}
 				else if (activePlayer.getPcInstance().getTeam() == activeTarget.getPcInstance().getTeam())
 				{
@@ -384,14 +381,14 @@ public abstract class AbstractEvent
 	/**
 	 * @param player
 	 * @param target
-	 * @return true -> solo en el caso de que no queremos q un ataque continue su progeso normal.
+	 * @return true -> only in the event that an attack not want q continue its normal progeso.
 	 */
 	public abstract boolean onAttack(PlayerHolder player, L2Character target);
 	
 	/**
 	 * @param playable -> personaje o summon
 	 * @param target -> puede ser null
-	 * @return true -> solo en el caso de que no queremos de una habilidad no continue su progreso normal.
+	 * @return true -> only in the event that an skill not want q continue its normal progeso.
 	 */
 	public boolean listenerOnUseSkill(L2Playable playable, L2Character target, Skill skill)
 	{
@@ -400,34 +397,34 @@ public abstract class AbstractEvent
 			return false;
 		}
 		
-		// Si el personaje no tiene target terminar el listener.
+		// If the character has no target to finish the listener.
 		// XXX quizas en algun evento pueda ser requerido el uso de habilidades sin necesidad de target....revisar.
 		if (target == null)
 		{
 			return false;
 		}
 		
-		// Si el personaje esta usando una habilidad sobre si mismo terminar el listener.
+		// If the character is using a skill on itself end the listener.
 		if (playable.equals(target))
 		{
 			return false;
 		}
 		
-		// Obtenemos el player en cuestion dentro de nuestro evento.
+		// We get the player involved in our event.
 		PlayerHolder activePlayer = getEventPlayer(playable);
 		
 		// CHECK FRIENDLY_FIRE ----------------------------------------
 		if (ConfigData.FRIENDLY_FIRE)
 		{
-			// Si nuestro target es de tipo L2Playable y esta dentro del evento hacemos el control.
+			// If our target is L2Playable type and we do this in the event control.
 			PlayerHolder activeTarget = getEventPlayer(target);
 			
 			if ((activeTarget != null) && skill.isDamage())
 			{
-				// Los eventos estilo AllVsAll no tienen un team definido los players.
+				// AllVsAll style events do not have a defined team players.
 				if ((activePlayer.getPcInstance().getTeam() == Team.NONE) || (activeTarget.getPcInstance().getTeam() == Team.NONE))
 				{
-					// Sin accion, dejamos q se ejecute el listener.
+					// Nothing
 				}
 				else if (activePlayer.getPcInstance().getTeam() == activeTarget.getPcInstance().getTeam())
 				{
@@ -444,14 +441,14 @@ public abstract class AbstractEvent
 	 * @param player
 	 * @param target
 	 * @param skill
-	 * @return true -> solo en el caso de no queremos de una habilidad no continue su progrso normal.
+	 * @return true -> only in the event that an skill not want q continue its normal progeso.
 	 */
 	public abstract boolean onUseSkill(PlayerHolder player, L2Character target, Skill skill);
 	
-	// METODOS VARIOS -------------------------------------------------------------------------------- //
+	// VARIOUS METHODS. -------------------------------------------------------------------------------- //
 	
 	/**
-	 * Teletransportamos a los players de cada team a su respectivos puntos de inicio.<br>
+	 * Teleport to players of each team to their respective starting points<br>
 	 */
 	public void teleportAllPlayers()
 	{
@@ -462,53 +459,52 @@ public abstract class AbstractEvent
 	}
 	
 	/**
-	 * Teletransportamos a un player especifico a su localizacion inicial dentro del evento.
+	 * Teleport to a specific player to its original location within the event.
 	 * @param player
 	 */
 	public void teleportPlayer(PlayerHolder player)
 	{
-		// obtenemos el spawn definido al inicia de cada evento
+		// get the spawn defined at the start of each event
 		Location loc = getTeamSpawn(player.getPcInstance().getTeam());
-		// teletransportamos al personaje
+		// teleport to character
 		player.getPcInstance().teleToLocation(loc.getX(), loc.getY(), loc.getZ(), loc.getHeading(), player.getDinamicInstanceId());
 		
 	}
 	
 	/**
-	 * Preparamos a los players para iniciar el eventos<br>
+	 * We prepare players to start the event<br>
 	 * <ul>
-	 * <b>Acciones: </b>
+	 * <b>Actions: </b>
 	 * </ul>
-	 * <li>Cancelamos cualquier ataque en progreso</li><br>
-	 * <li>Cancelamos cualquier habilidad en progreso</li><br>
-	 * <li>Paralizamos al player</li><br>
-	 * <li>Cancelamos todos los effectos de los personajes</li><br>
-	 * <li>Cancelamos todos los effectos de los pets en caso de existir</li><br>
-	 * <li>Cancelamos todos los cubics</li><br>
-	 * <li>Cancelamos todos los Pets/Summons</li><br>
+	 * <li>Cancel any attack in progress</li><br>
+	 * <li>Cancel any skill in progress</li><br>
+	 * <li>We paralyzed the player</li><br>
+	 * <li>Cancel all character effects</li><br>
+	 * <li>Cancel summon pet</li><br>
+	 * <li>Cancel all character cubics</li><br>
 	 */
 	public void prepareToStart()
 	{
 		for (PlayerHolder player : getAllEventPlayers())
 		{
-			// cancelamos target
+			// Cancel target
 			player.getPcInstance().setTarget(null);
-			// cancelos cualquier ataque en progrso.
+			// Cancel any attack in progress
 			player.getPcInstance().abortAttack();
 			player.getPcInstance().breakAttack();
-			// cancelamos cualquier cast en progreso.
+			// Cancel any skill in progress
 			player.getPcInstance().abortCast();
 			player.getPcInstance().breakCast();
-			// paramos todos los effectos del evento.
+			// Cancel all character effects
 			player.getPcInstance().stopAllEffects();
 			
 			if (player.getPcInstance().getSummon() != null)
 			{
-				player.getPcInstance().getSummon().stopAllEffects();// paramos todos los effectos del pet
-				player.getPcInstance().getSummon().unSummon(player.getPcInstance());// cancelamos el summon del pet
+				player.getPcInstance().getSummon().stopAllEffects();
+				player.getPcInstance().getSummon().unSummon(player.getPcInstance());
 			}
 			
-			// cancelamos todos los cubics
+			// Cancel all character cubics
 			for (L2CubicInstance cubic : player.getPcInstance().getCubics().values())
 			{
 				cubic.cancelDisappear();
@@ -517,52 +513,53 @@ public abstract class AbstractEvent
 	}
 	
 	/**
-	 * Preparamos al player para la pelea.<br>
+	 * We prepare the player for the fight.<br>
 	 * <ul>
-	 * <b>Acciones: </b>
+	 * <b>Actions: </b>
 	 * </ul>
-	 * <li>Cancelamos el paralizis realizado en -> <u>prepareToTeleport()</u></li><br>
-	 * <li>Entregamos los buffs definidos en los configs</li>
+	 * <li>We canceled the paralysis made in -> <u>prepareToTeleport()</u></li><br>
+	 * <li>We deliver buffs defined in configs</li>
 	 */
 	public void prepareToFight()
 	{
 		for (PlayerHolder player : getAllEventPlayers())
 		{
-			giveBuffPlayer(player.getPcInstance()); // entregamos buffs
+			giveBuffPlayer(player.getPcInstance());
 		}
 	}
 	
 	/**
-	 * Preparamos al player para el fin del evento<br>
+	 * We prepare the player for the end of the event<br>
 	 * <ul>
-	 * <b>Acciones: </b>
+	 * <b>Actions: </b>
 	 * </ul>
-	 * <li>Cancelamos cualquier ataque y habilidad en progreso.</li><br>
-	 * <li>Cancelamos todos los effectos propios del evento.</li><br>
-	 * <li>Recuperamos el titulo y su color original.</li><br>
-	 * <li>Cancelamos el Team</li><br>
-	 * <li>Lo sacamos del mundo q creamos para el evento</li>
+	 * <li>Cancel any attack in progress</li><br>
+	 * <li>Cancel any skill in progress</li><br>
+	 * <li>Cancel all effects</li><br>
+	 * <li>Recover the title and color of the participants.</li><br>
+	 * <li>We canceled the Team</li><br>
+	 * <li>It out of the world we created for the event</li>
 	 */
 	public void prepareToEnd()
 	{
 		for (PlayerHolder player : getAllEventPlayers())
 		{
-			// cancelamos target
+			// Cancel target
 			player.getPcInstance().setTarget(null);
-			// cancelos cualquier ataque en progrso.
+			// Cancel any attack in progress
 			player.getPcInstance().abortAttack();
 			player.getPcInstance().breakAttack();
-			// cancelamos cualquier cast en progreso.
+			// Cancel any skill in progress<
 			player.getPcInstance().abortCast();
 			player.getPcInstance().breakCast();
-			// paramos todos los effectos del evento.
+			// Cancel all effects
 			player.getPcInstance().stopAllEffects();
-			// Recuperamos el titulo y su color de los participantes.
+			// Recover the title and color of the participants.
 			player.recoverOriginalColorTitle();
 			player.recoverOriginalTitle();
-			// Le quitamos el team al personaje
+			// We canceled the Team
 			player.getPcInstance().setTeam(Team.NONE);
-			// Lo sacamos del mundo creado para el evento
+			// It out of the world created for the event
 			for (InstanceWorld world : EventEngineManager.getInstancesWorlds())
 			{
 				if (player.getDinamicInstanceId() == world.getInstanceId())
@@ -570,31 +567,32 @@ public abstract class AbstractEvent
 					world.removeAllowed(player.getPcInstance().getObjectId());
 				}
 			}
-			// Enviamos al personaje a su instancia real y a giran
+			// FIXME We send a character to their actual instance and turn
 			player.getPcInstance().teleToLocation(83437, 148634, -3403, 0, 0);// GIRAN CENTER
 		}
 	}
 	
 	/**
-	 * Generamos un task para revivir a un personaje.<br>
+	 * We generated a task to revive a character.<br>
 	 * <ul>
-	 * <b>Acciones: </b>
+	 * <b>Actions: </b>
 	 * </ul>
-	 * <li>Generamos una pausa antes de ejecutar accion alguna.</li><br>
-	 * <li>Revivimos al personaje.</li><br>
-	 * <li>Le entregamos los buff dependiendo del evento en el q esta.</li><br>
-	 * <li>Teletransportamos al personaje dependiendo del evento en el q esta.</li><br>
-	 * <li>Lo hacemos invulnerable por 5 seg y no le permitimos moverse.</li><br>
-	 * <li>Cancelamos el invul y le permitimos moverse</li><br>
-	 * @param player -> personaje a revivir
-	 * @param time -> tiempo antes de revivir a un personaje
+	 * <li>Generate a pause before executing any action.</li><br>
+	 * <li>Revive the character.</li><br>
+	 * <li>We give you the buff depending on the event in which this.</li><br>
+	 * <li>Teleport the character depending on the event in this.</li><br>
+	 * <li>We do invulnerable for 5 seconds and not allow it to move.</li><br>
+	 * <li>We canceled the invul and let you move</li><br>
+	 * @param player
+	 * @param time
 	 */
 	public void giveResurrectPlayer(final PlayerHolder player, int time)
 	{
 		try
 		{
+			// TODO falta agregar este mensaje al sistema de "lang"
 			EventUtil.sendEventMessage(player, "En " + time + " segundos seras revivido");
-			// Cuenta regresiva
+			
 			ThreadPoolManager.getInstance().scheduleGeneral(new Runnable()
 			{
 				@Override
@@ -602,13 +600,13 @@ public abstract class AbstractEvent
 				{
 					DecayTaskManager.getInstance().cancel(player.getPcInstance());
 					player.getPcInstance().doRevive();
-					// lo curamos por completo
+					// heal to max
 					player.getPcInstance().setCurrentCp(player.getPcInstance().getMaxCp());
 					player.getPcInstance().setCurrentHp(player.getPcInstance().getMaxHp());
 					player.getPcInstance().setCurrentMp(player.getPcInstance().getMaxMp());
-					// lo teletransportamos
+					// teleport
 					EventEngineManager.getCurrentEvent().teleportPlayer(player);
-					// le entregamos los buffs
+					// buff
 					EventEngineManager.getCurrentEvent().giveBuffPlayer(player.getPcInstance());
 				}
 				
@@ -622,7 +620,7 @@ public abstract class AbstractEvent
 	}
 	
 	/**
-	 * Le damos los buff a un player seteados dentro de los configs
+	 * We give you the buff to a player seteados within configs
 	 * @param player
 	 */
 	public void giveBuffPlayer(L2PcInstance player)
@@ -644,8 +642,8 @@ public abstract class AbstractEvent
 	}
 	
 	/**
-	 * Entrgamos los items definidos ya en alguna lista<br>
-	 * Creado con el fin de entregar los rewards dentro de los eventos
+	 * We deliver the items in a list defined as<br>
+	 * Created in order to deliver rewards in the events
 	 * @param ph
 	 * @param items
 	 */
@@ -658,21 +656,21 @@ public abstract class AbstractEvent
 	}
 	
 	/**
-	 * Controlamos los tiempo de los eventos<br>
+	 * We control the timing of events<br>
 	 * <ul>
-	 * <b>Acciones: </b>
+	 * <b>Actions: </b>
 	 * </ul>
-	 * <li>-> step 1: Anunciamos q los participantes seran teletransportados</li><br>
-	 * <li>Esperamos 3 segs</li><br>
-	 * <li>-> step 2: Ajustamos el estado del evento -> START</li><br>
-	 * <li>Esperamos 1 seg a q se realicen acciones individuales de cada evento</li><br>
-	 * <li>-> step 3: Ajustamos el estado del evento -> FIGHT</li><br>
-	 * <li>-> step 3: Enviamos un mensaje de que ya estan listos para pelear.</li><br>
-	 * <li>Esperamos a que el evento termine</li><br>
-	 * <li>-> step 4: Ajustamos el estado del evento -> END</li><br>
-	 * <li>-> step 4: Enviamos un mensaje avisando de q termino el evento</li><br>
+	 * <li>-> step 1: We announced that participants will be teleported</li><br>
+	 * <li>Wait 3 secs</li><br>
+	 * <li>-> step 2: Adjust the status of the event -> START</li><br>
+	 * <li>We hope 1 sec aq individual actions of each event are made.</li><br>
+	 * <li>-> step 3: Adjust the status of the event -> FIGHT</li><br>
+	 * <li>-> step 3: We sent a message that they are ready to fight.</li><br>
+	 * <li>We wait until the event ends</li><br>
+	 * <li>-> step 4: Adjust the status of the event -> END</li><br>
+	 * <li>-> step 4: We sent a message warning that term event</li><br>
 	 * <li>Esperamos 1 seg</li><br>
-	 * <li>-> step 5: Le avisamos al EventEngineManager que termino el evento</li><br>
+	 * <li>-> step 5: We alerted the event ended EventEngineManager</li><br>
 	 */
 	private void controlTimeEvent()
 	{
