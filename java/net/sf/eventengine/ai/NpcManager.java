@@ -170,14 +170,13 @@ public class NpcManager extends Quest
 					{
 						player.sendMessage(MessageData.getMsgByLang(player, "registering_registered", true));
 					}
-					
-					return index(player);
 				}
 				else
 				{
 					player.sendMessage(MessageData.getMsgByLang(player, "registering_already_registered", true));
-					return index(player);
 				}
+				
+				return index(player);
 				
 			case "unregister":
 				if (EventEngineManager.isOpenRegister())
@@ -185,19 +184,18 @@ public class NpcManager extends Quest
 					if (EventEngineManager.unRegisterPlayer(player))
 					{
 						player.sendMessage(MessageData.getMsgByLang(player, "unregistering_unregistered", true));
-						return index(player);
 					}
 					else
 					{
 						player.sendMessage(MessageData.getMsgByLang(player, "unregistering_notRegistered", true));
-						return index(player);
 					}
 				}
 				else
 				{
 					player.sendMessage(MessageData.getMsgByLang(player, "event_registration_notUnRegState", true));
-					return index(player);
 				}
+				
+				return index(player);
 				
 				// Multi-Language System menu
 			case "menulang":
@@ -234,8 +232,7 @@ public class NpcManager extends Quest
 				String lang = st.nextToken();
 				MessageData.setLanguage(player, lang);
 				player.sendMessage(MessageData.getMsgByLang(player, "lang_current_successfully", false) + " " + lang);
-				index(player);
-				break;
+				return index(player);
 		}
 		
 		return null;
