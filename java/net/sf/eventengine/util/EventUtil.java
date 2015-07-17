@@ -96,7 +96,7 @@ public class EventUtil
 	 */
 	public static void sendEventMessage(PlayerHolder player, String text)
 	{
-		player.getPcInstance().sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", MessageData.getTag(player.getPcInstance()) + text));
+		player.getPcInstance().sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", text));
 	}
 	
 	/**
@@ -139,7 +139,7 @@ public class EventUtil
 	{
 		for (L2PcInstance player : L2World.getInstance().getPlayers())
 		{
-			player.sendPacket(new CreatureSay(0, say2, "", MessageData.getTag(player) + MessageData.getMsgByLang(player, text)));
+			player.sendPacket(new CreatureSay(0, say2, "", MessageData.getMsgByLang(player, text, true)));
 		}
 	}
 	
@@ -152,7 +152,7 @@ public class EventUtil
 	{
 		for (L2PcInstance player : L2World.getInstance().getPlayers())
 		{
-			player.sendPacket(new CreatureSay(0, say2, "", MessageData.getTag(player) + MessageData.getMsgByLang(player, text)));
+			player.sendPacket(new CreatureSay(0, say2, "", MessageData.getMsgByLang(player, text, true)));
 		}
 	}
 	
@@ -167,7 +167,7 @@ public class EventUtil
 	{
 		for (L2PcInstance player : L2World.getInstance().getPlayers())
 		{
-			player.sendPacket(new CreatureSay(0, say2, "", MessageData.getTag(player) + MessageData.getMsgByLang(player, text).replace(replace, textReplace)));
+			player.sendPacket(new CreatureSay(0, say2, "", MessageData.getMsgByLang(player, text, true).replace(replace, textReplace)));
 		}
 	}
 }

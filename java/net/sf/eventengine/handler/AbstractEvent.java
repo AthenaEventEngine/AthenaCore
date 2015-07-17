@@ -591,7 +591,7 @@ public abstract class AbstractEvent
 	{
 		try
 		{
-			EventUtil.sendEventMessage(player, MessageData.getMsgByLang(player.getPcInstance(), "revive_in").replace("%time%", time + ""));
+			EventUtil.sendEventMessage(player, MessageData.getMsgByLang(player.getPcInstance(), "revive_in", true).replace("%time%", time + ""));
 			
 			ThreadPoolManager.getInstance().scheduleGeneral(new Runnable()
 			{

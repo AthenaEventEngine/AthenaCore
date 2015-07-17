@@ -353,8 +353,8 @@ public class EventEngineManager
 	 */
 	public static void listenerOnLogin(L2PcInstance player)
 	{
-		player.sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", MessageData.getTag(player) + MessageData.getMsgByLang(player, "event_login_participate")));
-		player.sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", MessageData.getTag(player) + MessageData.getMsgByLang(player, "event_login_vote")));
+		player.sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", MessageData.getMsgByLang(player, "event_login_participate", true)));
+		player.sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", MessageData.getMsgByLang(player, "event_login_vote", true)));
 	}
 	
 	/**
