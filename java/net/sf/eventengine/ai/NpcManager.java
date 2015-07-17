@@ -162,6 +162,10 @@ public class NpcManager extends Quest
 					{
 						player.sendMessage(MessageData.getMsgByLang(player, "registering_highLevel", true));
 					}
+					else if (EventEngineManager.getAllRegisteredPlayers().size() >= ConfigData.MAX_PLAYERS_IN_EVENT)
+					{
+						player.sendMessage(MessageData.getMsgByLang(player, "registering_maxPlayers", true));
+					}
 					else
 					{
 						player.sendMessage(MessageData.getMsgByLang(player, "registering_registered", true));

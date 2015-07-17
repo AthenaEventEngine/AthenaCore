@@ -37,6 +37,7 @@
 	<message id="registering_already_registered" text="You are already registered." />
 	<message id="unregistering_unregistered" text="You have been unregistered." />
 	<message id="unregistering_notRegistered" text="You are not registered!" />
+	<message id="registering_maxPlayers" text="Sorry, since the maximum amount of players registered." />
 	
 	<!-- Events Info -->
 	<message id="event_ava_name" text="All vs All" />

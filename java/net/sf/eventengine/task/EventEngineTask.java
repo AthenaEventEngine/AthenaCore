@@ -97,7 +97,7 @@ public class EventEngineTask implements Runnable
 				}
 				else
 				{
-					if (EventEngineManager.isEmptyRegisteredPlayers()) // TODO: handle min register players
+					if (EventEngineManager.getAllRegisteredPlayers().size() > ConfigData.MIN_PLAYERS_IN_EVENT)
 					{
 						EventEngineManager.setTime(ConfigData.EVENT_TASK * 60);
 						EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "event_aborted");

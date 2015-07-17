@@ -205,10 +205,16 @@ public class OneVsOne extends AbstractEvent
 	 */
 	private void giveRewardsTeams()
 	{
+		if (EventEngineManager.isEmptyRegisteredPlayers())
+		{
+			return;
+		}
+		
 		for (InstancesTeams team : _instancesTeams)
 		{
-			// Averiguamos q jugador tiene la mayor cant de kills de este equipo
+			// TODO falta verificar si los players estan conectados.
 			
+			// Averiguamos q jugador tiene la mayor cant de kills de este equipo
 			int pointsBlue = team._playerBlue.getKills();
 			int pointsRed = team._playerRed.getKills();
 			
