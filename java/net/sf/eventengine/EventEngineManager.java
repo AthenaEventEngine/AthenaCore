@@ -45,6 +45,7 @@ import com.l2jserver.gameserver.model.actor.L2Playable;
 import com.l2jserver.gameserver.model.actor.instance.L2DoorInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
+import com.l2jserver.gameserver.model.items.L2Item;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
 import com.l2jserver.gameserver.network.serverpackets.CreatureSay;
@@ -359,10 +360,24 @@ public class EventEngineManager
 	
 	/**
 	 * @param player
+	 * @return boolean -> true solo en el caso de que no queremos que no se pueda usar un item
 	 */
-	public static void listenerOnUseItem(L2PcInstance player)
+	public static boolean listenerOnUseItem(L2PcInstance player, L2Item item)
 	{
-		// Sin desarrollar
+		// Si no se esta corriendo no continuar el listener.
+		if (CURRENT_EVENT != null)
+		{
+			try
+			{
+				CURRENT_EVENT.listenerOnUseItem(player, item);
+			}
+			catch (Exception e)
+			{
+				LOG.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnUseItem() " + e);
+				e.printStackTrace();
+			}
+		}
+		return false;
 	}
 	
 	// XXX EVENT VOTE ------------------------------------------------------------------------------------

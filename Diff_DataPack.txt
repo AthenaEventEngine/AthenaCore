@@ -1,5 +1,3 @@
-### Eclipse Workspace Patch 1.0
-#P L2J-Server_Engine_data
 Index: dist/game/data/scripts/handlers/actionhandlers/L2NpcAction.java
 ===================================================================
 --- dist/game/data/scripts/handlers/actionhandlers/L2NpcAction.java	(revision 21978)

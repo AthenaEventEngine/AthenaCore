@@ -28,7 +28,6 @@ import net.sf.eventengine.EventEngineManager;
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.EventState;
-import net.sf.eventengine.enums.EventType;
 import net.sf.eventengine.enums.PlayerClassType;
 import net.sf.eventengine.holder.PlayerHolder;
 import net.sf.eventengine.task.EventTask;
@@ -47,9 +46,11 @@ import com.l2jserver.gameserver.model.actor.L2Summon;
 import com.l2jserver.gameserver.model.actor.instance.L2CubicInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
+import com.l2jserver.gameserver.model.effects.L2EffectType;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
+import com.l2jserver.gameserver.model.items.L2Item;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.network.serverpackets.MagicSkillUse;
 import com.l2jserver.gameserver.taskmanager.DecayTaskManager;
@@ -72,9 +73,6 @@ public abstract class AbstractEvent
 	
 	/** Necessary to keep track of the states of the event. */
 	public abstract void runEventState(EventState state);
-	
-	/** Necessary for the type of event. */
-	public abstract EventType getEventType();
 	
 	// NPC IN EVENT --------------------------------------------------------------------------------- //
 	
@@ -382,14 +380,14 @@ public abstract class AbstractEvent
 	/**
 	 * @param player
 	 * @param target
-	 * @return true -> only in the event that an attack not want q continue its normal progeso.
+	 * @return true -> only in the event that an attack not want q continue its normal progress.
 	 */
 	public abstract boolean onAttack(PlayerHolder player, L2Character target);
 	
 	/**
 	 * @param playable -> personaje o summon
 	 * @param target -> puede ser null
-	 * @return true -> only in the event that an skill not want q continue its normal progeso.
+	 * @return true -> only in the event that an skill not want that continue its normal progress.
 	 */
 	public boolean listenerOnUseSkill(L2Playable playable, L2Character target, Skill skill)
 	{
@@ -442,9 +440,45 @@ public abstract class AbstractEvent
 	 * @param player
 	 * @param target
 	 * @param skill
-	 * @return true -> only in the event that an skill not want q continue its normal progeso.
+	 * @return true -> only in the event that an item not want that continue its normal progress.
 	 */
 	public abstract boolean onUseSkill(PlayerHolder player, L2Character target, Skill skill);
+	
+	/**
+	 * @param player
+	 * @param item
+	 * @return -> only in the event that an skill not want q continue its normal progress.
+	 */
+	public boolean listenerOnUseItem(L2PcInstance player, L2Item item)
+	{
+		if (!isPlayableInEvent(player))
+		{
+			return false;
+		}
+		
+		// Avoid that some items have certain skills that skills are used.
+		SkillHolder[] skills = item.getSkills();
+		if (skills != null)
+		{
+			for (SkillHolder sHolder : skills)
+			{
+				Skill skill = sHolder.getSkill();
+				if ((skill != null) && skill.hasEffectType(L2EffectType.TELEPORT, L2EffectType.RESURRECTION, L2EffectType.BUFF))
+				{
+					return true;
+				}
+			}
+		}
+		
+		return onUseItem(getEventPlayer(player), item);
+	}
+	
+	/**
+	 * @param player
+	 * @param item
+	 * @return true -> only in the event that an skill not want q continue its normal progress.
+	 */
+	public abstract boolean onUseItem(PlayerHolder player, L2Item item);
 	
 	// VARIOUS METHODS. -------------------------------------------------------------------------------- //
 	
@@ -663,7 +697,7 @@ public abstract class AbstractEvent
 	 * <li>-> step 1: We announced that participants will be teleported</li><br>
 	 * <li>Wait 3 secs</li><br>
 	 * <li>-> step 2: Adjust the status of the event -> START</li><br>
-	 * <li>We hope 1 sec aq individual actions of each event are made.</li><br>
+	 * <li>We hope 1 sec to actions within each event is executed..</li><br>
 	 * <li>-> step 3: Adjust the status of the event -> FIGHT</li><br>
 	 * <li>-> step 3: We sent a message that they are ready to fight.</li><br>
 	 * <li>We wait until the event ends</li><br>

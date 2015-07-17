@@ -20,7 +20,6 @@ package net.sf.eventengine.events;
 
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.enums.EventState;
-import net.sf.eventengine.enums.EventType;
 import net.sf.eventengine.enums.PlayerClassType;
 import net.sf.eventengine.handler.AbstractEvent;
 import net.sf.eventengine.holder.PlayerHolder;
@@ -28,6 +27,7 @@ import net.sf.eventengine.holder.PlayerHolder;
 import com.l2jserver.gameserver.enums.Team;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
+import com.l2jserver.gameserver.model.items.L2Item;
 import com.l2jserver.gameserver.model.skills.Skill;
 
 /**
@@ -45,12 +45,6 @@ public class CaptureTheFlag extends AbstractEvent
 		// Definimos los buffs de los personajes
 		setPlayerBuffs(PlayerClassType.MAGE, ConfigData.TVT_BUFF_PLAYER_MAGE);
 		setPlayerBuffs(PlayerClassType.WARRIOR, ConfigData.TVT_BUFF_PLAYER_WARRIOR);
-	}
-	
-	@Override
-	public EventType getEventType()
-	{
-		return EventType.CTF;
 	}
 	
 	@Override
@@ -105,6 +99,12 @@ public class CaptureTheFlag extends AbstractEvent
 	public boolean onUseSkill(PlayerHolder player, L2Character target, Skill skill)
 	{
 		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	@Override
+	public boolean onUseItem(PlayerHolder player, L2Item item)
+	{
 		return false;
 	}
 }
