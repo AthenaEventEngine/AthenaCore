@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sf.eventengine.configs.Configs;
+import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.enums.EventType;
 import net.sf.eventengine.handler.AbstractEvent;
 
@@ -20,7 +20,7 @@ public class EventLoader
 	
 	public static void load()
 	{
-		if (Configs.AVA_EVENT_ENABLED)
+		if (ConfigData.AVA_EVENT_ENABLED)
 		{
 			EVENTS.add(EventType.AVA);
 			EVENTS_MAP.put(EventType.AVA, AllVsAll.class);
@@ -28,19 +28,19 @@ public class EventLoader
 		
 		// EVENTS.put(EventType.CTF, CaptureTheFlag.class);
 		
-		if (Configs.OVO_EVENT_ENABLED)
+		if (ConfigData.OVO_EVENT_ENABLED)
 		{
 			EVENTS.add(EventType.OVO);
 			EVENTS_MAP.put(EventType.OVO, OneVsOne.class);
 		}
 		
-		if (Configs.SURVIVE_EVENT_ENABLED)
+		if (ConfigData.SURVIVE_EVENT_ENABLED)
 		{
 			EVENTS.add(EventType.SURVIVE);
 			EVENTS_MAP.put(EventType.SURVIVE, Survive.class);
 		}
 		
-		if (Configs.TVT_EVENT_ENABLED)
+		if (ConfigData.TVT_EVENT_ENABLED)
 		{
 			EVENTS.add(EventType.TVT);
 			EVENTS_MAP.put(EventType.TVT, TeamVsTeam.class);

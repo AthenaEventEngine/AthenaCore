@@ -22,10 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sf.eventengine.EventEngineManager;
-import net.sf.eventengine.configs.Configs;
+import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.enums.EventState;
-import net.sf.eventengine.enums.EventType;
-import net.sf.eventengine.enums.PlayerClassType;
 import net.sf.eventengine.enums.PlayerColorType;
 import net.sf.eventengine.handler.AbstractEvent;
 import net.sf.eventengine.holder.PlayerHolder;
@@ -36,6 +34,7 @@ import com.l2jserver.gameserver.enums.Team;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
+import com.l2jserver.gameserver.model.items.L2Item;
 import com.l2jserver.gameserver.model.skills.Skill;
 
 /**
@@ -52,17 +51,8 @@ public class TeamVsTeam extends AbstractEvent
 		super();
 		
 		// Definimos los spawns de cada team
-		setTeamSpawn(Team.RED, Configs.TVT_COORDINATES_TEAM_1);
-		setTeamSpawn(Team.BLUE, Configs.TVT_COORDINATES_TEAM_2);
-		// Definimos los buffs de los personajes
-		setPlayerBuffs(PlayerClassType.MAGE, Configs.TVT_BUFF_PLAYER_MAGE);
-		setPlayerBuffs(PlayerClassType.WARRIOR, Configs.TVT_BUFF_PLAYER_WARRIOR);
-	}
-	
-	@Override
-	public EventType getEventType()
-	{
-		return EventType.TVT;
+		setTeamSpawn(Team.RED, ConfigData.TVT_COORDINATES_TEAM_1);
+		setTeamSpawn(Team.BLUE, ConfigData.TVT_COORDINATES_TEAM_2);
 	}
 	
 	@Override
@@ -134,6 +124,12 @@ public class TeamVsTeam extends AbstractEvent
 		return;
 	}
 	
+	@Override
+	public boolean onUseItem(PlayerHolder player, L2Item item)
+	{
+		return false;
+	}
+	
 	// METODOS VARIOS -------------------------------------------------
 	
 	/**
@@ -194,9 +190,9 @@ public class TeamVsTeam extends AbstractEvent
 				EventUtil.sendEventScreenMessage(player, "El evento resulto en un empate entre ambos teams!");
 				
 				// Entregamos los rewards
-				if (Configs.OVO_REWARD_TEAM_TIE)
+				if (ConfigData.OVO_REWARD_TEAM_TIE)
 				{
-					giveItems(player, Configs.TVT_REWARD_PLAYER_WIN);
+					giveItems(player, ConfigData.TVT_REWARD_PLAYER_WIN);
 				}
 			}
 			else
@@ -207,7 +203,7 @@ public class TeamVsTeam extends AbstractEvent
 				// Entregamos los rewards
 				if (player.getPcInstance().getTeam() == ganador)
 				{
-					giveItems(player, Configs.TVT_REWARD_PLAYER_WIN);
+					giveItems(player, ConfigData.TVT_REWARD_PLAYER_WIN);
 				}
 			}
 		}

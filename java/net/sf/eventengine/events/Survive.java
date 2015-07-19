@@ -21,10 +21,8 @@ package net.sf.eventengine.events;
 import java.util.List;
 
 import net.sf.eventengine.EventEngineManager;
-import net.sf.eventengine.configs.Configs;
+import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.enums.EventState;
-import net.sf.eventengine.enums.EventType;
-import net.sf.eventengine.enums.PlayerClassType;
 import net.sf.eventengine.enums.PlayerColorType;
 import net.sf.eventengine.handler.AbstractEvent;
 import net.sf.eventengine.holder.PlayerHolder;
@@ -35,6 +33,7 @@ import com.l2jserver.gameserver.enums.Team;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
+import com.l2jserver.gameserver.model.items.L2Item;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
 import com.l2jserver.util.Rnd;
@@ -52,22 +51,13 @@ public class Survive extends AbstractEvent
 	private int _auxKillMonsters = 0;
 	
 	// Id de los monsters
-	private static final List<Integer> MONSTERS_ID = Configs.SURVIVE_MONSTERS_ID;
+	private static final List<Integer> MONSTERS_ID = ConfigData.SURVIVE_MONSTERS_ID;
 	
 	public Survive()
 	{
 		super();
 		// Definimos los spawns de cada team
-		setTeamSpawn(Team.BLUE, Configs.SURVIVE_COORDINATES_PLAYER);
-		// Definimos los buffs de los personajes
-		setPlayerBuffs(PlayerClassType.MAGE, Configs.SURVIVE_BUFF_PLAYER_MAGE);
-		setPlayerBuffs(PlayerClassType.WARRIOR, Configs.SURVIVE_BUFF_PLAYER_WARRIOR);
-	}
-	
-	@Override
-	public EventType getEventType()
-	{
-		return EventType.SURVIVE;
+		setTeamSpawn(Team.BLUE, ConfigData.SURVIVE_COORDINATES_PLAYER);
 	}
 	
 	@Override
@@ -111,7 +101,7 @@ public class Survive extends AbstractEvent
 		// Incrementamos en uno la cantidad de mobs muertos
 		_auxKillMonsters++;
 		// Verificamos la cantidad de mobs muertos, de haberlos matados a todos aumentamos en uno el stage.
-		if (_auxKillMonsters >= (_stage * Configs.SURVIVE_MONSTER_SPAWN_FOR_STAGE))
+		if (_auxKillMonsters >= (_stage * ConfigData.SURVIVE_MONSTER_SPAWN_FOR_STAGE))
 		{
 			// aumentamos en uno el stage.
 			_stage++;
@@ -146,6 +136,12 @@ public class Survive extends AbstractEvent
 		return false;
 	}
 	
+	@Override
+	public boolean onUseItem(PlayerHolder player, L2Item item)
+	{
+		return false;
+	}
+	
 	// MISC ---------------------------------------------------------------------------------------
 	public void giveRewardsTeams()
 	{
@@ -160,7 +156,7 @@ public class Survive extends AbstractEvent
 			// Enviamos un mensaje al ganador
 			EventUtil.sendEventScreenMessage(player, "Felicitaciones sobreviviente");
 			// Entregamos los rewards
-			giveItems(player, Configs.SURVIVE_REWARD_PLAYER_WIN);
+			giveItems(player, ConfigData.SURVIVE_REWARD_PLAYER_WIN);
 		}
 	}
 	
@@ -175,7 +171,7 @@ public class Survive extends AbstractEvent
 			public void run()
 			{
 				// Spawneamos los mobs dependiendo del nivel del stage dentro de la unica instancia creada.
-				for (int i = 0; i < (_stage * Configs.SURVIVE_MONSTER_SPAWN_FOR_STAGE); i++)
+				for (int i = 0; i < (_stage * ConfigData.SURVIVE_MONSTER_SPAWN_FOR_STAGE); i++)
 				{
 					L2Npc eventNpc = addEventNpc(MONSTERS_ID.get(Rnd.get(MONSTERS_ID.size() - 1)), 149539, 46712, -3411, 0, true, EventEngineManager.getInstancesWorlds().get(0).getInstanceId());
 					// Definimos un team para el monster.
