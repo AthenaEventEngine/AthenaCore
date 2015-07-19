@@ -132,21 +132,32 @@ public final class MessageData
 		LOG.info("Loaded language file for language " + lang + " " + count + " messages.");
 	}
 	
-	public static String getTag(L2PcInstance player)
-	{
-		return getMsgByLang(player, "event_engine_tag") + " ";
-	}
-	
 	/**
 	 * Obtenemos un texto segun el lang q este usando el personaje.<br>
 	 * @param player
 	 * @param text
+	 * @param addTag -> usado principalmente en los mensaje q salen por pantalla o el chat
 	 * @return String
 	 */
-	public static String getMsgByLang(L2PcInstance player, String text)
+	public static String getMsgByLang(L2PcInstance player, String text, boolean addTag)
 	{
-		// lenguaje definido por el usuario o el default
+		// Obtenemos el lenguaje por el que opto el usuario.
 		String lang = getLanguage(player);
+		
+		String tag = "";
+		// generamos el TAG propio de nuestro evento
+		if (addTag)
+		{
+			if (MSG_MAP.containsKey(lang + "_" + "event_engine_tag"))
+			{
+				// buscamos la traduccion del texto en el lenguaje seleccionado por el personaje
+				tag = MSG_MAP.get(lang + "_" + "event_engine_tag") + " ";
+			}
+			else
+			{
+				tag = "[Event Engine] ";
+			}
+		}
 		
 		StringBuilder msg = new StringBuilder(50);
 		
@@ -174,7 +185,7 @@ public final class MessageData
 			}
 		}
 		
-		return msg.toString();
+		return tag + msg.toString();
 	}
 	
 	/**

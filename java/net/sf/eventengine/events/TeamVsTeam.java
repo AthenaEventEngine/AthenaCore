@@ -24,7 +24,6 @@ import java.util.List;
 import net.sf.eventengine.EventEngineManager;
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.enums.EventState;
-import net.sf.eventengine.enums.EventType;
 import net.sf.eventengine.enums.PlayerClassType;
 import net.sf.eventengine.enums.PlayerColorType;
 import net.sf.eventengine.handler.AbstractEvent;
@@ -36,6 +35,7 @@ import com.l2jserver.gameserver.enums.Team;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
+import com.l2jserver.gameserver.model.items.L2Item;
 import com.l2jserver.gameserver.model.skills.Skill;
 
 /**
@@ -57,12 +57,6 @@ public class TeamVsTeam extends AbstractEvent
 		// Definimos los buffs de los personajes
 		setPlayerBuffs(PlayerClassType.MAGE, ConfigData.TVT_BUFF_PLAYER_MAGE);
 		setPlayerBuffs(PlayerClassType.WARRIOR, ConfigData.TVT_BUFF_PLAYER_WARRIOR);
-	}
-	
-	@Override
-	public EventType getEventType()
-	{
-		return EventType.TVT;
 	}
 	
 	@Override
@@ -132,6 +126,12 @@ public class TeamVsTeam extends AbstractEvent
 	public void onInteract(PlayerHolder player, L2Npc npc)
 	{
 		return;
+	}
+	
+	@Override
+	public boolean onUseItem(PlayerHolder player, L2Item item)
+	{
+		return false;
 	}
 	
 	// METODOS VARIOS -------------------------------------------------
