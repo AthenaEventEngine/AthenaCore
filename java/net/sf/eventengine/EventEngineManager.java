@@ -28,6 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import net.sf.eventengine.ai.NpcManager;
+import net.sf.eventengine.datatables.BuffListData;
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.EventEngineState;
@@ -77,6 +78,9 @@ public class EventEngineManager
 			ConfigData.load();
 			LOG.info("EventEngineManager: Configs cargados con exito");
 			EventLoader.load();
+			// BuffsList
+			BuffListData.getInstance();
+			LOG.info("EventEngineManager: buffs cargados con exito");
 			// Multi-Language System
 			MessageData.load();
 			LOG.info("EventEngineManager: Multi-Language System cargado.");

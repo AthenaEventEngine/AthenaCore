@@ -1,3 +1,4 @@
+diff --git a/L2J_Server/.classpath b/L2J_Server/.classpath
 index 05e3150..0057726 100644
 --- a/L2J_Server/.classpath
 +++ b/L2J_Server/.classpath
@@ -30,7 +31,7 @@ index 05e3150..0057726 100644
 +</classpath>
 diff --git a/L2J_Server/dist/libs/L2J_EventEngine.jar b/L2J_Server/dist/libs/L2J_EventEngine.jar
 new file mode 100644
-index 0000000..7da9aac
+index 0000000..6e0c4c1
 --- /dev/null
 +++ b/L2J_Server/dist/libs/L2J_EventEngine.jar
 Binary files differ
@@ -240,7 +241,7 @@ index 3d3da22..3e40b41 100644
  		AnnouncementsTable.getInstance().showAnnouncements(activeChar);
  		
 diff --git a/L2J_Server/java/com/l2jserver/gameserver/network/clientpackets/UseItem.java b/L2J_Server/java/com/l2jserver/gameserver/network/clientpackets/UseItem.java
-index 640e695..2134dab 100644
+index 640e695..358626e 100644
 --- a/L2J_Server/java/com/l2jserver/gameserver/network/clientpackets/UseItem.java
 +++ b/L2J_Server/java/com/l2jserver/gameserver/network/clientpackets/UseItem.java
 @@ -21,6 +21,8 @@
