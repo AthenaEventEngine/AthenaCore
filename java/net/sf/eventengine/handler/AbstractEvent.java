@@ -25,10 +25,10 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import net.sf.eventengine.EventEngineManager;
+import net.sf.eventengine.datatables.BuffListData;
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.EventState;
-import net.sf.eventengine.enums.PlayerClassType;
 import net.sf.eventengine.holder.PlayerHolder;
 import net.sf.eventengine.task.EventTask;
 import net.sf.eventengine.util.EventUtil;
@@ -167,29 +167,6 @@ public abstract class AbstractEvent
 	public boolean isNpcInEvent(L2Npc npc)
 	{
 		return _eventNpc.containsValue(npc);
-	}
-	
-	// BUFFS TEAMS ---------------------------------------------------------------------------------- //
-	private final Map<PlayerClassType, List<SkillHolder>> _playerBuffs = new HashMap<>();
-	
-	/**
-	 * We define the list of buffs depending on whether the characters are wizards or warriors.
-	 * @param type
-	 * @param list
-	 */
-	public void setPlayerBuffs(PlayerClassType type, List<SkillHolder> list)
-	{
-		_playerBuffs.put(type, list);
-	}
-	
-	/**
-	 * We get a list buffs depending on whether a character is a wizard or warrior.
-	 * @param type
-	 * @return List<SkillHolder>
-	 */
-	public List<SkillHolder> getPlayerBuffs(PlayerClassType type)
-	{
-		return _playerBuffs.get(type);
 	}
 	
 	// SAWNS TEAMS ---------------------------------------------------------------------------------- //
@@ -659,19 +636,9 @@ public abstract class AbstractEvent
 	 */
 	public void giveBuffPlayer(L2PcInstance player)
 	{
-		if (player.isMageClass())
+		for (SkillHolder sh : BuffListData.getBuffsPlayer(player))
 		{
-			for (SkillHolder sh : getPlayerBuffs(PlayerClassType.MAGE))
-			{
-				sh.getSkill().applyEffects(player, player);
-			}
-		}
-		else
-		{
-			for (SkillHolder sh : getPlayerBuffs(PlayerClassType.WARRIOR))
-			{
-				sh.getSkill().applyEffects(player, player);
-			}
+			sh.getSkill().applyEffects(player, player);
 		}
 	}
 	

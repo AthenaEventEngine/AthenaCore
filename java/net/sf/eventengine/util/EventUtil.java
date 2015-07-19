@@ -66,7 +66,12 @@ public class EventUtil
 	{
 		if (TIME_LEFT_TO_ANNOUNCE.contains(time))
 		{
-			text.replace("%event%", EventEngineManager.getNextEvent().getEventName());
+			// TODO hardcode
+			// revisar bien la secuencias de anuncios para mejorar el sistema.
+			if (EventEngineManager.getNextEvent() != null)
+			{
+				text = text.replace("%event%", EventEngineManager.getNextEvent().getEventName());
+			}
 			
 			String announce;
 			if (time > 60)

@@ -23,7 +23,6 @@ import java.util.List;
 import net.sf.eventengine.EventEngineManager;
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.enums.EventState;
-import net.sf.eventengine.enums.PlayerClassType;
 import net.sf.eventengine.enums.PlayerColorType;
 import net.sf.eventengine.handler.AbstractEvent;
 import net.sf.eventengine.holder.PlayerHolder;
@@ -59,9 +58,6 @@ public class Survive extends AbstractEvent
 		super();
 		// Definimos los spawns de cada team
 		setTeamSpawn(Team.BLUE, ConfigData.SURVIVE_COORDINATES_PLAYER);
-		// Definimos los buffs de los personajes
-		setPlayerBuffs(PlayerClassType.MAGE, ConfigData.SURVIVE_BUFF_PLAYER_MAGE);
-		setPlayerBuffs(PlayerClassType.WARRIOR, ConfigData.SURVIVE_BUFF_PLAYER_WARRIOR);
 	}
 	
 	@Override

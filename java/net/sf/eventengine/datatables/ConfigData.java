@@ -25,7 +25,6 @@ import net.sf.eventengine.util.EventPropertiesParser;
 
 import com.l2jserver.gameserver.model.Location;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
-import com.l2jserver.gameserver.model.holders.SkillHolder;
 
 /**
  * Clase encargada de leer todos los configs establecidos en los archivos de tipo "properties"
@@ -64,6 +63,8 @@ public class ConfigData
 	/** Definimos el lvl maximo/minimo que podran participar de los eventos. */
 	public static int MIN_LVL_IN_EVENT;
 	public static int MAX_LVL_IN_EVENT;
+	/** Definimos la cantidad maxima de buffs q se podran usar */
+	public static int MAX_BUFF_COUNT;
 	
 	// -------------------------------------------------------------------------------
 	// Configs All Vs All
@@ -71,8 +72,6 @@ public class ConfigData
 	public static boolean AVA_EVENT_ENABLED;
 	public static List<ItemHolder> AVA_REWARD_PLAYER_WIN = new ArrayList<>();
 	public static List<ItemHolder> AVA_REWARD_KILL_PLAYER = new ArrayList<>();
-	public static List<SkillHolder> AVA_BUFF_PLAYER_WARRIOR = new ArrayList<>();
-	public static List<SkillHolder> AVA_BUFF_PLAYER_MAGE = new ArrayList<>();
 	public static Location AVA_COORDINATES_PLAYER;
 	
 	// -------------------------------------------------------------------------------
@@ -82,8 +81,6 @@ public class ConfigData
 	public static boolean OVO_REWARD_TEAM_TIE;
 	public static List<ItemHolder> OVO_REWARD_PLAYER_WIN = new ArrayList<>();
 	public static List<ItemHolder> OVO_REWARD_KILL_PLAYER = new ArrayList<>();
-	public static List<SkillHolder> OVO_BUFF_PLAYER_WARRIOR = new ArrayList<>();
-	public static List<SkillHolder> OVO_BUFF_PLAYER_MAGE = new ArrayList<>();
 	public static Location OVO_COORDINATES_TEAM_1;
 	public static Location OVO_COORDINATES_TEAM_2;
 	
@@ -93,8 +90,6 @@ public class ConfigData
 	public static boolean TVT_EVENT_ENABLED;
 	public static List<ItemHolder> TVT_REWARD_PLAYER_WIN = new ArrayList<>();
 	public static List<ItemHolder> TVT_REWARD_KILL_PLAYER = new ArrayList<>();
-	public static List<SkillHolder> TVT_BUFF_PLAYER_WARRIOR = new ArrayList<>();
-	public static List<SkillHolder> TVT_BUFF_PLAYER_MAGE = new ArrayList<>();
 	public static Location TVT_COORDINATES_TEAM_1;
 	public static Location TVT_COORDINATES_TEAM_2;
 	
@@ -103,8 +98,6 @@ public class ConfigData
 	// -------------------------------------------------------------------------------
 	public static boolean SURVIVE_EVENT_ENABLED;
 	public static List<ItemHolder> SURVIVE_REWARD_PLAYER_WIN = new ArrayList<>();
-	public static List<SkillHolder> SURVIVE_BUFF_PLAYER_WARRIOR = new ArrayList<>();
-	public static List<SkillHolder> SURVIVE_BUFF_PLAYER_MAGE = new ArrayList<>();
 	public static Location SURVIVE_COORDINATES_PLAYER;
 	public static Location SURVIVE_COORDINATES_MOBS;
 	public static List<Integer> SURVIVE_MONSTERS_ID = new ArrayList<>();
@@ -130,6 +123,7 @@ public class ConfigData
 		MIN_LVL_IN_EVENT = settings.getInt("EventMinPlayerLevel", 40);
 		MAX_LVL_IN_EVENT = settings.getInt("EventMaxPlayerLevel", 78);
 		INSTANCE_FILE = settings.getString("EventInstanceFile", "EventEngine.xml");
+		MAX_BUFF_COUNT = settings.getInt("EventMaxBuffCount", 5);
 		
 		// ------------------------------------------------------------------------------------- //
 		// AllVsAll.properties
@@ -138,8 +132,6 @@ public class ConfigData
 		AVA_EVENT_ENABLED = settings.getBoolean("AvAEventEnabled", false);
 		AVA_REWARD_PLAYER_WIN = settings.getItemHolderList("AvAEventReward");
 		AVA_REWARD_KILL_PLAYER = settings.getItemHolderList("AvAEventRewardKill");
-		AVA_BUFF_PLAYER_WARRIOR = settings.getSkillHolderList("AvAEventFighterBuffs");
-		AVA_BUFF_PLAYER_MAGE = settings.getSkillHolderList("AvAEventMageBuffs");
 		AVA_COORDINATES_PLAYER = settings.getLocation("AvAEventCoordinates");
 		
 		// ------------------------------------------------------------------------------------- //
@@ -149,8 +141,6 @@ public class ConfigData
 		OVO_EVENT_ENABLED = settings.getBoolean("OvOEventEnabled", false);
 		OVO_REWARD_PLAYER_WIN = settings.getItemHolderList("OvOEventReward");
 		OVO_REWARD_KILL_PLAYER = settings.getItemHolderList("OvOEventRewardKill");
-		OVO_BUFF_PLAYER_WARRIOR = settings.getSkillHolderList("OvOEventFighterBuffs");
-		OVO_BUFF_PLAYER_MAGE = settings.getSkillHolderList("OvOEventMageBuffs");
 		OVO_COORDINATES_TEAM_1 = settings.getLocation("OvOEventTeam1Coordinates");
 		OVO_COORDINATES_TEAM_2 = settings.getLocation("OvOEventTeam2Coordinates");
 		
@@ -161,8 +151,6 @@ public class ConfigData
 		TVT_EVENT_ENABLED = settings.getBoolean("TvTEventEnabled", false);
 		TVT_REWARD_PLAYER_WIN = settings.getItemHolderList("TvTEventReward");
 		TVT_REWARD_KILL_PLAYER = settings.getItemHolderList("TvTEventRewardKill");
-		TVT_BUFF_PLAYER_WARRIOR = settings.getSkillHolderList("TvTEventFighterBuffs");
-		TVT_BUFF_PLAYER_MAGE = settings.getSkillHolderList("TvTEventMageBuffs");
 		TVT_COORDINATES_TEAM_1 = settings.getLocation("TvTEventTeam1Coordinates");
 		TVT_COORDINATES_TEAM_2 = settings.getLocation("TvTEventTeam2Coordinates");
 		
@@ -172,8 +160,6 @@ public class ConfigData
 		settings = new EventPropertiesParser(SURVIVE_CONFIG);
 		SURVIVE_EVENT_ENABLED = settings.getBoolean("SVEventEnabled", false);
 		SURVIVE_REWARD_PLAYER_WIN = settings.getItemHolderList("SVEventReward");
-		SURVIVE_BUFF_PLAYER_WARRIOR = settings.getSkillHolderList("SVEventFighterBuffs");
-		SURVIVE_BUFF_PLAYER_MAGE = settings.getSkillHolderList("SVEventMageBuffs");
 		SURVIVE_COORDINATES_PLAYER = settings.getLocation("SVEventCoordinatesPlayer");
 		SURVIVE_COORDINATES_MOBS = settings.getLocation("SVEventCoordinatesMobs");
 		SURVIVE_MONSTERS_ID = settings.getListInteger("SVEventMobsID");
