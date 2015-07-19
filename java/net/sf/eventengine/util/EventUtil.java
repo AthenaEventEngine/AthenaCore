@@ -38,6 +38,7 @@ import com.l2jserver.gameserver.network.serverpackets.ExShowScreenMessage;
 public class EventUtil
 {
 	private static final Set<Integer> TIME_LEFT_TO_ANNOUNCE = new HashSet<>();
+	static
 	{
 		TIME_LEFT_TO_ANNOUNCE.add(1800);
 		TIME_LEFT_TO_ANNOUNCE.add(1200);
@@ -64,32 +65,29 @@ public class EventUtil
 	 */
 	public static void announceTimeLeft(int time, String text, int say2, boolean toAllPlayers)
 	{
+		if (text.contains("%event%"))
+		{
+			text = text.replace("%event%", EventEngineManager.getNextEvent().getEventName());
+		}
+		
 		if (TIME_LEFT_TO_ANNOUNCE.contains(time))
 		{
-			// TODO hardcode
-			// revisar bien la secuencias de anuncios para mejorar el sistema.
-			if (EventEngineManager.getNextEvent() != null)
-			{
-				text = text.replace("%event%", EventEngineManager.getNextEvent().getEventName());
-			}
-			
-			String announce;
 			if (time > 60)
 			{
-				announce = text + " " + (time / 60) + " " + "time_minutes";
+				text += " " + (time / 60) + " " + "time_minutes";
 			}
 			else
 			{
-				announce = text + " " + time + " " + "time_seconds";
+				text += " " + time + " " + "time_seconds";
 			}
 			
 			if (toAllPlayers)
 			{
-				announceToAllPlayers(say2, announce);
+				announceToAllPlayers(say2, text);
 			}
 			else
 			{
-				announceToAllPlayersInEvent(say2, announce);
+				announceToAllPlayersInEvent(say2, text);
 			}
 		}
 	}

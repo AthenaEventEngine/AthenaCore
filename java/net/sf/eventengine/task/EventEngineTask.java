@@ -66,7 +66,7 @@ public class EventEngineTask implements Runnable
 					{
 						EventEngineManager.setNextEvent(EventLoader.getRandomEventType());
 						EventEngineManager.setTime(ConfigData.EVENT_REGISTER_TIME * 60);
-						EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "event_register_started", "%event%", EventEngineManager.getNextEvent().toString());
+						EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "event_register_started", "%event%", EventEngineManager.getNextEvent().getEventName());
 						EventEngineManager.setEventEngineState(EventEngineState.REGISTER);
 					}
 				}
@@ -84,7 +84,7 @@ public class EventEngineTask implements Runnable
 					EventEngineManager.setNextEvent(nextEvent);
 					EventEngineManager.setTime(ConfigData.EVENT_REGISTER_TIME * 60);
 					EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "event_voting_ended");
-					EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "event_register_started", "%event%", nextEvent.toString());
+					EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "event_register_started", "%event%", nextEvent.getEventName());
 					EventEngineManager.setEventEngineState(EventEngineState.REGISTER);
 				}
 				break;

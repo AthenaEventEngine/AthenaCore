@@ -171,17 +171,17 @@ public final class MessageData
 			if (MSG_MAP.containsKey(lang + "_" + textLang))
 			{
 				// buscamos la traduccion del texto en el lenguaje seleccionado por el personaje
-				msg.append(MSG_MAP.get(lang + "_" + textLang));
+				msg.append(" " + MSG_MAP.get(lang + "_" + textLang));
 			}
 			else if (MSG_MAP.containsKey(lang + "_" + textLang))
 			{
 				// buscamos la traduccion del texto en el lenguaje default -> "en"
-				msg.append(MSG_MAP.get("en_" + textLang));
+				msg.append(" " + MSG_MAP.get("en_" + textLang));
 			}
 			else
 			{
 				// agregamos el texto sin traduccion
-				msg.append(textLang);
+				msg.append(" " + textLang);
 			}
 		}
 		
