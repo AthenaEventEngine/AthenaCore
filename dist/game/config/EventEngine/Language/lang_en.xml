@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<localization lang="English" author="swarlog">
-
+<localization lang="English">
+	<!-- author swarlog  -->
+	
 	<!-- Event Engine Tag -->
 	<message id="event_engine_tag" text="[EventEngine]"/>
 	
@@ -36,6 +37,7 @@
 	<message id="registering_already_registered" text="You are already registered." />
 	<message id="unregistering_unregistered" text="You have been unregistered." />
 	<message id="unregistering_notRegistered" text="You are not registered!" />
+	<message id="registering_maxPlayers" text="Sorry, since the maximum amount of players registered." />
 	
 	<!-- Events Info -->
 	<message id="event_ava_name" text="All vs All" />
@@ -51,7 +53,6 @@
 	<message id="event_pa_name" text="Present Arms" />
 	<message id="event_pa_description" text="Here information of event!" />
 	
-	
 	<!-- General Text -->
 	<message id="text_description" text="Description"/>
 	<message id="text_requirements" text="Requirements"/>
@@ -60,6 +61,7 @@
 	<message id="text_rewards" text="Rewards" />
 	<message id="text_configuration" text="Configurations" />
 	<message id="text_time_event" text="Time Event" />
+	<message id="revive_in" text="You will be revived within %time% seconds." />
 	
 	<!-- HTML: Lang Setting -->
 	<message id="lang_menu_title" text="Menu Setting"/>
@@ -90,5 +92,7 @@
 	<message id="time_hours" text="hour(s)."/>
 	<message id="time_minutes" text="minute(s)."/>
 	<message id="time_seconds" text="second(s)."/>
-
+	
+	<!-- Buff -->
+	<message id="buff_tittle" text="Buff List"/>
 </localization>

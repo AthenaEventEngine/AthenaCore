@@ -23,10 +23,8 @@ import java.util.Collections;
 import java.util.List;
 
 import net.sf.eventengine.EventEngineManager;
-import net.sf.eventengine.configs.Configs;
+import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.enums.EventState;
-import net.sf.eventengine.enums.EventType;
-import net.sf.eventengine.enums.PlayerClassType;
 import net.sf.eventengine.enums.PlayerColorType;
 import net.sf.eventengine.handler.AbstractEvent;
 import net.sf.eventengine.holder.PlayerHolder;
@@ -36,6 +34,7 @@ import com.l2jserver.gameserver.enums.Team;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
+import com.l2jserver.gameserver.model.items.L2Item;
 import com.l2jserver.gameserver.model.skills.Skill;
 
 /**
@@ -47,16 +46,7 @@ public class AllVsAll extends AbstractEvent
 	{
 		super();
 		// Definimos el spawn del team
-		setTeamSpawn(Team.NONE, Configs.AVA_COORDINATES_PLAYER);
-		// Definimos los buffs de los personajes
-		setPlayerBuffs(PlayerClassType.MAGE, Configs.AVA_BUFF_PLAYER_MAGE);
-		setPlayerBuffs(PlayerClassType.WARRIOR, Configs.AVA_BUFF_PLAYER_WARRIOR);
-	}
-	
-	@Override
-	public EventType getEventType()
-	{
-		return EventType.AVA;
+		setTeamSpawn(Team.NONE, ConfigData.AVA_COORDINATES_PLAYER);
 	}
 	
 	@Override
@@ -89,7 +79,7 @@ public class AllVsAll extends AbstractEvent
 		// Incrementamos en uno la cant de kills al player.
 		player.increaseKills();
 		// Entregamos la rewards
-		giveItems(player, Configs.AVA_REWARD_KILL_PLAYER);
+		giveItems(player, ConfigData.AVA_REWARD_KILL_PLAYER);
 		// Actualizamos el titulo del personaje
 		updateTitle(player);
 	}
@@ -121,6 +111,12 @@ public class AllVsAll extends AbstractEvent
 	public void onInteract(PlayerHolder player, L2Npc npc)
 	{
 		return;
+	}
+	
+	@Override
+	public boolean onUseItem(PlayerHolder player, L2Item item)
+	{
+		return false;
 	}
 	
 	// METODOS VARIOS ------------------------------------------------------------------
@@ -191,7 +187,7 @@ public class AllVsAll extends AbstractEvent
 				// Enviamos un mensaje al ganador
 				EventUtil.sendEventScreenMessage(player, "Ganador " + player.getPcInstance().getName() + " con " + player.getPoints());
 				// Entregamos los rewards
-				giveItems(player, Configs.AVA_REWARD_PLAYER_WIN);
+				giveItems(player, ConfigData.AVA_REWARD_PLAYER_WIN);
 			}
 			else
 			{
