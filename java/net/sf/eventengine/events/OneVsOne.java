@@ -24,7 +24,6 @@ import java.util.List;
 import net.sf.eventengine.EventEngineManager;
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.enums.EventState;
-import net.sf.eventengine.enums.PlayerClassType;
 import net.sf.eventengine.enums.PlayerColorType;
 import net.sf.eventengine.handler.AbstractEvent;
 import net.sf.eventengine.holder.PlayerHolder;
@@ -57,9 +56,6 @@ public class OneVsOne extends AbstractEvent
 		// Definimos los spawns de cada team
 		setTeamSpawn(Team.RED, ConfigData.OVO_COORDINATES_TEAM_1);
 		setTeamSpawn(Team.BLUE, ConfigData.OVO_COORDINATES_TEAM_2);
-		// Definimos los buffs de los personajes
-		setPlayerBuffs(PlayerClassType.MAGE, ConfigData.OVO_BUFF_PLAYER_MAGE);
-		setPlayerBuffs(PlayerClassType.WARRIOR, ConfigData.OVO_BUFF_PLAYER_WARRIOR);
 	}
 	
 	@Override

@@ -93,4 +93,7 @@
 	<message id="time_minutes" text="minute(s)."/>
 	<message id="time_seconds" text="second(s)."/>
 
+	<!-- Buff -->
+	<message id="buff_tittle" text="Buff List"/>
+
 </localization>
