@@ -30,9 +30,9 @@ import java.util.logging.Logger;
 import net.sf.eventengine.ai.NpcManager;
 import net.sf.eventengine.datatables.BuffListData;
 import net.sf.eventengine.datatables.ConfigData;
+import net.sf.eventengine.datatables.EventData;
 import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.EventEngineState;
-import net.sf.eventengine.events.EventLoader;
 import net.sf.eventengine.handler.AbstractEvent;
 import net.sf.eventengine.holder.PlayerHolder;
 import net.sf.eventengine.task.EventEngineTask;
@@ -56,12 +56,12 @@ import com.l2jserver.util.Rnd;
  */
 public class EventEngineManager
 {
-	private static final Logger LOG = Logger.getLogger(EventEngineManager.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(EventEngineManager.class.getName());
 	
 	/**
 	 * Constructor
 	 */
-	public EventEngineManager()
+	private EventEngineManager()
 	{
 		load();
 	}
@@ -69,68 +69,68 @@ public class EventEngineManager
 	/**
 	 * Metodo encargado de cargar todo lo necesario para el evento
 	 */
-	public void load()
+	private void load()
 	{
 		try
 		{
 			// Cargamos los configs de los eventos.
-			ConfigData.load();
-			LOG.info("EventEngineManager: Configs loaded");
-			EventLoader.load();
-			LOG.info("EventEngineManager: Events loaded");
+			ConfigData.getInstance();
+			LOGGER.info(EventEngineManager.class.getSimpleName() + ": Configs loaded");
+			EventData.getInstance();
+			LOGGER.info(EventEngineManager.class.getSimpleName() + ": Events loaded");
 			initVotes();
 			// BuffsList
 			BuffListData.getInstance();
-			LOG.info("EventEngineManager: buffs cargados con exito");
+			LOGGER.info(EventEngineManager.class.getSimpleName() + ": Buffs loaded.");
 			// Multi-Language System
-			MessageData.load();
-			LOG.info("EventEngineManager: Multi-Language System cargado.");
+			MessageData.getInstance();
+			LOGGER.info(EventEngineManager.class.getSimpleName() + ": Multi-Language system cargado.");
 			// Cargamos los AI
 			NpcManager.class.newInstance();
-			LOG.info("EventEngineManager: AI's loaded.");
+			LOGGER.info("EventEngineManager: AI's loaded.");
 			// lanzamos el task principal
-			TIME = 0;
+			_time = 0;
 			ThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(new EventEngineTask(), 10 * 1000, 1000);
 		}
 		catch (Exception e)
 		{
-			LOG.warning(EventEngineManager.class.getSimpleName() + ": -> load() " + e);
+			LOGGER.warning(EventEngineManager.class.getSimpleName() + ": -> load() " + e);
 			e.printStackTrace();
 		}
 	}
 	
 	// XXX EventEngineTask ------------------------------------------------------------------------------------
-	private static int TIME;
+	private int _time;
 	
-	public static int getTime()
+	public int getTime()
 	{
-		return TIME;
+		return _time;
 	}
 	
-	public static void setTime(int time)
+	public void setTime(int time)
 	{
-		TIME = time;
+		_time = time;
 	}
 	
-	public static void decreaseTime()
+	public void decreaseTime()
 	{
-		TIME--;
+		_time--;
 	}
 	
 	// XXX DINAMIC INSTANCE ------------------------------------------------------------------------------
-	private static final List<InstanceWorld> INSTANCE_WORLDS = new ArrayList<>();
+	private final List<InstanceWorld> _instanceWorld = new ArrayList<>();
 	
 	/**
 	 * Creamos instancias dinamicas y un mundo para ella
 	 * @param count
 	 * @return InstanceWorld: world creado para la instancia
 	 */
-	public static InstanceWorld createNewInstanceWorld()
+	public InstanceWorld createNewInstanceWorld()
 	{
 		InstanceWorld world = null;
 		try
 		{
-			int instanceId = InstanceManager.getInstance().createDynamicInstance(ConfigData.INSTANCE_FILE);
+			int instanceId = InstanceManager.getInstance().createDynamicInstance(ConfigData.getInstance().INSTANCE_FILE);
 			InstanceManager.getInstance().getInstance(instanceId).setAllowSummon(false);
 			InstanceManager.getInstance().getInstance(instanceId).setPvPInstance(true);
 			InstanceManager.getInstance().getInstance(instanceId).setEmptyDestroyTime(1000 + 60000L);
@@ -145,32 +145,32 @@ public class EventEngineManager
 			world.setTemplateId(100); // TODO hardcode
 			world.setStatus(0);
 			InstanceManager.getInstance().addWorld(world);
-			INSTANCE_WORLDS.add(world);
+			_instanceWorld.add(world);
 			
 		}
 		catch (Exception e)
 		{
-			LOG.warning(EventEngineManager.class.getSimpleName() + ": -> createDynamicInstances() " + e);
+			LOGGER.warning(EventEngineManager.class.getSimpleName() + ": -> createDynamicInstances() " + e);
 			e.printStackTrace();
 		}
 		
 		return world;
 	}
 	
-	public static List<InstanceWorld> getInstancesWorlds()
+	public List<InstanceWorld> getInstancesWorlds()
 	{
-		return INSTANCE_WORLDS;
+		return _instanceWorld;
 	}
 	
 	// XXX NEXT EVENT ---------------------------------------------------------------------------------
 	
-	private static Class<? extends AbstractEvent> _nextEvent;
+	private Class<? extends AbstractEvent> _nextEvent;
 	
 	/**
 	 * Get the next event type
 	 * @return
 	 */
-	public static Class<? extends AbstractEvent> getNextEvent()
+	public Class<? extends AbstractEvent> getNextEvent()
 	{
 		return _nextEvent;
 	}
@@ -179,7 +179,7 @@ public class EventEngineManager
 	 * Set the next event type
 	 * @param event
 	 */
-	public static void setNextEvent(Class<? extends AbstractEvent> event)
+	public void setNextEvent(Class<? extends AbstractEvent> event)
 	{
 		_nextEvent = event;
 	}
@@ -187,24 +187,24 @@ public class EventEngineManager
 	// XXX CURRENT EVENT ---------------------------------------------------------------------------------
 	
 	// Evento que esta corriendo.
-	private static AbstractEvent CURRENT_EVENT;
+	private AbstractEvent _currentEvent;
 	
 	/**
 	 * Obtenemos el evento q esta corriendo actualmente.
 	 * @return
 	 */
-	public static AbstractEvent getCurrentEvent()
+	public AbstractEvent getCurrentEvent()
 	{
-		return CURRENT_EVENT;
+		return _currentEvent;
 	}
 	
 	/**
 	 * Definimos el evento q comenzara a correr.
 	 * @param event
 	 */
-	public static void setCurrentEvent(AbstractEvent event)
+	public void setCurrentEvent(AbstractEvent event)
 	{
-		CURRENT_EVENT = event;
+		_currentEvent = event;
 	}
 	
 	// XXX LISTENERS -------------------------------------------------------------------------------------
@@ -213,17 +213,17 @@ public class EventEngineManager
 	 * @param target -> NO puede ser null
 	 * @return true -> solo en el caso de que no queremos q un ataque continue su progeso normal.
 	 */
-	public static boolean listenerOnAttack(L2Playable playable, L2Character target)
+	public boolean listenerOnAttack(L2Playable playable, L2Character target)
 	{
-		if (CURRENT_EVENT != null)
+		if (_currentEvent != null)
 		{
 			try
 			{
-				return CURRENT_EVENT.listenerOnAttack(playable, target);
+				return _currentEvent.listenerOnAttack(playable, target);
 			}
 			catch (Exception e)
 			{
-				LOG.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnAttack() " + e);
+				LOGGER.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnAttack() " + e);
 				e.printStackTrace();
 			}
 		}
@@ -235,18 +235,18 @@ public class EventEngineManager
 	 * @param target -> puede ser null
 	 * @return true -> solo en el caso de que no queremos de una habilidad no continue su progreso normal.
 	 */
-	public static boolean listenerOnUseSkill(L2Playable playable, L2Character target, Skill skill)
+	public boolean listenerOnUseSkill(L2Playable playable, L2Character target, Skill skill)
 	{
 		// Si no se esta corriendo no continuar el listener.
-		if (CURRENT_EVENT != null)
+		if (_currentEvent != null)
 		{
 			try
 			{
-				return CURRENT_EVENT.listenerOnUseSkill(playable, target, skill);
+				return _currentEvent.listenerOnUseSkill(playable, target, skill);
 			}
 			catch (Exception e)
 			{
-				LOG.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnUseSkill() " + e);
+				LOGGER.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnUseSkill() " + e);
 				e.printStackTrace();
 			}
 		}
@@ -257,17 +257,17 @@ public class EventEngineManager
 	 * @param playable -> personaje o summon
 	 * @param target -> No puede ser null
 	 */
-	public static void listenerOnKill(L2Playable playable, L2Character target)
+	public void listenerOnKill(L2Playable playable, L2Character target)
 	{
-		if (CURRENT_EVENT != null)
+		if (_currentEvent != null)
 		{
 			try
 			{
-				CURRENT_EVENT.listenerOnKill(playable, target);
+				_currentEvent.listenerOnKill(playable, target);
 			}
 			catch (Exception e)
 			{
-				LOG.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnKill() " + e);
+				LOGGER.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnKill() " + e);
 				e.printStackTrace();
 			}
 		}
@@ -277,17 +277,17 @@ public class EventEngineManager
 	 * @param player
 	 * @param target
 	 */
-	public static void listenerOnInteract(L2PcInstance player, L2Npc target)
+	public void listenerOnInteract(L2PcInstance player, L2Npc target)
 	{
-		if (CURRENT_EVENT != null)
+		if (_currentEvent != null)
 		{
 			try
 			{
-				CURRENT_EVENT.listenerOnInteract(player, target);
+				_currentEvent.listenerOnInteract(player, target);
 			}
 			catch (Exception e)
 			{
-				LOG.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnInteract() " + e);
+				LOGGER.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnInteract() " + e);
 				e.printStackTrace();
 			}
 		}
@@ -296,18 +296,18 @@ public class EventEngineManager
 	/**
 	 * @param player
 	 */
-	public static void listenerOnDeath(L2PcInstance player)
+	public void listenerOnDeath(L2PcInstance player)
 	{
 		// Si no se esta corriendo no continuar el listener.
-		if (CURRENT_EVENT != null)
+		if (_currentEvent != null)
 		{
 			try
 			{
-				CURRENT_EVENT.listenerOnDeath(player);
+				_currentEvent.listenerOnDeath(player);
 			}
 			catch (Exception e)
 			{
-				LOG.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnDeath() " + e);
+				LOGGER.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnDeath() " + e);
 				e.printStackTrace();
 			}
 		}
@@ -317,12 +317,12 @@ public class EventEngineManager
 	 * Listener when the player logouts
 	 * @param player
 	 */
-	public static void listenerOnLogout(L2PcInstance player)
+	public void listenerOnLogout(L2PcInstance player)
 	{
 		// Si no se esta corriendo no continuar el listener.
-		if (CURRENT_EVENT == null)
+		if (_currentEvent == null)
 		{
-			if (STATE == EventEngineState.REGISTER || STATE == EventEngineState.VOTING)
+			if (_state == EventEngineState.REGISTER || _state == EventEngineState.VOTING)
 			{
 				removeVote(player);
 				unRegisterPlayer(player);
@@ -331,11 +331,11 @@ public class EventEngineManager
 		}
 		else
 		{
-			if (CURRENT_EVENT.isPlayableInEvent(player))
+			if (_currentEvent.isPlayableInEvent(player))
 			{
 				try
 				{
-					PlayerHolder ph = CURRENT_EVENT.getEventPlayer(player);
+					PlayerHolder ph = _currentEvent.getEventPlayer(player);
 					// recobramos el color del titulo original
 					ph.recoverOriginalColorTitle();
 					// recobramos el titulo original
@@ -343,11 +343,11 @@ public class EventEngineManager
 					// remobemos al personaje del mundo creado
 					InstanceManager.getInstance().getWorld(ph.getDinamicInstanceId()).removeAllowed(ph.getPcInstance().getObjectId());
 					
-					CURRENT_EVENT.getAllEventPlayers().remove(ph);
+					_currentEvent.getAllEventPlayers().remove(ph);
 				}
 				catch (Exception e)
 				{
-					LOG.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnLogout() " + e);
+					LOGGER.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnLogout() " + e);
 					e.printStackTrace();
 				}
 			}
@@ -357,28 +357,28 @@ public class EventEngineManager
 	/**
 	 * @param player
 	 */
-	public static void listenerOnLogin(L2PcInstance player)
+	public void listenerOnLogin(L2PcInstance player)
 	{
-		player.sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", MessageData.getMsgByLang(player, "event_login_participate", true)));
-		player.sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", MessageData.getMsgByLang(player, "event_login_vote", true)));
+		player.sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", MessageData.getInstance().getMsgByLang(player, "event_login_participate", true)));
+		player.sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", MessageData.getInstance().getMsgByLang(player, "event_login_vote", true)));
 	}
 	
 	/**
 	 * @param player
 	 * @return boolean -> true solo en el caso de que no queremos que no se pueda usar un item
 	 */
-	public static boolean listenerOnUseItem(L2PcInstance player, L2Item item)
+	public boolean listenerOnUseItem(L2PcInstance player, L2Item item)
 	{
 		// Si no se esta corriendo no continuar el listener.
-		if (CURRENT_EVENT != null)
+		if (_currentEvent != null)
 		{
 			try
 			{
-				return CURRENT_EVENT.listenerOnUseItem(player, item);
+				return _currentEvent.listenerOnUseItem(player, item);
 			}
 			catch (Exception e)
 			{
-				LOG.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnUseItem() " + e);
+				LOGGER.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnUseItem() " + e);
 				e.printStackTrace();
 			}
 		}
@@ -388,18 +388,18 @@ public class EventEngineManager
 	// XXX EVENT VOTE ------------------------------------------------------------------------------------
 	
 	// Lista de id's de personajes que votaron
-	private static final Set<Integer> PLAYERS_ALREADY_VOTED = ConcurrentHashMap.newKeySet();
+	private final Set<Integer> _playersAlreadyVoted = ConcurrentHashMap.newKeySet();
 	// Mapa de con los id's de los personajes que los votaron
-	private static final Map<Class<? extends AbstractEvent>, Set<Integer>> CURRENT_EVENT_VOTES = new HashMap<>();
+	private final Map<Class<? extends AbstractEvent>, Set<Integer>> _currentEventVotes = new HashMap<>();
 	
 	/**
 	 * Init votes
 	 */
-	public static void initVotes()
+	public void initVotes()
 	{
-		for (Class<? extends AbstractEvent> type : EventLoader.getEnabledEvents())
+		for (Class<? extends AbstractEvent> type : EventData.getInstance().getEnabledEvents())
 		{
-			CURRENT_EVENT_VOTES.put(type, ConcurrentHashMap.newKeySet());
+			_currentEventVotes.put(type, ConcurrentHashMap.newKeySet());
 		}
 	}
 	
@@ -407,15 +407,15 @@ public class EventEngineManager
 	 * Clase encargada de inicializar los votos de cada evento.
 	 * @return Map<EventType, Integer>
 	 */
-	public static void clearVotes()
+	public void clearVotes()
 	{
 		// Se reinicia el mapa
-		for (Class<? extends AbstractEvent> event : CURRENT_EVENT_VOTES.keySet())
+		for (Class<? extends AbstractEvent> event : _currentEventVotes.keySet())
 		{
-			CURRENT_EVENT_VOTES.get(event).clear();
+			_currentEventVotes.get(event).clear();
 		}
 		// Se limpia la lista de jugadores que votaron
-		PLAYERS_ALREADY_VOTED.clear();
+		_playersAlreadyVoted.clear();
 	}
 	
 	/**
@@ -424,14 +424,14 @@ public class EventEngineManager
 	 * @param event -> evento al q se vota
 	 * @return boolean
 	 */
-	public static void increaseVote(L2PcInstance player, Class<? extends AbstractEvent> event)
+	public void increaseVote(L2PcInstance player, Class<? extends AbstractEvent> event)
 	{
 		// Agrega al personaje a la lista de los que votaron
 		// Si ya estaba, sigue de largo
 		// Sino, agrega un voto al evento
-		if (PLAYERS_ALREADY_VOTED.add(player.getObjectId()))
+		if (_playersAlreadyVoted.add(player.getObjectId()))
 		{
-			CURRENT_EVENT_VOTES.get(event).add(player.getObjectId());
+			_currentEventVotes.get(event).add(player.getObjectId());
 		}
 	}
 	
@@ -440,15 +440,15 @@ public class EventEngineManager
 	 * @param player -> personaje q esta votando
 	 * @return
 	 */
-	public static void removeVote(L2PcInstance player)
+	public void removeVote(L2PcInstance player)
 	{
 		// Lo borra de la lista de jugadores que votaron
-		if (PLAYERS_ALREADY_VOTED.remove(player.getObjectId()))
+		if (_playersAlreadyVoted.remove(player.getObjectId()))
 		{
 			// Si estaba en la lista, empieza a buscar para qué evento votó
-			for (Class<? extends AbstractEvent> event : CURRENT_EVENT_VOTES.keySet())
+			for (Class<? extends AbstractEvent> event : _currentEventVotes.keySet())
 			{
-				CURRENT_EVENT_VOTES.get(event).remove(player.getObjectId());
+				_currentEventVotes.get(event).remove(player.getObjectId());
 			}
 		}
 	}
@@ -458,19 +458,19 @@ public class EventEngineManager
 	 * @param event -> AVA, TVT, CFT.
 	 * @return int
 	 */
-	public static int getCurrentVotesInEvent(Class<? extends AbstractEvent> event)
+	public int getCurrentVotesInEvent(Class<? extends AbstractEvent> event)
 	{
-		return CURRENT_EVENT_VOTES.get(event).size();
+		return _currentEventVotes.get(event).size();
 	}
 	
 	/**
 	 * Obtenemos la cantidad de votos totales.
 	 * @return
 	 */
-	public static int getAllCurrentVotesInEvents()
+	public int getAllCurrentVotesInEvents()
 	{
 		int count = 0;
-		for (Set<Integer> set : CURRENT_EVENT_VOTES.values())
+		for (Set<Integer> set : _currentEventVotes.values())
 		{
 			count += set.size();
 		}
@@ -484,14 +484,14 @@ public class EventEngineManager
 	 * entre los que más votos tienen<br>
 	 * @return
 	 */
-	public static Class<? extends AbstractEvent> getEventMoreVotes()
+	public Class<? extends AbstractEvent> getEventMoreVotes()
 	{
 		int maxVotes = 0;
 		List<Class<? extends AbstractEvent>> topEvents = new ArrayList<>();
 		
-		for (Class<? extends AbstractEvent> event : CURRENT_EVENT_VOTES.keySet())
+		for (Class<? extends AbstractEvent> event : _currentEventVotes.keySet())
 		{
-			int eventVotes = CURRENT_EVENT_VOTES.get(event).size();
+			int eventVotes = _currentEventVotes.get(event).size();
 			if (eventVotes > maxVotes)
 			{
 				topEvents.clear();
@@ -516,15 +516,15 @@ public class EventEngineManager
 	// XXX EVENT STATE -----------------------------------------------------------------------------------
 	
 	// variable encargada de controlar en que momento se podran registrar los usuarios a los eventos.
-	private static EventEngineState STATE = EventEngineState.WAITING;
+	private EventEngineState _state = EventEngineState.WAITING;
 	
 	/**
 	 * Revisamos en q estado se encuentra el engine
 	 * @return EventState
 	 */
-	public static EventEngineState getEventEngineState()
+	public EventEngineState getEventEngineState()
 	{
-		return STATE;
+		return _state;
 	}
 	
 	/**
@@ -533,68 +533,68 @@ public class EventEngineManager
 	 * <li>REGISTER -> Indicamos q se esta</li><br>
 	 * @param state
 	 */
-	public static void setEventEngineState(EventEngineState state)
+	public void setEventEngineState(EventEngineState state)
 	{
-		STATE = state;
+		_state = state;
 	}
 	
 	/**
 	 * Get if the EventEngine is waiting to start a register or voting time.
 	 * @return boolean
 	 */
-	public static boolean isWaiting()
+	public boolean isWaiting()
 	{
-		return STATE == EventEngineState.WAITING;
+		return _state == EventEngineState.WAITING;
 	}
 	
 	/**
 	 * Get if the EventEngine is running an event.
 	 * @return boolean
 	 */
-	public static boolean isRunning()
+	public boolean isRunning()
 	{
-		return (STATE == EventEngineState.RUNNING_EVENT) || (STATE == EventEngineState.RUN_EVENT);
+		return (_state == EventEngineState.RUNNING_EVENT) || (_state == EventEngineState.RUN_EVENT);
 	}
 	
 	/**
 	 * Verificamos si se pueden seguir registrando mas usuarios a los eventos.
 	 * @return boolean
 	 */
-	public static boolean isOpenRegister()
+	public boolean isOpenRegister()
 	{
-		return STATE == EventEngineState.REGISTER;
+		return _state == EventEngineState.REGISTER;
 	}
 	
 	/**
 	 * Verificamos si se pueden seguir registrando mas usuarios a los eventos.
 	 * @return boolean
 	 */
-	public static boolean isOpenVote()
+	public boolean isOpenVote()
 	{
-		return STATE == EventEngineState.VOTING;
+		return _state == EventEngineState.VOTING;
 	}
 	
 	// XXX PLAYERS REGISTER -----------------------------------------------------------------------------
 	
 	// Lista de players en el evento.
-	private static final Set<L2PcInstance> EVENT_REGISTERED_PLAYERS = ConcurrentHashMap.newKeySet();
+	private final Set<L2PcInstance> _eventRegisterdPlayers = ConcurrentHashMap.newKeySet();
 	
 	/**
 	 * Obtenemos la colección de jugadores registrados
 	 * @return Collection<L2PcInstance>
 	 */
-	public static Collection<L2PcInstance> getAllRegisteredPlayers()
+	public Collection<L2PcInstance> getAllRegisteredPlayers()
 	{
-		return EVENT_REGISTERED_PLAYERS;
+		return _eventRegisterdPlayers;
 	}
 	
 	/**
 	 * Limpia la colección de jugadores
 	 * @return
 	 */
-	public static void clearRegisteredPlayers()
+	public void clearRegisteredPlayers()
 	{
-		EVENT_REGISTERED_PLAYERS.clear();
+		_eventRegisterdPlayers.clear();
 	}
 	
 	/**
@@ -602,9 +602,9 @@ public class EventEngineManager
 	 * @return <li>True - > no hay jugadores registrados.</li><br>
 	 *         <li>False - > hay al menos un jugador registrado.</li><br>
 	 */
-	public static boolean isEmptyRegisteredPlayers()
+	public boolean isEmptyRegisteredPlayers()
 	{
-		return EVENT_REGISTERED_PLAYERS.isEmpty();
+		return _eventRegisterdPlayers.isEmpty();
 	}
 	
 	/**
@@ -612,9 +612,9 @@ public class EventEngineManager
 	 * @return <li>True - > Está registrado.</li><br>
 	 *         <li>False - > No está registrado.</li><br>
 	 */
-	public static boolean isRegistered(L2PcInstance player)
+	public boolean isRegistered(L2PcInstance player)
 	{
-		return EVENT_REGISTERED_PLAYERS.contains(player);
+		return _eventRegisterdPlayers.contains(player);
 	}
 	
 	/**
@@ -623,9 +623,9 @@ public class EventEngineManager
 	 * @return <li>True - > si el registro es exitoso.</li><br>
 	 *         <li>False - > si el player ya estaba registrado.</li><br>
 	 */
-	public static boolean registerPlayer(L2PcInstance player)
+	public boolean registerPlayer(L2PcInstance player)
 	{
-		return EVENT_REGISTERED_PLAYERS.add(player);
+		return _eventRegisterdPlayers.add(player);
 	}
 	
 	/**
@@ -634,16 +634,16 @@ public class EventEngineManager
 	 * @return <li>True - > si el player estaba registrado.</li><br>
 	 *         <li>False - > si el player no estaba registrado.</li><br>
 	 */
-	public static boolean unRegisterPlayer(L2PcInstance player)
+	public boolean unRegisterPlayer(L2PcInstance player)
 	{
-		return EVENT_REGISTERED_PLAYERS.remove(player);
+		return _eventRegisterdPlayers.remove(player);
 	}
 	
 	// XXX MISC ---------------------------------------------------------------------------------------
 	/**
 	 * Cleanup variables to the next event
 	 */
-	public static void cleanUp()
+	public void cleanUp()
 	{
 		setCurrentEvent(null);
 		clearVotes();
@@ -656,14 +656,14 @@ public class EventEngineManager
 	 * @param player
 	 * @return
 	 */
-	public static boolean isPlayerInEvent(L2PcInstance player)
+	public boolean isPlayerInEvent(L2PcInstance player)
 	{
-		if (CURRENT_EVENT == null)
+		if (_currentEvent == null)
 		{
 			return false;
 		}
 		
-		return CURRENT_EVENT.isPlayableInEvent(player);
+		return _currentEvent.isPlayableInEvent(player);
 	}
 	
 	/**
@@ -671,14 +671,14 @@ public class EventEngineManager
 	 * @param playable
 	 * @return
 	 */
-	public static boolean isPlayableInEvent(L2Playable playable)
+	public boolean isPlayableInEvent(L2Playable playable)
 	{
-		if (CURRENT_EVENT == null)
+		if (_currentEvent == null)
 		{
 			return false;
 		}
 		
-		return CURRENT_EVENT.isPlayableInEvent(playable);
+		return _currentEvent.isPlayableInEvent(playable);
 	}
 	
 	public static EventEngineManager getInstance()

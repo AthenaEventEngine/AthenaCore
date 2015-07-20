@@ -23,8 +23,8 @@ import java.util.Map;
 
 import net.sf.eventengine.EventEngineManager;
 import net.sf.eventengine.datatables.ConfigData;
+import net.sf.eventengine.datatables.EventData;
 import net.sf.eventengine.enums.EventEngineState;
-import net.sf.eventengine.events.EventLoader;
 import net.sf.eventengine.handler.AbstractEvent;
 import net.sf.eventengine.util.EventUtil;
 
@@ -39,87 +39,87 @@ public class EventEngineTask implements Runnable
 	@Override
 	public void run()
 	{
-		EventEngineState state = EventEngineManager.getEventEngineState();
+		EventEngineState state = EventEngineManager.getInstance().getEventEngineState();
 		switch (state)
 		{
 			case WAITING:
 			{
-				if (EventEngineManager.getTime() <= 0)
+				if (EventEngineManager.getInstance().getTime() <= 0)
 				{
-					if (ConfigData.EVENT_VOTING_ENABLED)
+					if (ConfigData.getInstance().EVENT_VOTING_ENABLED)
 					{
 						EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "event_voting_started");
-						EventEngineManager.setTime(ConfigData.EVENT_VOTING_TIME * 60);
-						EventEngineManager.setEventEngineState(EventEngineState.VOTING);
+						EventEngineManager.getInstance().setTime(ConfigData.getInstance().EVENT_VOTING_TIME * 60);
+						EventEngineManager.getInstance().setEventEngineState(EventEngineState.VOTING);
 					}
 					else
 					{
-						EventEngineManager.setNextEvent(EventLoader.getRandomEventType());
-						EventEngineManager.setTime(ConfigData.EVENT_REGISTER_TIME * 60);
-						EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "event_register_started", "%event%", EventEngineManager.getNextEvent().getSimpleName());
-						EventEngineManager.setEventEngineState(EventEngineState.REGISTER);
+						EventEngineManager.getInstance().setNextEvent(EventData.getInstance().getRandomEventType());
+						EventEngineManager.getInstance().setTime(ConfigData.getInstance().EVENT_REGISTER_TIME * 60);
+						EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "event_register_started", "%event%", EventEngineManager.getInstance().getNextEvent().getSimpleName());
+						EventEngineManager.getInstance().setEventEngineState(EventEngineState.REGISTER);
 					}
 				}
 				break;
 			}
 			case VOTING:
 			{
-				if (EventEngineManager.getTime() > 0)
+				if (EventEngineManager.getInstance().getTime() > 0)
 				{
-					EventUtil.announceTimeLeft(EventEngineManager.getTime(), "event_voting_state", Say2.CRITICAL_ANNOUNCE, true);
+					EventUtil.announceTimeLeft(EventEngineManager.getInstance().getTime(), "event_voting_state", Say2.CRITICAL_ANNOUNCE, true);
 				}
 				else
 				{
-					Class<? extends AbstractEvent> nextEvent = EventEngineManager.getEventMoreVotes();
-					EventEngineManager.setNextEvent(nextEvent);
-					EventEngineManager.setTime(ConfigData.EVENT_REGISTER_TIME * 60);
+					Class<? extends AbstractEvent> nextEvent = EventEngineManager.getInstance().getEventMoreVotes();
+					EventEngineManager.getInstance().setNextEvent(nextEvent);
+					EventEngineManager.getInstance().setTime(ConfigData.getInstance().EVENT_REGISTER_TIME * 60);
 					EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "event_voting_ended");
 					EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "event_register_started", "%event%", nextEvent.getSimpleName());
-					EventEngineManager.setEventEngineState(EventEngineState.REGISTER);
+					EventEngineManager.getInstance().setEventEngineState(EventEngineState.REGISTER);
 				}
 				break;
 			}
 			case REGISTER:
 			{
-				if (EventEngineManager.getTime() > 0)
+				if (EventEngineManager.getInstance().getTime() > 0)
 				{
 					Map<String, String> holdersText = new HashMap<>();
-					holdersText.put("%event%", EventEngineManager.getNextEvent().getSimpleName());
-					EventUtil.announceTimeLeft(EventEngineManager.getTime(), "event_register_state", Say2.CRITICAL_ANNOUNCE, holdersText, true);
+					holdersText.put("%event%", EventEngineManager.getInstance().getNextEvent().getSimpleName());
+					EventUtil.announceTimeLeft(EventEngineManager.getInstance().getTime(), "event_register_state", Say2.CRITICAL_ANNOUNCE, holdersText, true);
 				}
 				else
 				{
-					if (EventEngineManager.getAllRegisteredPlayers().size() < ConfigData.MIN_PLAYERS_IN_EVENT)
+					if (EventEngineManager.getInstance().getAllRegisteredPlayers().size() < ConfigData.getInstance().MIN_PLAYERS_IN_EVENT)
 					{
-						EventEngineManager.cleanUp();
-						EventEngineManager.setTime(ConfigData.EVENT_TASK * 60);
+						EventEngineManager.getInstance().cleanUp();
+						EventEngineManager.getInstance().setTime(ConfigData.getInstance().EVENT_TASK * 60);
 						EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "event_aborted");
-						EventUtil.announceTimeLeft(EventEngineManager.getTime(), "event_next", Say2.CRITICAL_ANNOUNCE, true);
-						EventEngineManager.setEventEngineState(EventEngineState.WAITING);
+						EventUtil.announceTimeLeft(EventEngineManager.getInstance().getTime(), "event_next", Say2.CRITICAL_ANNOUNCE, true);
+						EventEngineManager.getInstance().setEventEngineState(EventEngineState.WAITING);
 					}
 					else
 					{
 						EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "event_register_ended");
-						EventEngineManager.setEventEngineState(EventEngineState.RUN_EVENT);
+						EventEngineManager.getInstance().setEventEngineState(EventEngineState.RUN_EVENT);
 					}
 				}
 				break;
 			}
 			case RUN_EVENT:
 			{
-				AbstractEvent event = EventLoader.getNewEventInstance(EventEngineManager.getNextEvent());
+				AbstractEvent event = EventData.getInstance().getNewEventInstance(EventEngineManager.getInstance().getNextEvent());
 				
 				if (event == null)
 				{
-					EventEngineManager.cleanUp();
+					EventEngineManager.getInstance().cleanUp();
 					EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "wrong_run");
 					EventUtil.announceTimeLeft(Say2.CRITICAL_ANNOUNCE, "event_next", Say2.CRITICAL_ANNOUNCE, true);
-					EventEngineManager.setEventEngineState(EventEngineState.WAITING);
+					EventEngineManager.getInstance().setEventEngineState(EventEngineState.WAITING);
 					return;
 				}
 				
-				EventEngineManager.setCurrentEvent(event);
-				EventEngineManager.setEventEngineState(EventEngineState.RUNNING_EVENT);
+				EventEngineManager.getInstance().setCurrentEvent(event);
+				EventEngineManager.getInstance().setEventEngineState(EventEngineState.RUNNING_EVENT);
 				EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "event_started");
 				break;
 			}
@@ -130,18 +130,18 @@ public class EventEngineTask implements Runnable
 			}
 			case EVENT_ENDED:
 			{
-				EventEngineManager.cleanUp();
-				EventEngineManager.setTime(ConfigData.EVENT_TASK * 60);
+				EventEngineManager.getInstance().cleanUp();
+				EventEngineManager.getInstance().setTime(ConfigData.getInstance().EVENT_TASK * 60);
 				EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "event_end");
-				EventUtil.announceTimeLeft(EventEngineManager.getTime(), "event_next", Say2.CRITICAL_ANNOUNCE, true);
-				EventEngineManager.setEventEngineState(EventEngineState.WAITING);
+				EventUtil.announceTimeLeft(EventEngineManager.getInstance().getTime(), "event_next", Say2.CRITICAL_ANNOUNCE, true);
+				EventEngineManager.getInstance().setEventEngineState(EventEngineState.WAITING);
 				break;
 			}
 		}
 		
 		if (state != EventEngineState.RUNNING_EVENT)
 		{
-			EventEngineManager.decreaseTime();
+			EventEngineManager.getInstance().decreaseTime();
 		}
 	}
 }

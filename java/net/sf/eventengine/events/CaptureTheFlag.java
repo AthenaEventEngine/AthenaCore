@@ -39,8 +39,8 @@ public class CaptureTheFlag extends AbstractEvent
 		super();
 		
 		// Definimos los spawns de cada team
-		setTeamSpawn(Team.RED, ConfigData.TVT_COORDINATES_TEAM_1);
-		setTeamSpawn(Team.BLUE, ConfigData.TVT_COORDINATES_TEAM_2);
+		setTeamSpawn(Team.RED, ConfigData.getInstance().TVT_COORDINATES_TEAM_1);
+		setTeamSpawn(Team.BLUE, ConfigData.getInstance().TVT_COORDINATES_TEAM_2);
 	}
 	
 	@Override

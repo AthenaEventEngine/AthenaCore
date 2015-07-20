@@ -60,7 +60,7 @@ import com.l2jserver.util.Rnd;
  */
 public abstract class AbstractEvent
 {
-	private static final Logger LOG = Logger.getLogger(AbstractEvent.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(AbstractEvent.class.getName());
 	
 	public AbstractEvent()
 	{
@@ -208,13 +208,13 @@ public abstract class AbstractEvent
 	 */
 	private void createEventPlayers()
 	{
-		for (L2PcInstance player : EventEngineManager.getAllRegisteredPlayers())
+		for (L2PcInstance player : EventEngineManager.getInstance().getAllRegisteredPlayers())
 		{
 			_eventPlayers.put(player.getObjectId(), new PlayerHolder(player));
 		}
 		
 		// We clean the list, no longer we need it.
-		EventEngineManager.clearRegisteredPlayers();
+		EventEngineManager.getInstance().clearRegisteredPlayers();
 	}
 	
 	/**
@@ -331,7 +331,7 @@ public abstract class AbstractEvent
 		PlayerHolder activePlayer = getEventPlayer(playable);
 		
 		// CHECK FRIENDLY_FIRE ----------------------------------------
-		if (ConfigData.FRIENDLY_FIRE)
+		if (ConfigData.getInstance().FRIENDLY_FIRE)
 		{
 			// If our target is L2Playable type and we do this in the event control.
 			PlayerHolder activeTarget = getEventPlayer(target);
@@ -389,7 +389,7 @@ public abstract class AbstractEvent
 		PlayerHolder activePlayer = getEventPlayer(playable);
 		
 		// CHECK FRIENDLY_FIRE ----------------------------------------
-		if (ConfigData.FRIENDLY_FIRE)
+		if (ConfigData.getInstance().FRIENDLY_FIRE)
 		{
 			// If our target is L2Playable type and we do this in the event control.
 			PlayerHolder activeTarget = getEventPlayer(target);
@@ -564,7 +564,7 @@ public abstract class AbstractEvent
 			// We canceled the Team
 			player.getPcInstance().setTeam(Team.NONE);
 			// It out of the world created for the event
-			for (InstanceWorld world : EventEngineManager.getInstancesWorlds())
+			for (InstanceWorld world : EventEngineManager.getInstance().getInstancesWorlds())
 			{
 				if (player.getDinamicInstanceId() == world.getInstanceId())
 				{
@@ -594,7 +594,7 @@ public abstract class AbstractEvent
 	{
 		try
 		{
-			EventUtil.sendEventMessage(player, MessageData.getMsgByLang(player.getPcInstance(), "revive_in", true).replace("%time%", time + ""));
+			EventUtil.sendEventMessage(player, MessageData.getInstance().getMsgByLang(player.getPcInstance(), "revive_in", true).replace("%time%", time + ""));
 			
 			ThreadPoolManager.getInstance().scheduleGeneral(new Runnable()
 			{
@@ -608,16 +608,16 @@ public abstract class AbstractEvent
 					player.getPcInstance().setCurrentHp(player.getPcInstance().getMaxHp());
 					player.getPcInstance().setCurrentMp(player.getPcInstance().getMaxMp());
 					// teleport
-					EventEngineManager.getCurrentEvent().teleportPlayer(player);
+					EventEngineManager.getInstance().getCurrentEvent().teleportPlayer(player);
 					// buff
-					EventEngineManager.getCurrentEvent().giveBuffPlayer(player.getPcInstance());
+					EventEngineManager.getInstance().getCurrentEvent().giveBuffPlayer(player.getPcInstance());
 				}
 				
 			}, time * 1000);
 		}
 		catch (Exception e)
 		{
-			LOG.warning(AbstractEvent.class.getSimpleName() + ": " + e);
+			LOGGER.warning(AbstractEvent.class.getSimpleName() + ": " + e);
 			e.printStackTrace();
 		}
 	}
@@ -628,7 +628,7 @@ public abstract class AbstractEvent
 	 */
 	public void giveBuffPlayer(L2PcInstance player)
 	{
-		for (SkillHolder sh : BuffListData.getBuffsPlayer(player))
+		for (SkillHolder sh : BuffListData.getInstance().getBuffsPlayer(player))
 		{
 			sh.getSkill().applyEffects(player, player);
 		}
@@ -673,7 +673,7 @@ public abstract class AbstractEvent
 		ThreadPoolManager.getInstance().scheduleGeneral(new EventTask(2), time);
 		time += 1000;
 		ThreadPoolManager.getInstance().scheduleGeneral(new EventTask(3), time);
-		time += ConfigData.EVENT_DURATION * 60 * 1000;
+		time += ConfigData.getInstance().EVENT_DURATION * 60 * 1000;
 		ThreadPoolManager.getInstance().scheduleGeneral(new EventTask(4), time);
 		time += 1000;
 		ThreadPoolManager.getInstance().scheduleGeneral(new EventTask(5), time);

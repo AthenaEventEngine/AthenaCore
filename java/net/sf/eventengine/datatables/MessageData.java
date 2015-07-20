@@ -38,17 +38,22 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
  */
 public final class MessageData
 {
-	private static final Logger LOG = Logger.getLogger(MessageData.class.getName());
-	
-	// Mapa para identificar el lenguaje de cada personaje
-	private static Map<L2PcInstance, String> PLAYER_CURRENT_LANG = new HashMap<>();
+	private static final Logger LOGGER = Logger.getLogger(MessageData.class.getName());
 	
 	private static final String DIRECTORY = "config/EventEngine/Language";
-	private static Map<String, String> MSG_MAP = new HashMap<>();
-	private static Map<String, String> LANGUAGES = new HashMap<>();
 	private static final String DEFAULT_LANG = "en";
 	
-	public static void load()
+	// Mapa para identificar el lenguaje de cada personaje
+	private Map<L2PcInstance, String> _playerCurrentLang = new HashMap<>();
+	private Map<String, String> _msgMap = new HashMap<>();
+	private Map<String, String> _languages = new HashMap<>();
+	
+	private MessageData()
+	{
+		load();
+	}
+	
+	private void load()
 	{
 		try
 		{
@@ -73,16 +78,16 @@ public final class MessageData
 				}
 			}
 			
-			LOG.info(MessageData.class.getSimpleName() + ": Loaded " + LANGUAGES.size() + " languages.");
+			LOGGER.info(MessageData.class.getSimpleName() + ": Loaded " + _languages.size() + " languages.");
 		}
 		catch (Exception e)
 		{
-			LOG.warning(MessageData.class.getSimpleName() + ": -> Error while loading language files: " + e);
+			LOGGER.warning(MessageData.class.getSimpleName() + ": -> Error while loading language files: " + e);
 			e.printStackTrace();
 		}
 	}
 	
-	private static void loadXml(File file, String lang)
+	private void loadXml(File file, String lang)
 	{
 		int count = 0;
 		String langName = "";
@@ -99,7 +104,7 @@ public final class MessageData
 			}
 			catch (Exception e)
 			{
-				LOG.warning(MessageData.class.getSimpleName() + ": -> Could not load language (" + lang + ") file for event engine: " + e);
+				LOGGER.warning(MessageData.class.getSimpleName() + ": -> Could not load language (" + lang + ") file for event engine: " + e);
 				e.printStackTrace();
 			}
 			
@@ -110,9 +115,9 @@ public final class MessageData
 				langName = docAttr.getNamedItem("lang").getNodeValue();
 			}
 			
-			if (!LANGUAGES.containsKey(lang))
+			if (!_languages.containsKey(lang))
 			{
-				LANGUAGES.put(lang, langName);
+				_languages.put(lang, langName);
 			}
 			
 			for (Node d = n.getFirstChild(); d != null; d = d.getNextSibling())
@@ -123,13 +128,13 @@ public final class MessageData
 					String id = attrs.getNamedItem("id").getNodeValue();
 					String text = attrs.getNamedItem("text").getNodeValue();
 					
-					MSG_MAP.put(lang + "_" + id, text);
+					_msgMap.put(lang + "_" + id, text);
 					count++;
 				}
 			}
 		}
 		
-		LOG.info("Loaded language file for language " + lang + " " + count + " messages.");
+		LOGGER.info("Loaded language file for language " + lang + " " + count + " messages.");
 	}
 	
 	/**
@@ -139,7 +144,7 @@ public final class MessageData
 	 * @param addTag -> usado principalmente en los mensaje q salen por pantalla o el chat
 	 * @return String
 	 */
-	public static String getMsgByLang(L2PcInstance player, String text, boolean addTag)
+	public String getMsgByLang(L2PcInstance player, String text, boolean addTag)
 	{
 		// Obtenemos el lenguaje por el que opto el usuario.
 		String lang = getLanguage(player);
@@ -148,10 +153,10 @@ public final class MessageData
 		// generamos el TAG propio de nuestro evento
 		if (addTag)
 		{
-			if (MSG_MAP.containsKey(lang + "_" + "event_engine_tag"))
+			if (_msgMap.containsKey(lang + "_" + "event_engine_tag"))
 			{
 				// buscamos la traduccion del texto en el lenguaje seleccionado por el personaje
-				tag = MSG_MAP.get(lang + "_" + "event_engine_tag") + " ";
+				tag = _msgMap.get(lang + "_" + "event_engine_tag") + " ";
 			}
 			else
 			{
@@ -168,15 +173,15 @@ public final class MessageData
 			// texto a ser traducido
 			String textLang = st.nextToken();
 			
-			if (MSG_MAP.containsKey(lang + "_" + textLang))
+			if (_msgMap.containsKey(lang + "_" + textLang))
 			{
 				// buscamos la traduccion del texto en el lenguaje seleccionado por el personaje
-				msg.append(MSG_MAP.get(lang + "_" + textLang));
+				msg.append(_msgMap.get(lang + "_" + textLang));
 			}
-			else if (MSG_MAP.containsKey(lang + "_" + textLang))
+			else if (_msgMap.containsKey(lang + "_" + textLang))
 			{
 				// buscamos la traduccion del texto en el lenguaje default -> "en"
-				msg.append(MSG_MAP.get("en_" + textLang));
+				msg.append(_msgMap.get("en_" + textLang));
 			}
 			else
 			{
@@ -193,9 +198,9 @@ public final class MessageData
 	 * @param player
 	 * @param lang
 	 */
-	public static void setLanguage(L2PcInstance player, String lang)
+	public void setLanguage(L2PcInstance player, String lang)
 	{
-		PLAYER_CURRENT_LANG.put(player, lang);
+		_playerCurrentLang.put(player, lang);
 	}
 	
 	/**
@@ -203,11 +208,11 @@ public final class MessageData
 	 * @param player
 	 * @return String
 	 */
-	public static String getLanguage(L2PcInstance player)
+	public String getLanguage(L2PcInstance player)
 	{
-		if (PLAYER_CURRENT_LANG.containsKey(player))
+		if (_playerCurrentLang.containsKey(player))
 		{
-			return PLAYER_CURRENT_LANG.get(player);
+			return _playerCurrentLang.get(player);
 			
 		}
 		return DEFAULT_LANG;
@@ -217,8 +222,18 @@ public final class MessageData
 	 * Obtenemos un mapa con todos los lenguajes que fueron cargados.
 	 * @return
 	 */
-	public static Map<String, String> getLanguages()
+	public Map<String, String> getLanguages()
 	{
-		return LANGUAGES;
+		return _languages;
+	}
+	
+	public static MessageData getInstance()
+	{
+		return SingletonHolder._instance;
+	}
+	
+	private static class SingletonHolder
+	{
+		protected static final MessageData _instance = new MessageData();
 	}
 }

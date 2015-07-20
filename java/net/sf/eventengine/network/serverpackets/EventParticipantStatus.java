@@ -91,7 +91,7 @@ public class EventParticipantStatus extends L2GameServerPacket
 		switch (_eventState)
 		{
 			case TOTAL:
-				writeD(EventEngineManager.getTime());
+				writeD(EventEngineManager.getInstance().getTime());
 				writeD(_pointsBlue);
 				writeD(_pointsRed);
 				writeD(1); // Equipo 1
@@ -128,7 +128,7 @@ public class EventParticipantStatus extends L2GameServerPacket
 				break;
 			
 			case PVP_KILL:
-				writeD(EventEngineManager.getTime());
+				writeD(EventEngineManager.getInstance().getTime());
 				writeD(_pointsBlue);
 				writeD(_pointsRed);
 				
