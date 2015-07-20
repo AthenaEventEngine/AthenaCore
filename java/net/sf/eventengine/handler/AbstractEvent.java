@@ -191,7 +191,7 @@ public abstract class AbstractEvent
 		return _playerBuffs.get(type);
 	}
 	
-	// SAWNS TEAMS ---------------------------------------------------------------------------------- //
+	// SPAWNS TEAMS ---------------------------------------------------------------------------------- //
 	private final Map<Team, Location> _teamSapwn = new HashMap<>();
 	
 	/**

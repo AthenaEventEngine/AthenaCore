@@ -31,7 +31,6 @@ import net.sf.eventengine.ai.NpcManager;
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.EventEngineState;
-import net.sf.eventengine.enums.EventType;
 import net.sf.eventengine.events.EventLoader;
 import net.sf.eventengine.handler.AbstractEvent;
 import net.sf.eventengine.holder.PlayerHolder;
@@ -75,14 +74,16 @@ public class EventEngineManager
 		{
 			// Cargamos los configs de los eventos.
 			ConfigData.load();
-			LOG.info("EventEngineManager: Configs cargados con exito");
+			LOG.info("EventEngineManager: Configs loaded");
 			EventLoader.load();
+			LOG.info("EventEngineManager: Events loaded");
+			initVotes();
 			// Multi-Language System
 			MessageData.load();
 			LOG.info("EventEngineManager: Multi-Language System cargado.");
 			// Cargamos los AI
 			NpcManager.class.newInstance();
-			LOG.info("EventEngineManager: AI's cargados con exito");
+			LOG.info("EventEngineManager: AI's loaded.");
 			// lanzamos el task principal
 			TIME = 0;
 			ThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(new EventEngineTask(), 10 * 1000, 1000);
@@ -159,24 +160,24 @@ public class EventEngineManager
 	
 	// XXX NEXT EVENT ---------------------------------------------------------------------------------
 	
-	private static EventType NEXT_EVENT;
+	private static Class<? extends AbstractEvent> _nextEvent;
 	
 	/**
 	 * Get the next event type
 	 * @return
 	 */
-	public static EventType getNextEvent()
+	public static Class<? extends AbstractEvent> getNextEvent()
 	{
-		return NEXT_EVENT;
+		return _nextEvent;
 	}
 	
 	/**
 	 * Set the next event type
 	 * @param event
 	 */
-	public static void setNextEvent(EventType event)
+	public static void setNextEvent(Class<? extends AbstractEvent> event)
 	{
-		NEXT_EVENT = event;
+		_nextEvent = event;
 	}
 	
 	// XXX CURRENT EVENT ---------------------------------------------------------------------------------
@@ -369,7 +370,7 @@ public class EventEngineManager
 		{
 			try
 			{
-				CURRENT_EVENT.listenerOnUseItem(player, item);
+				return CURRENT_EVENT.listenerOnUseItem(player, item);
 			}
 			catch (Exception e)
 			{
@@ -385,9 +386,14 @@ public class EventEngineManager
 	// Lista de id's de personajes que votaron
 	private static final Set<Integer> PLAYERS_ALREADY_VOTED = ConcurrentHashMap.newKeySet();
 	// Mapa de con los id's de los personajes que los votaron
-	private static final Map<EventType, Set<Integer>> CURRENT_EVENT_VOTES = new HashMap<>();
+	private static final Map<Class<? extends AbstractEvent>, Set<Integer>> CURRENT_EVENT_VOTES = new HashMap<>();
+	
+	/**
+	 * Init votes
+	 */
+	public static void initVotes()
 	{
-		for (EventType type : EventType.values())
+		for (Class<? extends AbstractEvent> type : EventLoader.getEnabledEvents())
 		{
 			CURRENT_EVENT_VOTES.put(type, ConcurrentHashMap.newKeySet());
 		}
@@ -400,7 +406,7 @@ public class EventEngineManager
 	public static void clearVotes()
 	{
 		// Se reinicia el mapa
-		for (EventType event : CURRENT_EVENT_VOTES.keySet())
+		for (Class<? extends AbstractEvent> event : CURRENT_EVENT_VOTES.keySet())
 		{
 			CURRENT_EVENT_VOTES.get(event).clear();
 		}
@@ -414,7 +420,7 @@ public class EventEngineManager
 	 * @param event -> evento al q se vota
 	 * @return boolean
 	 */
-	public static void increaseVote(L2PcInstance player, EventType event)
+	public static void increaseVote(L2PcInstance player, Class<? extends AbstractEvent> event)
 	{
 		// Agrega al personaje a la lista de los que votaron
 		// Si ya estaba, sigue de largo
@@ -436,7 +442,7 @@ public class EventEngineManager
 		if (PLAYERS_ALREADY_VOTED.remove(player.getObjectId()))
 		{
 			// Si estaba en la lista, empieza a buscar para qué evento votó
-			for (EventType event : CURRENT_EVENT_VOTES.keySet())
+			for (Class<? extends AbstractEvent> event : CURRENT_EVENT_VOTES.keySet())
 			{
 				CURRENT_EVENT_VOTES.get(event).remove(player.getObjectId());
 			}
@@ -448,7 +454,7 @@ public class EventEngineManager
 	 * @param event -> AVA, TVT, CFT.
 	 * @return int
 	 */
-	public static int getCurrentVotesInEvent(EventType event)
+	public static int getCurrentVotesInEvent(Class<? extends AbstractEvent> event)
 	{
 		return CURRENT_EVENT_VOTES.get(event).size();
 	}
@@ -474,12 +480,12 @@ public class EventEngineManager
 	 * entre los que más votos tienen<br>
 	 * @return
 	 */
-	public static EventType getEventMoreVotes()
+	public static Class<? extends AbstractEvent> getEventMoreVotes()
 	{
 		int maxVotes = 0;
-		List<EventType> topEvents = new ArrayList<>();
+		List<Class<? extends AbstractEvent>> topEvents = new ArrayList<>();
 		
-		for (EventType event : CURRENT_EVENT_VOTES.keySet())
+		for (Class<? extends AbstractEvent> event : CURRENT_EVENT_VOTES.keySet())
 		{
 			int eventVotes = CURRENT_EVENT_VOTES.get(event).size();
 			if (eventVotes > maxVotes)
@@ -630,6 +636,16 @@ public class EventEngineManager
 	}
 	
 	// XXX MISC ---------------------------------------------------------------------------------------
+	/**
+	 * Cleanup variables to the next event
+	 */
+	public static void cleanUp()
+	{
+		setCurrentEvent(null);
+		clearVotes();
+		getInstancesWorlds().clear();
+	}
+	
 	/**
 	 * Verificamos si un player participa de algun evento
 	 * @param player

@@ -24,13 +24,8 @@ import java.util.Map;
 import net.sf.eventengine.EventEngineManager;
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.enums.EventEngineState;
-import net.sf.eventengine.enums.EventType;
-import net.sf.eventengine.events.AllVsAll;
-import net.sf.eventengine.events.CaptureTheFlag;
 import net.sf.eventengine.events.EventLoader;
-import net.sf.eventengine.events.OneVsOne;
-import net.sf.eventengine.events.Survive;
-import net.sf.eventengine.events.TeamVsTeam;
+import net.sf.eventengine.handler.AbstractEvent;
 import net.sf.eventengine.util.EventUtil;
 
 import com.l2jserver.gameserver.network.clientpackets.Say2;
@@ -49,12 +44,9 @@ public class EventEngineTask implements Runnable
 		{
 			case WAITING:
 			{
-				// Cleanup
 				if (EventEngineManager.getCurrentEvent() != null)
 				{
-					EventEngineManager.setCurrentEvent(null);
-					EventEngineManager.clearVotes();
-					EventEngineManager.getInstancesWorlds().clear();
+					EventEngineManager.cleanUp();
 				}
 				
 				if (EventEngineManager.getTime() <= 0)
@@ -69,7 +61,7 @@ public class EventEngineTask implements Runnable
 					{
 						EventEngineManager.setNextEvent(EventLoader.getRandomEventType());
 						EventEngineManager.setTime(ConfigData.EVENT_REGISTER_TIME * 60);
-						EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "event_register_started", "%event%", EventEngineManager.getNextEvent().toString());
+						EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "event_register_started", "%event%", EventEngineManager.getNextEvent().getSimpleName());
 						EventEngineManager.setEventEngineState(EventEngineState.REGISTER);
 					}
 				}
@@ -83,11 +75,11 @@ public class EventEngineTask implements Runnable
 				}
 				else
 				{
-					EventType nextEvent = EventEngineManager.getEventMoreVotes();
+					Class<? extends AbstractEvent> nextEvent = EventEngineManager.getEventMoreVotes();
 					EventEngineManager.setNextEvent(nextEvent);
 					EventEngineManager.setTime(ConfigData.EVENT_REGISTER_TIME * 60);
 					EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "event_voting_ended");
-					EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "event_register_started", "%event%", nextEvent.toString());
+					EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "event_register_started", "%event%", nextEvent.getSimpleName());
 					EventEngineManager.setEventEngineState(EventEngineState.REGISTER);
 				}
 				break;
@@ -97,7 +89,7 @@ public class EventEngineTask implements Runnable
 				if (EventEngineManager.getTime() > 0)
 				{
 					Map<String, String> holdersText = new HashMap<>();
-					holdersText.put("%event%", EventEngineManager.getNextEvent().toString());
+					holdersText.put("%event%", EventEngineManager.getNextEvent().getSimpleName());
 					EventUtil.announceTimeLeft(EventEngineManager.getTime(), "event_register_state", Say2.CRITICAL_ANNOUNCE, holdersText, true);
 				}
 				else
@@ -119,33 +111,18 @@ public class EventEngineTask implements Runnable
 			}
 			case RUN_EVENT:
 			{
-				EventType event = EventEngineManager.getNextEvent();
+				AbstractEvent event = EventLoader.getNewEventInstance(EventEngineManager.getNextEvent());
 				
-				// Initialize the event with more votes
-				switch (event)
+				if (event == null)
 				{
-					case AVA:
-						EventEngineManager.setCurrentEvent(new AllVsAll());
-						break;
-					
-					case CTF:
-						EventEngineManager.setCurrentEvent(new CaptureTheFlag());
-						break;
-					
-					case TVT:
-						EventEngineManager.setCurrentEvent(new TeamVsTeam());
-						break;
-					
-					case OVO:
-						EventEngineManager.setCurrentEvent(new OneVsOne());
-						break;
-					
-					case SURVIVE:
-						EventEngineManager.setCurrentEvent(new Survive());
-						break;
-				
+					EventEngineManager.cleanUp();
+					EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "wrong_run");
+					EventUtil.announceTimeLeft(Say2.CRITICAL_ANNOUNCE, "event_next", Say2.CRITICAL_ANNOUNCE, true);
+					EventEngineManager.setEventEngineState(EventEngineState.WAITING);
+					return;
 				}
 				
+				EventEngineManager.setCurrentEvent(event);
 				EventEngineManager.setEventEngineState(EventEngineState.RUNNING_EVENT);
 				EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "event_started");
 				break;
