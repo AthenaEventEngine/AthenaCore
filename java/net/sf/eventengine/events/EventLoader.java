@@ -3,9 +3,9 @@ package net.sf.eventengine.events;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
-import net.sf.eventengine.configs.Configs;
-import net.sf.eventengine.enums.EventType;
+import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.handler.AbstractEvent;
 
 import com.l2jserver.util.Rnd;
@@ -15,45 +15,64 @@ import com.l2jserver.util.Rnd;
  */
 public class EventLoader
 {
-	private static final ArrayList<EventType> EVENTS = new ArrayList<>();
-	private static final Map<EventType, Class<? extends AbstractEvent>> EVENTS_MAP = new HashMap<>();
+	private static final Logger LOG = Logger.getLogger(EventLoader.class.getName());
+	private static final ArrayList<Class<? extends AbstractEvent>> EVENTS_LIST = new ArrayList<>();
+	private static final Map<String, Class<? extends AbstractEvent>> EVENTS_MAP = new HashMap<>();
 	
 	public static void load()
 	{
-		if (Configs.AVA_EVENT_ENABLED)
+		if (ConfigData.AVA_EVENT_ENABLED)
 		{
-			EVENTS.add(EventType.AVA);
-			EVENTS_MAP.put(EventType.AVA, AllVsAll.class);
+			EVENTS_LIST.add(AllVsAll.class);
+			EVENTS_MAP.put(AllVsAll.class.getSimpleName(), AllVsAll.class);
 		}
 		
 		// EVENTS.put(EventType.CTF, CaptureTheFlag.class);
 		
-		if (Configs.OVO_EVENT_ENABLED)
+		if (ConfigData.OVO_EVENT_ENABLED)
 		{
-			EVENTS.add(EventType.OVO);
-			EVENTS_MAP.put(EventType.OVO, OneVsOne.class);
+			EVENTS_LIST.add(OneVsOne.class);
+			EVENTS_MAP.put(OneVsOne.class.getSimpleName(), OneVsOne.class);
 		}
 		
-		if (Configs.SURVIVE_EVENT_ENABLED)
+		if (ConfigData.SURVIVE_EVENT_ENABLED)
 		{
-			EVENTS.add(EventType.SURVIVE);
-			EVENTS_MAP.put(EventType.SURVIVE, Survive.class);
+			EVENTS_LIST.add(Survive.class);
+			EVENTS_MAP.put(Survive.class.getSimpleName(), Survive.class);
 		}
 		
-		if (Configs.TVT_EVENT_ENABLED)
+		if (ConfigData.TVT_EVENT_ENABLED)
 		{
-			EVENTS.add(EventType.TVT);
-			EVENTS_MAP.put(EventType.TVT, TeamVsTeam.class);
+			EVENTS_LIST.add(TeamVsTeam.class);
+			EVENTS_MAP.put(TeamVsTeam.class.getSimpleName(), TeamVsTeam.class);
 		}
 	}
 	
-	public static Class<? extends AbstractEvent> getClass(EventType type)
+	public static Class<? extends AbstractEvent> getEvent(String name)
 	{
-		return EVENTS_MAP.get(type);
+		return EVENTS_MAP.get(name);
 	}
 	
-	public static EventType getRandomEventType()
+	public static Class<? extends AbstractEvent> getRandomEventType()
 	{
-		return EVENTS.get(Rnd.get(EVENTS.size() - 1));
+		return EVENTS_LIST.get(Rnd.get(EVENTS_LIST.size() - 1));
+	}
+	
+	public static ArrayList<Class<? extends AbstractEvent>> getEnabledEvents()
+	{
+		return EVENTS_LIST;
+	}
+	
+	public static AbstractEvent getNewEventInstance(Class<? extends AbstractEvent> type)
+	{
+		try
+		{
+			return type.newInstance();
+		}
+		catch (Exception e)
+		{
+			LOG.warning(EventLoader.class.getSimpleName() + ": " + e);
+		}
+		return null;
 	}
 }
