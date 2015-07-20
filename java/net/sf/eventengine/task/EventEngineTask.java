@@ -44,11 +44,6 @@ public class EventEngineTask implements Runnable
 		{
 			case WAITING:
 			{
-				if (EventEngineManager.getCurrentEvent() != null)
-				{
-					EventEngineManager.cleanUp();
-				}
-				
 				if (EventEngineManager.getTime() <= 0)
 				{
 					if (ConfigData.EVENT_VOTING_ENABLED)
@@ -96,6 +91,7 @@ public class EventEngineTask implements Runnable
 				{
 					if (EventEngineManager.getAllRegisteredPlayers().size() < ConfigData.MIN_PLAYERS_IN_EVENT)
 					{
+						EventEngineManager.cleanUp();
 						EventEngineManager.setTime(ConfigData.EVENT_TASK * 60);
 						EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "event_aborted");
 						EventUtil.announceTimeLeft(EventEngineManager.getTime(), "event_next", Say2.CRITICAL_ANNOUNCE, true);
@@ -134,6 +130,7 @@ public class EventEngineTask implements Runnable
 			}
 			case EVENT_ENDED:
 			{
+				EventEngineManager.cleanUp();
 				EventEngineManager.setTime(ConfigData.EVENT_TASK * 60);
 				EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "event_end");
 				EventUtil.announceTimeLeft(EventEngineManager.getTime(), "event_next", Say2.CRITICAL_ANNOUNCE, true);

@@ -30,7 +30,6 @@ import java.util.logging.Logger;
 
 import com.l2jserver.gameserver.model.Location;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
-import com.l2jserver.gameserver.model.holders.SkillHolder;
 
 /**
  * Simplifies loading of property files and adds logging if a non existing property is requested.
@@ -248,32 +247,6 @@ public final class EventPropertiesParser
 			_log.warning("[" + _file.getName() + "] Invalid value specified for key: " + key + " specified value: " + value + " should be enum value of \"" + clazz.getSimpleName() + "\" using default value: " + defaultValue);
 			return defaultValue;
 		}
-	}
-	
-	/**
-	 * Parseamos un config usando "," para diferenciar entre cada cordenada<br>
-	 * Ejemplo -> "xx,xx,xx;xx,xx,xx ..."
-	 * @param key
-	 * @return List<SkillHolder>
-	 */
-	public List<SkillHolder> getSkillHolderList(String key)
-	{
-		List<SkillHolder> auxList = new ArrayList<>();
-		try
-		{
-			StringTokenizer st = new StringTokenizer(getValue(key), ";");
-			while (st.hasMoreTokens())
-			{
-				StringTokenizer st1 = new StringTokenizer(st.nextToken(), ",");
-				auxList.add(new SkillHolder(Integer.parseInt(st1.nextToken()), Integer.parseInt(st1.nextToken())));
-			}
-		}
-		catch (Exception e)
-		{
-			_log.warning(getClass().getSimpleName() + ": fail to read config -> " + key);
-		}
-		
-		return auxList;
 	}
 	
 	/**

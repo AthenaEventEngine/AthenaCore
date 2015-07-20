@@ -24,7 +24,6 @@ import java.util.List;
 import net.sf.eventengine.EventEngineManager;
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.enums.EventState;
-import net.sf.eventengine.enums.PlayerClassType;
 import net.sf.eventengine.enums.PlayerColorType;
 import net.sf.eventengine.handler.AbstractEvent;
 import net.sf.eventengine.holder.PlayerHolder;
@@ -54,9 +53,6 @@ public class TeamVsTeam extends AbstractEvent
 		// Definimos los spawns de cada team
 		setTeamSpawn(Team.RED, ConfigData.TVT_COORDINATES_TEAM_1);
 		setTeamSpawn(Team.BLUE, ConfigData.TVT_COORDINATES_TEAM_2);
-		// Definimos los buffs de los personajes
-		setPlayerBuffs(PlayerClassType.MAGE, ConfigData.TVT_BUFF_PLAYER_MAGE);
-		setPlayerBuffs(PlayerClassType.WARRIOR, ConfigData.TVT_BUFF_PLAYER_WARRIOR);
 	}
 	
 	@Override
