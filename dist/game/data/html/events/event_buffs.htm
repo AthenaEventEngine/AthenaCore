@@ -2,32 +2,55 @@
 	<title>..:: * L2J-Event Engine * ::..</title>
 	<body>
 		<center>
-			<table border=0 cellpadding=0 cellspacing=0 width=270>
+			<table border=0 cellpadding=0 cellspacing=0 width=270 background=L2UI_CH3.refinewnd_back_Pattern>
 				<tr>
 					<td valign=top align=center>
-					
-						<img src="l2ui.squaregray" width=210 height=1>
-						
+						<table border=0 cellpadding=0 cellspacing=0>
+							<tr>
+								<td width=256 height=185 background="L2UI_CT1.OlympiadWnd_DF_GrandTexture"></td>
+							</tr>
+						</table>
+						<center>
+							<img src="l2ui.squaregray" width=210 height=1>
+						</center>
 						<table width=210 border=0 bgcolor="090908">
 							<tr>
 								<td width=210 align="center">%buffTitle%</td>
 							</tr>
 						</table>
-						
-						<img src="l2ui.squaregray" width=210 height=1>
-						
-						<table width=210 border=0 bgcolor="090908">
+						<center>
+							<img src="l2ui.squaregray" width=210 height=1>
+						</center>
+						<table width=210 border=0 bgcolor="444444">
 							<tr>
-								<td width=100 align="center">%buffcount%</td>
-								<td width=110 align="center">%buffmax%</td>
+								<td width=210 align="center">%buffDescription%</td>
 							</tr>
 						</table>
-						
-						<img src="l2ui.squaregray" width=210 height=1>
-						
-								%buffList%
-								
-						<img src="l2ui.squaregray" width=210 height=1>
+						<br>
+						<center>
+							<img src="l2ui.squaregray" width=210 height=1>
+						</center>
+						<table width=210 border=0 bgcolor="090908">
+							<tr>
+								<td width=105 align="center">%buffTextCount% <font color=LEVEL>%buffCount%</font></td>
+								<td width=105 align="center">%buffTextMax% <font color=LEVEL>%buffMax%</font></td>
+							</tr>
+						</table>
+						<center>
+							<img src="l2ui.squaregray" width=210 height=1>
+						</center>
+						<br>
+						<table width=200 border=0>
+							<tr>
+								<td align="center">%buffList%</td>
+							</tr>
+						</table>
+						<br>
+						<center>
+							<button value="%buttonMain%" action="bypass -h Quest NpcManager index" width=100 height=27 back="L2UI_CT1.Button_DF_Down" fore="L2UI_CT1.Button_DF"/>
+						</center>
+						<br>
+						<br>
 					</td>
 				</tr>
 			</table>
