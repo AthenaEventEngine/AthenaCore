@@ -54,8 +54,8 @@ public class OneVsOne extends AbstractEvent
 		super();
 		
 		// Definimos los spawns de cada team
-		setTeamSpawn(Team.RED, ConfigData.OVO_COORDINATES_TEAM_1);
-		setTeamSpawn(Team.BLUE, ConfigData.OVO_COORDINATES_TEAM_2);
+		setTeamSpawn(Team.RED, ConfigData.getInstance().OVO_COORDINATES_TEAM_1);
+		setTeamSpawn(Team.BLUE, ConfigData.getInstance().OVO_COORDINATES_TEAM_2);
 	}
 	
 	@Override
@@ -130,7 +130,7 @@ public class OneVsOne extends AbstractEvent
 	 */
 	private void createTeams()
 	{
-		if (EventEngineManager.isEmptyRegisteredPlayers())
+		if (EventEngineManager.getInstance().isEmptyRegisteredPlayers())
 		{
 			return;
 		}
@@ -152,7 +152,7 @@ public class OneVsOne extends AbstractEvent
 				// Creamos la instancia y el mundo
 				if (countPlayer == 0)
 				{
-					world = EventEngineManager.createNewInstanceWorld();
+					world = EventEngineManager.getInstance().createNewInstanceWorld();
 				}
 				
 				// Repartimos uno para cada team
@@ -201,7 +201,7 @@ public class OneVsOne extends AbstractEvent
 	 */
 	private void giveRewardsTeams()
 	{
-		if (EventEngineManager.isEmptyRegisteredPlayers())
+		if (EventEngineManager.getInstance().isEmptyRegisteredPlayers())
 		{
 			return;
 		}
@@ -221,10 +221,10 @@ public class OneVsOne extends AbstractEvent
 				EventUtil.sendEventScreenMessage(team._playerRed, "El evento resulto en un empate entre ambos teams!");
 				
 				// Entregamos los rewards
-				if (ConfigData.OVO_REWARD_TEAM_TIE)
+				if (ConfigData.getInstance().OVO_REWARD_TEAM_TIE)
 				{
-					giveItems(team._playerBlue, ConfigData.OVO_REWARD_PLAYER_WIN);
-					giveItems(team._playerRed, ConfigData.OVO_REWARD_PLAYER_WIN);
+					giveItems(team._playerBlue, ConfigData.getInstance().OVO_REWARD_PLAYER_WIN);
+					giveItems(team._playerRed, ConfigData.getInstance().OVO_REWARD_PLAYER_WIN);
 				}
 			}
 			else if (pointsBlue < pointsRed)// ganador red
@@ -234,7 +234,7 @@ public class OneVsOne extends AbstractEvent
 				EventUtil.sendEventScreenMessage(team._playerRed, "El evento fue ganado por el jugador RED!");
 				
 				// Entregamos los rewards
-				giveItems(team._playerRed, ConfigData.OVO_REWARD_PLAYER_WIN);
+				giveItems(team._playerRed, ConfigData.getInstance().OVO_REWARD_PLAYER_WIN);
 			}
 			else if (pointsBlue > pointsRed)// ganador blue
 			{
@@ -243,7 +243,7 @@ public class OneVsOne extends AbstractEvent
 				EventUtil.sendEventScreenMessage(team._playerRed, "El evento fue ganado por el jugador BLUE!");
 				
 				// Entregamos los rewards
-				giveItems(team._playerBlue, ConfigData.OVO_REWARD_PLAYER_WIN);
+				giveItems(team._playerBlue, ConfigData.getInstance().OVO_REWARD_PLAYER_WIN);
 			}
 		}
 	}

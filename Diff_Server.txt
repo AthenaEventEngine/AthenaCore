@@ -31,7 +31,7 @@ index 05e3150..0057726 100644
 +</classpath>
 diff --git a/L2J_Server/dist/libs/L2J_EventEngine.jar b/L2J_Server/dist/libs/L2J_EventEngine.jar
 new file mode 100644
-index 0000000..6e0c4c1
+index 0000000..b8ab609
 --- /dev/null
 +++ b/L2J_Server/dist/libs/L2J_EventEngine.jar
 Binary files differ
@@ -61,7 +61,7 @@ index 25de90c..29c8050 100644
  		// maxMemory is the upper limit the jvm can use, totalMemory the size of
  		// the current allocation pool, freeMemory the unused memory in the allocation pool
 diff --git a/L2J_Server/java/com/l2jserver/gameserver/model/actor/L2Character.java b/L2J_Server/java/com/l2jserver/gameserver/model/actor/L2Character.java
-index 9bb51e3..1648648 100644
+index 9bb51e3..ddbc2e1 100644
 --- a/L2J_Server/java/com/l2jserver/gameserver/model/actor/L2Character.java
 +++ b/L2J_Server/java/com/l2jserver/gameserver/model/actor/L2Character.java
 @@ -36,6 +36,8 @@
@@ -80,14 +80,14 @@ index 9bb51e3..1648648 100644
 +		// L2J EventEngine
 +		if ((killer != null) && killer.isPlayable())
 +		{
-+			EventEngineManager.listenerOnKill((L2Playable) killer, this);
++			EventEngineManager.getInstance().listenerOnKill((L2Playable) killer, this);
 +		}
 +		
  		final TerminateReturn returnBack = EventDispatcher.getInstance().notifyEvent(new OnCreatureKill(killer, this), this, TerminateReturn.class);
  		if ((returnBack != null) && returnBack.terminate())
  		{
 diff --git a/L2J_Server/java/com/l2jserver/gameserver/model/actor/L2Playable.java b/L2J_Server/java/com/l2jserver/gameserver/model/actor/L2Playable.java
-index cbe50df..e180f16 100644
+index cbe50df..74069b8 100644
 --- a/L2J_Server/java/com/l2jserver/gameserver/model/actor/L2Playable.java
 +++ b/L2J_Server/java/com/l2jserver/gameserver/model/actor/L2Playable.java
 @@ -18,6 +18,8 @@
@@ -106,7 +106,7 @@ index cbe50df..e180f16 100644
 +	public void doAttack(L2Character target)
 +	{
 +		// L2J EventEngine
-+		if (EventEngineManager.listenerOnAttack(this, target))
++		if (EventEngineManager.getInstance().listenerOnAttack(this, target))
 +		{
 +			return;
 +		}
@@ -117,7 +117,7 @@ index cbe50df..e180f16 100644
 +	public void doCast(Skill skill)
 +	{
 +		// L2J EventEngine
-+		if (EventEngineManager.listenerOnUseSkill(this, (L2Character) getTarget(), skill))
++		if (EventEngineManager.getInstance().listenerOnUseSkill(this, (L2Character) getTarget(), skill))
 +		{
 +			return;
 +		}
@@ -129,7 +129,7 @@ index cbe50df..e180f16 100644
  	{
  		final TerminateReturn returnBack = EventDispatcher.getInstance().notifyEvent(new OnCreatureKill(killer, this), this, TerminateReturn.class);
 diff --git a/L2J_Server/java/com/l2jserver/gameserver/model/actor/instance/L2PcInstance.java b/L2J_Server/java/com/l2jserver/gameserver/model/actor/instance/L2PcInstance.java
-index ebe0026..e442aff 100644
+index ebe0026..30bc90d 100644
 --- a/L2J_Server/java/com/l2jserver/gameserver/model/actor/instance/L2PcInstance.java
 +++ b/L2J_Server/java/com/l2jserver/gameserver/model/actor/instance/L2PcInstance.java
 @@ -48,6 +48,8 @@
@@ -146,7 +146,7 @@ index ebe0026..e442aff 100644
  			else
  			{
 -				final boolean insidePvpZone = isInsideZone(ZoneId.PVP) || isInsideZone(ZoneId.SIEGE);
-+				final boolean insidePvpZone = isInsideZone(ZoneId.PVP) || isInsideZone(ZoneId.SIEGE) || EventEngineManager.isPlayerInEvent(this);
++				final boolean insidePvpZone = isInsideZone(ZoneId.PVP) || isInsideZone(ZoneId.SIEGE) || EventEngineManager.getInstance().isPlayerInEvent(this);
  				if ((pk == null) || !pk.isCursedWeaponEquipped())
  				{
  					onDieDropItem(killer); // Check if any item should be dropped
@@ -155,7 +155,7 @@ index ebe0026..e442aff 100644
  			}
  		}
 +		// L2J EventEngine
-+		EventEngineManager.listenerOnDeath(this);
++		EventEngineManager.getInstance().listenerOnDeath(this);
  		
  		// Kill the L2PcInstance
  		if (!super.doDie(killer))
@@ -164,7 +164,7 @@ index ebe0026..e442aff 100644
  	public void updatePvPStatus()
  	{
 -		if (isInsideZone(ZoneId.PVP))
-+		if (isInsideZone(ZoneId.PVP) || EventEngineManager.isPlayerInEvent(this))
++		if (isInsideZone(ZoneId.PVP) || EventEngineManager.getInstance().isPlayerInEvent(this))
  		{
  			return;
  		}
@@ -175,7 +175,7 @@ index ebe0026..e442aff 100644
 +		}
 +		
 +		// L2J EventEngine
-+		if (EventEngineManager.isPlayerInEvent(this))
++		if (EventEngineManager.getInstance().isPlayerInEvent(this))
 +		{
 +			return true;
  		}
@@ -185,14 +185,14 @@ index ebe0026..e442aff 100644
  			_log.log(Level.SEVERE, "deleteMe()", e);
  		}
  		
-+		// EventEngine
-+		EventEngineManager.listenerOnLogout(this);
++		// L2J EventEngine
++		EventEngineManager.getInstance().listenerOnLogout(this);
 +		
  		// TvT Event removal
  		try
  		{
 diff --git a/L2J_Server/java/com/l2jserver/gameserver/model/olympiad/AbstractOlympiadGame.java b/L2J_Server/java/com/l2jserver/gameserver/model/olympiad/AbstractOlympiadGame.java
-index 3f038d0..210d046 100644
+index 3f038d0..a353c38 100644
 --- a/L2J_Server/java/com/l2jserver/gameserver/model/olympiad/AbstractOlympiadGame.java
 +++ b/L2J_Server/java/com/l2jserver/gameserver/model/olympiad/AbstractOlympiadGame.java
 @@ -22,6 +22,8 @@
@@ -208,8 +208,8 @@ index 3f038d0..210d046 100644
  			return SystemMessage.getSystemMessage(SystemMessageId.THE_GAME_HAS_BEEN_CANCELLED_BECAUSE_THE_OTHER_PARTY_ENDS_THE_GAME);
  		}
  		
-+		// Event Engine
-+		if (EventEngineManager.isPlayableInEvent(player))
++		// L2J EventEngine
++		if (EventEngineManager.getInstance().isPlayableInEvent(player))
 +		{
 +			return SystemMessage.getSystemMessage(SystemMessageId.THE_GAME_HAS_BEEN_CANCELLED_BECAUSE_THE_OTHER_PARTY_DOES_NOT_MEET_THE_REQUIREMENTS_FOR_JOINING_THE_GAME);
 +		}
@@ -218,7 +218,7 @@ index 3f038d0..210d046 100644
  		if (player.inObserverMode() || TvTEvent.isPlayerParticipant(player.getObjectId()))
  		{
 diff --git a/L2J_Server/java/com/l2jserver/gameserver/network/clientpackets/EnterWorld.java b/L2J_Server/java/com/l2jserver/gameserver/network/clientpackets/EnterWorld.java
-index 3d3da22..3e40b41 100644
+index 3d3da22..f1b3a77 100644
 --- a/L2J_Server/java/com/l2jserver/gameserver/network/clientpackets/EnterWorld.java
 +++ b/L2J_Server/java/com/l2jserver/gameserver/network/clientpackets/EnterWorld.java
 @@ -20,6 +20,8 @@
@@ -234,14 +234,14 @@ index 3d3da22..3e40b41 100644
  		activeChar.sendMessage(getText("Q29weXJpZ2h0IDIwMDQtMjAxNA=="));
  		activeChar.sendMessage(getText("VGhhbmsgeW91IGZvciAxMCB5ZWFycyE="));
  		
-+		// Event Engine
-+		EventEngineManager.listenerOnLogin(activeChar);
++		// L2J EventEngine
++		EventEngineManager.getInstance().listenerOnLogin(activeChar);
 +		
  		SevenSigns.getInstance().sendCurrentPeriodMsg(activeChar);
  		AnnouncementsTable.getInstance().showAnnouncements(activeChar);
  		
 diff --git a/L2J_Server/java/com/l2jserver/gameserver/network/clientpackets/UseItem.java b/L2J_Server/java/com/l2jserver/gameserver/network/clientpackets/UseItem.java
-index 640e695..358626e 100644
+index 640e695..8267663 100644
 --- a/L2J_Server/java/com/l2jserver/gameserver/network/clientpackets/UseItem.java
 +++ b/L2J_Server/java/com/l2jserver/gameserver/network/clientpackets/UseItem.java
 @@ -21,6 +21,8 @@
@@ -257,8 +257,8 @@ index 640e695..358626e 100644
  			}
  		}
  		
-+		// Event Engine
-+		if (EventEngineManager.listenerOnUseItem(activeChar, item.getItem()))
++		// L2J EventEngine
++		if (EventEngineManager.getInstance().listenerOnUseItem(activeChar, item.getItem()))
 +		{
 +			return;
 +		}
@@ -267,7 +267,7 @@ index 640e695..358626e 100644
  		// Message from reuse delay must come from item.
  		final int reuseDelay = item.getReuseDelay();
 diff --git a/L2J_Server/java/com/l2jserver/gameserver/network/serverpackets/Die.java b/L2J_Server/java/com/l2jserver/gameserver/network/serverpackets/Die.java
-index 108ae76..220346a 100644
+index 108ae76..bb14a3a 100644
 --- a/L2J_Server/java/com/l2jserver/gameserver/network/serverpackets/Die.java
 +++ b/L2J_Server/java/com/l2jserver/gameserver/network/serverpackets/Die.java
 @@ -18,6 +18,8 @@
@@ -293,8 +293,8 @@ index 108ae76..220346a 100644
  		writeC(0x00);
  		writeD(_charObjId);
 +		
-+		// L2J Event Engine
-+		if (_activeChar.isPlayer() && EventEngineManager.isPlayerInEvent((L2PcInstance) _activeChar))
++		// L2J EventEngine
++		if (_activeChar.isPlayer() && EventEngineManager.getInstance().isPlayerInEvent((L2PcInstance) _activeChar))
 +		{
 +			_canTeleport = false;
 +		}

@@ -51,15 +51,15 @@ public class EventTask implements Runnable
 			
 			case 2:
 				/** Se ejecutan acciones dentro de cada evento */
-				EventEngineManager.getCurrentEvent().runEventState(EventState.START);
+				EventEngineManager.getInstance().getCurrentEvent().runEventState(EventState.START);
 				break;
 			
 			case 3:
 				/** Se ejecutan acciones dentro de cada evento */
-				EventEngineManager.getCurrentEvent().runEventState(EventState.FIGHT);
+				EventEngineManager.getInstance().getCurrentEvent().runEventState(EventState.FIGHT);
 				
 				// Enviamos un mensaje especial para los participantes
-				for (PlayerHolder player : EventEngineManager.getCurrentEvent().getAllEventPlayers())
+				for (PlayerHolder player : EventEngineManager.getInstance().getCurrentEvent().getAllEventPlayers())
 				{
 					EventUtil.sendEventSpecialMessage(player, 2, "status_started");
 				}
@@ -67,13 +67,13 @@ public class EventTask implements Runnable
 			
 			case 4:
 				/** Se ejecutan acciones dentro de cada evento */
-				EventEngineManager.getCurrentEvent().runEventState(EventState.END);
+				EventEngineManager.getInstance().getCurrentEvent().runEventState(EventState.END);
 				
 				// Borramos todos los spawns de npc
-				EventEngineManager.getCurrentEvent().removeAllEventNpc();
+				EventEngineManager.getInstance().getCurrentEvent().removeAllEventNpc();
 				
 				// Enviamos un mensaje especial para los participantes
-				for (PlayerHolder player : EventEngineManager.getCurrentEvent().getAllEventPlayers())
+				for (PlayerHolder player : EventEngineManager.getInstance().getCurrentEvent().getAllEventPlayers())
 				{
 					EventUtil.sendEventSpecialMessage(player, 1, "status_finished");
 				}
@@ -81,7 +81,7 @@ public class EventTask implements Runnable
 			
 			case 5:
 				// Volvemos a habilitar el registro
-				EventEngineManager.setEventEngineState(EventEngineState.EVENT_ENDED);
+				EventEngineManager.getInstance().setEventEngineState(EventEngineState.EVENT_ENDED);
 				break;
 		}
 	}

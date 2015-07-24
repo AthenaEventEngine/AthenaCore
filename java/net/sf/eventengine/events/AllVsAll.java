@@ -46,7 +46,7 @@ public class AllVsAll extends AbstractEvent
 	{
 		super();
 		// Definimos el spawn del team
-		setTeamSpawn(Team.NONE, ConfigData.AVA_COORDINATES_PLAYER);
+		setTeamSpawn(Team.NONE, ConfigData.getInstance().AVA_COORDINATES_PLAYER);
 	}
 	
 	@Override
@@ -79,7 +79,7 @@ public class AllVsAll extends AbstractEvent
 		// Incrementamos en uno la cant de kills al player.
 		player.increaseKills();
 		// Entregamos la rewards
-		giveItems(player, ConfigData.AVA_REWARD_KILL_PLAYER);
+		giveItems(player, ConfigData.getInstance().AVA_REWARD_KILL_PLAYER);
 		// Actualizamos el titulo del personaje
 		updateTitle(player);
 	}
@@ -127,7 +127,7 @@ public class AllVsAll extends AbstractEvent
 	private void createTeam()
 	{
 		// Creamos la instancia y el mundo
-		InstanceWorld world = EventEngineManager.createNewInstanceWorld();
+		InstanceWorld world = EventEngineManager.getInstance().createNewInstanceWorld();
 		
 		for (PlayerHolder player : getAllEventPlayers())
 		{
@@ -187,7 +187,7 @@ public class AllVsAll extends AbstractEvent
 				// Enviamos un mensaje al ganador
 				EventUtil.sendEventScreenMessage(player, "Ganador " + player.getPcInstance().getName() + " con " + player.getPoints());
 				// Entregamos los rewards
-				giveItems(player, ConfigData.AVA_REWARD_PLAYER_WIN);
+				giveItems(player, ConfigData.getInstance().AVA_REWARD_PLAYER_WIN);
 			}
 			else
 			{

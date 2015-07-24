@@ -51,8 +51,8 @@ public class TeamVsTeam extends AbstractEvent
 		super();
 		
 		// Definimos los spawns de cada team
-		setTeamSpawn(Team.RED, ConfigData.TVT_COORDINATES_TEAM_1);
-		setTeamSpawn(Team.BLUE, ConfigData.TVT_COORDINATES_TEAM_2);
+		setTeamSpawn(Team.RED, ConfigData.getInstance().TVT_COORDINATES_TEAM_1);
+		setTeamSpawn(Team.BLUE, ConfigData.getInstance().TVT_COORDINATES_TEAM_2);
 	}
 	
 	@Override
@@ -138,7 +138,7 @@ public class TeamVsTeam extends AbstractEvent
 	private void createTeams()
 	{
 		// Creamos la instancia y el mundo
-		InstanceWorld world = EventEngineManager.createNewInstanceWorld();
+		InstanceWorld world = EventEngineManager.getInstance().createNewInstanceWorld();
 		
 		int aux = 0;
 		
@@ -175,7 +175,7 @@ public class TeamVsTeam extends AbstractEvent
 	 */
 	private void giveRewardsTeams()
 	{
-		if (EventEngineManager.isEmptyRegisteredPlayers())
+		if (EventEngineManager.getInstance().isEmptyRegisteredPlayers())
 		{
 			return;
 		}
@@ -190,9 +190,9 @@ public class TeamVsTeam extends AbstractEvent
 				EventUtil.sendEventScreenMessage(player, "El evento resulto en un empate entre ambos teams!");
 				
 				// Entregamos los rewards
-				if (ConfigData.OVO_REWARD_TEAM_TIE)
+				if (ConfigData.getInstance().OVO_REWARD_TEAM_TIE)
 				{
-					giveItems(player, ConfigData.TVT_REWARD_PLAYER_WIN);
+					giveItems(player, ConfigData.getInstance().TVT_REWARD_PLAYER_WIN);
 				}
 			}
 			else
@@ -203,7 +203,7 @@ public class TeamVsTeam extends AbstractEvent
 				// Entregamos los rewards
 				if (player.getPcInstance().getTeam() == ganador)
 				{
-					giveItems(player, ConfigData.TVT_REWARD_PLAYER_WIN);
+					giveItems(player, ConfigData.getInstance().TVT_REWARD_PLAYER_WIN);
 				}
 			}
 		}

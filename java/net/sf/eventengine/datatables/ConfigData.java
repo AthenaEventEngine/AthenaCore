@@ -42,69 +42,74 @@ public class ConfigData
 	// lista de configs generales
 	
 	/** Definimos ID del npc del engine */
-	public static int NPC_MANAGER_ID;
+	public int NPC_MANAGER_ID;
 	/** Definimos el xml q usaremos para nuestras instancias. */
-	public static String INSTANCE_FILE;
+	public String INSTANCE_FILE;
 	/** Definimos cada cuanto se ejecutara algun evento en hs */
-	public static int EVENT_TASK;
+	public int EVENT_TASK;
 	/** Definimos si va a haber tiempo de votacion */
-	public static boolean EVENT_VOTING_ENABLED;
+	public boolean EVENT_VOTING_ENABLED;
 	/** Definimos el tiempo que durara el periodo de votacion */
-	public static int EVENT_VOTING_TIME;
+	public int EVENT_VOTING_TIME;
 	/** Definimos el tiempo que durara el periodo de registro */
-	public static int EVENT_REGISTER_TIME;
+	public int EVENT_REGISTER_TIME;
 	/** Definimos el tiempo que durara cada evento en minutos */
-	public static int EVENT_DURATION;
+	public int EVENT_DURATION;
 	/** Definimos si permitimos o no el daño entre amigos. */
-	public static boolean FRIENDLY_FIRE;
+	public boolean FRIENDLY_FIRE;
 	/** Definimos la cant de players maximo/minimo que podran participar */
-	public static int MIN_PLAYERS_IN_EVENT;
-	public static int MAX_PLAYERS_IN_EVENT;
+	public int MIN_PLAYERS_IN_EVENT;
+	public int MAX_PLAYERS_IN_EVENT;
 	/** Definimos el lvl maximo/minimo que podran participar de los eventos. */
-	public static int MIN_LVL_IN_EVENT;
-	public static int MAX_LVL_IN_EVENT;
+	public int MIN_LVL_IN_EVENT;
+	public int MAX_LVL_IN_EVENT;
 	/** Definimos la cantidad maxima de buffs q se podran usar */
 	public static int MAX_BUFF_COUNT;
 	
 	// -------------------------------------------------------------------------------
 	// Configs All Vs All
 	// -------------------------------------------------------------------------------
-	public static boolean AVA_EVENT_ENABLED;
-	public static List<ItemHolder> AVA_REWARD_PLAYER_WIN = new ArrayList<>();
-	public static List<ItemHolder> AVA_REWARD_KILL_PLAYER = new ArrayList<>();
-	public static Location AVA_COORDINATES_PLAYER;
+	public boolean AVA_EVENT_ENABLED;
+	public List<ItemHolder> AVA_REWARD_PLAYER_WIN = new ArrayList<>();
+	public List<ItemHolder> AVA_REWARD_KILL_PLAYER = new ArrayList<>();
+	public Location AVA_COORDINATES_PLAYER;
 	
 	// -------------------------------------------------------------------------------
 	// Configs One Vs One
 	// -------------------------------------------------------------------------------
-	public static boolean OVO_EVENT_ENABLED;
-	public static boolean OVO_REWARD_TEAM_TIE;
-	public static List<ItemHolder> OVO_REWARD_PLAYER_WIN = new ArrayList<>();
-	public static List<ItemHolder> OVO_REWARD_KILL_PLAYER = new ArrayList<>();
-	public static Location OVO_COORDINATES_TEAM_1;
-	public static Location OVO_COORDINATES_TEAM_2;
+	public boolean OVO_EVENT_ENABLED;
+	public boolean OVO_REWARD_TEAM_TIE;
+	public List<ItemHolder> OVO_REWARD_PLAYER_WIN = new ArrayList<>();
+	public List<ItemHolder> OVO_REWARD_KILL_PLAYER = new ArrayList<>();
+	public Location OVO_COORDINATES_TEAM_1;
+	public Location OVO_COORDINATES_TEAM_2;
 	
 	// -------------------------------------------------------------------------------
 	// Configs Team Vs Team
 	// -------------------------------------------------------------------------------
-	public static boolean TVT_EVENT_ENABLED;
-	public static List<ItemHolder> TVT_REWARD_PLAYER_WIN = new ArrayList<>();
-	public static List<ItemHolder> TVT_REWARD_KILL_PLAYER = new ArrayList<>();
-	public static Location TVT_COORDINATES_TEAM_1;
-	public static Location TVT_COORDINATES_TEAM_2;
+	public boolean TVT_EVENT_ENABLED;
+	public List<ItemHolder> TVT_REWARD_PLAYER_WIN = new ArrayList<>();
+	public List<ItemHolder> TVT_REWARD_KILL_PLAYER = new ArrayList<>();
+	public Location TVT_COORDINATES_TEAM_1;
+	public Location TVT_COORDINATES_TEAM_2;
 	
 	// -------------------------------------------------------------------------------
 	// Configs Survive
 	// -------------------------------------------------------------------------------
-	public static boolean SURVIVE_EVENT_ENABLED;
-	public static List<ItemHolder> SURVIVE_REWARD_PLAYER_WIN = new ArrayList<>();
-	public static Location SURVIVE_COORDINATES_PLAYER;
-	public static Location SURVIVE_COORDINATES_MOBS;
-	public static List<Integer> SURVIVE_MONSTERS_ID = new ArrayList<>();
-	public static int SURVIVE_MONSTER_SPAWN_FOR_STAGE;
+	public boolean SURVIVE_EVENT_ENABLED;
+	public List<ItemHolder> SURVIVE_REWARD_PLAYER_WIN = new ArrayList<>();
+	public Location SURVIVE_COORDINATES_PLAYER;
+	public Location SURVIVE_COORDINATES_MOBS;
+	public List<Integer> SURVIVE_MONSTERS_ID = new ArrayList<>();
+	public int SURVIVE_MONSTER_SPAWN_FOR_STAGE;
+	
+	public ConfigData()
+	{
+		load();
+	}
 	
 	// Metodo encargado de leer los configs
-	public static void load()
+	public void load()
 	{
 		EventPropertiesParser settings;
 		// ------------------------------------------------------------------------------------- //
@@ -164,5 +169,15 @@ public class ConfigData
 		SURVIVE_COORDINATES_MOBS = settings.getLocation("SVEventCoordinatesMobs");
 		SURVIVE_MONSTERS_ID = settings.getListInteger("SVEventMobsID");
 		SURVIVE_MONSTER_SPAWN_FOR_STAGE = settings.getInt("SVEventMobsSpawnForStage", 5);
+	}
+	
+	public static ConfigData getInstance()
+	{
+		return SingletonHolder._instance;
+	}
+	
+	private static class SingletonHolder
+	{
+		protected static final ConfigData _instance = new ConfigData();
 	}
 }

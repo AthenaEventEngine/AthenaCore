@@ -42,9 +42,10 @@ import com.l2jserver.util.data.xml.IXmlReader;
  */
 public class BuffListData implements IXmlReader
 {
-	// XXX DATA ---------------------------------------------------------------------------------
 	// BuffList
-	private static final List<SkillHolder> _buffList = new ArrayList<>();
+	private final List<SkillHolder> _buffList = new ArrayList<>();
+	// Lista de buffs de los personajes
+	private final Map<Integer, Set<SkillHolder>> _buffsPlayers = new ConcurrentHashMap<>();
 	
 	public BuffListData()
 	{
@@ -77,21 +78,17 @@ public class BuffListData implements IXmlReader
 	 * List all possible buffs for events
 	 * @return List<SkillHolder>
 	 */
-	public static List<SkillHolder> getAllBuffs()
+	public List<SkillHolder> getAllBuffs()
 	{
 		return _buffList;
 	}
-	
-	// XXX INSTANCE ----------------------------------------------------------------------------
-	// Lista de buffs de los personajes
-	private static final Map<Integer, Set<SkillHolder>> _buffsPlayers = new ConcurrentHashMap<>();
 	
 	/**
 	 * Obtenemos el listado de buffs seleccionado por un personaje
 	 * @param player
 	 * @return List<SkillHolder>
 	 */
-	public static Set<SkillHolder> getBuffsPlayer(L2PcInstance player)
+	public Set<SkillHolder> getBuffsPlayer(L2PcInstance player)
 	{
 		if (_buffsPlayers.containsKey(player.getObjectId()))
 		{
@@ -106,7 +103,7 @@ public class BuffListData implements IXmlReader
 	 * @param player
 	 * @return List<SkillHolder>
 	 */
-	public static boolean getBuffPlayer(L2PcInstance player, SkillHolder sh)
+	public boolean getBuffPlayer(L2PcInstance player, SkillHolder sh)
 	{
 		if (_buffsPlayers.containsKey(player.getObjectId()))
 		{
@@ -127,7 +124,7 @@ public class BuffListData implements IXmlReader
 	 * @param player
 	 * @param sh
 	 */
-	public static void deleteBuffPlayer(L2PcInstance player, SkillHolder sh)
+	public void deleteBuffPlayer(L2PcInstance player, SkillHolder sh)
 	{
 		for (SkillHolder aux : _buffsPlayers.get(player.getObjectId()))
 		{
@@ -144,7 +141,7 @@ public class BuffListData implements IXmlReader
 	 * @param player
 	 * @param sh
 	 */
-	public static void addBuffPlayer(L2PcInstance player, SkillHolder sh)
+	public void addBuffPlayer(L2PcInstance player, SkillHolder sh)
 	{
 		if (_buffsPlayers.containsKey(player.getObjectId()))
 		{
@@ -163,7 +160,7 @@ public class BuffListData implements IXmlReader
 	 * Limpiamos la lista de buff de un personaje sin eliminar al personaje del listado.
 	 * @param player
 	 */
-	public static void clearBuffsPlayer(L2PcInstance player)
+	public void clearBuffsPlayer(L2PcInstance player)
 	{
 		if (_buffsPlayers.containsKey(player.getObjectId()))
 		{
