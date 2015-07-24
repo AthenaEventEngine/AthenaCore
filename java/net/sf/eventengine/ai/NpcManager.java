@@ -41,7 +41,7 @@ import com.l2jserver.util.StringUtil;
 public class NpcManager extends Quest
 {
 	private static final int NPC = ConfigData.getInstance().NPC_MANAGER_ID;
-	private static final int MAX_BUFF_PAGE = 20;
+	private static final int MAX_BUFF_PAGE = 12;
 	
 	public NpcManager()
 	{
