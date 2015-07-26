@@ -36,20 +36,19 @@ import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
 import com.l2jserver.util.StringUtil;
 
 /**
- * @author swarlog, Zephyr
+ * @author swarlog, Zephyr, fissban
  */
 public class NpcManager extends Quest
 {
-	private static final int NPC = ConfigData.getInstance().NPC_MANAGER_ID;
 	private static final int MAX_BUFF_PAGE = 12;
 	
 	public NpcManager()
 	{
 		super(-1, NpcManager.class.getSimpleName(), "EventEngine");
 		
-		addStartNpc(NPC);
-		addFirstTalkId(NPC);
-		addTalkId(NPC);
+		addStartNpc(ConfigData.getInstance().NPC_MANAGER_ID);
+		addFirstTalkId(ConfigData.getInstance().NPC_MANAGER_ID);
+		addTalkId(ConfigData.getInstance().NPC_MANAGER_ID);
 	}
 	
 	@Override
@@ -63,17 +62,20 @@ public class NpcManager extends Quest
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
 	{
 		StringTokenizer st = new StringTokenizer(event, " ");
-		final NpcHtmlMessage html = new NpcHtmlMessage();
+		
 		switch (st.nextToken())
 		{
 			case "index":
 				sendHtmlIndex(player);
 				break;
+			
 			case "engine":
+				final NpcHtmlMessage html = new NpcHtmlMessage();
 				html.setFile(player.getHtmlPrefix(), "data/html/events/event_engine.htm");
 				html.replace("%buttonMain%", MessageData.getInstance().getMsgByLang(player, "button_main", false));
 				player.sendPacket(html);
 				break;
+			
 			case "vote":
 				// Add vote event
 				Class<? extends AbstractEvent> type = EventData.getInstance().getEvent(st.nextToken());
@@ -84,39 +86,10 @@ public class NpcManager extends Quest
 				}
 				sendHtmlIndex(player);
 				break;
+			
 			case "info":
-				html.setFile(player.getHtmlPrefix(), "data/html/events/event_info.htm");
 				String eventName = st.nextToken();
-				
-				// Avoid a vulnerability
-				if (EventData.getInstance().getEvent(eventName) != null)
-				{
-					// Info event
-					html.replace("%eventName%", MessageData.getInstance().getMsgByLang(player, "event_" + eventName.toLowerCase() + "_name", false));
-					html.replace("%textDescription%", MessageData.getInstance().getMsgByLang(player, "text_description", false));
-					html.replace("%eventDescription%", MessageData.getInstance().getMsgByLang(player, "event_" + eventName.toLowerCase() + "_description", false));
-					// Requirements
-					html.replace("%textRequirements%", MessageData.getInstance().getMsgByLang(player, "text_requirements", false));
-					html.replace("%textLevelMax%", MessageData.getInstance().getMsgByLang(player, "text_level_max", false));
-					html.replace("%textLevelMin%", MessageData.getInstance().getMsgByLang(player, "text_level_min", false));
-					// TODO: replace for max and min from event
-					html.replace("%levelMax%", ConfigData.getInstance().MAX_LVL_IN_EVENT);
-					html.replace("%levelMin%", ConfigData.getInstance().MIN_LVL_IN_EVENT);
-					// Configuration
-					html.replace("%textConfiguration%", MessageData.getInstance().getMsgByLang(player, "text_configuration", false));
-					html.replace("%textTimeEvent%", MessageData.getInstance().getMsgByLang(player, "text_time_event", false));
-					// TODO: replace for duration from event
-					html.replace("%timeEvent%", ConfigData.getInstance().EVENT_DURATION);
-					html.replace("%timeMinutes%", MessageData.getInstance().getMsgByLang(player, "time_minutes", false));
-					// Rewards
-					html.replace("%textRewards%", MessageData.getInstance().getMsgByLang(player, "text_rewards", false));
-					// Button
-					html.replace("%buttonMain%", MessageData.getInstance().getMsgByLang(player, "button_main", false));
-					
-					player.sendPacket(html);
-				}
-				// Send html
-				player.sendPacket(html);
+				sendHtmlInfo(player, eventName);
 				break;
 			
 			case "register":
@@ -147,6 +120,7 @@ public class NpcManager extends Quest
 				
 				sendHtmlIndex(player);
 				break;
+			
 			case "unregister":
 				if (EventEngineManager.getInstance().isOpenRegister())
 				{
@@ -169,32 +143,7 @@ public class NpcManager extends Quest
 			
 			// Multi-Language System menu
 			case "menulang":
-				html.setFile(player.getHtmlPrefix(), "data/html/events/event_lang.htm");
-				
-				// Info menu
-				html.replace("%settingTitle%", MessageData.getInstance().getMsgByLang(player, "lang_menu_title", false));
-				html.replace("%languageTitle%", MessageData.getInstance().getMsgByLang(player, "lang_language_title", false));
-				html.replace("%languageDescription%", MessageData.getInstance().getMsgByLang(player, "lang_language_description", false));
-				
-				// Info lang
-				html.replace("%currentLanguage%", MessageData.getInstance().getMsgByLang(player, "lang_current_language", false));
-				html.replace("%getLanguage%", MessageData.getInstance().getLanguage(player));
-				
-				// Buttons
-				final StringBuilder langList = new StringBuilder(500);
-				for (Map.Entry<String, String> e : MessageData.getInstance().getLanguages().entrySet())
-				{
-					StringUtil.append(langList, "<tr>");
-					StringUtil.append(langList, "<td align=center width=30% height=30><button value=\"" + e.getValue() + "\" action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " setlang " + e.getKey() + "\" width=70 height=20 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\"></td>");
-					StringUtil.append(langList, "</tr>");
-				}
-				html.replace("%buttonLang%", langList.toString());
-				
-				// Button
-				html.replace("%buttonMain%", MessageData.getInstance().getMsgByLang(player, "button_main", false));
-				
-				// Send
-				player.sendPacket(html);
+				sendHtmlLang(player);
 				break;
 			
 			// Multi-Language System set language
@@ -230,6 +179,68 @@ public class NpcManager extends Quest
 		}
 		
 		return "";
+	}
+	
+	private static void sendHtmlInfo(L2PcInstance player, String eventName)
+	{
+		final NpcHtmlMessage html = new NpcHtmlMessage();
+		html.setFile(player.getHtmlPrefix(), "data/html/events/event_info.htm");
+		
+		// Avoid a vulnerability
+		if (EventData.getInstance().getEvent(eventName) != null)
+		{
+			// Info event
+			html.replace("%eventName%", MessageData.getInstance().getMsgByLang(player, "event_" + eventName.toLowerCase() + "_name", false));
+			html.replace("%textDescription%", MessageData.getInstance().getMsgByLang(player, "text_description", false));
+			html.replace("%eventDescription%", MessageData.getInstance().getMsgByLang(player, "event_" + eventName.toLowerCase() + "_description", false));
+			// Requirements
+			html.replace("%textRequirements%", MessageData.getInstance().getMsgByLang(player, "text_requirements", false));
+			html.replace("%textLevelMax%", MessageData.getInstance().getMsgByLang(player, "text_level_max", false));
+			html.replace("%textLevelMin%", MessageData.getInstance().getMsgByLang(player, "text_level_min", false));
+			// TODO: replace for max and min from event
+			html.replace("%levelMax%", ConfigData.getInstance().MAX_LVL_IN_EVENT);
+			html.replace("%levelMin%", ConfigData.getInstance().MIN_LVL_IN_EVENT);
+			// Configuration
+			html.replace("%textConfiguration%", MessageData.getInstance().getMsgByLang(player, "text_configuration", false));
+			html.replace("%textTimeEvent%", MessageData.getInstance().getMsgByLang(player, "text_time_event", false));
+			// TODO: replace for duration from event
+			html.replace("%timeEvent%", ConfigData.getInstance().EVENT_DURATION);
+			html.replace("%timeMinutes%", MessageData.getInstance().getMsgByLang(player, "time_minutes", false));
+			// Rewards
+			html.replace("%textRewards%", MessageData.getInstance().getMsgByLang(player, "text_rewards", false));
+			// Button
+			html.replace("%buttonMain%", MessageData.getInstance().getMsgByLang(player, "button_main", false));
+		}
+		// Send html
+		player.sendPacket(html);
+	}
+	
+	private static void sendHtmlLang(L2PcInstance player)
+	{
+		final NpcHtmlMessage html = new NpcHtmlMessage();
+		html.setFile(player.getHtmlPrefix(), "data/html/events/event_lang.htm");
+		
+		// Info menu
+		html.replace("%settingTitle%", MessageData.getInstance().getMsgByLang(player, "lang_menu_title", false));
+		html.replace("%languageTitle%", MessageData.getInstance().getMsgByLang(player, "lang_language_title", false));
+		html.replace("%languageDescription%", MessageData.getInstance().getMsgByLang(player, "lang_language_description", false));
+		// Info lang
+		html.replace("%currentLanguage%", MessageData.getInstance().getMsgByLang(player, "lang_current_language", false));
+		html.replace("%getLanguage%", MessageData.getInstance().getLanguage(player));
+		// Buttons
+		final StringBuilder langList = new StringBuilder(500);
+		for (Map.Entry<String, String> e : MessageData.getInstance().getLanguages().entrySet())
+		{
+			StringUtil.append(langList, "<tr>");
+			StringUtil.append(langList, "<td align=center width=30% height=30><button value=\"" + e.getValue() + "\" action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " setlang " + e.getKey() + "\" width=70 height=20 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\"></td>");
+			StringUtil.append(langList, "</tr>");
+		}
+		html.replace("%buttonLang%", langList.toString());
+		// Button
+		html.replace("%buttonMain%", MessageData.getInstance().getMsgByLang(player, "button_main", false));
+		
+		// Send html
+		player.sendPacket(html);
 	}
 	
 	private static void sendHtmlBuffList(L2PcInstance player, int page)
@@ -293,6 +304,7 @@ public class NpcManager extends Quest
 		sb.append("<center><img src=\"l2ui.squaregray\" width=210 height=1></center>");
 		
 		html.replace("%buffList%", sb.toString());
+		// Send html
 		player.sendPacket(html);
 	}
 	
@@ -363,7 +375,7 @@ public class NpcManager extends Quest
 			html.replace("%menuInfo%", MessageData.getInstance().getMsgByLang(player, "event_reloading", false));
 			html.replace("%button%", "");
 		}
-		
+		// Send html
 		player.sendPacket(html);
 	}
 }
