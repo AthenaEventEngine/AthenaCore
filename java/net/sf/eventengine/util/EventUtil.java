@@ -25,6 +25,7 @@ import java.util.Set;
 
 import net.sf.eventengine.EventEngineManager;
 import net.sf.eventengine.datatables.MessageData;
+import net.sf.eventengine.handler.AbstractEvent;
 import net.sf.eventengine.holder.PlayerHolder;
 
 import com.l2jserver.gameserver.model.L2World;
@@ -165,9 +166,16 @@ public class EventUtil
 	 */
 	public static void announceToAllPlayersInEvent(int say2, String text)
 	{
-		for (L2PcInstance player : EventEngineManager.getInstance().getAllRegisteredPlayers())
+		AbstractEvent event = EventEngineManager.getInstance().getCurrentEvent();
+		
+		if (event == null)
 		{
-			player.sendPacket(new CreatureSay(0, say2, "", MessageData.getInstance().getMsgByLang(player, text, true)));
+			return;
+		}
+		
+		for (PlayerHolder ph : event.getAllEventPlayers())
+		{
+			ph.getPcInstance().sendPacket(new CreatureSay(0, say2, "", MessageData.getInstance().getMsgByLang(ph.getPcInstance(), text, true)));
 		}
 	}
 	
