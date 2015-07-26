@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import net.sf.eventengine.events.AllVsAll;
+import net.sf.eventengine.events.CaptureTheFlag;
 import net.sf.eventengine.events.OneVsOne;
 import net.sf.eventengine.events.Survive;
 import net.sf.eventengine.events.TeamVsTeam;
@@ -36,7 +37,11 @@ public class EventData
 			_eventMap.put(AllVsAll.class.getSimpleName(), AllVsAll.class);
 		}
 		
-		// EVENTS.put(EventType.CTF, CaptureTheFlag.class);
+		if (ConfigData.getInstance().CTF_EVENT_ENABLED)
+		{
+			_eventList.add(CaptureTheFlag.class);
+			_eventMap.put(CaptureTheFlag.class.getSimpleName(), CaptureTheFlag.class);
+		}
 		
 		if (ConfigData.getInstance().OVO_EVENT_ENABLED)
 		{
