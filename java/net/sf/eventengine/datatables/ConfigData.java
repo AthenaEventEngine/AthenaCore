@@ -39,6 +39,11 @@ public class ConfigData
 	private static final String OVO_CONFIG = "./config/EventEngine/OneVsOne.properties";
 	private static final String SURVIVE_CONFIG = "./config/EventEngine/Survive.properties";
 	
+	public ConfigData()
+	{
+		load();
+	}
+	
 	// lista de configs generales
 	
 	/** Definimos ID del npc del engine */
@@ -61,13 +66,12 @@ public class ConfigData
 	/** Definimos el lvl maximo/minimo que podran participar de los eventos. */
 	public int MIN_LVL_IN_EVENT;
 	public int MAX_LVL_IN_EVENT;
-	/** Definimos la cantidad maxima de buffs q se podran usar */
+	/** Definimos la cantidad maxima de buffs que se podran usar */
 	public static int MAX_BUFF_COUNT;
 	
 	// -------------------------------------------------------------------------------
 	// Configs Capture The Flag
 	// -------------------------------------------------------------------------------
-	/** Definimos el xml q usaremos para nuestras instancias. */
 	public boolean CTF_EVENT_ENABLED;
 	public String CTF_INSTANCE_FILE;
 	public List<ItemHolder> CTF_REWARD_PLAYER_WIN = new ArrayList<>();
@@ -79,7 +83,6 @@ public class ConfigData
 	// -------------------------------------------------------------------------------
 	// Configs All Vs All
 	// -------------------------------------------------------------------------------
-	/** Definimos el xml q usaremos para nuestras instancias. */
 	public boolean AVA_EVENT_ENABLED;
 	public String AVA_INSTANCE_FILE;
 	public List<ItemHolder> AVA_REWARD_PLAYER_WIN = new ArrayList<>();
@@ -88,7 +91,6 @@ public class ConfigData
 	// -------------------------------------------------------------------------------
 	// Configs One Vs One
 	// -------------------------------------------------------------------------------
-	/** Definimos el xml q usaremos para nuestras instancias. */
 	public boolean OVO_EVENT_ENABLED;
 	public String OVO_INSTANCE_FILE;
 	public List<ItemHolder> OVO_REWARD_PLAYER_WIN = new ArrayList<>();
@@ -98,7 +100,6 @@ public class ConfigData
 	// -------------------------------------------------------------------------------
 	// Configs Team Vs Team
 	// -------------------------------------------------------------------------------
-	/** Definimos el xml q usaremos para nuestras instancias. */
 	public String TVT_INSTANCE_FILE;
 	public boolean TVT_EVENT_ENABLED;
 	public List<ItemHolder> TVT_REWARD_PLAYER_WIN = new ArrayList<>();
@@ -108,7 +109,6 @@ public class ConfigData
 	// -------------------------------------------------------------------------------
 	// Configs Survive
 	// -------------------------------------------------------------------------------
-	/** Definimos el xml q usaremos para nuestras instancias. */
 	public boolean SURVIVE_EVENT_ENABLED;
 	public String SURVIVE_INSTANCE_FILE;
 	public List<ItemHolder> SURVIVE_REWARD_PLAYER_WIN = new ArrayList<>();
@@ -117,7 +117,9 @@ public class ConfigData
 	public List<Integer> SURVIVE_MONSTERS_ID = new ArrayList<>();
 	public int SURVIVE_MONSTER_SPAWN_FOR_STAGE;
 	
-	// Metodo encargado de leer los configs
+	/**
+	 * Metodo encargado de leer los configs
+	 */
 	public void load()
 	{
 		EventPropertiesParser settings;
