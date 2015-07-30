@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sf.eventengine.datatables.ConfigData;
+import net.sf.eventengine.enums.CollectionTarget;
 import net.sf.eventengine.enums.EventState;
 import net.sf.eventengine.enums.PlayerColorType;
 import net.sf.eventengine.handler.AbstractEvent;
@@ -35,6 +36,7 @@ import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 import com.l2jserver.gameserver.model.items.L2Item;
 import com.l2jserver.gameserver.model.skills.Skill;
+import com.l2jserver.gameserver.network.clientpackets.Say2;
 
 /**
  * @author fissban
@@ -188,24 +190,25 @@ public class TeamVsTeam extends AbstractEvent
 		
 		for (PlayerHolder player : getAllEventPlayers())
 		{
-			if (teamWinner == Team.NONE)
+			// We deliver rewards
+			if (player.getPcInstance().getTeam() == teamWinner)
 			{
-				// Send Message
-				EventUtil.sendEventScreenMessage(player, "El evento resulto en un empate entre ambos teams!");
-			}
-			else
-			{
-				// Send Message
-				EventUtil.sendEventScreenMessage(player, "Equipo ganador -> " + teamWinner.toString() + "!");
-				
-				// Entregamos los rewards
-				if (player.getPcInstance().getTeam() == teamWinner)
-				{
-					giveItems(player, ConfigData.getInstance().TVT_REWARD_PLAYER_WIN);
-				}
+				giveItems(player, ConfigData.getInstance().TVT_REWARD_PLAYER_WIN);
 			}
 		}
 		
+		if (teamWinner == Team.BLUE)
+		{
+			EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "team_winner", "%holder%", Team.BLUE.toString(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
+		}
+		else if (teamWinner == Team.RED)
+		{
+			EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "team_winner", "%holder%", Team.RED.toString(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
+		}
+		else
+		{
+			EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "teams_tie", CollectionTarget.ALL_PLAYERS_IN_EVENT);
+		}
 	}
 	
 	/**

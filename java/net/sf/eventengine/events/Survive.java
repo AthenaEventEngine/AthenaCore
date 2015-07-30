@@ -21,6 +21,7 @@ package net.sf.eventengine.events;
 import java.util.List;
 
 import net.sf.eventengine.datatables.ConfigData;
+import net.sf.eventengine.enums.CollectionTarget;
 import net.sf.eventengine.enums.EventState;
 import net.sf.eventengine.enums.PlayerColorType;
 import net.sf.eventengine.handler.AbstractEvent;
@@ -156,14 +157,14 @@ public class Survive extends AbstractEvent
 		
 		for (PlayerHolder player : getAllEventPlayers())
 		{
-			EventUtil.sendEventScreenMessage(player, "Felicitaciones sobreviviente");
+			EventUtil.sendEventScreenMessage(player, "Congratulations survivor!");
 			giveItems(player, ConfigData.getInstance().SURVIVE_REWARD_PLAYER_WIN);
 		}
 	}
 	
 	private void spawnsMobs()
 	{
-		EventUtil.announceToAllPlayersInEvent(Say2.BATTLEFIELD, "Ya llegan, preparate!");
+		EventUtil.announceTo(Say2.BATTLEFIELD, "survive_spawns_mobs", CollectionTarget.ALL_PLAYERS_IN_EVENT);
 		
 		// After 5 secs spawn run.
 		ThreadPoolManager.getInstance().scheduleGeneral(new Runnable()

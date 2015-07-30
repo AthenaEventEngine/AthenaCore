@@ -21,14 +21,6 @@ package net.sf.eventengine.events;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sf.eventengine.datatables.ConfigData;
-import net.sf.eventengine.enums.EventState;
-import net.sf.eventengine.enums.PlayerColorType;
-import net.sf.eventengine.handler.AbstractEvent;
-import net.sf.eventengine.holder.PlayerHolder;
-import net.sf.eventengine.util.EventUtil;
-import net.sf.eventengine.util.SortUtil;
-
 import com.l2jserver.gameserver.enums.Team;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
@@ -37,6 +29,15 @@ import com.l2jserver.gameserver.model.items.L2Item;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
 import com.l2jserver.util.Rnd;
+
+import net.sf.eventengine.datatables.ConfigData;
+import net.sf.eventengine.enums.CollectionTarget;
+import net.sf.eventengine.enums.EventState;
+import net.sf.eventengine.enums.PlayerColorType;
+import net.sf.eventengine.handler.AbstractEvent;
+import net.sf.eventengine.holder.PlayerHolder;
+import net.sf.eventengine.util.EventUtil;
+import net.sf.eventengine.util.SortUtil;
 
 /**
  * @author fissban
@@ -61,11 +62,11 @@ public class AllVsAll extends AbstractEvent
 				createTeam();
 				teleportAllPlayers(1000);
 				break;
-			
+				
 			case FIGHT:
 				prepareToFight(); // General Method
 				break;
-			
+				
 			case END:
 				giveRewardsTeams();
 				prepareToEnd(); // General Method
@@ -185,6 +186,6 @@ public class AllVsAll extends AbstractEvent
 			giveItems(player, ConfigData.getInstance().AVA_REWARD_PLAYER_WIN);
 		}
 		
-		EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "ava_first_place", "%holder%", winners);
+		EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "ava_first_place", "%holder%", winners, CollectionTarget.ALL_PLAYERS_IN_EVENT);
 	}
 }
