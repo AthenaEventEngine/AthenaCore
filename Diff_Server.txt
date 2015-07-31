@@ -53,8 +53,8 @@ index 25de90c..29c8050 100644
  			_deadDetectThread = null;
  		}
 +		
-+		// L2J EventEngine
-+		printSection("L2J EventEngine");
++		// L2J-EventEngine
++		printSection("L2J-EventEngine");
 +		EventEngineManager.getInstance();
 +		
  		System.gc();
@@ -77,7 +77,7 @@ index 9bb51e3..ddbc2e1 100644
  	 */
  	public boolean doDie(L2Character killer)
  	{
-+		// L2J EventEngine
++		// L2J-EventEngine
 +		if ((killer != null) && killer.isPlayable())
 +		{
 +			EventEngineManager.getInstance().listenerOnKill((L2Playable) killer, this);
@@ -105,7 +105,7 @@ index cbe50df..12fc0f3 100644
  	@Override
 +	public void doAttack(L2Character target)
 +	{
-+		// L2J EventEngine
++		// L2J-EventEngine
 +		if (EventEngineManager.getInstance().listenerOnAttack(this, target))
 +		{
 +			return;
@@ -116,7 +116,7 @@ index cbe50df..12fc0f3 100644
 +	@Override
 +	public void doCast(Skill skill)
 +	{
-+		// L2J EventEngine
++		// L2J-EventEngine
 +		if (EventEngineManager.getInstance().listenerOnUseSkill(this, (L2Character) getTarget(), skill))
 +		{
 +			return;
@@ -127,7 +127,7 @@ index cbe50df..12fc0f3 100644
 +	@Override
  	public boolean doDie(L2Character killer)
  	{
-+		// L2J EventEngine
++		// L2J-EventEngine
 +		if ((killer != null) && killer.isPlayable())
 +		{
 +			EventEngineManager.getInstance().listenerOnKill((L2Playable) killer, this);
@@ -162,7 +162,7 @@ index ebe0026..30bc90d 100644
  				}
  			}
  		}
-+		// L2J EventEngine
++		// L2J-EventEngine
 +		EventEngineManager.getInstance().listenerOnDeath(this);
  		
  		// Kill the L2PcInstance
@@ -182,7 +182,7 @@ index ebe0026..30bc90d 100644
  			return false;
 +		}
 +		
-+		// L2J EventEngine
++		// L2J-EventEngine
 +		if (EventEngineManager.getInstance().isPlayerInEvent(this))
 +		{
 +			return true;
@@ -193,7 +193,7 @@ index ebe0026..30bc90d 100644
  			_log.log(Level.SEVERE, "deleteMe()", e);
  		}
  		
-+		// L2J EventEngine
++		// L2J-EventEngine
 +		EventEngineManager.getInstance().listenerOnLogout(this);
 +		
  		// TvT Event removal
@@ -216,7 +216,7 @@ index 3f038d0..a353c38 100644
  			return SystemMessage.getSystemMessage(SystemMessageId.THE_GAME_HAS_BEEN_CANCELLED_BECAUSE_THE_OTHER_PARTY_ENDS_THE_GAME);
  		}
  		
-+		// L2J EventEngine
++		// L2J-EventEngine
 +		if (EventEngineManager.getInstance().isPlayableInEvent(player))
 +		{
 +			return SystemMessage.getSystemMessage(SystemMessageId.THE_GAME_HAS_BEEN_CANCELLED_BECAUSE_THE_OTHER_PARTY_DOES_NOT_MEET_THE_REQUIREMENTS_FOR_JOINING_THE_GAME);
@@ -242,7 +242,7 @@ index 3d3da22..f1b3a77 100644
  		activeChar.sendMessage(getText("Q29weXJpZ2h0IDIwMDQtMjAxNA=="));
  		activeChar.sendMessage(getText("VGhhbmsgeW91IGZvciAxMCB5ZWFycyE="));
  		
-+		// L2J EventEngine
++		// L2J-EventEngine
 +		EventEngineManager.getInstance().listenerOnLogin(activeChar);
 +		
  		SevenSigns.getInstance().sendCurrentPeriodMsg(activeChar);
@@ -265,7 +265,7 @@ index 640e695..8267663 100644
  			}
  		}
  		
-+		// L2J EventEngine
++		// L2J-EventEngine
 +		if (EventEngineManager.getInstance().listenerOnUseItem(activeChar, item.getItem()))
 +		{
 +			return;
@@ -301,7 +301,7 @@ index 108ae76..bb14a3a 100644
  		writeC(0x00);
  		writeD(_charObjId);
 +		
-+		// L2J EventEngine
++		// L2J-EventEngine
 +		if (_activeChar.isPlayer() && EventEngineManager.getInstance().isPlayerInEvent((L2PcInstance) _activeChar))
 +		{
 +			_canTeleport = false;
