@@ -19,6 +19,7 @@
 package net.sf.eventengine.util;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -166,6 +167,31 @@ public class EventUtil
 	 */
 	public static void announceToAllPlayersInEvent(int say2, String text)
 	{
+		announceToAllPlayersInEvent(say2, text, null);
+	}
+	
+	/**
+	 * Send a message to all players in the event
+	 * @param say2
+	 * @param text
+	 * @param replace
+	 * @param textReplace
+	 */
+	public static void announceToAllPlayersInEvent(int say2, String text, String replace, String textReplace)
+	{
+		Map<String, String> map = new HashMap<>();
+		map.put(replace, textReplace);
+		announceToAllPlayersInEvent(say2, text, map);
+	}
+	
+	/**
+	 * Send a message to all players in the event
+	 * @param say2
+	 * @param text
+	 * @param map : used to replace the holders with the proper text
+	 */
+	public static void announceToAllPlayersInEvent(int say2, String text, Map<String, String> mapToReplace)
+	{
 		AbstractEvent event = EventEngineManager.getInstance().getCurrentEvent();
 		
 		if (event == null)
@@ -175,7 +201,17 @@ public class EventUtil
 		
 		for (PlayerHolder ph : event.getAllEventPlayers())
 		{
-			ph.getPcInstance().sendPacket(new CreatureSay(0, say2, "", MessageData.getInstance().getMsgByLang(ph.getPcInstance(), text, true)));
+			String announce = MessageData.getInstance().getMsgByLang(ph.getPcInstance(), text, true);
+			
+			if (mapToReplace != null)
+			{
+				for (String key : mapToReplace.keySet())
+				{
+					announce = announce.replace(key, mapToReplace.get(key));
+				}
+			}
+			
+			ph.getPcInstance().sendPacket(new CreatureSay(0, say2, "", announce));
 		}
 	}
 	
@@ -186,10 +222,7 @@ public class EventUtil
 	 */
 	public static void announceToAllPlayers(int say2, String text)
 	{
-		for (L2PcInstance player : L2World.getInstance().getPlayers())
-		{
-			player.sendPacket(new CreatureSay(0, say2, "", MessageData.getInstance().getMsgByLang(player, text, true)));
-		}
+		announceToAllPlayers(say2, text, null);
 	}
 	
 	/**
@@ -201,9 +234,31 @@ public class EventUtil
 	 */
 	public static void announceToAllPlayers(int say2, String text, String replace, String textReplace)
 	{
+		Map<String, String> map = new HashMap<>();
+		map.put(replace, textReplace);
+		announceToAllPlayers(say2, text, map);
+	}
+	
+	/**
+	 * Send a message to all online players
+	 * @param say2
+	 * @param text
+	 */
+	public static void announceToAllPlayers(int say2, String text, Map<String, String> mapToReplace)
+	{
 		for (L2PcInstance player : L2World.getInstance().getPlayers())
 		{
-			player.sendPacket(new CreatureSay(0, say2, "", MessageData.getInstance().getMsgByLang(player, text, true).replace(replace, textReplace)));
+			String announce = MessageData.getInstance().getMsgByLang(player, text, true);
+			
+			if (mapToReplace != null)
+			{
+				for (String key : mapToReplace.keySet())
+				{
+					announce = announce.replace(key, mapToReplace.get(key));
+				}
+			}
+			
+			player.sendPacket(new CreatureSay(0, say2, "", announce));
 		}
 	}
 }

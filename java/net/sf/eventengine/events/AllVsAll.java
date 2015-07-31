@@ -19,16 +19,15 @@
 package net.sf.eventengine.events;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import net.sf.eventengine.EventEngineManager;
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.enums.EventState;
 import net.sf.eventengine.enums.PlayerColorType;
 import net.sf.eventengine.handler.AbstractEvent;
 import net.sf.eventengine.holder.PlayerHolder;
 import net.sf.eventengine.util.EventUtil;
+import net.sf.eventengine.util.SortUtil;
 
 import com.l2jserver.gameserver.enums.Team;
 import com.l2jserver.gameserver.model.actor.L2Character;
@@ -36,6 +35,8 @@ import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 import com.l2jserver.gameserver.model.items.L2Item;
 import com.l2jserver.gameserver.model.skills.Skill;
+import com.l2jserver.gameserver.network.clientpackets.Say2;
+import com.l2jserver.util.Rnd;
 
 /**
  * @author fissban
@@ -45,7 +46,8 @@ public class AllVsAll extends AbstractEvent
 	public AllVsAll()
 	{
 		super();
-		// Definimos el spawn del team
+		setInstanceFile(ConfigData.getInstance().AVA_INSTANCE_FILE);
+		// We define the main spawn of equipment
 		setTeamSpawn(Team.NONE, ConfigData.getInstance().AVA_COORDINATES_PLAYER);
 	}
 	
@@ -55,18 +57,18 @@ public class AllVsAll extends AbstractEvent
 		switch (state)
 		{
 			case START:
-				prepareToStart(); // Metodo general
+				prepareToStart(); // General Method
 				createTeam();
-				teleportAllPlayers();
+				teleportAllPlayers(1000);
 				break;
 			
 			case FIGHT:
-				prepareToFight(); // Metodo general
+				prepareToFight(); // General Method
 				break;
 			
 			case END:
 				giveRewardsTeams();
-				prepareToEnd(); // Metodo general
+				prepareToEnd(); // General Method
 				break;
 		}
 		
@@ -76,11 +78,8 @@ public class AllVsAll extends AbstractEvent
 	@Override
 	public void onKill(PlayerHolder player, L2Character target)
 	{
-		// Incrementamos en uno la cant de kills al player.
+		// Increase the amount of one character kills.
 		player.increaseKills();
-		// Entregamos la rewards
-		giveItems(player, ConfigData.getInstance().AVA_REWARD_KILL_PLAYER);
-		// Actualizamos el titulo del personaje
 		updateTitle(player);
 	}
 	
@@ -99,11 +98,11 @@ public class AllVsAll extends AbstractEvent
 	@Override
 	public void onDeath(PlayerHolder player)
 	{
-		// generamos un task para revivir al player
-		giveResurrectPlayer(player, 10); // TODO -> hardcode
-		// Incrementamos en uno la cant de muertes al player.
+		// We generated a task to revive the player
+		giveResurrectPlayer(player, 10, 1000);
+		// Increase the amount of one character deaths.
 		player.increaseDeaths();
-		// Actualizamos el titulo del personaje
+		// We update the title character
 		updateTitle(player);
 	}
 	
@@ -119,48 +118,51 @@ public class AllVsAll extends AbstractEvent
 		return false;
 	}
 	
-	// METODOS VARIOS ------------------------------------------------------------------
+	@Override
+	public void onLogout(PlayerHolder player)
+	{
+		//
+	}
+	
+	// VARIOUS METHODS ------------------------------------------------------------------
 	
 	/**
-	 * Creamos el equipo donde jugaran los personajes
+	 * We create teams
 	 */
 	private void createTeam()
 	{
-		// Creamos la instancia y el mundo
-		InstanceWorld world = EventEngineManager.getInstance().createNewInstanceWorld();
+		// We create the instance and the world
+		InstanceWorld world = createNewInstanceWorld();
 		
 		for (PlayerHolder player : getAllEventPlayers())
 		{
-			// Agregamos el personaje al mundo para luego ser teletransportado
+			// We add the character to the world and then be teleported
 			world.addAllowed(player.getPcInstance().getObjectId());
-			// Ajustamos el team de los personaje
+			// Adjust the character team
 			player.getPcInstance().setTeam(Team.NONE);
-			// Ajustamos la instancia a al que perteneceran los personaje
+			// Adjust the instance that owns the character
 			player.setDinamicInstanceId(world.getInstanceId());
-			// Ajustamos el color del titulo
-			player.setNewColorTitle(PlayerColorType.YELLOW_OCHRE);
-			// Ajustamos el color del titulo y el titulo del personaje.
+			// Adjust the color of the title
+			player.setNewColorTitle(PlayerColorType.values()[Rnd.get(PlayerColorType.values().length - 1)]);
+			// Update Title
 			updateTitle(player);
 		}
 	}
 	
 	/**
-	 * Actualizamos el titulo de un personaje dependiendo de la cantidad de muertes o kills q tenga
+	 * Update the title of a character depending on the number of deaths or kills have
 	 * @param player
 	 */
 	private void updateTitle(PlayerHolder player)
 	{
-		// Ajustamos el titulo del pesonaje
+		// Adjust the title character
 		player.setNewTitle("Kills " + player.getKills() + " | " + player.getDeaths() + " Death");
-		// Actualizamos el status del personaje
+		// We update the status of the character
 		player.getPcInstance().updateAndBroadcastStatus(2);
 	}
 	
 	/**
-	 * Entregamos los rewards.<br>
-	 * <u>Acciones:</u> <li>Ordenamos la lista dependiendo de la cant de puntos de cada player</li><br>
-	 * <li>Al 50% mejor se le entregan los rewards de ganador</li><br>
-	 * <li>Al 50% peor se le entregan los rewards de perdedor</li><br>
+	 * We deliver rewards.<br>
 	 */
 	public void giveRewardsTeams()
 	{
@@ -169,33 +171,20 @@ public class AllVsAll extends AbstractEvent
 			return;
 		}
 		
-		// Le daremos por default reward de ganador al 50% de los mejores participantes y a los demas le damos reward de perdedor :P
-		
-		// Lista auxiliar
+		// auxiliary list
 		List<PlayerHolder> playersInEvent = new ArrayList<>();
-		//
+		
 		playersInEvent.addAll(getAllEventPlayers());
-		// Ordenamos la lista
-		Collections.sort(playersInEvent, PlayerHolder._pointsComparator);
-		// Entregamos los rewards y anunciamos los ganadores.
-		for (PlayerHolder player : playersInEvent)
+		ArrayList<List<PlayerHolder>> listOrdered = SortUtil.getOrderedByKills(playersInEvent, 1);
+		
+		String winners = "";
+		
+		for (PlayerHolder player : listOrdered.get(0))
 		{
-			int aux = 0;
-			
-			if (aux <= (playersInEvent.size() / 2))
-			{
-				// Enviamos un mensaje al ganador
-				EventUtil.sendEventScreenMessage(player, "Ganador " + player.getPcInstance().getName() + " con " + player.getPoints());
-				// Entregamos los rewards
-				giveItems(player, ConfigData.getInstance().AVA_REWARD_PLAYER_WIN);
-			}
-			else
-			{
-				// Enviamos un mensaje al ganador
-				EventUtil.sendEventScreenMessage(player, "Perdedor " + player.getPcInstance().getName() + " con " + player.getPoints());
-			}
-			
-			aux++;
+			winners += player.getPcInstance().getName() + " // ";
+			giveItems(player, ConfigData.getInstance().AVA_REWARD_PLAYER_WIN);
 		}
+		
+		EventUtil.announceToAllPlayers(Say2.CRITICAL_ANNOUNCE, "ava_first_place", "%holder%", winners);
 	}
 }

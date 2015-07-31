@@ -64,6 +64,8 @@
 	<message id="text_configuration" text="Configurations" />
 	<message id="text_time_event" text="Time Event" />
 	<message id="revive_in" text="You will be revived within %time% seconds." />
+	<message id="team_winner" text="The team winner is the %holder%"/>
+	<message id="teams_tie" text="Tie"/>
 	
 	<!-- HTML: Lang Setting -->
 	<message id="lang_menu_title" text="Menu Setting"/>
@@ -101,5 +103,13 @@
 	<message id="buff_description" text="Select from the list 5 buff skills to start with them at the next event."/>
 	<message id="buff_text_count" text="Get Buff:"/>
 	<message id="buff_text_max" text="Max Buff:"/>
+	
+	<!-- Capture the flag -->
+	<message id="ctf_captured_the_flag" text="The %holder% team just take the enemy flag"/>
+	<message id="ctf_conquered_the_flag" text="The %holder% team conquered the enemy flag"/>
+	<message id="player_dropped_flag" text="The player %holder% has dropped the %flag% flag"/>
+	
+	<!-- All vs All -->
+	<message id="ava_first_place" text="First place: %holder%"/>
 
 </localization>
