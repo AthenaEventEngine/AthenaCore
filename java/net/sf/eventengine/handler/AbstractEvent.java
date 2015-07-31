@@ -18,6 +18,7 @@
  */
 package net.sf.eventengine.handler;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import net.sf.eventengine.EventEngineManager;
+import net.sf.eventengine.EventEngineWorld;
 import net.sf.eventengine.datatables.BuffListData;
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.MessageData;
@@ -37,6 +39,7 @@ import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.data.xml.impl.NpcData;
 import com.l2jserver.gameserver.datatables.SpawnTable;
 import com.l2jserver.gameserver.enums.Team;
+import com.l2jserver.gameserver.instancemanager.InstanceManager;
 import com.l2jserver.gameserver.model.L2Spawn;
 import com.l2jserver.gameserver.model.Location;
 import com.l2jserver.gameserver.model.actor.L2Character;
@@ -44,6 +47,7 @@ import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.L2Playable;
 import com.l2jserver.gameserver.model.actor.L2Summon;
 import com.l2jserver.gameserver.model.actor.instance.L2CubicInstance;
+import com.l2jserver.gameserver.model.actor.instance.L2DoorInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
@@ -73,6 +77,58 @@ public abstract class AbstractEvent
 	/** Necessary to keep track of the states of the event. */
 	public abstract void runEventState(EventState state);
 	
+	// XXX DINAMIC INSTANCE ------------------------------------------------------------------------------
+	private String _instanceFile = "";
+	
+	public void setInstanceFile(String instanceFile)
+	{
+		_instanceFile = instanceFile;
+	}
+	
+	private final List<InstanceWorld> _instanceWorlds = new ArrayList<>();
+	
+	/**
+	 * Create dynamic instances and a world for her
+	 * @param count
+	 * @return InstanceWorld
+	 */
+	public InstanceWorld createNewInstanceWorld()
+	{
+		InstanceWorld world = null;
+		try
+		{
+			int instanceId = InstanceManager.getInstance().createDynamicInstance(_instanceFile);
+			InstanceManager.getInstance().getInstance(instanceId).setAllowSummon(false);
+			InstanceManager.getInstance().getInstance(instanceId).setPvPInstance(true);
+			InstanceManager.getInstance().getInstance(instanceId).setEmptyDestroyTime(1000 + 60000L);
+			// We closed the doors of the instance if there
+			for (L2DoorInstance door : InstanceManager.getInstance().getInstance(instanceId).getDoors())
+			{
+				door.closeMe();
+			}
+			
+			world = new EventEngineWorld();
+			world.setInstanceId(instanceId);
+			world.setTemplateId(100); // TODO hardcode
+			world.setStatus(0);
+			InstanceManager.getInstance().addWorld(world);
+			_instanceWorlds.add(world);
+			
+		}
+		catch (Exception e)
+		{
+			LOGGER.warning(EventEngineManager.class.getSimpleName() + ": -> createDynamicInstances() " + e);
+			e.printStackTrace();
+		}
+		
+		return world;
+	}
+	
+	public List<InstanceWorld> getInstancesWorlds()
+	{
+		return _instanceWorlds;
+	}
+	
 	// NPC IN EVENT --------------------------------------------------------------------------------- //
 	
 	// List of NPC in the event.
@@ -89,14 +145,31 @@ public abstract class AbstractEvent
 	
 	/**
 	 * We generate a new spawn in our event and added to the list.
+	 */
+	public L2Npc addEventNpc(int npcId, Location loc, Team team, int instanceId)
+	{
+		return addEventNpc(npcId, loc.getX(), loc.getY(), loc.getZ(), loc.getHeading(), team, false, instanceId);
+	}
+	
+	/**
+	 * We generate a new spawn in our event and added to the list.
+	 */
+	public L2Npc addEventNpc(int npcId, Location loc, Team team, boolean randomOffset, int instanceId)
+	{
+		return addEventNpc(npcId, loc.getX(), loc.getY(), loc.getZ(), loc.getHeading(), team, randomOffset, instanceId);
+	}
+	
+	/**
+	 * We generate a new spawn in our event and added to the list.
 	 * @param npcId
 	 * @param x
 	 * @param y
 	 * @param z
 	 * @param heading
-	 * @param randomOffset -> 100
+	 * @param randomOffset -> +/- 1000
+	 * @return L2Npc
 	 */
-	public L2Npc addEventNpc(int npcId, int x, int y, int z, int heading, boolean randomOffset, int instanceId)
+	public L2Npc addEventNpc(int npcId, int x, int y, int z, int heading, Team team, boolean randomOffset, int instanceId)
 	{
 		// We generate our npc spawn
 		L2Npc npc = null;
@@ -119,6 +192,7 @@ public abstract class AbstractEvent
 				spawn.setAmount(1);
 				spawn.setInstanceId(instanceId);
 				npc = spawn.doSpawn();// isSummonSpawn.
+				npc.setTeam(team);
 				
 				SpawnTable.getInstance().addNewSpawn(spawn, false);
 				spawn.init();
@@ -132,7 +206,7 @@ public abstract class AbstractEvent
 			return null;
 		}
 		// We add our npc to the list.
-		_eventNpc.put(npc.getId(), npc);
+		_eventNpc.put(npc.getObjectId(), npc);
 		
 		return npc;
 	}
@@ -165,7 +239,17 @@ public abstract class AbstractEvent
 	 */
 	public boolean isNpcInEvent(L2Npc npc)
 	{
-		return _eventNpc.containsValue(npc);
+		return _eventNpc.containsValue(npc.getObjectId());
+	}
+	
+	public void removeNpc(L2Npc npc)
+	{
+		// We stopped the npc spawn.
+		npc.getSpawn().stopRespawn();
+		// Delete the npc.
+		npc.deleteMe();
+		
+		_eventNpc.remove(npc.getObjectId());
 	}
 	
 	// SPAWNS TEAMS ---------------------------------------------------------------------------------- //
@@ -204,12 +288,34 @@ public abstract class AbstractEvent
 	}
 	
 	/**
-	 * We add all the characters registered to our list of characters in the event.
+	 * We add all the characters registered to our list of characters in the event.<br>
+	 * Check if player in olympiad.<br>
+	 * Check if player in duel<br>
+	 * Check if player in observer mode<br>
 	 */
 	private void createEventPlayers()
 	{
 		for (L2PcInstance player : EventEngineManager.getInstance().getAllRegisteredPlayers())
 		{
+			// Check if player in olympiad.
+			if (player.isInOlympiadMode())
+			{
+				player.sendMessage("You can not attend the event being in the Olympics.");
+				continue;
+			}
+			// Check if player in duel
+			if (player.isInDuel())
+			{
+				player.sendMessage("You can not attend the event being in the Duel.");
+				continue;
+			}
+			// Check if player in observer mode
+			if (player.inObserverMode())
+			{
+				player.sendMessage("You can not attend the event being in the Observer mode.");
+				continue;
+			}
+			
 			_eventPlayers.put(player.getObjectId(), new PlayerHolder(player));
 		}
 		
@@ -219,7 +325,7 @@ public abstract class AbstractEvent
 	
 	/**
 	 * Check if the playable is participating in any event. In the case of a summon, verify that the owner participates <br>
-	 * For not participate in an event is returned <u> false </ u>
+	 * For not participate in an event is returned <u> false </u>
 	 * @param player
 	 * @return boolean
 	 */
@@ -241,7 +347,7 @@ public abstract class AbstractEvent
 	/**
 	 * Check if a player is participating in any event. <br>
 	 * In the case of dealing with a summon you verify the owner. <br>
-	 * For an event not perticipar returns <u> null </ u>
+	 * For an event not perticipar returns <u> null </u>
 	 * @param character
 	 * @return PlayerHolder
 	 */
@@ -289,6 +395,13 @@ public abstract class AbstractEvent
 	public void listenerOnKill(L2Playable playable, L2Character target)
 	{
 		if (!isPlayableInEvent(playable))
+		{
+			return;
+		}
+		
+		// ignoramos siempre si matan algun summon.
+		// XXX se podria usar en algun evento...analizar!
+		if (target.isSummon())
 		{
 			return;
 		}
@@ -361,8 +474,8 @@ public abstract class AbstractEvent
 	public abstract boolean onAttack(PlayerHolder player, L2Character target);
 	
 	/**
-	 * @param playable -> personaje o summon
-	 * @param target -> puede ser null
+	 * @param playable
+	 * @param target
 	 * @return true -> only in the event that an skill not want that continue its normal progress.
 	 */
 	public boolean listenerOnUseSkill(L2Playable playable, L2Character target, Skill skill)
@@ -449,16 +562,44 @@ public abstract class AbstractEvent
 	 */
 	public abstract boolean onUseItem(PlayerHolder player, L2Item item);
 	
+	public void listenerOnLogout(L2PcInstance player)
+	{
+		if (isPlayableInEvent(player))
+		{
+			try
+			{
+				PlayerHolder ph = getEventPlayer(player);
+				// listener
+				onLogout(ph);
+				// recover the original color title
+				ph.recoverOriginalColorTitle();
+				// recover the original title
+				ph.recoverOriginalTitle();
+				// we remove the character of the created world
+				InstanceManager.getInstance().getWorld(ph.getDinamicInstanceId()).removeAllowed(ph.getPcInstance().getObjectId());
+				
+				getAllEventPlayers().remove(ph);
+			}
+			catch (Exception e)
+			{
+				LOGGER.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnLogout() " + e);
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public abstract void onLogout(PlayerHolder player);
+	
 	// VARIOUS METHODS. -------------------------------------------------------------------------------- //
 	
 	/**
 	 * Teleport to players of each team to their respective starting points<br>
 	 */
-	public void teleportAllPlayers()
+	public void teleportAllPlayers(int radius)
 	{
 		for (PlayerHolder player : getAllEventPlayers())
 		{
-			teleportPlayer(player);
+			teleportPlayer(player, radius);
 		}
 	}
 	
@@ -466,12 +607,22 @@ public abstract class AbstractEvent
 	 * Teleport to a specific player to its original location within the event.
 	 * @param player
 	 */
-	public void teleportPlayer(PlayerHolder player)
+	public void teleportPlayer(PlayerHolder player, int radius)
 	{
 		// get the spawn defined at the start of each event
 		Location loc = getTeamSpawn(player.getPcInstance().getTeam());
+		// verify if character is dead
+		if (player.getPcInstance().isDead())
+		{
+			DecayTaskManager.getInstance().cancel(player.getPcInstance());
+			player.getPcInstance().doRevive();
+			// heal to max
+			player.getPcInstance().setCurrentCp(player.getPcInstance().getMaxCp());
+			player.getPcInstance().setCurrentHp(player.getPcInstance().getMaxHp());
+			player.getPcInstance().setCurrentMp(player.getPcInstance().getMaxMp());
+		}
 		// teleport to character
-		player.getPcInstance().teleToLocation(loc.getX(), loc.getY(), loc.getZ(), loc.getHeading(), player.getDinamicInstanceId());
+		player.getPcInstance().teleToLocation(loc.getX() + Rnd.get(-radius, radius), loc.getY() + Rnd.get(-radius, radius), loc.getZ(), loc.getHeading(), player.getDinamicInstanceId());
 		
 	}
 	
@@ -564,13 +715,9 @@ public abstract class AbstractEvent
 			// We canceled the Team
 			player.getPcInstance().setTeam(Team.NONE);
 			// It out of the world created for the event
-			for (InstanceWorld world : EventEngineManager.getInstance().getInstancesWorlds())
-			{
-				if (player.getDinamicInstanceId() == world.getInstanceId())
-				{
-					world.removeAllowed(player.getPcInstance().getObjectId());
-				}
-			}
+			InstanceWorld world = InstanceManager.getInstance().getPlayerWorld(player.getPcInstance());
+			world.removeAllowed(player.getPcInstance().getObjectId());
+			player.getPcInstance().setInstanceId(0);
 			// FIXME We send a character to their actual instance and turn
 			player.getPcInstance().teleToLocation(83437, 148634, -3403, 0, 0);// GIRAN CENTER
 		}
@@ -589,8 +736,9 @@ public abstract class AbstractEvent
 	 * <li>We canceled the invul and let you move</li><br>
 	 * @param player
 	 * @param time
+	 * @param radiusTeleport
 	 */
-	public void giveResurrectPlayer(final PlayerHolder player, int time)
+	public void giveResurrectPlayer(final PlayerHolder player, int time, int radiusTeleport)
 	{
 		try
 		{
@@ -608,9 +756,9 @@ public abstract class AbstractEvent
 					player.getPcInstance().setCurrentHp(player.getPcInstance().getMaxHp());
 					player.getPcInstance().setCurrentMp(player.getPcInstance().getMaxMp());
 					// teleport
-					EventEngineManager.getInstance().getCurrentEvent().teleportPlayer(player);
+					teleportPlayer(player, radiusTeleport);
 					// buff
-					EventEngineManager.getInstance().getCurrentEvent().giveBuffPlayer(player.getPcInstance());
+					giveBuffPlayer(player.getPcInstance());
 				}
 				
 			}, time * 1000);
