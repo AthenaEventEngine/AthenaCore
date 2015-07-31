@@ -1,5 +1,5 @@
 diff --git a/L2J_Server/.classpath b/L2J_Server/.classpath
-index 05e3150..0057726 100644
+index 05e3150..0b47f01 100644
 --- a/L2J_Server/.classpath
 +++ b/L2J_Server/.classpath
 @@ -1,13 +1,14 @@
@@ -18,7 +18,7 @@ index 05e3150..0057726 100644
 -</classpath>
 \ No newline at end of file
 +	<classpathentry kind="src" path="java"/>
-+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
++	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.8.0_51"/>
 +	<classpathentry kind="lib" path="dist/libs/c3p0-0.9.5.jar"/>
 +	<classpathentry kind="lib" path="dist/libs/jython.jar"/>
 +	<classpathentry kind="lib" path="dist/libs/jython-engine-2.2.1.jar"/>
@@ -31,7 +31,7 @@ index 05e3150..0057726 100644
 +</classpath>
 diff --git a/L2J_Server/dist/libs/L2J_EventEngine.jar b/L2J_Server/dist/libs/L2J_EventEngine.jar
 new file mode 100644
-index 0000000..b8ab609
+index 0000000..223838b
 --- /dev/null
 +++ b/L2J_Server/dist/libs/L2J_EventEngine.jar
 Binary files differ
@@ -87,7 +87,7 @@ index 9bb51e3..ddbc2e1 100644
  		if ((returnBack != null) && returnBack.terminate())
  		{
 diff --git a/L2J_Server/java/com/l2jserver/gameserver/model/actor/L2Playable.java b/L2J_Server/java/com/l2jserver/gameserver/model/actor/L2Playable.java
-index cbe50df..74069b8 100644
+index cbe50df..12fc0f3 100644
 --- a/L2J_Server/java/com/l2jserver/gameserver/model/actor/L2Playable.java
 +++ b/L2J_Server/java/com/l2jserver/gameserver/model/actor/L2Playable.java
 @@ -18,6 +18,8 @@
@@ -99,7 +99,7 @@ index cbe50df..74069b8 100644
  import com.l2jserver.gameserver.ai.CtrlEvent;
  import com.l2jserver.gameserver.enums.InstanceType;
  import com.l2jserver.gameserver.instancemanager.InstanceManager;
-@@ -106,6 +108,28 @@
+@@ -106,8 +108,36 @@
  	}
  	
  	@Override
@@ -127,7 +127,15 @@ index cbe50df..74069b8 100644
 +	@Override
  	public boolean doDie(L2Character killer)
  	{
++		// L2J EventEngine
++		if ((killer != null) && killer.isPlayable())
++		{
++			EventEngineManager.getInstance().listenerOnKill((L2Playable) killer, this);
++		}
++		
  		final TerminateReturn returnBack = EventDispatcher.getInstance().notifyEvent(new OnCreatureKill(killer, this), this, TerminateReturn.class);
+ 		if ((returnBack != null) && returnBack.terminate())
+ 		{
 diff --git a/L2J_Server/java/com/l2jserver/gameserver/model/actor/instance/L2PcInstance.java b/L2J_Server/java/com/l2jserver/gameserver/model/actor/instance/L2PcInstance.java
 index ebe0026..30bc90d 100644
 --- a/L2J_Server/java/com/l2jserver/gameserver/model/actor/instance/L2PcInstance.java
