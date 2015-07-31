@@ -20,7 +20,6 @@ package net.sf.eventengine.events;
 
 import java.util.List;
 
-import net.sf.eventengine.EventEngineManager;
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.enums.EventState;
 import net.sf.eventengine.enums.PlayerColorType;
@@ -39,24 +38,27 @@ import com.l2jserver.gameserver.network.clientpackets.Say2;
 import com.l2jserver.util.Rnd;
 
 /**
- * Evento de supervivencia<br>
- * Se creara un unico team y tendran que sobrevivir durante varias oleadas de mobs,<br>
+ * Event survival<br>
+ * One team will be created and will have to survive several waves of mobs.<br>
  * @author fissban
  */
 public class Survive extends AbstractEvent
 {
-	// Variable que controlara el nivel del stage.
+	// Variable that controls the level of the stage
 	private int _stage = 1;
-	// Variable que nos ayudara a llevar el control de la cantidad de mobs muertos.
+	// Variable that helps us keep track of the number of dead mobs.
 	private int _auxKillMonsters = 0;
+	// Radius spawn
+	private static final int RADIUS_SPAWN_PLAYER = 100;
 	
-	// Id de los monsters
-	private static final List<Integer> MONSTERS_ID = ConfigData.getInstance().SURVIVE_MONSTERS_ID;
+	// Monsters ids
+	private final List<Integer> MONSTERS_ID = ConfigData.getInstance().SURVIVE_MONSTERS_ID;
 	
 	public Survive()
 	{
 		super();
-		// Definimos los spawns de cada team
+		setInstanceFile(ConfigData.getInstance().SURVIVE_INSTANCE_FILE);
+		// We define the main spawn of equipment
 		setTeamSpawn(Team.BLUE, ConfigData.getInstance().SURVIVE_COORDINATES_PLAYER);
 	}
 	
@@ -66,19 +68,19 @@ public class Survive extends AbstractEvent
 		switch (state)
 		{
 			case START:
-				prepareToStart(); // Metodo general
+				prepareToStart(); // General Method
 				createTeam();
-				teleportAllPlayers();
+				teleportAllPlayers(RADIUS_SPAWN_PLAYER);
 				break;
 			
 			case FIGHT:
-				prepareToFight(); // Metodo general
+				prepareToFight(); // General Method
 				spawnsMobs();
 				break;
 			
 			case END:
 				// showResult();
-				prepareToEnd(); // Metodo general
+				prepareToEnd(); // General Method
 				break;
 		}
 	}
@@ -86,38 +88,40 @@ public class Survive extends AbstractEvent
 	@Override
 	public void onInteract(PlayerHolder player, L2Npc npc)
 	{
-		// TODO Auto-generated method stub
+		//
 	}
 	
 	@Override
 	public void onKill(PlayerHolder player, L2Character target)
 	{
-		// La instancia al ser "NO PVP" no hace falta tener en cuenta q maten a un compañero.
-		
-		// Nos servira para llevar el recuento de cuantos mobs mato.
+		// We serve to keep count of how many mobs killed.
 		player.increaseKills();
-		// Actualizamos el titulo de un personaje
+		// Update title character
 		updateTitle(player);
-		// Incrementamos en uno la cantidad de mobs muertos
+		// One increasing the amount of dead mobs
 		_auxKillMonsters++;
-		// Verificamos la cantidad de mobs muertos, de haberlos matados a todos aumentamos en uno el stage.
+		// Verify the number of dead mobs, if any killed all increase by one the stage.
 		if (_auxKillMonsters >= (_stage * ConfigData.getInstance().SURVIVE_MONSTER_SPAWN_FOR_STAGE))
 		{
-			// aumentamos en uno el stage.
+			// Increase by one the stage.
 			_stage++;
-			// reiniciamos nuestro auxiliar.
+			// We restart our assistant.
 			_auxKillMonsters = 0;
-			// spawneamos mas mobs
+			// Spawns Mobs
 			spawnsMobs();
-			// Entregamos los rewards por haber pasado de stage
+			// Give rewards
 			giveRewardsTeams();
 		}
 	}
 	
+	// -------------------------------------------------------------------------------------
+	// LISTENERS
+	// -------------------------------------------------------------------------------------
+	
 	@Override
 	public void onDeath(PlayerHolder player)
 	{
-		//
+		// empty
 	}
 	
 	@Override
@@ -142,7 +146,16 @@ public class Survive extends AbstractEvent
 		return false;
 	}
 	
-	// MISC ---------------------------------------------------------------------------------------
+	@Override
+	public void onLogout(PlayerHolder player)
+	{
+		// empty
+	}
+	
+	// -------------------------------------------------------------------------------------
+	// OTHERS METHODS
+	// -------------------------------------------------------------------------------------
+	
 	public void giveRewardsTeams()
 	{
 		if (getAllEventPlayers().isEmpty())
@@ -150,12 +163,9 @@ public class Survive extends AbstractEvent
 			return;
 		}
 		
-		// Entregamos los rewards y anunciamos los ganadores.
 		for (PlayerHolder player : getAllEventPlayers())
 		{
-			// Enviamos un mensaje al ganador
 			EventUtil.sendEventScreenMessage(player, "Felicitaciones sobreviviente");
-			// Entregamos los rewards
 			giveItems(player, ConfigData.getInstance().SURVIVE_REWARD_PLAYER_WIN);
 		}
 	}
@@ -164,64 +174,59 @@ public class Survive extends AbstractEvent
 	{
 		EventUtil.announceToAllPlayersInEvent(Say2.BATTLEFIELD, "Ya llegan, preparate!");
 		
-		// Transcurridos 5 segs se ejecutara el spawn.
+		// After 5 secs spawn run.
 		ThreadPoolManager.getInstance().scheduleGeneral(new Runnable()
 		{
 			@Override
 			public void run()
 			{
-				// Spawneamos los mobs dependiendo del nivel del stage dentro de la unica instancia creada.
 				for (int i = 0; i < (_stage * ConfigData.getInstance().SURVIVE_MONSTER_SPAWN_FOR_STAGE); i++)
 				{
-					L2Npc eventNpc = addEventNpc(MONSTERS_ID.get(Rnd.get(MONSTERS_ID.size() - 1)), 149539, 46712, -3411, 0, true, EventEngineManager.getInstance().getInstancesWorlds().get(0).getInstanceId());
-					// Definimos un team para el monster.
-					// Solo usado como un efecto.
-					eventNpc.setTeam(Team.RED);
+					addEventNpc(MONSTERS_ID.get(Rnd.get(MONSTERS_ID.size() - 1)), ConfigData.getInstance().SURVIVE_COORDINATES_PLAYER, Team.RED, true, getInstancesWorlds().get(0).getInstanceId());
 				}
 				
-				// Avisamos a los personajes del evento en q stage estan actualmente.
+				// We notify the characters in the event that stage they are currently.
 				for (PlayerHolder ph : getAllEventPlayers())
 				{
 					EventUtil.sendEventScreenMessage(ph, "Stage " + _stage, 5000);
 				}
 			}
-			
 		}, 5000L);
 		
 	}
 	
 	/**
-	 * Creamos el equipo donde jugaran los personajes
+	 * We create the computer that will play the characters.
 	 */
 	private void createTeam()
 	{
-		// Creamos la instancia y el mundo
-		InstanceWorld world = EventEngineManager.getInstance().createNewInstanceWorld();
+		// We create the instance and the world
+		InstanceWorld world = createNewInstanceWorld();
 		
 		for (PlayerHolder ph : getAllEventPlayers())
 		{
-			// Agregamos el personaje al mundo para luego ser teletransportado
+			// We add the character to the world and then be teleported
 			world.addAllowed(ph.getPcInstance().getObjectId());
-			// Ajustamos el team de los personaje
+			// Adjust the team of character
 			ph.getPcInstance().setTeam(Team.BLUE);
-			// Ajustamos la instancia a al que perteneceran los personaje
+			// Adjust the instance that owns the character
 			ph.setDinamicInstanceId(world.getInstanceId());
-			// Ajustamos el color del titulo
+			// Adjust the color of the title
 			ph.setNewColorTitle(PlayerColorType.YELLOW_OCHRE);
-			// Ajustamos el titulo del personaje.
+			// Adjust the title character.
 			updateTitle(ph);
 		}
 	}
 	
 	/**
-	 * Actualizamos el titulo de un personaje dependiendo de la cantidad de kills q tenga
+	 * We update the title of a character depending on the number of murders that have
 	 * @param player
 	 */
 	private void updateTitle(PlayerHolder player)
 	{
-		// Ajustamos el titulo del pesonaje
+		// Adjust the title character.
 		player.setNewTitle("Monster Death " + player.getKills());
-		// Actualizamos el status del personaje
+		// Adjust the status character.
 		player.getPcInstance().updateAndBroadcastStatus(2);
 	}
 }

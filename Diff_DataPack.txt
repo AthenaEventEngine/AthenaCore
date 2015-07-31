@@ -36,25 +36,9 @@ index 94fe9c4..5b80dc8 100644
  					}
  					else
  					{
-+						// L2J EventEngine
++						// L2J-EventEngine
 +						EventEngineManager.getInstance().listenerOnInteract(activeChar, npc);
 +						
  						if (npc.hasListener(EventType.ON_NPC_QUEST_START))
  						{
  							activeChar.setLastQuestNpcObject(npc.getObjectId());
-diff --git a/L2J_DataPack/dist/game/data/stats/npcs/custom/custom.xml b/L2J_DataPack/dist/game/data/stats/npcs/custom/custom.xml
-index 18f8f27..bda47fa 100644
---- a/L2J_DataPack/dist/game/data/stats/npcs/custom/custom.xml
-+++ b/L2J_DataPack/dist/game/data/stats/npcs/custom/custom.xml
-@@ -58,4 +58,10 @@
- 			<height normal="22.25" />
- 		</collision>
- 	</npc>
-+		<npc id="36600" displayId="32226" name="EventEngine" usingServerSideName="true" title="L2J" usingServerSideTitle="true" type="L2Npc">
-+		<collision>
-+			<radius normal="11" />
-+			<height normal="22.25" />
-+		</collision>
-+	</npc>
- </list>
-\ No newline at end of file

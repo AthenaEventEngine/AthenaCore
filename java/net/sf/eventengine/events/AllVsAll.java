@@ -36,16 +36,20 @@ import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 import com.l2jserver.gameserver.model.items.L2Item;
 import com.l2jserver.gameserver.model.skills.Skill;
+import com.l2jserver.util.Rnd;
 
 /**
  * @author fissban
  */
 public class AllVsAll extends AbstractEvent
 {
+	// Radius spawn
+	private static final int RADIUS_SPAWN_PLAYER = 100;
+	
 	public AllVsAll()
 	{
 		super();
-		// Definimos el spawn del team
+		setInstanceFile(ConfigData.getInstance().AVA_INSTANCE_FILE);
 		setTeamSpawn(Team.NONE, ConfigData.getInstance().AVA_COORDINATES_PLAYER);
 	}
 	
@@ -55,32 +59,32 @@ public class AllVsAll extends AbstractEvent
 		switch (state)
 		{
 			case START:
-				prepareToStart(); // Metodo general
+				prepareToStart();
 				createTeam();
-				teleportAllPlayers();
+				teleportAllPlayers(RADIUS_SPAWN_PLAYER);
 				break;
 			
 			case FIGHT:
-				prepareToFight(); // Metodo general
+				prepareToFight();
 				break;
 			
 			case END:
 				giveRewardsTeams();
-				prepareToEnd(); // Metodo general
+				prepareToEnd();
 				break;
 		}
 		
 	}
 	
-	// LISTENERS -----------------------------------------------------------------------
+	// -------------------------------------------------------------------------------------
+	// LISTENERS
+	// -------------------------------------------------------------------------------------
+	
 	@Override
 	public void onKill(PlayerHolder player, L2Character target)
 	{
-		// Incrementamos en uno la cant de kills al player.
 		player.increaseKills();
-		// Entregamos la rewards
 		giveItems(player, ConfigData.getInstance().AVA_REWARD_KILL_PLAYER);
-		// Actualizamos el titulo del personaje
 		updateTitle(player);
 	}
 	
@@ -99,11 +103,8 @@ public class AllVsAll extends AbstractEvent
 	@Override
 	public void onDeath(PlayerHolder player)
 	{
-		// generamos un task para revivir al player
-		giveResurrectPlayer(player, 10); // TODO -> hardcode
-		// Incrementamos en uno la cant de muertes al player.
+		giveResurrectPlayer(player, ConfigData.getInstance().EVENT_TELEPORT_PLAYER_DELAY, RADIUS_SPAWN_PLAYER);
 		player.increaseDeaths();
-		// Actualizamos el titulo del personaje
 		updateTitle(player);
 	}
 	
@@ -119,79 +120,73 @@ public class AllVsAll extends AbstractEvent
 		return false;
 	}
 	
-	// METODOS VARIOS ------------------------------------------------------------------
+	@Override
+	public void onLogout(PlayerHolder player)
+	{
+		// empty
+	}
+	
+	// -------------------------------------------------------------------------------------
+	// OTHERS METHODS
+	// -------------------------------------------------------------------------------------
 	
 	/**
-	 * Creamos el equipo donde jugaran los personajes
+	 * Create teams
 	 */
 	private void createTeam()
 	{
-		// Creamos la instancia y el mundo
+		// New Instance for event
 		InstanceWorld world = EventEngineManager.getInstance().createNewInstanceWorld();
 		
 		for (PlayerHolder player : getAllEventPlayers())
 		{
-			// Agregamos el personaje al mundo para luego ser teletransportado
 			world.addAllowed(player.getPcInstance().getObjectId());
-			// Ajustamos el team de los personaje
 			player.getPcInstance().setTeam(Team.NONE);
-			// Ajustamos la instancia a al que perteneceran los personaje
 			player.setDinamicInstanceId(world.getInstanceId());
-			// Ajustamos el color del titulo
-			player.setNewColorTitle(PlayerColorType.YELLOW_OCHRE);
-			// Ajustamos el color del titulo y el titulo del personaje.
+			player.setNewColorTitle(PlayerColorType.values()[Rnd.get(PlayerColorType.values().length - 1)]);
 			updateTitle(player);
 		}
 	}
 	
 	/**
-	 * Actualizamos el titulo de un personaje dependiendo de la cantidad de muertes o kills q tenga
+	 * Update the title of a character depending on the number of deaths or kills have
 	 * @param player
 	 */
 	private void updateTitle(PlayerHolder player)
 	{
-		// Ajustamos el titulo del pesonaje
 		player.setNewTitle("Kills " + player.getKills() + " | " + player.getDeaths() + " Death");
-		// Actualizamos el status del personaje
 		player.getPcInstance().updateAndBroadcastStatus(2);
 	}
 	
 	/**
-	 * Entregamos los rewards.<br>
-	 * <u>Acciones:</u> <li>Ordenamos la lista dependiendo de la cant de puntos de cada player</li><br>
-	 * <li>Al 50% mejor se le entregan los rewards de ganador</li><br>
-	 * <li>Al 50% peor se le entregan los rewards de perdedor</li><br>
+	 * Rewards
 	 */
 	public void giveRewardsTeams()
 	{
+		// Check player
 		if (getAllEventPlayers().isEmpty())
 		{
 			return;
 		}
 		
-		// Le daremos por default reward de ganador al 50% de los mejores participantes y a los demas le damos reward de perdedor :P
-		
-		// Lista auxiliar
+		// Auxiliary list
 		List<PlayerHolder> playersInEvent = new ArrayList<>();
-		//
 		playersInEvent.addAll(getAllEventPlayers());
-		// Ordenamos la lista
+		
+		// Ordered list
 		Collections.sort(playersInEvent, PlayerHolder._pointsComparator);
-		// Entregamos los rewards y anunciamos los ganadores.
+		
+		// We deliver the awards and announce the winners
 		for (PlayerHolder player : playersInEvent)
 		{
 			int aux = 0;
-			
 			if (aux <= (playersInEvent.size() / 2))
 			{
-				// Enviamos un mensaje al ganador
 				EventUtil.sendEventScreenMessage(player, "Ganador " + player.getPcInstance().getName() + " con " + player.getPoints());
-				// Entregamos los rewards
 				giveItems(player, ConfigData.getInstance().AVA_REWARD_PLAYER_WIN);
 			}
 			else
 			{
-				// Enviamos un mensaje al ganador
 				EventUtil.sendEventScreenMessage(player, "Perdedor " + player.getPcInstance().getName() + " con " + player.getPoints());
 			}
 			

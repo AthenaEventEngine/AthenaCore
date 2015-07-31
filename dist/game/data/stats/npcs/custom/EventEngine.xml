@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../xsd/npcs.xsd">
+	
+	<!-- Event Engine Manager -->
+	<npc id="36600" displayId="32226" name="Manager Event" usingServerSideName="true" title="Event Engine" usingServerSideTitle="true" type="L2Npc">
+		<collision>
+			<radius normal="11" />
+			<height normal="22.25" />
+		</collision>
+	</npc>
+	
+	<!-- Event Engine Flag -->
+	<npc id="36601" displayId="35062" name="Flag" usingServerSideName="true" title="BLUE" usingServerSideTitle="true" type="L2Npc">
+		<collision>
+			<radius normal="11" />
+			<height normal="22.25" />
+		</collision>
+	</npc>
+	<npc id="36602" displayId="35062" name="Flag" usingServerSideName="true" title="RED" usingServerSideTitle="true" type="L2Npc">
+		<collision>
+			<radius normal="11" />
+			<height normal="22.25" />
+		</collision>
+	</npc>
+	
+	<!-- Event Engine Holder -->
+	<npc id="36603" displayId="32027" name="Holder" usingServerSideName="true" title="BLUE" usingServerSideTitle="true" type="L2Npc">
+		<collision>
+			<radius normal="11" />
+			<height normal="22.25" />
+		</collision>
+	</npc>
+	<npc id="36604" displayId="32027" name="Holder" usingServerSideName="true" title="RED" usingServerSideTitle="true" type="L2Npc">
+		<collision>
+			<radius normal="11" />
+			<height normal="22.25" />
+		</collision>
+	</npc>
+</list>

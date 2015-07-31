@@ -32,71 +32,81 @@ import com.l2jserver.gameserver.model.holders.ItemHolder;
  */
 public class ConfigData
 {
+	// --------------------------------------------------
+	// Event Engine Property File Definitions
+	// --------------------------------------------------
 	private static final String EVENT_CONFIG = "./config/EventEngine/EventEngine.properties";
 	private static final String TVT_CONFIG = "./config/EventEngine/TeamVsTeam.properties";
 	private static final String AVA_CONFIG = "./config/EventEngine/AllVsAll.properties";
-	// private static final String CTF_CONFIG = "./config/EventEngine/CTF.properties";
+	private static final String CTF_CONFIG = "./config/EventEngine/CaptureTheFlag.properties";
 	private static final String OVO_CONFIG = "./config/EventEngine/OneVsOne.properties";
 	private static final String SURVIVE_CONFIG = "./config/EventEngine/Survive.properties";
 	
-	// lista de configs generales
-	
-	/** Definimos ID del npc del engine */
+	// -------------------------------------------------------------------------------
+	// Event Engine - Variable Definitions
+	// -------------------------------------------------------------------------------
 	public int NPC_MANAGER_ID;
-	/** Definimos el xml q usaremos para nuestras instancias. */
 	public String INSTANCE_FILE;
-	/** Definimos cada cuanto se ejecutara algun evento en hs */
 	public int EVENT_TASK;
-	/** Definimos si va a haber tiempo de votacion */
 	public boolean EVENT_VOTING_ENABLED;
-	/** Definimos el tiempo que durara el periodo de votacion */
 	public int EVENT_VOTING_TIME;
-	/** Definimos el tiempo que durara el periodo de registro */
 	public int EVENT_REGISTER_TIME;
-	/** Definimos el tiempo que durara cada evento en minutos */
 	public int EVENT_DURATION;
-	/** Definimos si permitimos o no el daño entre amigos. */
+	public int EVENT_TELEPORT_PLAYER_DELAY;
 	public boolean FRIENDLY_FIRE;
-	/** Definimos la cant de players maximo/minimo que podran participar */
 	public int MIN_PLAYERS_IN_EVENT;
 	public int MAX_PLAYERS_IN_EVENT;
-	/** Definimos el lvl maximo/minimo que podran participar de los eventos. */
 	public int MIN_LVL_IN_EVENT;
 	public int MAX_LVL_IN_EVENT;
-	/** Definimos la cantidad maxima de buffs q se podran usar */
 	public static int MAX_BUFF_COUNT;
 	
 	// -------------------------------------------------------------------------------
-	// Configs All Vs All
+	// Capture The Flag - Settings
+	// -------------------------------------------------------------------------------
+	public boolean CTF_EVENT_ENABLED;
+	public String CTF_INSTANCE_FILE;
+	public List<ItemHolder> CTF_REWARD_PLAYER_WIN = new ArrayList<>();
+	public Location CTF_COORDINATES_TEAM_RED;
+	public Location CTF_COORDINATES_TEAM_BLUE;
+	public int CTF_POINTS_CONQUER_FLAG;
+	public int CTF_POINTS_KILL;
+	
+	// -------------------------------------------------------------------------------
+	// All vs All - Settings
 	// -------------------------------------------------------------------------------
 	public boolean AVA_EVENT_ENABLED;
+	public String AVA_INSTANCE_FILE;
 	public List<ItemHolder> AVA_REWARD_PLAYER_WIN = new ArrayList<>();
 	public List<ItemHolder> AVA_REWARD_KILL_PLAYER = new ArrayList<>();
 	public Location AVA_COORDINATES_PLAYER;
 	
 	// -------------------------------------------------------------------------------
-	// Configs One Vs One
+	// One vs One - Settings
 	// -------------------------------------------------------------------------------
 	public boolean OVO_EVENT_ENABLED;
+	public String OVO_INSTANCE_FILE;
+	public int OVO_NEXT_FIGHT_DELAY;
 	public boolean OVO_REWARD_TEAM_TIE;
 	public List<ItemHolder> OVO_REWARD_PLAYER_WIN = new ArrayList<>();
 	public List<ItemHolder> OVO_REWARD_KILL_PLAYER = new ArrayList<>();
-	public Location OVO_COORDINATES_TEAM_1;
-	public Location OVO_COORDINATES_TEAM_2;
+	public Location OVO_COORDINATES_TEAM_RED;
+	public Location OVO_COORDINATES_TEAM_BLUE;
 	
 	// -------------------------------------------------------------------------------
-	// Configs Team Vs Team
+	// Team vs Team - Settings
 	// -------------------------------------------------------------------------------
 	public boolean TVT_EVENT_ENABLED;
+	public String TVT_INSTANCE_FILE;
 	public List<ItemHolder> TVT_REWARD_PLAYER_WIN = new ArrayList<>();
 	public List<ItemHolder> TVT_REWARD_KILL_PLAYER = new ArrayList<>();
-	public Location TVT_COORDINATES_TEAM_1;
-	public Location TVT_COORDINATES_TEAM_2;
+	public Location TVT_COORDINATES_TEAM_RED;
+	public Location TVT_COORDINATES_TEAM_BLUE;
 	
 	// -------------------------------------------------------------------------------
-	// Configs Survive
+	// Survive - Settings
 	// -------------------------------------------------------------------------------
 	public boolean SURVIVE_EVENT_ENABLED;
+	public String SURVIVE_INSTANCE_FILE;
 	public List<ItemHolder> SURVIVE_REWARD_PLAYER_WIN = new ArrayList<>();
 	public Location SURVIVE_COORDINATES_PLAYER;
 	public Location SURVIVE_COORDINATES_MOBS;
@@ -108,13 +118,18 @@ public class ConfigData
 		load();
 	}
 	
-	// Metodo encargado de leer los configs
+	/**
+	 * This class initializes all global variables for configuration.<br>
+	 * If the key doesn't appear in properties file, a default value is set by this class. {@link #CONFIGURATION_FILE} (properties file) for configuring your server.
+	 */
 	public void load()
 	{
+		// Properties Settings
 		EventPropertiesParser settings;
-		// ------------------------------------------------------------------------------------- //
+		
+		// -------------------------------------------------------------------------------------
 		// EventEngine.properties
-		// ------------------------------------------------------------------------------------- //
+		// -------------------------------------------------------------------------------------
 		settings = new EventPropertiesParser(EVENT_CONFIG);
 		NPC_MANAGER_ID = settings.getInt("EventParticipationNpcId", 36600);
 		EVENT_TASK = settings.getInt("EventInterval", 10);
@@ -122,53 +137,70 @@ public class ConfigData
 		EVENT_VOTING_TIME = settings.getInt("EventVotingTime", 10);
 		EVENT_REGISTER_TIME = settings.getInt("EventRegisterTime", 10);
 		EVENT_DURATION = settings.getInt("EventRunningTime", 10);
+		EVENT_TELEPORT_PLAYER_DELAY = settings.getInt("EventTeleportPlayerDelay", 10);
 		FRIENDLY_FIRE = settings.getBoolean("EventFriendlyFire", false);
 		MIN_PLAYERS_IN_EVENT = settings.getInt("EventMinPlayers", 2);
 		MAX_PLAYERS_IN_EVENT = settings.getInt("EventMaxPlayers", 20);
 		MIN_LVL_IN_EVENT = settings.getInt("EventMinPlayerLevel", 40);
 		MAX_LVL_IN_EVENT = settings.getInt("EventMaxPlayerLevel", 78);
-		INSTANCE_FILE = settings.getString("EventInstanceFile", "EventEngine.xml");
 		MAX_BUFF_COUNT = settings.getInt("EventMaxBuffCount", 5);
 		
-		// ------------------------------------------------------------------------------------- //
+		// -------------------------------------------------------------------------------------
+		// CaptureTheFlag.properties
+		// -------------------------------------------------------------------------------------
+		settings = new EventPropertiesParser(CTF_CONFIG);
+		CTF_INSTANCE_FILE = settings.getString("EventInstanceFile", "EventEngine.xml");
+		CTF_EVENT_ENABLED = settings.getBoolean("EventEnabled", false);
+		CTF_REWARD_PLAYER_WIN = settings.getItemHolderList("EventReward");
+		CTF_COORDINATES_TEAM_RED = settings.getLocation("EventTeam1Coordinates");
+		CTF_COORDINATES_TEAM_BLUE = settings.getLocation("EventTeam2Coordinates");
+		CTF_POINTS_CONQUER_FLAG = settings.getInt("EventPointsConquerFlag", 10);
+		CTF_POINTS_KILL = settings.getInt("EventPointsKill", 1);
+		
+		// -------------------------------------------------------------------------------------
 		// AllVsAll.properties
-		// ------------------------------------------------------------------------------------- //
+		// -------------------------------------------------------------------------------------
 		settings = new EventPropertiesParser(AVA_CONFIG);
-		AVA_EVENT_ENABLED = settings.getBoolean("AvAEventEnabled", false);
-		AVA_REWARD_PLAYER_WIN = settings.getItemHolderList("AvAEventReward");
-		AVA_REWARD_KILL_PLAYER = settings.getItemHolderList("AvAEventRewardKill");
-		AVA_COORDINATES_PLAYER = settings.getLocation("AvAEventCoordinates");
+		AVA_EVENT_ENABLED = settings.getBoolean("EventEnabled", false);
+		AVA_INSTANCE_FILE = settings.getString("EventInstanceFile", "EventEngine.xml");
+		AVA_REWARD_PLAYER_WIN = settings.getItemHolderList("EventReward");
+		AVA_REWARD_KILL_PLAYER = settings.getItemHolderList("EventRewardKill");
+		AVA_COORDINATES_PLAYER = settings.getLocation("EventCoordinates");
 		
-		// ------------------------------------------------------------------------------------- //
+		// -------------------------------------------------------------------------------------
 		// OneVsOne.properties
-		// ------------------------------------------------------------------------------------- //
+		// -------------------------------------------------------------------------------------
 		settings = new EventPropertiesParser(OVO_CONFIG);
-		OVO_EVENT_ENABLED = settings.getBoolean("OvOEventEnabled", false);
-		OVO_REWARD_PLAYER_WIN = settings.getItemHolderList("OvOEventReward");
-		OVO_REWARD_KILL_PLAYER = settings.getItemHolderList("OvOEventRewardKill");
-		OVO_COORDINATES_TEAM_1 = settings.getLocation("OvOEventTeam1Coordinates");
-		OVO_COORDINATES_TEAM_2 = settings.getLocation("OvOEventTeam2Coordinates");
+		OVO_EVENT_ENABLED = settings.getBoolean("EventEnabled", false);
+		OVO_INSTANCE_FILE = settings.getString("EventInstanceFile", "EventEngine.xml");
+		OVO_NEXT_FIGHT_DELAY = settings.getInt("EventNextFightDelay", 10);
+		OVO_REWARD_PLAYER_WIN = settings.getItemHolderList("EventReward");
+		OVO_REWARD_KILL_PLAYER = settings.getItemHolderList("EventRewardKill");
+		OVO_COORDINATES_TEAM_RED = settings.getLocation("EventTeam1Coordinates");
+		OVO_COORDINATES_TEAM_BLUE = settings.getLocation("EventTeam2Coordinates");
 		
-		// ------------------------------------------------------------------------------------- //
+		// -------------------------------------------------------------------------------------
 		// TeamVsTeam.properties
-		// ------------------------------------------------------------------------------------- //
+		// -------------------------------------------------------------------------------------
 		settings = new EventPropertiesParser(TVT_CONFIG);
-		TVT_EVENT_ENABLED = settings.getBoolean("TvTEventEnabled", false);
-		TVT_REWARD_PLAYER_WIN = settings.getItemHolderList("TvTEventReward");
-		TVT_REWARD_KILL_PLAYER = settings.getItemHolderList("TvTEventRewardKill");
-		TVT_COORDINATES_TEAM_1 = settings.getLocation("TvTEventTeam1Coordinates");
-		TVT_COORDINATES_TEAM_2 = settings.getLocation("TvTEventTeam2Coordinates");
+		TVT_EVENT_ENABLED = settings.getBoolean("EventEnabled", false);
+		TVT_INSTANCE_FILE = settings.getString("EventInstanceFile", "EventEngine.xml");
+		TVT_REWARD_PLAYER_WIN = settings.getItemHolderList("EventReward");
+		TVT_REWARD_KILL_PLAYER = settings.getItemHolderList("EventRewardKill");
+		TVT_COORDINATES_TEAM_RED = settings.getLocation("EventTeam1Coordinates");
+		TVT_COORDINATES_TEAM_BLUE = settings.getLocation("EventTeam2Coordinates");
 		
-		// ------------------------------------------------------------------------------------- //
+		// -------------------------------------------------------------------------------------
 		// Survive.properties
-		// ------------------------------------------------------------------------------------- //
+		// -------------------------------------------------------------------------------------
 		settings = new EventPropertiesParser(SURVIVE_CONFIG);
-		SURVIVE_EVENT_ENABLED = settings.getBoolean("SVEventEnabled", false);
-		SURVIVE_REWARD_PLAYER_WIN = settings.getItemHolderList("SVEventReward");
-		SURVIVE_COORDINATES_PLAYER = settings.getLocation("SVEventCoordinatesPlayer");
-		SURVIVE_COORDINATES_MOBS = settings.getLocation("SVEventCoordinatesMobs");
-		SURVIVE_MONSTERS_ID = settings.getListInteger("SVEventMobsID");
-		SURVIVE_MONSTER_SPAWN_FOR_STAGE = settings.getInt("SVEventMobsSpawnForStage", 5);
+		SURVIVE_EVENT_ENABLED = settings.getBoolean("EventEnabled", false);
+		SURVIVE_INSTANCE_FILE = settings.getString("EventInstanceFile", "EventEngine.xml");
+		SURVIVE_REWARD_PLAYER_WIN = settings.getItemHolderList("EventReward");
+		SURVIVE_COORDINATES_PLAYER = settings.getLocation("EventCoordinatesPlayer");
+		SURVIVE_COORDINATES_MOBS = settings.getLocation("EventCoordinatesMobs");
+		SURVIVE_MONSTERS_ID = settings.getListInteger("EventMobsID");
+		SURVIVE_MONSTER_SPAWN_FOR_STAGE = settings.getInt("EventMobsSpawnForStage", 5);
 	}
 	
 	public static ConfigData getInstance()
