@@ -42,9 +42,7 @@ import com.l2jserver.gameserver.instancemanager.InstanceManager;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.L2Playable;
-import com.l2jserver.gameserver.model.actor.instance.L2DoorInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
-import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 import com.l2jserver.gameserver.model.items.L2Item;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
@@ -115,51 +113,6 @@ public class EventEngineManager
 	public void decreaseTime()
 	{
 		_time--;
-	}
-	
-	// XXX DINAMIC INSTANCE ------------------------------------------------------------------------------
-	private final List<InstanceWorld> _instanceWorld = new ArrayList<>();
-	
-	/**
-	 * Creamos instancias dinamicas y un mundo para ella
-	 * @param count
-	 * @return InstanceWorld: world creado para la instancia
-	 */
-	public InstanceWorld createNewInstanceWorld()
-	{
-		InstanceWorld world = null;
-		try
-		{
-			int instanceId = InstanceManager.getInstance().createDynamicInstance(ConfigData.getInstance().INSTANCE_FILE);
-			InstanceManager.getInstance().getInstance(instanceId).setAllowSummon(false);
-			InstanceManager.getInstance().getInstance(instanceId).setPvPInstance(true);
-			InstanceManager.getInstance().getInstance(instanceId).setEmptyDestroyTime(1000 + 60000L);
-			// Cerramos las puertas de la instancia si es q existen
-			for (L2DoorInstance door : InstanceManager.getInstance().getInstance(instanceId).getDoors())
-			{
-				door.closeMe();
-			}
-			
-			world = new EventEngineWorld();
-			world.setInstanceId(instanceId);
-			world.setTemplateId(100); // TODO hardcode
-			world.setStatus(0);
-			InstanceManager.getInstance().addWorld(world);
-			_instanceWorld.add(world);
-			
-		}
-		catch (Exception e)
-		{
-			LOGGER.warning(EventEngineManager.class.getSimpleName() + ": -> createDynamicInstances() " + e);
-			e.printStackTrace();
-		}
-		
-		return world;
-	}
-	
-	public List<InstanceWorld> getInstancesWorlds()
-	{
-		return _instanceWorld;
 	}
 	
 	// XXX NEXT EVENT ---------------------------------------------------------------------------------
@@ -648,7 +601,6 @@ public class EventEngineManager
 		setCurrentEvent(null);
 		clearVotes();
 		clearRegisteredPlayers();
-		getInstancesWorlds().clear();
 	}
 	
 	/**
