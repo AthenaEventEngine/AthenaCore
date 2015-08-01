@@ -4,5 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/L2J_Server"/>
 	<classpathentry kind="lib" path="/L2J_Server/dist/libs/mmocore.jar"/>
+	<classpathentry kind="lib" path="/L2J_Server/dist/libs/slf4j-api-1.7.12.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

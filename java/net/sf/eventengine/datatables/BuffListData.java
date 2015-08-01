@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -56,7 +55,7 @@ public class BuffListData implements IXmlReader
 	public void load()
 	{
 		parseDatapackFile("config/EventEngine/xml/buff_list.xml");
-		LOGGER.log(Level.INFO, getClass().getSimpleName() + ": Loaded: " + _buffList.size() + " Buffs.");
+		LOGGER.info("{}: Loaded {} Buffs.", getClass().getSimpleName(), _buffList.size());
 	}
 	
 	@Override
