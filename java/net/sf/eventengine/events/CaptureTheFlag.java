@@ -21,13 +21,6 @@ package net.sf.eventengine.events;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sf.eventengine.datatables.ConfigData;
-import net.sf.eventengine.enums.EventState;
-import net.sf.eventengine.enums.PlayerColorType;
-import net.sf.eventengine.handler.AbstractEvent;
-import net.sf.eventengine.holder.PlayerHolder;
-import net.sf.eventengine.util.EventUtil;
-
 import com.l2jserver.gameserver.datatables.ItemTable;
 import com.l2jserver.gameserver.enums.Team;
 import com.l2jserver.gameserver.model.actor.L2Character;
@@ -39,6 +32,14 @@ import com.l2jserver.gameserver.model.items.L2Weapon;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
+
+import net.sf.eventengine.datatables.ConfigData;
+import net.sf.eventengine.enums.CollectionTarget;
+import net.sf.eventengine.enums.EventState;
+import net.sf.eventengine.enums.PlayerColorType;
+import net.sf.eventengine.handler.AbstractEvent;
+import net.sf.eventengine.holder.PlayerHolder;
+import net.sf.eventengine.util.EventUtil;
 
 /**
  * @author fissban
@@ -80,11 +81,11 @@ public class CaptureTheFlag extends AbstractEvent
 				spawnFlagsAndHolders();
 				teleportAllPlayers(100);
 				break;
-			
+				
 			case FIGHT:
 				prepareToFight(); // General Method
 				break;
-			
+				
 			case END:
 				giveRewardsTeams();
 				prepareToEnd(); // General Method
@@ -105,10 +106,10 @@ public class CaptureTheFlag extends AbstractEvent
 					// We remove the flag from his position
 					removeNpc(npc);
 					// We announced that a flag was taken
-					EventUtil.announceToAllPlayersInEvent(Say2.SCREEN_ANNOUNCE, "ctf_captured_the_flag", "%holder%", Team.RED.toString());
+					EventUtil.announceTo(Say2.SCREEN_ANNOUNCE, "ctf_captured_the_flag", "%holder%", Team.RED.toString(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
 				}
 				break;
-			
+				
 			case RED_FLAG:
 				if (player.getPcInstance().getTeam() == Team.BLUE)
 				{
@@ -117,10 +118,10 @@ public class CaptureTheFlag extends AbstractEvent
 					// We remove the flag from his position
 					removeNpc(npc);
 					// We announced that a flag was taken
-					EventUtil.announceToAllPlayersInEvent(Say2.SCREEN_ANNOUNCE, "ctf_captured_the_flag", "%holder%", Team.BLUE.toString());
+					EventUtil.announceTo(Say2.SCREEN_ANNOUNCE, "ctf_captured_the_flag", "%holder%", Team.BLUE.toString(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
 				}
 				break;
-			
+				
 			case BLUE_HOLDER:
 				if (player.getPcInstance().getTeam() == Team.BLUE)
 				{
@@ -133,13 +134,13 @@ public class CaptureTheFlag extends AbstractEvent
 						// We created the flag again
 						addEventNpc(RED_FLAG, ConfigData.getInstance().CTF_COORDINATES_TEAM_RED, Team.RED, getInstancesWorlds().get(0).getInstanceId());
 						// We announced that a flag was taken
-						EventUtil.announceToAllPlayersInEvent(Say2.SCREEN_ANNOUNCE, "ctf_conquered_the_flag", "%holder%", Team.BLUE.toString());
+						EventUtil.announceTo(Say2.SCREEN_ANNOUNCE, "ctf_conquered_the_flag", "%holder%", Team.BLUE.toString(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
 						// Show points of each team
 						showPoint();
 					}
 				}
 				break;
-			
+				
 			case RED_HOLDER:
 				if (player.getPcInstance().getTeam() == Team.RED)
 				{
@@ -152,7 +153,7 @@ public class CaptureTheFlag extends AbstractEvent
 						// We created the flag again
 						addEventNpc(BLUE_FLAG, ConfigData.getInstance().CTF_COORDINATES_TEAM_BLUE, Team.BLUE, getInstancesWorlds().get(0).getInstanceId());
 						// We announced that a flag was taken
-						EventUtil.announceToAllPlayersInEvent(Say2.SCREEN_ANNOUNCE, "ctf_conquered_the_flag", "%holder%", Team.RED.toString());
+						EventUtil.announceTo(Say2.SCREEN_ANNOUNCE, "ctf_conquered_the_flag", "%holder%", Team.RED.toString(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
 						// Show points of each team
 						showPoint();
 					}
@@ -321,15 +322,15 @@ public class CaptureTheFlag extends AbstractEvent
 		
 		if (teamWinner == Team.BLUE)
 		{
-			EventUtil.announceToAllPlayersInEvent(Say2.CRITICAL_ANNOUNCE, "team_winner", "%holder%", Team.BLUE.toString());
+			EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "team_winner", "%holder%", Team.BLUE.toString(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
 		}
 		else if (teamWinner == Team.RED)
 		{
-			EventUtil.announceToAllPlayersInEvent(Say2.CRITICAL_ANNOUNCE, "team_winner", "%holder%", Team.RED.toString());
+			EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "team_winner", "%holder%", Team.RED.toString(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
 		}
 		else
 		{
-			EventUtil.announceToAllPlayersInEvent(Say2.CRITICAL_ANNOUNCE, "teams_tie");
+			EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "teams_tie", CollectionTarget.ALL_PLAYERS_IN_EVENT);
 		}
 	}
 	
@@ -422,7 +423,7 @@ public class CaptureTheFlag extends AbstractEvent
 				// We announced that a flag was taken
 				map.put("%holder%", player.getPcInstance().getName());
 				map.put("%flag%", Team.BLUE.toString());
-				EventUtil.announceToAllPlayersInEvent(Say2.SCREEN_ANNOUNCE, "player_dropped_flag", map);
+				EventUtil.announceTo(Say2.SCREEN_ANNOUNCE, "player_dropped_flag", map, CollectionTarget.ALL_PLAYERS_IN_EVENT);
 				break;
 			case BLUE:
 				// New spawn for the red flag
@@ -430,7 +431,7 @@ public class CaptureTheFlag extends AbstractEvent
 				// We announced that a flag was taken
 				map.put("%holder%", player.getPcInstance().getName());
 				map.put("%flag%", Team.RED.toString());
-				EventUtil.announceToAllPlayersInEvent(Say2.SCREEN_ANNOUNCE, "player_dropped_flag", map);
+				EventUtil.announceTo(Say2.SCREEN_ANNOUNCE, "player_dropped_flag", map, CollectionTarget.ALL_PLAYERS_IN_EVENT);
 				break;
 		}
 	}

@@ -41,6 +41,7 @@ public class ConfigData
 	
 	// General configs
 	public int NPC_MANAGER_ID;
+	public boolean EVENT_MESSAGE_GLOBAL;
 	public int EVENT_TASK;
 	public boolean EVENT_VOTING_ENABLED;
 	public int EVENT_VOTING_TIME;
@@ -114,6 +115,7 @@ public class ConfigData
 		// ------------------------------------------------------------------------------------- //
 		settings = new EventPropertiesParser(EVENT_CONFIG);
 		NPC_MANAGER_ID = settings.getInt("EventParticipationNpcId", 36600);
+		EVENT_MESSAGE_GLOBAL = settings.getBoolean("EventGlobalMessage", true);
 		EVENT_TASK = settings.getInt("EventInterval", 10);
 		EVENT_VOTING_ENABLED = settings.getBoolean("EventVotingEnabled", true);
 		EVENT_VOTING_TIME = settings.getInt("EventVotingTime", 10);

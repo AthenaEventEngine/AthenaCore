@@ -18,13 +18,14 @@
  */
 package net.sf.eventengine.task;
 
+import com.l2jserver.gameserver.network.clientpackets.Say2;
+
 import net.sf.eventengine.EventEngineManager;
+import net.sf.eventengine.enums.CollectionTarget;
 import net.sf.eventengine.enums.EventEngineState;
 import net.sf.eventengine.enums.EventState;
 import net.sf.eventengine.holder.PlayerHolder;
 import net.sf.eventengine.util.EventUtil;
-
-import com.l2jserver.gameserver.network.clientpackets.Say2;
 
 /**
  * Clase encargada de correr los diferentes estados q sufren los diferentes eventos
@@ -46,14 +47,14 @@ public class EventTask implements Runnable
 		{
 			case 1:
 				// Anunciamos a los players q pronto seran teletransportados
-				EventUtil.announceToAllPlayersInEvent(Say2.CRITICAL_ANNOUNCE, "teleport_seconds");
+				EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "teleport_seconds", CollectionTarget.ALL_PLAYERS_IN_EVENT);
 				break;
-			
+				
 			case 2:
 				/** Se ejecutan acciones dentro de cada evento */
 				EventEngineManager.getInstance().getCurrentEvent().runEventState(EventState.START);
 				break;
-			
+				
 			case 3:
 				/** Se ejecutan acciones dentro de cada evento */
 				EventEngineManager.getInstance().getCurrentEvent().runEventState(EventState.FIGHT);
@@ -64,7 +65,7 @@ public class EventTask implements Runnable
 					EventUtil.sendEventSpecialMessage(player, 2, "status_started");
 				}
 				break;
-			
+				
 			case 4:
 				/** Se ejecutan acciones dentro de cada evento */
 				EventEngineManager.getInstance().getCurrentEvent().runEventState(EventState.END);
@@ -78,7 +79,7 @@ public class EventTask implements Runnable
 					EventUtil.sendEventSpecialMessage(player, 1, "status_finished");
 				}
 				break;
-			
+				
 			case 5:
 				// Volvemos a habilitar el registro
 				EventEngineManager.getInstance().setEventEngineState(EventEngineState.EVENT_ENDED);

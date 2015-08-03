@@ -111,5 +111,8 @@
 	
 	<!-- All vs All -->
 	<message id="ava_first_place" text="First place: %holder%"/>
+	
+	<!-- Survive -->
+	<message id="survive_spawns_mobs" text="Here come, get ready!"/>
 
 </localization>
