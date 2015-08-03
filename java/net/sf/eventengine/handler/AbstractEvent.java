@@ -21,19 +21,12 @@ package net.sf.eventengine.handler;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ScheduledFuture;
 import java.util.logging.Logger;
-
-import net.sf.eventengine.EventEngineManager;
-import net.sf.eventengine.EventEngineWorld;
-import net.sf.eventengine.datatables.BuffListData;
-import net.sf.eventengine.datatables.ConfigData;
-import net.sf.eventengine.datatables.MessageData;
-import net.sf.eventengine.enums.EventState;
-import net.sf.eventengine.holder.PlayerHolder;
-import net.sf.eventengine.task.EventTask;
-import net.sf.eventengine.util.EventUtil;
 
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.data.xml.impl.NpcData;
@@ -58,6 +51,16 @@ import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.network.serverpackets.MagicSkillUse;
 import com.l2jserver.gameserver.taskmanager.DecayTaskManager;
 import com.l2jserver.util.Rnd;
+
+import net.sf.eventengine.EventEngineManager;
+import net.sf.eventengine.EventEngineWorld;
+import net.sf.eventengine.datatables.BuffListData;
+import net.sf.eventengine.datatables.ConfigData;
+import net.sf.eventengine.datatables.MessageData;
+import net.sf.eventengine.enums.EventState;
+import net.sf.eventengine.holder.PlayerHolder;
+import net.sf.eventengine.task.EventTask;
+import net.sf.eventengine.util.EventUtil;
 
 /**
  * @author fissban
@@ -127,6 +130,20 @@ public abstract class AbstractEvent
 	public List<InstanceWorld> getInstancesWorlds()
 	{
 		return _instanceWorlds;
+	}
+	
+	// REVIVE --------------------------------------------------------------------------------------- //
+	private final List<ScheduledFuture<?>> _revivePending = new CopyOnWriteArrayList<>();
+	
+	private void stopAllPendingRevive()
+	{
+		Iterator<ScheduledFuture<?>> iterator = _revivePending.iterator();
+		while (iterator.hasNext())
+		{
+			iterator.next().cancel(true);
+		}
+		
+		_revivePending.clear();
 	}
 	
 	// NPC IN EVENT --------------------------------------------------------------------------------- //
@@ -595,10 +612,11 @@ public abstract class AbstractEvent
 	/**
 	 * Teleport to players of each team to their respective starting points<br>
 	 */
-	public void teleportAllPlayers(int radius)
+	protected void teleportAllPlayers(int radius)
 	{
 		for (PlayerHolder player : getAllEventPlayers())
 		{
+			revivePlayer(player);
 			teleportPlayer(player, radius);
 		}
 	}
@@ -607,20 +625,10 @@ public abstract class AbstractEvent
 	 * Teleport to a specific player to its original location within the event.
 	 * @param player
 	 */
-	public void teleportPlayer(PlayerHolder player, int radius)
+	protected void teleportPlayer(PlayerHolder player, int radius)
 	{
 		// get the spawn defined at the start of each event
 		Location loc = getTeamSpawn(player.getPcInstance().getTeam());
-		// verify if character is dead
-		if (player.getPcInstance().isDead())
-		{
-			DecayTaskManager.getInstance().cancel(player.getPcInstance());
-			player.getPcInstance().doRevive();
-			// heal to max
-			player.getPcInstance().setCurrentCp(player.getPcInstance().getMaxCp());
-			player.getPcInstance().setCurrentHp(player.getPcInstance().getMaxHp());
-			player.getPcInstance().setCurrentMp(player.getPcInstance().getMaxMp());
-		}
 		// teleport to character
 		player.getPcInstance().teleToLocation(loc.getX() + Rnd.get(-radius, radius), loc.getY() + Rnd.get(-radius, radius), loc.getZ(), loc.getHeading(), player.getDinamicInstanceId());
 		
@@ -697,6 +705,8 @@ public abstract class AbstractEvent
 	 */
 	public void prepareToEnd()
 	{
+		stopAllPendingRevive();
+		
 		for (PlayerHolder player : getAllEventPlayers())
 		{
 			// Cancel target
@@ -719,6 +729,8 @@ public abstract class AbstractEvent
 			InstanceWorld world = InstanceManager.getInstance().getPlayerWorld(player.getPcInstance());
 			world.removeAllowed(player.getPcInstance().getObjectId());
 			player.getPcInstance().setInstanceId(0);
+			
+			revivePlayer(player);
 			
 			// FIXME We send a character to their actual instance and turn
 			player.getPcInstance().teleToLocation(83437, 148634, -3403, 0, 0);// GIRAN CENTER
@@ -746,29 +758,45 @@ public abstract class AbstractEvent
 		{
 			EventUtil.sendEventMessage(player, MessageData.getInstance().getMsgByLang(player.getPcInstance(), "revive_in", true).replace("%time%", time + ""));
 			
-			ThreadPoolManager.getInstance().scheduleGeneral(new Runnable()
+			_revivePending.add(ThreadPoolManager.getInstance().scheduleGeneral(new Runnable()
 			{
 				@Override
 				public void run()
 				{
-					DecayTaskManager.getInstance().cancel(player.getPcInstance());
-					player.getPcInstance().doRevive();
-					// heal to max
-					player.getPcInstance().setCurrentCp(player.getPcInstance().getMaxCp());
-					player.getPcInstance().setCurrentHp(player.getPcInstance().getMaxHp());
-					player.getPcInstance().setCurrentMp(player.getPcInstance().getMaxMp());
-					// teleport
-					teleportPlayer(player, radiusTeleport);
-					// buff
+					revivePlayer(player);
 					giveBuffPlayer(player.getPcInstance());
+					teleportPlayer(player, radiusTeleport);
 				}
 				
-			}, time * 1000);
+			}, time * 1000));
 		}
 		catch (Exception e)
 		{
 			LOGGER.warning(AbstractEvent.class.getSimpleName() + ": " + e);
 			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Revive the player.<br>
+	 * <ul>
+	 * <b>Actions: </b>
+	 * </ul>
+	 * <li>Cancel the DecayTask.</li><br>
+	 * <li>Revive the character.</li><br>
+	 * <li>Set max cp, hp and mp.</li><br>
+	 * @param player
+	 */
+	protected void revivePlayer(PlayerHolder player)
+	{
+		if (player.getPcInstance().isDead())
+		{
+			DecayTaskManager.getInstance().cancel(player.getPcInstance());
+			player.getPcInstance().doRevive();
+			// heal to max
+			player.getPcInstance().setCurrentCp(player.getPcInstance().getMaxCp());
+			player.getPcInstance().setCurrentHp(player.getPcInstance().getMaxHp());
+			player.getPcInstance().setCurrentMp(player.getPcInstance().getMaxMp());
 		}
 	}
 	

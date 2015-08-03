@@ -21,6 +21,14 @@ package net.sf.eventengine.events;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.l2jserver.gameserver.ThreadPoolManager;
+import com.l2jserver.gameserver.enums.Team;
+import com.l2jserver.gameserver.model.actor.L2Character;
+import com.l2jserver.gameserver.model.actor.L2Npc;
+import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
+import com.l2jserver.gameserver.model.items.L2Item;
+import com.l2jserver.gameserver.model.skills.Skill;
+
 import net.sf.eventengine.EventEngineManager;
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.MessageData;
@@ -30,14 +38,6 @@ import net.sf.eventengine.enums.PlayerColorType;
 import net.sf.eventengine.handler.AbstractEvent;
 import net.sf.eventengine.holder.PlayerHolder;
 import net.sf.eventengine.util.EventUtil;
-
-import com.l2jserver.gameserver.ThreadPoolManager;
-import com.l2jserver.gameserver.enums.Team;
-import com.l2jserver.gameserver.model.actor.L2Character;
-import com.l2jserver.gameserver.model.actor.L2Npc;
-import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
-import com.l2jserver.gameserver.model.items.L2Item;
-import com.l2jserver.gameserver.model.skills.Skill;
 
 /**
  * @author fissban
@@ -67,11 +67,11 @@ public class OneVsOne extends AbstractEvent
 				createTeams();
 				teleportAllPlayers(0);
 				break;
-			
+				
 			case FIGHT:
 				prepareToFight(); // General Method
 				break;
-			
+				
 			case END:
 				giveRewardsTeams();
 				prepareToEnd(); // General Method
@@ -247,18 +247,18 @@ public class OneVsOne extends AbstractEvent
 				int pointsBlue = team._playerBlue.getKills();
 				int pointsRed = team._playerRed.getKills();
 				
-				if (pointsBlue == pointsRed)// tie
+				if (pointsBlue == pointsRed) // tie
 				{
 					
 					EventUtil.sendEventScreenMessage(team._playerBlue, MessageData.getInstance().getMsgByLang(team._playerBlue.getPcInstance(), "event_tie", false));
 					EventUtil.sendEventScreenMessage(team._playerRed, MessageData.getInstance().getMsgByLang(team._playerRed.getPcInstance(), "event_tie", false));
 				}
-				else if (pointsBlue < pointsRed)// win red
+				else if (pointsBlue < pointsRed) // win red
 				{
 					EventUtil.sendEventScreenMessage(team._playerRed, MessageData.getInstance().getMsgByLang(team._playerRed.getPcInstance(), "winner_red", false));
 					giveItems(team._playerRed, ConfigData.getInstance().OVO_REWARD_PLAYER_WIN);
 				}
-				else if (pointsBlue > pointsRed)// win blue
+				else if (pointsBlue > pointsRed) // win blue
 				{
 					EventUtil.sendEventScreenMessage(team._playerBlue, MessageData.getInstance().getMsgByLang(team._playerBlue.getPcInstance(), "winner_blue", false));
 					giveItems(team._playerBlue, ConfigData.getInstance().OVO_REWARD_PLAYER_WIN);
@@ -281,6 +281,7 @@ public class OneVsOne extends AbstractEvent
 					ph.getPcInstance().setCurrentHp(ph.getPcInstance().getMaxHp());
 					ph.getPcInstance().setCurrentMp(ph.getPcInstance().getMaxMp());
 					// teleport
+					revivePlayer(ph);
 					teleportPlayer(ph, 0);
 					// buff
 					giveBuffPlayer(ph.getPcInstance());
