@@ -84,6 +84,11 @@ public class NpcManager extends Quest
 					EventEngineManager.getInstance().increaseVote(player, type);
 					player.sendMessage(MessageData.getInstance().getMsgByLang(player, "event_vote_done", true));
 				}
+				else
+				{
+					EventEngineManager.getInstance().removeVote(player);
+					player.sendMessage(MessageData.getInstance().getMsgByLang(player, "event_vote_remove", true));
+				}
 				sendHtmlIndex(player);
 				break;
 			

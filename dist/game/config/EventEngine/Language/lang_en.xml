@@ -17,6 +17,7 @@
 	<message id="event_login_participate" text="Come on! And participate!" />
 	<message id="event_login_vote" text="Vote for the next event!" />
 	<message id="event_vote_done" text="Thank, event successfully voted!" />
+	<message id="event_vote_remove" text="The vote has been successfully removed!" />
 	<message id="event_vote_info" text="Vote for the desired event. The event with the most votes, will start!" />
 	
 	<message id="event_started" text="The event has started!" />
