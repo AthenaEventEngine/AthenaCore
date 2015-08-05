@@ -58,8 +58,12 @@ import net.sf.eventengine.datatables.BuffListData;
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.EventState;
+import net.sf.eventengine.events.schedules.AnnounceTeleportEvent;
+import net.sf.eventengine.events.schedules.ChangeToEndEvent;
+import net.sf.eventengine.events.schedules.ChangeToFightEvent;
+import net.sf.eventengine.events.schedules.ChangeToStartEvent;
 import net.sf.eventengine.holder.PlayerHolder;
-import net.sf.eventengine.task.EventTask;
+import net.sf.eventengine.interfaces.EventScheduled;
 import net.sf.eventengine.util.EventUtil;
 
 /**
@@ -74,7 +78,7 @@ public abstract class AbstractEvent
 		// We add every player registered for the event.
 		createEventPlayers();
 		// We started the clock to control the sequence of internal events of the event.
-		controlTimeEvent();
+		initControlTime();
 	}
 	
 	/** Necessary to keep track of the states of the event. */
@@ -144,6 +148,44 @@ public abstract class AbstractEvent
 		}
 		
 		_revivePending.clear();
+	}
+	
+	// SCHEDULED AND UNSCHEDULED EVENTS ------------------------------------------------------------- //
+	
+	// Event time
+	private int _currentTime;
+	
+	// Task that control the event time
+	private ScheduledFuture<?> _taskControlTime;
+	
+	private final Map<Integer, List<EventScheduled>> _scheduledEvents = new HashMap<>();
+	
+	protected void addScheduledEvent(EventScheduled event)
+	{
+		List<EventScheduled> list;
+		if (!_scheduledEvents.containsKey(event.getTime()))
+		{
+			list = new ArrayList<>();
+			_scheduledEvents.put(event.getTime(), list);
+		}
+		else
+		{
+			list = _scheduledEvents.get(event.getTime());
+		}
+		
+		list.add(event);
+	}
+	
+	private void checkScheduledEvents()
+	{
+		List<EventScheduled> list = _scheduledEvents.get(_currentTime);
+		if (list != null)
+		{
+			for (EventScheduled event : list)
+			{
+				event.run();
+			}
+		}
 	}
 	
 	// NPC IN EVENT --------------------------------------------------------------------------------- //
@@ -735,6 +777,7 @@ public abstract class AbstractEvent
 			// FIXME We send a character to their actual instance and turn
 			player.getPcInstance().teleToLocation(83437, 148634, -3403, 0, 0);// GIRAN CENTER
 		}
+		_taskControlTime.cancel(true);
 	}
 	
 	/**
@@ -843,17 +886,31 @@ public abstract class AbstractEvent
 	 * <li>Esperamos 1 seg</li><br>
 	 * <li>-> step 5: We alerted the event ended EventEngineManager</li><br>
 	 */
-	private void controlTimeEvent()
+	private void initControlTime()
 	{
+		_currentTime = 0;
+		
 		int time = 1000;
-		ThreadPoolManager.getInstance().scheduleGeneral(new EventTask(1), time);
+		addScheduledEvent(new AnnounceTeleportEvent(time));
 		time += 3000;
-		ThreadPoolManager.getInstance().scheduleGeneral(new EventTask(2), time);
+		addScheduledEvent(new ChangeToStartEvent(time));
 		time += 1000;
-		ThreadPoolManager.getInstance().scheduleGeneral(new EventTask(3), time);
+		addScheduledEvent(new ChangeToFightEvent(time));
+		// TODO: Maybe some events don't need a finish time, like korean pvp style
 		time += ConfigData.getInstance().EVENT_DURATION * 60 * 1000;
-		ThreadPoolManager.getInstance().scheduleGeneral(new EventTask(4), time);
-		time += 1000;
-		ThreadPoolManager.getInstance().scheduleGeneral(new EventTask(5), time);
+		addScheduledEvent(new ChangeToEndEvent(time));
+		
+		_taskControlTime = ThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(new ControlTimeTask(), 10 * 1000, 1000);
+	}
+	
+	private class ControlTimeTask implements Runnable
+	{
+		@Override
+		public void run()
+		{
+			_currentTime += 1000;
+			checkScheduledEvents();
+		}
+		
 	}
 }
