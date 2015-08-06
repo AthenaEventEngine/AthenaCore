@@ -55,8 +55,8 @@ public class TeamVsTeam extends AbstractEvent
 		// Define the spawn for each team
 		setTeamSpawn(Team.RED, ConfigData.getInstance().TVT_COORDINATES_TEAM_RED);
 		setTeamSpawn(Team.BLUE, ConfigData.getInstance().TVT_COORDINATES_TEAM_BLUE);
-		
-		int timeLeft = (ConfigData.getInstance().EVENT_DURATION * 60 * 1000) - (30 * 1000);
+		// Announce near end event
+		int timeLeft = (ConfigData.getInstance().EVENT_DURATION * 60 * 1000) - (ConfigData.getInstance().EVENT_TEXT_TIME_FOR_END * 1000);
 		addScheduledEvent(new AnnounceNearEndEvent(timeLeft));
 	}
 	

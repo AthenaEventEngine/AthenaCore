@@ -35,6 +35,7 @@ import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.EventEngineState;
 import net.sf.eventengine.enums.EventState;
 import net.sf.eventengine.enums.PlayerColorType;
+import net.sf.eventengine.events.schedules.AnnounceNearEndEvent;
 import net.sf.eventengine.handler.AbstractEvent;
 import net.sf.eventengine.holder.PlayerHolder;
 import net.sf.eventengine.util.EventUtil;
@@ -55,6 +56,9 @@ public class OneVsOne extends AbstractEvent
 		// We define each team spawns
 		setTeamSpawn(Team.RED, ConfigData.getInstance().OVO_COORDINATES_TEAM_RED);
 		setTeamSpawn(Team.BLUE, ConfigData.getInstance().OVO_COORDINATES_TEAM_BLUE);
+		// Announce near end event
+		int timeLeft = (ConfigData.getInstance().EVENT_DURATION * 60 * 1000) - (ConfigData.getInstance().EVENT_TEXT_TIME_FOR_END * 1000);
+		addScheduledEvent(new AnnounceNearEndEvent(timeLeft));
 	}
 	
 	@Override

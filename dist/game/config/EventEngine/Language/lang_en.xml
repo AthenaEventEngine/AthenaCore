@@ -116,6 +116,6 @@
 	<message id="survive_spawns_mobs" text="Here come, get ready!"/>
 
 	<!-- Custom events scheduled - Example -->
-	<message id="event_end_soon" text="The event will endup in 30 seconds" />
+	<message id="event_end_soon" text="The event will endup in %time% seconds." />
 	
 </localization>

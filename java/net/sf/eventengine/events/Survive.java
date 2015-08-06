@@ -20,14 +20,6 @@ package net.sf.eventengine.events;
 
 import java.util.List;
 
-import net.sf.eventengine.datatables.ConfigData;
-import net.sf.eventengine.enums.CollectionTarget;
-import net.sf.eventengine.enums.EventState;
-import net.sf.eventengine.enums.PlayerColorType;
-import net.sf.eventengine.handler.AbstractEvent;
-import net.sf.eventengine.holder.PlayerHolder;
-import net.sf.eventengine.util.EventUtil;
-
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.enums.Team;
 import com.l2jserver.gameserver.model.actor.L2Character;
@@ -37,6 +29,15 @@ import com.l2jserver.gameserver.model.items.L2Item;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
 import com.l2jserver.util.Rnd;
+
+import net.sf.eventengine.datatables.ConfigData;
+import net.sf.eventengine.enums.CollectionTarget;
+import net.sf.eventengine.enums.EventState;
+import net.sf.eventengine.enums.PlayerColorType;
+import net.sf.eventengine.events.schedules.AnnounceNearEndEvent;
+import net.sf.eventengine.handler.AbstractEvent;
+import net.sf.eventengine.holder.PlayerHolder;
+import net.sf.eventengine.util.EventUtil;
 
 /**
  * Event survival<br>
@@ -59,6 +60,9 @@ public class Survive extends AbstractEvent
 		setInstanceFile(ConfigData.getInstance().SURVIVE_INSTANCE_FILE);
 		// We define the main spawn of equipment
 		setTeamSpawn(Team.BLUE, ConfigData.getInstance().SURVIVE_COORDINATES_PLAYER);
+		// Announce near end event
+		int timeLeft = (ConfigData.getInstance().EVENT_DURATION * 60 * 1000) - (ConfigData.getInstance().EVENT_TEXT_TIME_FOR_END * 1000);
+		addScheduledEvent(new AnnounceNearEndEvent(timeLeft));
 	}
 	
 	@Override
@@ -71,12 +75,12 @@ public class Survive extends AbstractEvent
 				createTeam();
 				teleportAllPlayers(200);
 				break;
-			
+				
 			case FIGHT:
 				prepareToFight(); // General Method
 				spawnsMobs();
 				break;
-			
+				
 			case END:
 				// showResult();
 				prepareToEnd(); // General Method

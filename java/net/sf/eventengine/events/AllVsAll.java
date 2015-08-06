@@ -34,6 +34,7 @@ import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.enums.CollectionTarget;
 import net.sf.eventengine.enums.EventState;
 import net.sf.eventengine.enums.PlayerColorType;
+import net.sf.eventengine.events.schedules.AnnounceNearEndEvent;
 import net.sf.eventengine.handler.AbstractEvent;
 import net.sf.eventengine.holder.PlayerHolder;
 import net.sf.eventengine.util.EventUtil;
@@ -50,6 +51,10 @@ public class AllVsAll extends AbstractEvent
 		setInstanceFile(ConfigData.getInstance().AVA_INSTANCE_FILE);
 		// We define the main spawn of equipment
 		setTeamSpawn(Team.NONE, ConfigData.getInstance().AVA_COORDINATES_PLAYER);
+		
+		// Announce near end event
+		int timeLeft = (ConfigData.getInstance().EVENT_DURATION * 60 * 1000) - (ConfigData.getInstance().EVENT_TEXT_TIME_FOR_END * 1000);
+		addScheduledEvent(new AnnounceNearEndEvent(timeLeft));
 	}
 	
 	@Override
