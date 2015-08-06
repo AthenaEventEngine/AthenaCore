@@ -25,6 +25,7 @@ import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.enums.CollectionTarget;
 import net.sf.eventengine.enums.EventState;
 import net.sf.eventengine.enums.PlayerColorType;
+import net.sf.eventengine.events.schedules.AnnounceNearEndEvent;
 import net.sf.eventengine.handler.AbstractEvent;
 import net.sf.eventengine.holder.PlayerHolder;
 import net.sf.eventengine.network.serverpackets.EventParticipantStatus;
@@ -51,9 +52,12 @@ public class TeamVsTeam extends AbstractEvent
 	{
 		super();
 		setInstanceFile(ConfigData.getInstance().TVT_INSTANCE_FILE);
-		// We define each team spawns
+		// Define the spawn for each team
 		setTeamSpawn(Team.RED, ConfigData.getInstance().TVT_COORDINATES_TEAM_RED);
 		setTeamSpawn(Team.BLUE, ConfigData.getInstance().TVT_COORDINATES_TEAM_BLUE);
+		
+		int timeLeft = (ConfigData.getInstance().EVENT_DURATION * 60 * 1000) - (30 * 1000);
+		addScheduledEvent(new AnnounceNearEndEvent(timeLeft));
 	}
 	
 	@Override
