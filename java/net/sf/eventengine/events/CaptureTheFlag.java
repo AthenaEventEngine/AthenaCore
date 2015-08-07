@@ -190,6 +190,12 @@ public class CaptureTheFlag extends AbstractEvent
 				break;
 		}
 		
+		// Message Kill
+		if (ConfigData.getInstance().EVENT_KILLER_MESSAGE)
+		{
+			EventUtil.messageKill(player, target);
+		}
+		
 		showPoint();
 	}
 	

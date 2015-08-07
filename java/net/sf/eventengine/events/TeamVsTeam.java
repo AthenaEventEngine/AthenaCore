@@ -21,6 +21,14 @@ package net.sf.eventengine.events;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.l2jserver.gameserver.enums.Team;
+import com.l2jserver.gameserver.model.actor.L2Character;
+import com.l2jserver.gameserver.model.actor.L2Npc;
+import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
+import com.l2jserver.gameserver.model.items.L2Item;
+import com.l2jserver.gameserver.model.skills.Skill;
+import com.l2jserver.gameserver.network.clientpackets.Say2;
+
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.enums.CollectionTarget;
 import net.sf.eventengine.enums.EventState;
@@ -30,14 +38,6 @@ import net.sf.eventengine.handler.AbstractEvent;
 import net.sf.eventengine.holder.PlayerHolder;
 import net.sf.eventengine.network.serverpackets.EventParticipantStatus;
 import net.sf.eventengine.util.EventUtil;
-
-import com.l2jserver.gameserver.enums.Team;
-import com.l2jserver.gameserver.model.actor.L2Character;
-import com.l2jserver.gameserver.model.actor.L2Npc;
-import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
-import com.l2jserver.gameserver.model.items.L2Item;
-import com.l2jserver.gameserver.model.skills.Skill;
-import com.l2jserver.gameserver.network.clientpackets.Say2;
 
 /**
  * @author fissban
@@ -70,12 +70,12 @@ public class TeamVsTeam extends AbstractEvent
 				createTeams();
 				teleportAllPlayers(300);
 				break;
-			
+				
 			case FIGHT:
 				prepareToFight(); // General Method
 				showPoint();
 				break;
-			
+				
 			case END:
 				// showResult();
 				giveRewardsTeams();
@@ -109,6 +109,11 @@ public class TeamVsTeam extends AbstractEvent
 			case BLUE:
 				_pointsBlue++;
 				break;
+		}
+		// Message Kill
+		if (ConfigData.getInstance().EVENT_KILLER_MESSAGE)
+		{
+			EventUtil.messageKill(player, target);
 		}
 		
 		showPoint();

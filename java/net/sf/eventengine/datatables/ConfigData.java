@@ -48,6 +48,7 @@ public class ConfigData
 	public int EVENT_REGISTER_TIME;
 	public int EVENT_DURATION;
 	public int EVENT_TEXT_TIME_FOR_END;
+	public boolean EVENT_KILLER_MESSAGE;
 	public boolean FRIENDLY_FIRE;
 	public int MIN_PLAYERS_IN_EVENT;
 	public int MAX_PLAYERS_IN_EVENT;
@@ -123,6 +124,7 @@ public class ConfigData
 		EVENT_REGISTER_TIME = settings.getInt("EventRegisterTime", 10);
 		EVENT_DURATION = settings.getInt("EventRunningTime", 10);
 		EVENT_TEXT_TIME_FOR_END = settings.getInt("EventTextTimeForEnd", 10);
+		EVENT_KILLER_MESSAGE = settings.getBoolean("EventKillerMessage", true);
 		FRIENDLY_FIRE = settings.getBoolean("EventFriendlyFire", false);
 		MIN_PLAYERS_IN_EVENT = settings.getInt("EventMinPlayers", 2);
 		MAX_PLAYERS_IN_EVENT = settings.getInt("EventMaxPlayers", 20);
