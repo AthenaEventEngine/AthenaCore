@@ -21,10 +21,10 @@ package net.sf.eventengine.datatables;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sf.eventengine.util.EventPropertiesParser;
-
 import com.l2jserver.gameserver.model.Location;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
+
+import net.sf.eventengine.util.EventPropertiesParser;
 
 /**
  * Load the config from "properties"
@@ -47,6 +47,7 @@ public class ConfigData
 	public int EVENT_VOTING_TIME;
 	public int EVENT_REGISTER_TIME;
 	public int EVENT_DURATION;
+	public int EVENT_TEXT_TIME_FOR_END;
 	public boolean FRIENDLY_FIRE;
 	public int MIN_PLAYERS_IN_EVENT;
 	public int MAX_PLAYERS_IN_EVENT;
@@ -121,6 +122,7 @@ public class ConfigData
 		EVENT_VOTING_TIME = settings.getInt("EventVotingTime", 10);
 		EVENT_REGISTER_TIME = settings.getInt("EventRegisterTime", 10);
 		EVENT_DURATION = settings.getInt("EventRunningTime", 10);
+		EVENT_TEXT_TIME_FOR_END = settings.getInt("EventTextTimeForEnd", 10);
 		FRIENDLY_FIRE = settings.getBoolean("EventFriendlyFire", false);
 		MIN_PLAYERS_IN_EVENT = settings.getInt("EventMinPlayers", 2);
 		MAX_PLAYERS_IN_EVENT = settings.getInt("EventMaxPlayers", 20);
