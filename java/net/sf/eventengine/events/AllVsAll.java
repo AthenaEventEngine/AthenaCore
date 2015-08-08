@@ -51,7 +51,6 @@ public class AllVsAll extends AbstractEvent
 		setInstanceFile(ConfigData.getInstance().AVA_INSTANCE_FILE);
 		// We define the main spawn of equipment
 		setTeamSpawn(Team.NONE, ConfigData.getInstance().AVA_COORDINATES_PLAYER);
-		
 		// Announce near end event
 		int timeLeft = (ConfigData.getInstance().EVENT_DURATION * 60 * 1000) - (ConfigData.getInstance().EVENT_TEXT_TIME_FOR_END * 1000);
 		addScheduledEvent(new AnnounceNearEndEvent(timeLeft));
@@ -87,6 +86,11 @@ public class AllVsAll extends AbstractEvent
 		// Increase the amount of one character kills.
 		player.increaseKills();
 		updateTitle(player);
+		// Message Kill
+		if (ConfigData.getInstance().EVENT_KILLER_MESSAGE)
+		{
+			EventUtil.messageKill(player, target);
+		}
 	}
 	
 	@Override

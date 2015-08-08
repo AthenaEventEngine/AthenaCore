@@ -118,4 +118,7 @@
 	<!-- Custom events scheduled - Example -->
 	<message id="event_end_soon" text="The event will endup in %time% seconds." />
 	
+	<!-- Others -->
+	<message id="event_player_killer" text="%killer% has defeated %target%!"/>
+	
 </localization>

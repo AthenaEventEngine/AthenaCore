@@ -29,6 +29,7 @@ import java.util.Set;
 import com.l2jserver.gameserver.datatables.SpawnTable;
 import com.l2jserver.gameserver.model.L2Spawn;
 import com.l2jserver.gameserver.model.L2World;
+import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
@@ -398,5 +399,18 @@ public class EventUtil
 		}
 		
 		return npcs;
+	}
+	
+	/**
+	 * Send killer message to all players in the event
+	 * @param player
+	 * @param target
+	 */
+	public static void messageKill(PlayerHolder player, L2Character target)
+	{
+		Map<String, String> map = new HashMap<>();
+		map.put("%killer%", player.getPcInstance().getName());
+		map.put("%target%", target.getName());
+		EventUtil.announceTo(Say2.TRADE, "event_player_killer", map, CollectionTarget.ALL_PLAYERS_IN_EVENT);
 	}
 }

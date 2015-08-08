@@ -115,6 +115,11 @@ public class Survive extends AbstractEvent
 			// Give rewards
 			giveRewardsTeams();
 		}
+		// Message Kill
+		if (ConfigData.getInstance().EVENT_KILLER_MESSAGE)
+		{
+			EventUtil.messageKill(player, target);
+		}
 	}
 	
 	@Override
