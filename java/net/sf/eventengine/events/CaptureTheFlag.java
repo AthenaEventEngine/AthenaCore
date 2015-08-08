@@ -58,6 +58,10 @@ public class CaptureTheFlag extends AbstractEvent
 	// Points to conquer the flag
 	private final int POINTS_CONQUER_FLAG = ConfigData.getInstance().CTF_POINTS_CONQUER_FLAG;
 	private final int POINTS_KILL = ConfigData.getInstance().CTF_POINTS_KILL;
+	// Radius spawn
+	private static final int RADIUS_SPAWN_PLAYER = 100;
+	// Time for resurrection
+	private static final int TIME_RES_PLAYER = 10;
 	// Points that each team.
 	private int _pointsRed = 0;
 	private int _pointsBlue = 0;
@@ -83,7 +87,7 @@ public class CaptureTheFlag extends AbstractEvent
 				prepareToStart(); // General Method
 				createTeams();
 				spawnFlagsAndHolders();
-				teleportAllPlayers(100);
+				teleportAllPlayers(RADIUS_SPAWN_PLAYER);
 				break;
 				
 			case FIGHT:
@@ -202,7 +206,7 @@ public class CaptureTheFlag extends AbstractEvent
 	@Override
 	public void onDeath(PlayerHolder player)
 	{
-		giveResurrectPlayer(player, 10, 100);
+		giveResurrectPlayer(player, TIME_RES_PLAYER, RADIUS_SPAWN_PLAYER);
 	}
 	
 	@Override

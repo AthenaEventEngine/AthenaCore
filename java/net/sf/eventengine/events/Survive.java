@@ -50,6 +50,8 @@ public class Survive extends AbstractEvent
 	private int _stage = 1;
 	// Variable that helps us keep track of the number of dead mobs.
 	private int _auxKillMonsters = 0;
+	// Radius spawn
+	private static final int RADIUS_SPAWN_PLAYER = 200;
 	
 	// Monsters ids
 	private final List<Integer> MONSTERS_ID = ConfigData.getInstance().SURVIVE_MONSTERS_ID;
@@ -73,7 +75,7 @@ public class Survive extends AbstractEvent
 			case START:
 				prepareToStart(); // General Method
 				createTeam();
-				teleportAllPlayers(200);
+				teleportAllPlayers(RADIUS_SPAWN_PLAYER);
 				break;
 				
 			case FIGHT:
