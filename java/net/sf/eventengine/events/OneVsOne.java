@@ -45,9 +45,11 @@ import net.sf.eventengine.util.EventUtil;
  */
 public class OneVsOne extends AbstractEvent
 {
-	// time between fights in sec
+	// Time between fights in sec
 	private static final int TIME_BETWEEN_FIGHT = 10;
 	private Map<Integer, InstancesTeams> _instancesTeams = new HashMap<>();
+	// Radius spawn
+	private static final int RADIUS_SPAWN_PLAYER = 0;
 	
 	public OneVsOne()
 	{
@@ -69,7 +71,7 @@ public class OneVsOne extends AbstractEvent
 			case START:
 				prepareToStart(); // General Method
 				createTeams();
-				teleportAllPlayers(0);
+				teleportAllPlayers(RADIUS_SPAWN_PLAYER);
 				break;
 				
 			case FIGHT:
@@ -113,7 +115,7 @@ public class OneVsOne extends AbstractEvent
 	@Override
 	public void onDeath(PlayerHolder player)
 	{
-		giveResurrectPlayer(player, TIME_BETWEEN_FIGHT, 0);
+		giveResurrectPlayer(player, TIME_BETWEEN_FIGHT, RADIUS_SPAWN_PLAYER);
 		// One we increased the amount of deaths you have the participants.
 		player.increaseDeaths();
 	}

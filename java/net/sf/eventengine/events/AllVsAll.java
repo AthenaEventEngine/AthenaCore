@@ -45,6 +45,11 @@ import net.sf.eventengine.util.SortUtil;
  */
 public class AllVsAll extends AbstractEvent
 {
+	// Radius spawn
+	private static final int RADIUS_SPAWN_PLAYER = 1000;
+	// Time for resurrection
+	private static final int TIME_RES_PLAYER = 10;
+	
 	public AllVsAll()
 	{
 		super();
@@ -64,7 +69,7 @@ public class AllVsAll extends AbstractEvent
 			case START:
 				prepareToStart(); // General Method
 				createTeam();
-				teleportAllPlayers(1000);
+				teleportAllPlayers(RADIUS_SPAWN_PLAYER);
 				break;
 				
 			case FIGHT:
@@ -109,7 +114,7 @@ public class AllVsAll extends AbstractEvent
 	public void onDeath(PlayerHolder player)
 	{
 		// We generated a task to revive the player
-		giveResurrectPlayer(player, 10, 1000);
+		giveResurrectPlayer(player, TIME_RES_PLAYER, RADIUS_SPAWN_PLAYER);
 		// Increase the amount of one character deaths.
 		player.increaseDeaths();
 		// We update the title character

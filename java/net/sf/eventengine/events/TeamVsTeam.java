@@ -44,6 +44,10 @@ import net.sf.eventengine.util.EventUtil;
  */
 public class TeamVsTeam extends AbstractEvent
 {
+	// Radius spawn
+	private static final int RADIUS_SPAWN_PLAYER = 300;
+	// Time for resurrection
+	private static final int TIME_RES_PLAYER = 10;
 	// Points that each team.
 	private int _pointsRed = 0;
 	private int _pointsBlue = 0;
@@ -68,7 +72,7 @@ public class TeamVsTeam extends AbstractEvent
 			case START:
 				prepareToStart(); // General Method
 				createTeams();
-				teleportAllPlayers(300);
+				teleportAllPlayers(RADIUS_SPAWN_PLAYER);
 				break;
 				
 			case FIGHT:
@@ -122,7 +126,7 @@ public class TeamVsTeam extends AbstractEvent
 	@Override
 	public void onDeath(PlayerHolder player)
 	{
-		giveResurrectPlayer(player, 10, 300);
+		giveResurrectPlayer(player, TIME_RES_PLAYER, RADIUS_SPAWN_PLAYER);
 		// Incremented by one the number of deaths Character
 		player.increaseDeaths();
 	}
