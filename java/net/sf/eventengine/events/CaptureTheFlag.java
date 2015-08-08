@@ -190,6 +190,12 @@ public class CaptureTheFlag extends AbstractEvent
 				break;
 		}
 		
+		// Reward for kills
+		if (ConfigData.getInstance().CTF_REWARD_KILLER_ENABLED)
+		{
+			giveItems(player, ConfigData.getInstance().CTF_REWARD_KILLER);
+		}
+		
 		// Message Kill
 		if (ConfigData.getInstance().EVENT_KILLER_MESSAGE)
 		{

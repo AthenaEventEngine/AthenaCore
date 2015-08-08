@@ -103,6 +103,13 @@ public class OneVsOne extends AbstractEvent
 		// One we increased the amount of kills you have the participants.
 		player.increaseKills();
 		showPoint(_instancesTeams.get(player.getDinamicInstanceId()));
+		
+		// Reward for kills
+		if (ConfigData.getInstance().OVO_REWARD_KILLER_ENABLED)
+		{
+			giveItems(player, ConfigData.getInstance().OVO_REWARD_KILLER);
+		}
+		
 		// Message Kill
 		if (ConfigData.getInstance().EVENT_KILLER_MESSAGE)
 		{

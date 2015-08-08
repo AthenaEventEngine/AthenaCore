@@ -86,6 +86,13 @@ public class AllVsAll extends AbstractEvent
 		// Increase the amount of one character kills.
 		player.increaseKills();
 		updateTitle(player);
+		
+		// Reward for kills
+		if (ConfigData.getInstance().AVA_REWARD_KILLER_ENABLED)
+		{
+			giveItems(player, ConfigData.getInstance().AVA_REWARD_KILLER);
+		}
+		
 		// Message Kill
 		if (ConfigData.getInstance().EVENT_KILLER_MESSAGE)
 		{
