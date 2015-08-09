@@ -62,6 +62,8 @@ public class ConfigData
 	public boolean CTF_EVENT_ENABLED;
 	public String CTF_INSTANCE_FILE;
 	public List<ItemHolder> CTF_REWARD_PLAYER_WIN = new ArrayList<>();
+	public boolean CTF_REWARD_KILLER_ENABLED;
+	public List<ItemHolder> CTF_REWARD_KILLER = new ArrayList<>();
 	public Location CTF_COORDINATES_TEAM_RED;
 	public Location CTF_COORDINATES_TEAM_BLUE;
 	public int CTF_POINTS_CONQUER_FLAG;
@@ -73,6 +75,8 @@ public class ConfigData
 	public boolean AVA_EVENT_ENABLED;
 	public String AVA_INSTANCE_FILE;
 	public List<ItemHolder> AVA_REWARD_PLAYER_WIN = new ArrayList<>();
+	public boolean AVA_REWARD_KILLER_ENABLED;
+	public List<ItemHolder> AVA_REWARD_KILLER = new ArrayList<>();
 	public Location AVA_COORDINATES_PLAYER;
 	
 	// -------------------------------------------------------------------------------
@@ -81,6 +85,8 @@ public class ConfigData
 	public boolean OVO_EVENT_ENABLED;
 	public String OVO_INSTANCE_FILE;
 	public List<ItemHolder> OVO_REWARD_PLAYER_WIN = new ArrayList<>();
+	public boolean OVO_REWARD_KILLER_ENABLED;
+	public List<ItemHolder> OVO_REWARD_KILLER = new ArrayList<>();
 	public Location OVO_COORDINATES_TEAM_RED;
 	public Location OVO_COORDINATES_TEAM_BLUE;
 	
@@ -90,6 +96,8 @@ public class ConfigData
 	public String TVT_INSTANCE_FILE;
 	public boolean TVT_EVENT_ENABLED;
 	public List<ItemHolder> TVT_REWARD_PLAYER_WIN = new ArrayList<>();
+	public boolean TVT_REWARD_KILLER_ENABLED;
+	public List<ItemHolder> TVT_REWARD_KILLER = new ArrayList<>();
 	public Location TVT_COORDINATES_TEAM_RED;
 	public Location TVT_COORDINATES_TEAM_BLUE;
 	
@@ -139,6 +147,8 @@ public class ConfigData
 		CTF_INSTANCE_FILE = settings.getString("EventInstanceFile", "EventEngine.xml");
 		CTF_EVENT_ENABLED = settings.getBoolean("EventEnabled", false);
 		CTF_REWARD_PLAYER_WIN = settings.getItemHolderList("EventReward");
+		CTF_REWARD_KILLER_ENABLED = settings.getBoolean("EventRewardKillEnabled", false);
+		CTF_REWARD_KILLER = settings.getItemHolderList("EventRewardKill");
 		CTF_COORDINATES_TEAM_RED = settings.getLocation("EventTeam1Coordinates");
 		CTF_COORDINATES_TEAM_BLUE = settings.getLocation("EventTeam2Coordinates");
 		CTF_POINTS_CONQUER_FLAG = settings.getInt("EventPointsConquerFlag", 10);
@@ -151,6 +161,8 @@ public class ConfigData
 		AVA_INSTANCE_FILE = settings.getString("EventInstanceFile", "EventEngine.xml");
 		AVA_EVENT_ENABLED = settings.getBoolean("EventEnabled", false);
 		AVA_REWARD_PLAYER_WIN = settings.getItemHolderList("EventReward");
+		AVA_REWARD_KILLER_ENABLED = settings.getBoolean("EventRewardKillEnabled", false);
+		AVA_REWARD_KILLER = settings.getItemHolderList("EventRewardKill");
 		AVA_COORDINATES_PLAYER = settings.getLocation("EventCoordinates");
 		
 		// ------------------------------------------------------------------------------------- //
@@ -160,6 +172,8 @@ public class ConfigData
 		OVO_INSTANCE_FILE = settings.getString("EventInstanceFile", "EventEngine.xml");
 		OVO_EVENT_ENABLED = settings.getBoolean("EventEnabled", false);
 		OVO_REWARD_PLAYER_WIN = settings.getItemHolderList("EventReward");
+		OVO_REWARD_KILLER_ENABLED = settings.getBoolean("EventRewardKillEnabled", false);
+		OVO_REWARD_KILLER = settings.getItemHolderList("EventRewardKill");
 		OVO_COORDINATES_TEAM_RED = settings.getLocation("EventTeam1Coordinates");
 		OVO_COORDINATES_TEAM_BLUE = settings.getLocation("EventTeam2Coordinates");
 		
@@ -170,6 +184,8 @@ public class ConfigData
 		TVT_INSTANCE_FILE = settings.getString("EventInstanceFile", "EventEngine.xml");
 		TVT_EVENT_ENABLED = settings.getBoolean("EventEnabled", false);
 		TVT_REWARD_PLAYER_WIN = settings.getItemHolderList("EventReward");
+		TVT_REWARD_KILLER_ENABLED = settings.getBoolean("EventRewardKillEnabled", false);
+		TVT_REWARD_KILLER = settings.getItemHolderList("EventRewardKill");
 		TVT_COORDINATES_TEAM_RED = settings.getLocation("EventTeam1Coordinates");
 		TVT_COORDINATES_TEAM_BLUE = settings.getLocation("EventTeam2Coordinates");
 		

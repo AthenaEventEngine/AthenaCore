@@ -114,6 +114,13 @@ public class TeamVsTeam extends AbstractEvent
 				_pointsBlue++;
 				break;
 		}
+		
+		// Reward for kills
+		if (ConfigData.getInstance().TVT_REWARD_KILLER_ENABLED)
+		{
+			giveItems(player, ConfigData.getInstance().TVT_REWARD_KILLER);
+		}
+		
 		// Message Kill
 		if (ConfigData.getInstance().EVENT_KILLER_MESSAGE)
 		{
