@@ -128,7 +128,7 @@ public class PlayerHolder
 	 */
 	public void setPvpKills(int pvpKills)
 	{
-		EventDispatcher.getInstance().notifyEventAsync(new OnPlayerPvPChanged(this, _pvpKills, pvpKills), this);
+		EventDispatcher.getInstance().notifyEventAsync(new OnPlayerPvPChanged(this.getPcInstance(), _pvpKills, pvpKills), this.getPcInstance());
 		_pvpKills = pvpKills;
 	}
 	
@@ -146,7 +146,7 @@ public class PlayerHolder
 	 */
 	public void setFame(int fame)
 	{
-		EventDispatcher.getInstance().notifyEventAsync(new OnPlayerFameChanged(this, _fame, fame), this);
+		EventDispatcher.getInstance().notifyEventAsync(new OnPlayerFameChanged(this.getPcInstance(), _fame, fame), this.getPcInstance());
 		_fame = (fame > Config.MAX_PERSONAL_FAME_POINTS) ? Config.MAX_PERSONAL_FAME_POINTS : fame;
 	}
 	
