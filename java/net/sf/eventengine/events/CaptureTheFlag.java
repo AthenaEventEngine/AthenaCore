@@ -200,6 +200,18 @@ public class CaptureTheFlag extends AbstractEvent
 			giveItems(player, ConfigData.getInstance().CTF_REWARD_KILLER);
 		}
 		
+		// Reward pvp for kills
+		if (ConfigData.getInstance().CTF_REWARD_PVP_KILLER_ENABLED)
+		{
+			player.setPvpKills(player.getPvpKills() + ConfigData.getInstance().CTF_REWARD_PVP_KILLER);
+		}
+		
+		// Reward fame for kills
+		if (ConfigData.getInstance().CTF_REWARD_FAME_KILLER_ENABLED)
+		{
+			player.setFame(player.getFame() + ConfigData.getInstance().CTF_REWARD_FAME_KILLER);
+		}
+		
 		// Message Kill
 		if (ConfigData.getInstance().EVENT_KILLER_MESSAGE)
 		{

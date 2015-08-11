@@ -64,6 +64,10 @@ public class ConfigData
 	public List<ItemHolder> CTF_REWARD_PLAYER_WIN = new ArrayList<>();
 	public boolean CTF_REWARD_KILLER_ENABLED;
 	public List<ItemHolder> CTF_REWARD_KILLER = new ArrayList<>();
+	public boolean CTF_REWARD_PVP_KILLER_ENABLED;
+	public int CTF_REWARD_PVP_KILLER;
+	public boolean CTF_REWARD_FAME_KILLER_ENABLED;
+	public int CTF_REWARD_FAME_KILLER;
 	public Location CTF_COORDINATES_TEAM_RED;
 	public Location CTF_COORDINATES_TEAM_BLUE;
 	public int CTF_POINTS_CONQUER_FLAG;
@@ -77,6 +81,10 @@ public class ConfigData
 	public List<ItemHolder> AVA_REWARD_PLAYER_WIN = new ArrayList<>();
 	public boolean AVA_REWARD_KILLER_ENABLED;
 	public List<ItemHolder> AVA_REWARD_KILLER = new ArrayList<>();
+	public boolean AVA_REWARD_PVP_KILLER_ENABLED;
+	public int AVA_REWARD_PVP_KILLER;
+	public boolean AVA_REWARD_FAME_KILLER_ENABLED;
+	public int AVA_REWARD_FAME_KILLER;
 	public Location AVA_COORDINATES_PLAYER;
 	
 	// -------------------------------------------------------------------------------
@@ -87,6 +95,10 @@ public class ConfigData
 	public List<ItemHolder> OVO_REWARD_PLAYER_WIN = new ArrayList<>();
 	public boolean OVO_REWARD_KILLER_ENABLED;
 	public List<ItemHolder> OVO_REWARD_KILLER = new ArrayList<>();
+	public boolean OVO_REWARD_PVP_KILLER_ENABLED;
+	public int OVO_REWARD_PVP_KILLER;
+	public boolean OVO_REWARD_FAME_KILLER_ENABLED;
+	public int OVO_REWARD_FAME_KILLER;
 	public Location OVO_COORDINATES_TEAM_RED;
 	public Location OVO_COORDINATES_TEAM_BLUE;
 	
@@ -98,6 +110,10 @@ public class ConfigData
 	public List<ItemHolder> TVT_REWARD_PLAYER_WIN = new ArrayList<>();
 	public boolean TVT_REWARD_KILLER_ENABLED;
 	public List<ItemHolder> TVT_REWARD_KILLER = new ArrayList<>();
+	public boolean TVT_REWARD_PVP_KILLER_ENABLED;
+	public int TVT_REWARD_PVP_KILLER;
+	public boolean TVT_REWARD_FAME_KILLER_ENABLED;
+	public int TVT_REWARD_FAME_KILLER;
 	public Location TVT_COORDINATES_TEAM_RED;
 	public Location TVT_COORDINATES_TEAM_BLUE;
 	
@@ -149,6 +165,10 @@ public class ConfigData
 		CTF_REWARD_PLAYER_WIN = settings.getItemHolderList("EventReward");
 		CTF_REWARD_KILLER_ENABLED = settings.getBoolean("EventRewardKillEnabled", false);
 		CTF_REWARD_KILLER = settings.getItemHolderList("EventRewardKill");
+		CTF_REWARD_PVP_KILLER_ENABLED = settings.getBoolean("EventRewardPvPKillEnabled", false);
+		CTF_REWARD_PVP_KILLER = settings.getInt("EventRewardPvPKill", 1);
+		CTF_REWARD_FAME_KILLER_ENABLED = settings.getBoolean("EventRewardFameKillEnabled", false);
+		CTF_REWARD_FAME_KILLER = settings.getInt("EventRewardFameKill", 10);
 		CTF_COORDINATES_TEAM_RED = settings.getLocation("EventTeam1Coordinates");
 		CTF_COORDINATES_TEAM_BLUE = settings.getLocation("EventTeam2Coordinates");
 		CTF_POINTS_CONQUER_FLAG = settings.getInt("EventPointsConquerFlag", 10);
@@ -163,6 +183,10 @@ public class ConfigData
 		AVA_REWARD_PLAYER_WIN = settings.getItemHolderList("EventReward");
 		AVA_REWARD_KILLER_ENABLED = settings.getBoolean("EventRewardKillEnabled", false);
 		AVA_REWARD_KILLER = settings.getItemHolderList("EventRewardKill");
+		AVA_REWARD_PVP_KILLER_ENABLED = settings.getBoolean("EventRewardPvPKillEnabled", false);
+		AVA_REWARD_PVP_KILLER = settings.getInt("EventRewardPvPKill", 1);
+		AVA_REWARD_FAME_KILLER_ENABLED = settings.getBoolean("EventRewardFameKillEnabled", false);
+		AVA_REWARD_FAME_KILLER = settings.getInt("EventRewardFameKill", 10);
 		AVA_COORDINATES_PLAYER = settings.getLocation("EventCoordinates");
 		
 		// ------------------------------------------------------------------------------------- //
@@ -174,6 +198,10 @@ public class ConfigData
 		OVO_REWARD_PLAYER_WIN = settings.getItemHolderList("EventReward");
 		OVO_REWARD_KILLER_ENABLED = settings.getBoolean("EventRewardKillEnabled", false);
 		OVO_REWARD_KILLER = settings.getItemHolderList("EventRewardKill");
+		OVO_REWARD_PVP_KILLER_ENABLED = settings.getBoolean("EventRewardPvPKillEnabled", false);
+		OVO_REWARD_PVP_KILLER = settings.getInt("EventRewardPvPKill", 1);
+		OVO_REWARD_FAME_KILLER_ENABLED = settings.getBoolean("EventRewardFameKillEnabled", false);
+		OVO_REWARD_FAME_KILLER = settings.getInt("EventRewardFameKill", 10);
 		OVO_COORDINATES_TEAM_RED = settings.getLocation("EventTeam1Coordinates");
 		OVO_COORDINATES_TEAM_BLUE = settings.getLocation("EventTeam2Coordinates");
 		
@@ -186,6 +214,10 @@ public class ConfigData
 		TVT_REWARD_PLAYER_WIN = settings.getItemHolderList("EventReward");
 		TVT_REWARD_KILLER_ENABLED = settings.getBoolean("EventRewardKillEnabled", false);
 		TVT_REWARD_KILLER = settings.getItemHolderList("EventRewardKill");
+		TVT_REWARD_PVP_KILLER_ENABLED = settings.getBoolean("EventRewardPvPKillEnabled", false);
+		TVT_REWARD_PVP_KILLER = settings.getInt("EventRewardPvPKill", 1);
+		TVT_REWARD_FAME_KILLER_ENABLED = settings.getBoolean("EventRewardFameKillEnabled", false);
+		TVT_REWARD_FAME_KILLER = settings.getInt("EventRewardFameKill", 10);
 		TVT_COORDINATES_TEAM_RED = settings.getLocation("EventTeam1Coordinates");
 		TVT_COORDINATES_TEAM_BLUE = settings.getLocation("EventTeam2Coordinates");
 		
