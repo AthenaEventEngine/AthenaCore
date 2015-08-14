@@ -30,6 +30,7 @@ import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
 
 import net.sf.eventengine.datatables.ConfigData;
+import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.CollectionTarget;
 import net.sf.eventengine.enums.EventState;
 import net.sf.eventengine.enums.PlayerColorType;
@@ -125,12 +126,14 @@ public class TeamVsTeam extends AbstractEvent
 		if (ConfigData.getInstance().TVT_REWARD_PVP_KILLER_ENABLED)
 		{
 			player.getPcInstance().setPvpKills(player.getPcInstance().getPvpKills() + ConfigData.getInstance().TVT_REWARD_PVP_KILLER);
+			EventUtil.sendEventMessage(player, MessageData.getInstance().getMsgByLang(player.getPcInstance(), "reward_text_pvp", true).replace("%count%", ConfigData.getInstance().TVT_REWARD_PVP_KILLER + ""));
 		}
 		
 		// Reward fame for kills
 		if (ConfigData.getInstance().TVT_REWARD_FAME_KILLER_ENABLED)
 		{
 			player.getPcInstance().setFame(player.getPcInstance().getFame() + ConfigData.getInstance().TVT_REWARD_FAME_KILLER);
+			EventUtil.sendEventMessage(player, MessageData.getInstance().getMsgByLang(player.getPcInstance(), "reward_text_fame", true).replace("%count%", ConfigData.getInstance().TVT_REWARD_FAME_KILLER + ""));
 		}
 		
 		// Message Kill
