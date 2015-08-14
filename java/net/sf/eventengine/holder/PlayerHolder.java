@@ -20,13 +20,9 @@ package net.sf.eventengine.holder;
 
 import java.util.Comparator;
 
-import com.l2jserver.Config;
-import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
-import com.l2jserver.gameserver.model.events.EventDispatcher;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerFameChanged;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerPvPChanged;
-
 import net.sf.eventengine.enums.PlayerColorType;
+
+import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 
 /**
  * Clase encargada de administrar los datos de los players que participan del evento.
@@ -44,11 +40,6 @@ public class PlayerHolder
 	private int _oriColorTitle = Integer.decode("0xFFFFFF");
 	// Titulo original de un personaje por si en algun evento es cambiado.
 	private String _oriTitle = "";
-	
-	/** The number of player killed during a PvP (the player killed was PvP Flagged) */
-	private int _pvpKills;
-	/** The Fame of this PlayerHolder */
-	private int _fame;
 	
 	private int _dinamicInstanceId = 0;
 	
@@ -112,42 +103,6 @@ public class PlayerHolder
 	public int getPoints()
 	{
 		return _kills - _deaths;
-	}
-	
-	/**
-	 * @return the the PvP Kills of the PlayerHolder (Number of player killed during a PvP).
-	 */
-	public int getPvpKills()
-	{
-		return _pvpKills;
-	}
-	
-	/**
-	 * Set the the PvP Kills of the PlayerHolder (Number of player killed during a PvP).
-	 * @param pvpKills
-	 */
-	public void setPvpKills(int pvpKills)
-	{
-		EventDispatcher.getInstance().notifyEventAsync(new OnPlayerPvPChanged(this.getPcInstance(), _pvpKills, pvpKills), this.getPcInstance());
-		_pvpKills = pvpKills;
-	}
-	
-	/**
-	 * @return the Fame of this PlayerHolder
-	 */
-	public int getFame()
-	{
-		return _fame;
-	}
-	
-	/**
-	 * Set the Fame of this PlayerHolder
-	 * @param fame
-	 */
-	public void setFame(int fame)
-	{
-		EventDispatcher.getInstance().notifyEventAsync(new OnPlayerFameChanged(this.getPcInstance(), _fame, fame), this.getPcInstance());
-		_fame = (fame > Config.MAX_PERSONAL_FAME_POINTS) ? Config.MAX_PERSONAL_FAME_POINTS : fame;
 	}
 	
 	public void setNewTitle(String title)

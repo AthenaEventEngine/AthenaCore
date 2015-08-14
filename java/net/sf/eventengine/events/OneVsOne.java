@@ -115,13 +115,13 @@ public class OneVsOne extends AbstractEvent
 		// Reward pvp for kills
 		if (ConfigData.getInstance().OVO_REWARD_PVP_KILLER_ENABLED)
 		{
-			player.setPvpKills(player.getPvpKills() + ConfigData.getInstance().OVO_REWARD_PVP_KILLER);
+			player.getPcInstance().setPvpKills(player.getPcInstance().getPvpKills() + ConfigData.getInstance().OVO_REWARD_PVP_KILLER);
 		}
 		
 		// Reward fame for kills
 		if (ConfigData.getInstance().OVO_REWARD_FAME_KILLER_ENABLED)
 		{
-			player.setFame(player.getFame() + ConfigData.getInstance().OVO_REWARD_FAME_KILLER);
+			player.getPcInstance().setFame(player.getPcInstance().getFame() + ConfigData.getInstance().OVO_REWARD_FAME_KILLER);
 		}
 		
 		// Message Kill
