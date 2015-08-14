@@ -112,6 +112,20 @@ public class OneVsOne extends AbstractEvent
 			giveItems(player, ConfigData.getInstance().OVO_REWARD_KILLER);
 		}
 		
+		// Reward pvp for kills
+		if (ConfigData.getInstance().OVO_REWARD_PVP_KILLER_ENABLED)
+		{
+			player.getPcInstance().setPvpKills(player.getPcInstance().getPvpKills() + ConfigData.getInstance().OVO_REWARD_PVP_KILLER);
+			EventUtil.sendEventMessage(player, MessageData.getInstance().getMsgByLang(player.getPcInstance(), "reward_text_pvp", true).replace("%count%", ConfigData.getInstance().OVO_REWARD_PVP_KILLER + ""));
+		}
+		
+		// Reward fame for kills
+		if (ConfigData.getInstance().OVO_REWARD_FAME_KILLER_ENABLED)
+		{
+			player.getPcInstance().setFame(player.getPcInstance().getFame() + ConfigData.getInstance().OVO_REWARD_FAME_KILLER);
+			EventUtil.sendEventMessage(player, MessageData.getInstance().getMsgByLang(player.getPcInstance(), "reward_text_fame", true).replace("%count%", ConfigData.getInstance().OVO_REWARD_FAME_KILLER + ""));
+		}
+		
 		// Message Kill
 		if (ConfigData.getInstance().EVENT_KILLER_MESSAGE)
 		{

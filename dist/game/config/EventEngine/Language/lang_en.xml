@@ -118,6 +118,10 @@
 	<!-- Custom events scheduled - Example -->
 	<message id="event_end_soon" text="The event will endup in %time% seconds." />
 	
+	<!-- Rewards -->
+	<message id="reward_text_fame" text="You have won %count% fame point!"/>
+	<message id="reward_text_pvp" text="You have won %count% pvp point!"/>
+	
 	<!-- Others -->
 	<message id="event_player_killer" text="%killer% has defeated %target%!"/>
 	
