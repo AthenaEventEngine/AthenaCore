@@ -49,11 +49,11 @@ import net.sf.eventengine.util.EventUtil;
 public class CaptureTheFlag extends AbstractEvent
 {
 	// Flags
-	private static final int BLUE_FLAG = 36601;
-	private static final int RED_FLAG = 36602;
+	private static final int BLUE_FLAG = ConfigData.getInstance().CTF_NPC_BLUE_FLAG_ID;
+	private static final int RED_FLAG = ConfigData.getInstance().CTF_NPC_RED_FLAG_ID;
 	// Holder
-	private static final int BLUE_HOLDER = 36603;
-	private static final int RED_HOLDER = 36604;
+	private static final int BLUE_HOLDER = ConfigData.getInstance().CTF_NPC_BLUE_HOLDER_ID;
+	private static final int RED_HOLDER = ConfigData.getInstance().CTF_NPC_RED_HOLDER_ID;
 	// FlagItem
 	private static final int FLAG_ITEM = 6718;
 	// Points to conquer the flag
@@ -105,69 +105,75 @@ public class CaptureTheFlag extends AbstractEvent
 	@Override
 	public void onInteract(PlayerHolder player, L2Npc npc)
 	{
-		switch (npc.getId())
+		if (npc.getId() == BLUE_FLAG)
 		{
-			case BLUE_FLAG:
-				if (player.getPcInstance().getTeam() == Team.RED)
+			if (player.getPcInstance().getTeam() == Team.RED)
+			{
+				// We equip flag
+				equipFlag(player);
+				// We remove the flag from his position
+				removeNpc(npc);
+				// We announced that a flag was taken
+				EventUtil.announceTo(Say2.SCREEN_ANNOUNCE, "ctf_captured_the_flag", "%holder%", Team.RED.toString(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
+			}
+			
+			// TODO: html null
+		}
+		else if (npc.getId() == RED_FLAG)
+		{
+			if (player.getPcInstance().getTeam() == Team.BLUE)
+			{
+				// We equip flag
+				equipFlag(player);
+				// We remove the flag from his position
+				removeNpc(npc);
+				// We announced that a flag was taken
+				EventUtil.announceTo(Say2.SCREEN_ANNOUNCE, "ctf_captured_the_flag", "%holder%", Team.BLUE.toString(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
+			}
+			
+			// TODO: html null
+		}
+		else if (npc.getId() == BLUE_HOLDER)
+		{
+			if (player.getPcInstance().getTeam() == Team.BLUE)
+			{
+				if (hasFlag(player))
 				{
-					// We equip flag
-					equipFlag(player);
-					// We remove the flag from his position
-					removeNpc(npc);
+					// We increased the points
+					_pointsBlue += POINTS_CONQUER_FLAG;
+					// Remove the flag character
+					unequiFlag(player);
+					// We created the flag again
+					addEventNpc(RED_FLAG, ConfigData.getInstance().CTF_COORDINATES_TEAM_RED, Team.RED, getInstancesWorlds().get(0).getInstanceId());
 					// We announced that a flag was taken
-					EventUtil.announceTo(Say2.SCREEN_ANNOUNCE, "ctf_captured_the_flag", "%holder%", Team.RED.toString(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
+					EventUtil.announceTo(Say2.SCREEN_ANNOUNCE, "ctf_conquered_the_flag", "%holder%", Team.BLUE.toString(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
+					// Show points of each team
+					showPoint();
 				}
-				break;
-				
-			case RED_FLAG:
-				if (player.getPcInstance().getTeam() == Team.BLUE)
+			}
+			
+			// TODO: html null
+		}
+		else if (npc.getId() == RED_HOLDER)
+		{
+			if (player.getPcInstance().getTeam() == Team.RED)
+			{
+				if (hasFlag(player))
 				{
-					// We equip flag
-					equipFlag(player);
-					// We remove the flag from his position
-					removeNpc(npc);
+					// We increased the points
+					_pointsRed += POINTS_CONQUER_FLAG;
+					// Remove the flag character
+					unequiFlag(player);
+					// We created the flag again
+					addEventNpc(BLUE_FLAG, ConfigData.getInstance().CTF_COORDINATES_TEAM_BLUE, Team.BLUE, getInstancesWorlds().get(0).getInstanceId());
 					// We announced that a flag was taken
-					EventUtil.announceTo(Say2.SCREEN_ANNOUNCE, "ctf_captured_the_flag", "%holder%", Team.BLUE.toString(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
+					EventUtil.announceTo(Say2.SCREEN_ANNOUNCE, "ctf_conquered_the_flag", "%holder%", Team.RED.toString(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
+					// Show points of each team
+					showPoint();
 				}
-				break;
-				
-			case BLUE_HOLDER:
-				if (player.getPcInstance().getTeam() == Team.BLUE)
-				{
-					if (hasFlag(player))
-					{
-						// We increased the points
-						_pointsBlue += POINTS_CONQUER_FLAG;
-						// Remove the flag character
-						unequiFlag(player);
-						// We created the flag again
-						addEventNpc(RED_FLAG, ConfigData.getInstance().CTF_COORDINATES_TEAM_RED, Team.RED, getInstancesWorlds().get(0).getInstanceId());
-						// We announced that a flag was taken
-						EventUtil.announceTo(Say2.SCREEN_ANNOUNCE, "ctf_conquered_the_flag", "%holder%", Team.BLUE.toString(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
-						// Show points of each team
-						showPoint();
-					}
-				}
-				break;
-				
-			case RED_HOLDER:
-				if (player.getPcInstance().getTeam() == Team.RED)
-				{
-					if (hasFlag(player))
-					{
-						// We increased the points
-						_pointsRed += POINTS_CONQUER_FLAG;
-						// Remove the flag character
-						unequiFlag(player);
-						// We created the flag again
-						addEventNpc(BLUE_FLAG, ConfigData.getInstance().CTF_COORDINATES_TEAM_BLUE, Team.BLUE, getInstancesWorlds().get(0).getInstanceId());
-						// We announced that a flag was taken
-						EventUtil.announceTo(Say2.SCREEN_ANNOUNCE, "ctf_conquered_the_flag", "%holder%", Team.RED.toString(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
-						// Show points of each team
-						showPoint();
-					}
-				}
-				break;
+			}
+			
+			// TODO: html null
 		}
 	}
 	
