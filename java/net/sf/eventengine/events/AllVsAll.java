@@ -47,7 +47,7 @@ import net.sf.eventengine.util.SortUtil;
 public class AllVsAll extends AbstractEvent
 {
 	// Radius spawn
-	private static final int RADIUS_SPAWN_PLAYER = 1000;
+	private static final int RADIUS_SPAWN_PLAYER = 150;
 	// Time for resurrection
 	private static final int TIME_RES_PLAYER = 10;
 	

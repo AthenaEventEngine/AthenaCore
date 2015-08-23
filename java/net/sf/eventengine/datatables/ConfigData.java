@@ -61,6 +61,10 @@ public class ConfigData
 	// -------------------------------------------------------------------------------
 	public boolean CTF_EVENT_ENABLED;
 	public String CTF_INSTANCE_FILE;
+	public int CTF_NPC_BLUE_FLAG_ID;
+	public int CTF_NPC_RED_FLAG_ID;
+	public int CTF_NPC_BLUE_HOLDER_ID;
+	public int CTF_NPC_RED_HOLDER_ID;
 	public List<ItemHolder> CTF_REWARD_PLAYER_WIN = new ArrayList<>();
 	public boolean CTF_REWARD_KILLER_ENABLED;
 	public List<ItemHolder> CTF_REWARD_KILLER = new ArrayList<>();
@@ -160,8 +164,12 @@ public class ConfigData
 		// CaptureTheFlag.properties
 		// ------------------------------------------------------------------------------------- //
 		settings = new EventPropertiesParser(CTF_CONFIG);
-		CTF_INSTANCE_FILE = settings.getString("EventInstanceFile", "EventEngine.xml");
 		CTF_EVENT_ENABLED = settings.getBoolean("EventEnabled", false);
+		CTF_INSTANCE_FILE = settings.getString("EventInstanceFile", "EventEngine.xml");
+		CTF_NPC_BLUE_FLAG_ID = settings.getInt("EventBlueFlagNpcId", 36601);
+		CTF_NPC_RED_FLAG_ID = settings.getInt("EventRedFlagNpcId", 36602);
+		CTF_NPC_BLUE_HOLDER_ID = settings.getInt("EventBlueHolderNpcId", 36603);
+		CTF_NPC_RED_HOLDER_ID = settings.getInt("EventRedHolderNpcId", 36604);
 		CTF_REWARD_PLAYER_WIN = settings.getItemHolderList("EventReward");
 		CTF_REWARD_KILLER_ENABLED = settings.getBoolean("EventRewardKillEnabled", false);
 		CTF_REWARD_KILLER = settings.getItemHolderList("EventRewardKill");
@@ -178,8 +186,8 @@ public class ConfigData
 		// AllVsAll.properties
 		// ------------------------------------------------------------------------------------- //
 		settings = new EventPropertiesParser(AVA_CONFIG);
-		AVA_INSTANCE_FILE = settings.getString("EventInstanceFile", "EventEngine.xml");
 		AVA_EVENT_ENABLED = settings.getBoolean("EventEnabled", false);
+		AVA_INSTANCE_FILE = settings.getString("EventInstanceFile", "EventEngine.xml");
 		AVA_REWARD_PLAYER_WIN = settings.getItemHolderList("EventReward");
 		AVA_REWARD_KILLER_ENABLED = settings.getBoolean("EventRewardKillEnabled", false);
 		AVA_REWARD_KILLER = settings.getItemHolderList("EventRewardKill");
@@ -193,8 +201,8 @@ public class ConfigData
 		// OneVsOne.properties
 		// ------------------------------------------------------------------------------------- //
 		settings = new EventPropertiesParser(OVO_CONFIG);
-		OVO_INSTANCE_FILE = settings.getString("EventInstanceFile", "EventEngine.xml");
 		OVO_EVENT_ENABLED = settings.getBoolean("EventEnabled", false);
+		OVO_INSTANCE_FILE = settings.getString("EventInstanceFile", "EventEngine.xml");
 		OVO_REWARD_PLAYER_WIN = settings.getItemHolderList("EventReward");
 		OVO_REWARD_KILLER_ENABLED = settings.getBoolean("EventRewardKillEnabled", false);
 		OVO_REWARD_KILLER = settings.getItemHolderList("EventRewardKill");
@@ -209,8 +217,8 @@ public class ConfigData
 		// TeamVsTeam.properties
 		// ------------------------------------------------------------------------------------- //
 		settings = new EventPropertiesParser(TVT_CONFIG);
-		TVT_INSTANCE_FILE = settings.getString("EventInstanceFile", "EventEngine.xml");
 		TVT_EVENT_ENABLED = settings.getBoolean("EventEnabled", false);
+		TVT_INSTANCE_FILE = settings.getString("EventInstanceFile", "EventEngine.xml");
 		TVT_REWARD_PLAYER_WIN = settings.getItemHolderList("EventReward");
 		TVT_REWARD_KILLER_ENABLED = settings.getBoolean("EventRewardKillEnabled", false);
 		TVT_REWARD_KILLER = settings.getItemHolderList("EventRewardKill");
@@ -225,8 +233,8 @@ public class ConfigData
 		// Survive.properties
 		// ------------------------------------------------------------------------------------- //
 		settings = new EventPropertiesParser(SURVIVE_CONFIG);
-		SURVIVE_INSTANCE_FILE = settings.getString("EventInstanceFile", "EventEngine.xml");
 		SURVIVE_EVENT_ENABLED = settings.getBoolean("EventEnabled", false);
+		SURVIVE_INSTANCE_FILE = settings.getString("EventInstanceFile", "EventEngine.xml");
 		SURVIVE_REWARD_PLAYER_WIN = settings.getItemHolderList("EventReward");
 		SURVIVE_COORDINATES_PLAYER = settings.getLocation("EventCoordinatesPlayer");
 		SURVIVE_COORDINATES_MOBS = settings.getLocation("EventCoordinatesMobs");

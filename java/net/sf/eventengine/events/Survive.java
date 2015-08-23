@@ -51,7 +51,7 @@ public class Survive extends AbstractEvent
 	// Variable that helps us keep track of the number of dead mobs.
 	private int _auxKillMonsters = 0;
 	// Radius spawn
-	private static final int RADIUS_SPAWN_PLAYER = 200;
+	private static final int RADIUS_SPAWN_PLAYER = 150;
 	
 	// Monsters ids
 	private final List<Integer> MONSTERS_ID = ConfigData.getInstance().SURVIVE_MONSTERS_ID;
