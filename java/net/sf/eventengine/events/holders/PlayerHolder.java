@@ -16,11 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package net.sf.eventengine.holder;
+package net.sf.eventengine.events.holders;
 
-import java.util.Comparator;
-
-import net.sf.eventengine.enums.PlayerColorType;
+import net.sf.eventengine.enums.TeamType;
 
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 
@@ -37,12 +35,18 @@ public class PlayerHolder
 	// Contador de deaths obtenidas.
 	private int _deaths = 0;
 	// Color original de un personaje por si en algun evento es cambiado.
-	private int _oriColorTitle = Integer.decode("0xFFFFFF");
+	private int _oriColorTitle = TeamType.WHITE.getColor();
 	// Titulo original de un personaje por si en algun evento es cambiado.
 	private String _oriTitle = "";
+	// Team al que pertenece el usuario
+	private TeamType _team;
 	
 	private int _dinamicInstanceId = 0;
 	
+	/**
+	 * Constructor
+	 * @param player
+	 */
 	public PlayerHolder(L2PcInstance player)
 	{
 		_player = player;
@@ -59,37 +63,78 @@ public class PlayerHolder
 		return _player;
 	}
 	
+	/**
+	 * <ul>
+	 * <b>Acciones:</b>
+	 * </ul>
+	 * <li>Definimos el team al que pertenece el personaje.</li><br>
+	 * <li>Ajustamos el color del personaje segun su team</li><br>
+	 * @param team
+	 */
+	public void setTeam(TeamType team)
+	{
+		_team = team;
+		// definimos el color del titulo del personaje
+		_oriColorTitle = _player.getAppearance().getTitleColor();
+		_player.getAppearance().setTitleColor(team.getColor());
+	}
+	
+	/**
+	 * Obtenemos el team del personaje.
+	 * @return
+	 */
+	public TeamType getTeam()
+	{
+		return _team;
+	}
+	
+	/**
+	 * Obtenemos el id de la instancia en la que participa dentro de los eventos.
+	 * @return
+	 */
 	public int getDinamicInstanceId()
 	{
 		return _dinamicInstanceId;
 	}
 	
+	/**
+	 * Definimos el id de la instancia de la cual participa dentro de los eventos.
+	 * @param dinamicInstanceId
+	 */
 	public void setDinamicInstanceId(int dinamicInstanceId)
 	{
 		_dinamicInstanceId = dinamicInstanceId;
 	}
 	
 	/**
-	 * Incrementamos en uno la cantidad de kills
+	 * Incrementamos en uno la cantidad de asesiantos.
 	 */
 	public void increaseKills()
 	{
 		_kills++;
 	}
 	
+	/**
+	 * Obtenemos lacantidad de asesinatos.
+	 * @return
+	 */
 	public int getKills()
 	{
 		return _kills;
 	}
 	
 	/**
-	 * Incrementamos en uno la cantidad de muertes
+	 * Incrementamos en uno la cantidad de muertes.
 	 */
 	public void increaseDeaths()
 	{
 		_deaths++;
 	}
 	
+	/**
+	 * Cantidad de muertes que tiene.
+	 * @return
+	 */
 	public int getDeaths()
 	{
 		return _deaths;
@@ -105,6 +150,10 @@ public class PlayerHolder
 		return _kills - _deaths;
 	}
 	
+	/**
+	 * Definimos un nuevo titulo para elpersonaje
+	 * @param title
+	 */
 	public void setNewTitle(String title)
 	{
 		_oriTitle = _player.getTitle();
@@ -120,38 +169,10 @@ public class PlayerHolder
 	}
 	
 	/**
-	 * Disponemos un nuevo color del titulo para un player.
-	 * @param colorHex
-	 */
-	public void setNewColorTitle(PlayerColorType colorHex)
-	{
-		_oriColorTitle = _player.getAppearance().getTitleColor();
-		_player.getAppearance().setTitleColor(colorHex.getColor());
-	}
-	
-	/**
 	 * Recuperamos el color original del titulo del player
 	 */
 	public void recoverOriginalColorTitle()
 	{
 		_player.getAppearance().setTitleColor(_oriColorTitle);
 	}
-	
-	// METODOS VARIOS --------------------------------------------------------------
-	
-	public static Comparator<PlayerHolder> _pointsComparator = new Comparator<PlayerHolder>()
-	{
-		@Override
-		public int compare(PlayerHolder p1, PlayerHolder p2)
-		{
-			if (p1.getPoints() == p2.getPoints())
-			{
-				return p1.getPcInstance().getName().compareTo(p2.getPcInstance().getName());
-			}
-			else
-			{
-				return p1.getPoints() - p2.getPoints();
-			}
-		}
-	};
 }
