@@ -526,8 +526,8 @@ public abstract class AbstractEvent
 		if (ConfigData.getInstance().DUAL_BOX)
 		{
 			// Players Address
-			String ip1 = playable.getClient().getConnection().getInetAddress().getHostAddress();
-			String ip2 = activeTarget.getClient().getConnection().getInetAddress().getHostAddress();
+			String ip1 = activePlayer.getPcInstance().getClient().getConnection().getInetAddress().getHostAddress();
+			String ip2 = activeTarget.getPcInstance().getClient().getConnection().getInetAddress().getHostAddress();
 			
 			if (activeTarget != null)
 			{
@@ -600,8 +600,8 @@ public abstract class AbstractEvent
 		if (ConfigData.getInstance().DUAL_BOX)
 		{
 			// Players Address
-			String ip1 = playable.getClient().getConnection().getInetAddress().getHostAddress();
-			String ip2 = activeTarget.getClient().getConnection().getInetAddress().getHostAddress();
+			String ip1 = activePlayer.getPcInstance().getClient().getConnection().getInetAddress().getHostAddress();
+			String ip2 = activeTarget.getPcInstance().getClient().getConnection().getInetAddress().getHostAddress();
 			
 			if ((activeTarget != null) && skill.isDamage())
 			{
