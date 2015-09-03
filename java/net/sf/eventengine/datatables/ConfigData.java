@@ -50,6 +50,7 @@ public class ConfigData
 	public int EVENT_TEXT_TIME_FOR_END;
 	public boolean EVENT_KILLER_MESSAGE;
 	public boolean FRIENDLY_FIRE;
+	public boolean DUAL_BOX;
 	public int MIN_PLAYERS_IN_EVENT;
 	public int MAX_PLAYERS_IN_EVENT;
 	public int MIN_LVL_IN_EVENT;
@@ -154,6 +155,7 @@ public class ConfigData
 		EVENT_TEXT_TIME_FOR_END = settings.getInt("EventTextTimeForEnd", 10);
 		EVENT_KILLER_MESSAGE = settings.getBoolean("EventKillerMessage", true);
 		FRIENDLY_FIRE = settings.getBoolean("EventFriendlyFire", false);
+		DUAL_BOX = settings.getBoolean("EventDualBox", false);
 		MIN_PLAYERS_IN_EVENT = settings.getInt("EventMinPlayers", 2);
 		MAX_PLAYERS_IN_EVENT = settings.getInt("EventMaxPlayers", 20);
 		MIN_LVL_IN_EVENT = settings.getInt("EventMinPlayerLevel", 40);

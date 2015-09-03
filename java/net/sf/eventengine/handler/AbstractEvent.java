@@ -502,12 +502,12 @@ public abstract class AbstractEvent
 		// We get the player involved in our event.
 		PlayerHolder activePlayer = getEventPlayer(playable);
 		
-		// CHECK FRIENDLY_FIRE ----------------------------------------
+		// If our target is L2Playable type and we do this in the event control.
+		PlayerHolder activeTarget = getEventPlayer(target);
+		
+		// CHECK FRIENDLY_FIRE PROTECTION
 		if (ConfigData.getInstance().FRIENDLY_FIRE)
 		{
-			// If our target is L2Playable type and we do this in the event control.
-			PlayerHolder activeTarget = getEventPlayer(target);
-			
 			if (activeTarget != null)
 			{
 				// AllVsAll style events do not have a defined team players.
@@ -521,7 +521,23 @@ public abstract class AbstractEvent
 				}
 			}
 		}
-		// CHECK FRIENDLY_FIRE ----------------------------------------
+		
+		// CHECK DUAL_BOX PROTECTION
+		if (ConfigData.getInstance().DUAL_BOX)
+		{
+			// Players Address
+			String ip1 = playable.getClient().getConnection().getInetAddress().getHostAddress();
+			String ip2 = activeTarget.getClient().getConnection().getInetAddress().getHostAddress();
+			
+			if (activeTarget != null)
+			{
+				if (ip1.equals(ip2))
+				{
+					return true;
+				}
+			}
+		}
+		
 		return onAttack(activePlayer, target);
 	}
 	
@@ -560,12 +576,12 @@ public abstract class AbstractEvent
 		// We get the player involved in our event.
 		PlayerHolder activePlayer = getEventPlayer(playable);
 		
-		// CHECK FRIENDLY_FIRE ----------------------------------------
+		// If our target is L2Playable type and we do this in the event control.
+		PlayerHolder activeTarget = getEventPlayer(target);
+		
+		// CHECK FRIENDLY_FIRE PROTECTION
 		if (ConfigData.getInstance().FRIENDLY_FIRE)
 		{
-			// If our target is L2Playable type and we do this in the event control.
-			PlayerHolder activeTarget = getEventPlayer(target);
-			
 			if ((activeTarget != null) && skill.isDamage())
 			{
 				// AllVsAll style events do not have a defined team players.
@@ -579,7 +595,22 @@ public abstract class AbstractEvent
 				}
 			}
 		}
-		// CHECK FRIENDLY_FIRE ----------------------------------------
+		
+		// CHECK DUAL_BOX PROTECTION
+		if (ConfigData.getInstance().DUAL_BOX)
+		{
+			// Players Address
+			String ip1 = playable.getClient().getConnection().getInetAddress().getHostAddress();
+			String ip2 = activeTarget.getClient().getConnection().getInetAddress().getHostAddress();
+			
+			if ((activeTarget != null) && skill.isDamage())
+			{
+				if (ip1.equals(ip2))
+				{
+					return true;
+				}
+			}
+		}
 		
 		return onUseSkill(activePlayer, target, skill);
 	}
