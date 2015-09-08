@@ -240,10 +240,8 @@ public class CaptureTheFlag extends AbstractEvent
 	@Override
 	public void onLogout(PlayerHolder ph)
 	{
-		System.out.println("1");
 		if (hasFlag(ph))
 		{
-			System.out.println("2");
 			// Remove the flag character
 			unequiFlag(ph);
 			// Drop flag.
