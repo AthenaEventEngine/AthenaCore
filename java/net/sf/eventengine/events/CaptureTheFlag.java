@@ -46,6 +46,7 @@ import com.l2jserver.gameserver.model.items.L2Weapon;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
+import com.l2jserver.gameserver.network.serverpackets.MagicSkillUse;
 
 /**
  * @author fissban
@@ -115,8 +116,10 @@ public class CaptureTheFlag extends AbstractEvent
 				
 				TeamType flagTeam = _flagSpawn.get(npc);
 				
-				if (ph.getTeam() != flagTeam)
+				if (ph.getTeamType() != flagTeam)
 				{
+					// Animacion
+					ph.getPcInstance().broadcastPacket(new MagicSkillUse(ph.getPcInstance(), ph.getPcInstance(), 1034, 1, 1, 1));
 					// Borramos del MAP la bandera
 					_flagSpawn.remove(npc);
 					// Guardamos que personaje lleva determinada bandera
@@ -131,10 +134,12 @@ public class CaptureTheFlag extends AbstractEvent
 				break;
 			
 			case HOLDER:
-				if (ph.getTeam() == _holderSpawn.get(npc))
+				if (ph.getTeamType() == _holderSpawn.get(npc))
 				{
 					if (hasFlag(ph))
 					{
+						// Animacion -> Large FireWork
+						ph.getPcInstance().broadcastPacket(new MagicSkillUse(ph.getPcInstance(), ph.getPcInstance(), 2025, 1, 1, 1));
 						// We increased the points
 						getPlayerTeam(ph).increasePoints(POINTS_CONQUER_FLAG);
 						// Remove the flag character
@@ -142,7 +147,7 @@ public class CaptureTheFlag extends AbstractEvent
 						
 						TeamHolder th = getTeam(_flagHasPlayer.remove(ph));
 						// We created the flag again
-						_flagSpawn.put(addEventNpc(FLAG, th.getSpawn().getX(), th.getSpawn().getY(), th.getSpawn().getZ(), 0, Team.BLUE, false, getInstancesWorlds().get(0).getInstanceId()), th.getTeamType());
+						_flagSpawn.put(addEventNpc(FLAG, th.getSpawn().getX(), th.getSpawn().getY(), th.getSpawn().getZ(), 0, Team.NONE, th.getTeamType().name(), false, getInstancesWorlds().get(0).getInstanceId()), th.getTeamType());
 						// We announced that a flag was taken
 						EventUtil.announceTo(Say2.BATTLEFIELD, "ctf_conquered_the_flag", "%holder%", th.getTeamType().name(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
 						// Show points of each team
@@ -235,10 +240,13 @@ public class CaptureTheFlag extends AbstractEvent
 	@Override
 	public void onLogout(PlayerHolder ph)
 	{
+		System.out.println("1");
 		if (hasFlag(ph))
 		{
+			System.out.println("2");
 			// Remove the flag character
 			unequiFlag(ph);
+			// Drop flag.
 			dropFlag(ph);
 		}
 	}
@@ -250,13 +258,17 @@ public class CaptureTheFlag extends AbstractEvent
 	 */
 	private void spawnFlagsAndHolders()
 	{
+		int instanceId = getInstancesWorlds().get(0).getInstanceId();
+		
 		for (TeamHolder th : getAllTeams())
 		{
 			int x = th.getSpawn().getX();
 			int y = th.getSpawn().getY();
 			int z = th.getSpawn().getZ();
-			_flagSpawn.put(addEventNpc(FLAG, x, y, z, 0, Team.BLUE, false, getInstancesWorlds().get(0).getInstanceId()), th.getTeamType());
-			_holderSpawn.put(addEventNpc(HOLDER, x - 100, y, z, 0, Team.RED, false, getInstancesWorlds().get(0).getInstanceId()), th.getTeamType());
+			TeamType tt = th.getTeamType();
+			
+			_flagSpawn.put(addEventNpc(FLAG, x, y, z, 0, Team.NONE, th.getTeamType().name(), false, instanceId), tt);
+			_holderSpawn.put(addEventNpc(HOLDER, x - 100, y, z, 0, Team.NONE, th.getTeamType().name(), false, instanceId), tt);
 		}
 	}
 	
@@ -310,7 +322,7 @@ public class CaptureTheFlag extends AbstractEvent
 		for (PlayerHolder ph : getAllEventPlayers())
 		{
 			// We deliver rewards
-			if (winners.contains(ph.getTeam()))
+			if (winners.contains(ph.getTeamType()))
 			{
 				// We deliver rewards
 				giveItems(ph, ConfigData.getInstance().CTF_REWARD_PLAYER_WIN);
@@ -391,15 +403,15 @@ public class CaptureTheFlag extends AbstractEvent
 		}
 	}
 	
-	private void dropFlag(PlayerHolder player)
+	private void dropFlag(PlayerHolder ph)
 	{
-		TeamHolder th = getTeam(_flagHasPlayer.remove(player));
-		_flagSpawn.put(addEventNpc(FLAG, th.getSpawn().getX(), th.getSpawn().getY(), th.getSpawn().getZ(), 0, Team.BLUE, false, getInstancesWorlds().get(0).getInstanceId()), th.getTeamType());
+		TeamHolder th = getTeam(_flagHasPlayer.remove(ph));
+		_flagSpawn.put(addEventNpc(FLAG, ph.getPcInstance().getX(), ph.getPcInstance().getY(), ph.getPcInstance().getZ(), 0, Team.NONE, th.getTeamType().name(), false, ph.getDinamicInstanceId()), th.getTeamType());
 		
 		Map<String, String> map = new HashMap<>();
 		
 		// We announced that a flag was taken
-		map.put("%holder%", player.getPcInstance().getName());
+		map.put("%holder%", ph.getPcInstance().getName());
 		map.put("%flag%", th.getTeamType().name());
 		EventUtil.announceTo(Say2.BATTLEFIELD, "player_dropped_flag", map, CollectionTarget.ALL_PLAYERS_IN_EVENT);
 	}

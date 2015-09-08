@@ -29,7 +29,7 @@ import com.l2jserver.gameserver.model.Location;
  */
 public class TeamHolder
 {
-	// color del team
+	// Tipo de team
 	private TeamType _teamType;
 	// Cantidad de puntos
 	private AtomicInteger _points = new AtomicInteger(0);

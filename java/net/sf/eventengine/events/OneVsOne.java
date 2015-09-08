@@ -290,7 +290,7 @@ public class OneVsOne extends AbstractEvent
 		for (PlayerHolder ph : _instancesTeams.get(instanceId).values())
 		{
 			sb.append(" | ");
-			sb.append(ph.getTeam().name());
+			sb.append(ph.getTeamType().name());
 			sb.append(" ");
 			sb.append(ph.getKills());
 		}

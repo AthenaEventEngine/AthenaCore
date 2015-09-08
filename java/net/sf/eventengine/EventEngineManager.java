@@ -288,6 +288,9 @@ public class EventEngineManager
 			{
 				try
 				{
+					// listener
+					_currentEvent.listenerOnLogout(player);
+					
 					PlayerHolder ph = _currentEvent.getEventPlayer(player);
 					// recobramos el color del titulo original
 					ph.recoverOriginalColorTitle();

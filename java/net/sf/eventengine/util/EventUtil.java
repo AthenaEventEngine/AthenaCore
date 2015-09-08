@@ -228,7 +228,7 @@ public class EventUtil
 				{
 					for (L2PcInstance player : npcPlayerMap.get(npc))
 					{
-						player.sendPacket(new CreatureSay(npc.getObjectId(), 18, npc.getName(), getAnnounce(player, textId, mapToReplace, time)));
+						player.sendPacket(new CreatureSay(npc.getObjectId(), say2, npc.getName(), getAnnounce(player, textId, mapToReplace, time)));
 					}
 				}
 				break;

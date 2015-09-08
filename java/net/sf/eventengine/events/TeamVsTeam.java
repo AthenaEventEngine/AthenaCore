@@ -207,7 +207,7 @@ public class TeamVsTeam extends AbstractEvent
 		for (PlayerHolder ph : getAllEventPlayers())
 		{
 			// We deliver rewards
-			if (winners.contains(ph.getTeam()))
+			if (winners.contains(ph.getTeamType()))
 			{
 				// We deliver rewards
 				giveItems(ph, ConfigData.getInstance().TVT_REWARD_PLAYER_WIN);

@@ -83,7 +83,7 @@ public class PlayerHolder
 	 * Obtenemos el team del personaje.
 	 * @return
 	 */
-	public TeamType getTeam()
+	public TeamType getTeamType()
 	{
 		return _team;
 	}

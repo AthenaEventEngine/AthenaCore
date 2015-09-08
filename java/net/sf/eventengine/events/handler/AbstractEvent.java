@@ -139,7 +139,7 @@ public abstract class AbstractEvent
 	 */
 	public TeamHolder getPlayerTeam(PlayerHolder player)
 	{
-		return _teams.get(player.getTeam());
+		return _teams.get(player.getTeamType());
 	}
 	
 	/**
@@ -307,7 +307,7 @@ public abstract class AbstractEvent
 	 */
 	public L2Npc addEventNpc(int npcId, Location loc, Team team, int instanceId)
 	{
-		return addEventNpc(npcId, loc.getX(), loc.getY(), loc.getZ(), loc.getHeading(), team, false, instanceId);
+		return addEventNpc(npcId, loc.getX(), loc.getY(), loc.getZ(), loc.getHeading(), team, null, false, instanceId);
 	}
 	
 	/**
@@ -315,7 +315,15 @@ public abstract class AbstractEvent
 	 */
 	public L2Npc addEventNpc(int npcId, Location loc, Team team, boolean randomOffset, int instanceId)
 	{
-		return addEventNpc(npcId, loc.getX(), loc.getY(), loc.getZ(), loc.getHeading(), team, randomOffset, instanceId);
+		return addEventNpc(npcId, loc.getX(), loc.getY(), loc.getZ(), loc.getHeading(), team, null, randomOffset, instanceId);
+	}
+	
+	/**
+	 * We generate a new spawn in our event and added to the list.
+	 */
+	public L2Npc addEventNpc(int npcId, Location loc, Team team, String title, boolean randomOffset, int instanceId)
+	{
+		return addEventNpc(npcId, loc.getX(), loc.getY(), loc.getZ(), loc.getHeading(), team, null, randomOffset, instanceId);
 	}
 	
 	/**
@@ -328,7 +336,7 @@ public abstract class AbstractEvent
 	 * @param randomOffset -> +/- 1000
 	 * @return L2Npc
 	 */
-	public L2Npc addEventNpc(int npcId, int x, int y, int z, int heading, Team team, boolean randomOffset, int instanceId)
+	public L2Npc addEventNpc(int npcId, int x, int y, int z, int heading, Team team, String title, boolean randomOffset, int instanceId)
 	{
 		// We generate our npc spawn
 		L2Npc npc = null;
@@ -352,6 +360,11 @@ public abstract class AbstractEvent
 				spawn.setInstanceId(instanceId);
 				npc = spawn.doSpawn();// isSummonSpawn.
 				npc.setTeam(team);
+				
+				if (title != null)
+				{
+					npc.setTitle(title);
+				}
 				
 				SpawnTable.getInstance().addNewSpawn(spawn, false);
 				spawn.init();
@@ -588,11 +601,11 @@ public abstract class AbstractEvent
 			if (activeTarget != null)
 			{
 				// AllVsAll style events do not have a defined team players.
-				if ((activePlayer.getTeam() == TeamType.WHITE) || (activeTarget.getTeam() == TeamType.WHITE))
+				if ((activePlayer.getTeamType() == TeamType.WHITE) || (activeTarget.getTeamType() == TeamType.WHITE))
 				{
 					// Nothing
 				}
-				else if (activePlayer.getTeam() == activeTarget.getTeam())
+				else if (activePlayer.getTeamType() == activeTarget.getTeamType())
 				{
 					return true;
 				}
@@ -646,11 +659,11 @@ public abstract class AbstractEvent
 			if ((activeTarget != null) && skill.isDamage())
 			{
 				// AllVsAll style events do not have a defined team players.
-				if ((activePlayer.getTeam() == TeamType.WHITE) || (activeTarget.getTeam() == TeamType.WHITE))
+				if ((activePlayer.getTeamType() == TeamType.WHITE) || (activeTarget.getTeamType() == TeamType.WHITE))
 				{
 					// Nothing
 				}
-				else if (activePlayer.getTeam() == activeTarget.getTeam())
+				else if (activePlayer.getTeamType() == activeTarget.getTeamType())
 				{
 					return true;
 				}
@@ -747,7 +760,7 @@ public abstract class AbstractEvent
 	protected void teleportPlayer(PlayerHolder ph, int radius)
 	{
 		// get the spawn defined at the start of each event
-		Location loc = getTeamSpawn(ph.getTeam());
+		Location loc = getTeamSpawn(ph.getTeamType());
 		
 		loc.setInstanceId(ph.getDinamicInstanceId());
 		loc.setX(loc.getX() + Rnd.get(-radius, radius));
