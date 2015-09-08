@@ -18,11 +18,11 @@
  */
 package net.sf.eventengine.events.schedules;
 
-import com.l2jserver.gameserver.network.clientpackets.Say2;
-
 import net.sf.eventengine.enums.CollectionTarget;
 import net.sf.eventengine.interfaces.EventScheduled;
 import net.sf.eventengine.util.EventUtil;
+
+import com.l2jserver.gameserver.network.clientpackets.Say2;
 
 /**
  * @author Zephyr
@@ -46,6 +46,6 @@ public class AnnounceTeleportEvent implements EventScheduled
 	@Override
 	public void run()
 	{
-		EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "teleport_seconds", CollectionTarget.ALL_PLAYERS_IN_EVENT);
+		EventUtil.announceTo(Say2.TELL, "teleport_seconds", CollectionTarget.ALL_PLAYERS_IN_EVENT);
 	}
 }

@@ -258,14 +258,14 @@ public final class EventPropertiesParser
 	 */
 	public List<ItemHolder> getItemHolderList(String key)
 	{
-		List<ItemHolder> auxList = new ArrayList<>();
+		List<ItemHolder> itemList = new ArrayList<>();
 		try
 		{
 			StringTokenizer st = new StringTokenizer(getValue(key), ";");
 			while (st.hasMoreTokens())
 			{
 				StringTokenizer st1 = new StringTokenizer(st.nextToken(), ",");
-				auxList.add(new ItemHolder(Integer.parseInt(st1.nextToken()), Integer.parseInt(st1.nextToken())));
+				itemList.add(new ItemHolder(Integer.parseInt(st1.nextToken()), Integer.parseInt(st1.nextToken())));
 			}
 		}
 		catch (Exception e)
@@ -273,7 +273,7 @@ public final class EventPropertiesParser
 			LOGGER.warning(getClass().getSimpleName() + ": fail to read config -> " + key);
 		}
 		
-		return auxList;
+		return itemList;
 	}
 	
 	/**
@@ -307,16 +307,16 @@ public final class EventPropertiesParser
 	{
 		try
 		{
-			List<Location> auxList = new ArrayList<>();
+			List<Location> locList = new ArrayList<>();
 			
 			StringTokenizer st = new StringTokenizer(getValue(key), ";");
 			while (st.hasMoreTokens())
 			{
 				StringTokenizer stLoc = new StringTokenizer(st.nextToken(), ",");
-				auxList.add(new Location(Integer.parseInt(stLoc.nextToken()), Integer.parseInt(stLoc.nextToken()), Integer.parseInt(stLoc.nextToken())));
+				locList.add(new Location(Integer.parseInt(stLoc.nextToken()), Integer.parseInt(stLoc.nextToken()), Integer.parseInt(stLoc.nextToken())));
 			}
 			
-			return auxList;
+			return locList;
 		}
 		catch (Exception e)
 		{
@@ -334,13 +334,13 @@ public final class EventPropertiesParser
 	 */
 	public List<Integer> getListInteger(String key)
 	{
-		List<Integer> auxList = new ArrayList<>();
+		List<Integer> integerList = new ArrayList<>();
 		try
 		{
 			StringTokenizer st = new StringTokenizer(getValue(key), ",");
 			while (st.hasMoreTokens())
 			{
-				auxList.add(Integer.parseInt(st.nextToken()));
+				integerList.add(Integer.parseInt(st.nextToken()));
 			}
 		}
 		catch (Exception e)
@@ -348,6 +348,6 @@ public final class EventPropertiesParser
 			LOGGER.warning(getClass().getSimpleName() + ": fail to read config -> " + key);
 		}
 		
-		return auxList;
+		return integerList;
 	}
 }

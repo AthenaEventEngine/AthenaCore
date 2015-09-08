@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledFuture;
 import java.util.logging.Logger;
@@ -88,7 +87,7 @@ public abstract class AbstractEvent
 	public abstract void runEventState(EventState state);
 	
 	// XXX TEAMS -----------------------------------------------------------------------------------------
-	private final Map<TeamType, TeamHolder> _teams = new TreeMap<>();
+	private final Map<TeamType, TeamHolder> _teams = new HashMap<>();
 	private int _countTeams = 0;
 	
 	/**
@@ -99,9 +98,9 @@ public abstract class AbstractEvent
 	{
 		_countTeams = count;
 		// inicializamos el uno para evitar usar el color blanco como team.
-		for (int aux = 1; aux <= _countTeams; aux++)
+		for (int i = 1; i <= _countTeams; i++)
 		{
-			TeamType team = TeamType.values()[aux];
+			TeamType team = TeamType.values()[i];
 			_teams.put(team, new TeamHolder(team));
 		}
 	}
@@ -158,9 +157,9 @@ public abstract class AbstractEvent
 			return;
 		}
 		
-		for (int aux = 0; aux < _countTeams; aux++)
+		for (int i = 0; i < _countTeams; i++)
 		{
-			setSpawn(TeamType.values()[aux + 1], locs.get(aux));
+			setSpawn(TeamType.values()[i + 1], locs.get(i));
 		}
 	}
 	

@@ -18,6 +18,8 @@
  */
 package net.sf.eventengine.events.holders;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import net.sf.eventengine.enums.TeamType;
 
 import com.l2jserver.gameserver.model.Location;
@@ -28,11 +30,11 @@ import com.l2jserver.gameserver.model.Location;
 public class TeamHolder
 {
 	// color del team
-	private TeamType _teamColor;
+	private TeamType _teamType;
 	// Cantidad de puntos
-	private int _points = 0; // Default 0
+	private AtomicInteger _points = new AtomicInteger(0);
 	// Spawn del team
-	private Location _teamSpawn;
+	private Location _teamSpawn = new Location(0, 0, 0);
 	
 	/**
 	 * Constructor
@@ -40,16 +42,16 @@ public class TeamHolder
 	 */
 	public TeamHolder(TeamType teamColor)
 	{
-		_teamColor = teamColor;
+		_teamType = teamColor;
 	}
 	
 	/**
 	 * Obtenemos el color del team
 	 * @return
 	 */
-	public TeamType getColorTeam()
+	public TeamType getTeamType()
 	{
-		return _teamColor;
+		return _teamType;
 	}
 	
 	/**
@@ -76,7 +78,7 @@ public class TeamHolder
 	 */
 	public int getPoints()
 	{
-		return _points;
+		return _points.intValue();
 	}
 	
 	/**
@@ -84,7 +86,7 @@ public class TeamHolder
 	 */
 	public void increasePoints(int points)
 	{
-		_points += points;
+		_points.getAndAdd(points);
 	}
 	
 	/**
@@ -92,12 +94,12 @@ public class TeamHolder
 	 */
 	public void decreasePoints(int points)
 	{
-		_points -= points;
+		_points.getAndAdd(-points);
 		// prevenimos q el equipo tenga puntos negativos
 		// FIXME revisar por si algun evento requiera que sean negativos.
-		if (_points < 0)
+		if (_points.intValue() < 0)
 		{
-			_points = 0;
+			_points.set(0);
 		}
 	}
 }
