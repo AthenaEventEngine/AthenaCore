@@ -97,7 +97,123 @@ public class EventEngineManager
 		}
 	}
 	
-	// XXX EventEngineTask ------------------------------------------------------------------------------------
+	// XXX TraceManager ------------------------------------------------------------------------------
+	
+	// Control de la cantidad de cuentas por IP/TRACE
+	private Map<String, Integer> _addressManager = new ConcurrentHashMap<>();
+	
+	/**
+	 * Verificamos la cantidad de cuentas por pc.<br>
+	 * <b> Obs: </b><br>
+	 * Si en los configs (MAX_PARTICIPANT_PER_PC) se estipulo en 0 no se haran verificaciones de cuentas por pc<br>
+	 * En caso de no superar el maximo, agregamos/incrementamos a _addressManager en 1 dependiendo del IP/TRACE del jugador
+	 * @param activeChar
+	 * @return
+	 */
+	public boolean checkMultiBox(L2PcInstance activeChar)
+	{
+		// sin verificacion de cuentas por pc
+		if (ConfigData.MAX_PARTICIPANT_PER_PC == 0)
+		{
+			return false;
+		}
+		
+		String address = getAddress(activeChar);
+		
+		if (getAddressCount(address) >= ConfigData.MAX_PARTICIPANT_PER_PC)
+		{
+			return true;
+		}
+		
+		addAddress(address);
+		
+		return false;
+	}
+	
+	/**
+	 * Incrementamos en 1 la cantidad de usuarios registrados en un mismo IP/TRACE
+	 * @param address
+	 */
+	private void addAddress(String address)
+	{
+		if (!_addressManager.containsKey(address))
+		{
+			_addressManager.put(address, 1);
+		}
+		else
+		{
+			int boxCount = _addressManager.get(address);
+			_addressManager.put(address, boxCount + 1);
+		}
+	}
+	
+	/**
+	 * Disminuimos en 1 la cantidad de usuarios registrados en un mismo IP/TRACE
+	 * @param L2PcInstance activeChar
+	 */
+	private void removeAddress(L2PcInstance activeChar)
+	{
+		String address = getAddress(activeChar);
+		
+		if (_addressManager.containsKey(address))
+		{
+			int boxCount = _addressManager.get(address);
+			_addressManager.put(address, boxCount - 1);
+		}
+	}
+	
+	/**
+	 * Obtenemos la cantidad de player registrados en un mismo IP/TRACE
+	 * @param address
+	 * @return
+	 */
+	private int getAddressCount(String address)
+	{
+		if (_addressManager.containsKey(address))
+		{
+			return _addressManager.get(address);
+		}
+		
+		return 0;
+	}
+	
+	/**
+	 * Limpiamos todos los IP/TRACE de los usuarios registrados.
+	 */
+	private void clearAddressManager()
+	{
+		_addressManager.clear();
+	}
+	
+	/**
+	 * Obtenemos el trace de un personaje con un formato especifico
+	 * @param activeChar
+	 * @return
+	 */
+	private String getAddress(L2PcInstance activeChar)
+	{
+		StringBuilder ip = new StringBuilder();
+		// agregamos el ip
+		ip.append(activeChar.getClient().getConnection().getInetAddress().getHostAddress());
+		ip.append("-");
+		// agregamos el trace
+		int[][] trace = activeChar.getClient().getTrace();
+		for (int i = 0; i < 5; i++)
+		{
+			ip.append(trace[i][0]);
+			ip.append(".");
+			ip.append(trace[i][1]);
+			ip.append(".");
+			ip.append(trace[i][2]);
+			ip.append(".");
+			ip.append(trace[i][3]);
+			ip.append("|");
+		}
+		
+		return ip.toString();
+	}
+	
+	// XXX EventEngineTask ---------------------------------------------------------------------------
 	private int _time;
 	
 	public int getTime()
@@ -576,9 +692,9 @@ public class EventEngineManager
 	 * @return <li>True - > si el registro es exitoso.</li><br>
 	 *         <li>False - > si el player ya estaba registrado.</li><br>
 	 */
-	public boolean registerPlayer(L2PcInstance player)
+	public void registerPlayer(L2PcInstance player)
 	{
-		return _eventRegisterdPlayers.add(player);
+		_eventRegisterdPlayers.add(player);
 	}
 	
 	/**
@@ -589,6 +705,10 @@ public class EventEngineManager
 	 */
 	public boolean unRegisterPlayer(L2PcInstance player)
 	{
+		if (ConfigData.MAX_PARTICIPANT_PER_PC != 0)
+		{
+			removeAddress(player);
+		}
 		return _eventRegisterdPlayers.remove(player);
 	}
 	
@@ -598,6 +718,7 @@ public class EventEngineManager
 	 */
 	public void cleanUp()
 	{
+		clearAddressManager();
 		setCurrentEvent(null);
 		clearVotes();
 		clearRegisteredPlayers();

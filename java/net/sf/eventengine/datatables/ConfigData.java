@@ -55,6 +55,7 @@ public class ConfigData
 	public int MIN_LVL_IN_EVENT;
 	public int MAX_LVL_IN_EVENT;
 	public static int MAX_BUFF_COUNT;
+	public static int MAX_PARTICIPANT_PER_PC;
 	
 	// -------------------------------------------------------------------------------
 	// Configs Capture The Flag
@@ -159,6 +160,7 @@ public class ConfigData
 		MIN_LVL_IN_EVENT = settings.getInt("EventMinPlayerLevel", 40);
 		MAX_LVL_IN_EVENT = settings.getInt("EventMaxPlayerLevel", 78);
 		MAX_BUFF_COUNT = settings.getInt("EventMaxBuffCount", 5);
+		MAX_PARTICIPANT_PER_PC = settings.getInt("EventMaxParticipantPerPc", 0);
 		
 		// ------------------------------------------------------------------------------------- //
 		// CaptureTheFlag.properties
