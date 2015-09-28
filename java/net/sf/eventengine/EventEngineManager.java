@@ -33,8 +33,8 @@ import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.EventData;
 import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.EventEngineState;
-import net.sf.eventengine.handler.AbstractEvent;
-import net.sf.eventengine.holder.PlayerHolder;
+import net.sf.eventengine.events.handler.AbstractEvent;
+import net.sf.eventengine.events.holders.PlayerHolder;
 import net.sf.eventengine.task.EventEngineTask;
 
 import com.l2jserver.gameserver.ThreadPoolManager;

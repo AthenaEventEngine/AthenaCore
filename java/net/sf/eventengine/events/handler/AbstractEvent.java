@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package net.sf.eventengine.handler;
+package net.sf.eventengine.events.handler;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -58,12 +58,14 @@ import net.sf.eventengine.datatables.BuffListData;
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.EventState;
+import net.sf.eventengine.enums.TeamType;
+import net.sf.eventengine.events.holders.PlayerHolder;
+import net.sf.eventengine.events.holders.TeamHolder;
 import net.sf.eventengine.events.schedules.AnnounceTeleportEvent;
 import net.sf.eventengine.events.schedules.ChangeToEndEvent;
 import net.sf.eventengine.events.schedules.ChangeToFightEvent;
 import net.sf.eventengine.events.schedules.ChangeToStartEvent;
-import net.sf.eventengine.holder.PlayerHolder;
-import net.sf.eventengine.interfaces.EventScheduled;
+import net.sf.eventengine.events.schedules.interfaces.EventScheduled;
 import net.sf.eventengine.util.EventUtil;
 
 /**
@@ -83,6 +85,103 @@ public abstract class AbstractEvent
 	
 	/** Necessary to keep track of the states of the event. */
 	public abstract void runEventState(EventState state);
+	
+	// XXX TEAMS -----------------------------------------------------------------------------------------
+	private final Map<TeamType, TeamHolder> _teams = new HashMap<>();
+	private int _countTeams = 0;
+	
+	/**
+	 * Creamos la cantidad de teams indicados
+	 * @param count
+	 */
+	public void setCountTeams(int count)
+	{
+		_countTeams = count;
+		// inicializamos el uno para evitar usar el color blanco como team.
+		for (int i = 1; i <= _countTeams; i++)
+		{
+			TeamType team = TeamType.values()[i];
+			_teams.put(team, new TeamHolder(team));
+		}
+	}
+	
+	/**
+	 * Obtenemos un array con los TeamType de equipos creados previamente.
+	 * @return
+	 */
+	public TeamType[] getEnabledTeams()
+	{
+		return _teams.keySet().toArray(new TeamType[_countTeams]);
+	}
+	
+	/**
+	 * Obtenemos una colleccion con los teams creados previamente.
+	 * @return
+	 */
+	public Collection<TeamHolder> getAllTeams()
+	{
+		return _teams.values();
+	}
+	
+	/**
+	 * Obtenemos un team a partir del TeamType
+	 * @param t
+	 * @return
+	 */
+	public TeamHolder getTeam(TeamType t)
+	{
+		return _teams.get(t);
+	}
+	
+	/**
+	 * Obtenemos el team de un personaje
+	 * @return
+	 */
+	public TeamHolder getPlayerTeam(PlayerHolder player)
+	{
+		return _teams.get(player.getTeamType());
+	}
+	
+	/**
+	 * We define a team spawns.
+	 * @param team
+	 * @param locs
+	 */
+	public void setSpawnTeams(List<Location> locs)
+	{
+		if (locs.size() < _countTeams)
+		{
+			LOGGER.warning(AbstractEvent.class.getSimpleName() + ": No se han definido correctamente los spawns para los teams.");
+			LOGGER.warning(AbstractEvent.class.getSimpleName() + ": Cantidad de teams: " + _countTeams);
+			LOGGER.warning(AbstractEvent.class.getSimpleName() + ": Cantidad de locs: " + locs.size());
+			return;
+		}
+		
+		for (int i = 0; i < _countTeams; i++)
+		{
+			setSpawn(TeamType.values()[i + 1], locs.get(i));
+		}
+	}
+	
+	/**
+	 * We define a team spawns.
+	 * @param team
+	 * @param loc
+	 */
+	public void setSpawn(TeamType team, Location loc)
+	{
+		_teams.get(team).setSpawn(loc);
+	}
+	
+	/**
+	 * We get the spawn of a particular team.
+	 * @param team
+	 * @return Location
+	 */
+	public Location getTeamSpawn(TeamType team)
+	{
+		return _teams.get(team).getSpawn();
+	}
 	
 	// XXX DINAMIC INSTANCE ------------------------------------------------------------------------------
 	private String _instanceFile = "";
@@ -107,6 +206,7 @@ public abstract class AbstractEvent
 			int instanceId = InstanceManager.getInstance().createDynamicInstance(_instanceFile);
 			InstanceManager.getInstance().getInstance(instanceId).setAllowSummon(false);
 			InstanceManager.getInstance().getInstance(instanceId).setPvPInstance(true);
+			InstanceManager.getInstance().getInstance(instanceId).setEjectTime(10 * 60 * 1000); // prevent eject death players.
 			InstanceManager.getInstance().getInstance(instanceId).setEmptyDestroyTime(1000 + 60000L);
 			// We closed the doors of the instance if there
 			for (L2DoorInstance door : InstanceManager.getInstance().getInstance(instanceId).getDoors())
@@ -207,7 +307,7 @@ public abstract class AbstractEvent
 	 */
 	public L2Npc addEventNpc(int npcId, Location loc, Team team, int instanceId)
 	{
-		return addEventNpc(npcId, loc.getX(), loc.getY(), loc.getZ(), loc.getHeading(), team, false, instanceId);
+		return addEventNpc(npcId, loc.getX(), loc.getY(), loc.getZ(), loc.getHeading(), team, null, false, instanceId);
 	}
 	
 	/**
@@ -215,7 +315,15 @@ public abstract class AbstractEvent
 	 */
 	public L2Npc addEventNpc(int npcId, Location loc, Team team, boolean randomOffset, int instanceId)
 	{
-		return addEventNpc(npcId, loc.getX(), loc.getY(), loc.getZ(), loc.getHeading(), team, randomOffset, instanceId);
+		return addEventNpc(npcId, loc.getX(), loc.getY(), loc.getZ(), loc.getHeading(), team, null, randomOffset, instanceId);
+	}
+	
+	/**
+	 * We generate a new spawn in our event and added to the list.
+	 */
+	public L2Npc addEventNpc(int npcId, Location loc, Team team, String title, boolean randomOffset, int instanceId)
+	{
+		return addEventNpc(npcId, loc.getX(), loc.getY(), loc.getZ(), loc.getHeading(), team, null, randomOffset, instanceId);
 	}
 	
 	/**
@@ -228,7 +336,7 @@ public abstract class AbstractEvent
 	 * @param randomOffset -> +/- 1000
 	 * @return L2Npc
 	 */
-	public L2Npc addEventNpc(int npcId, int x, int y, int z, int heading, Team team, boolean randomOffset, int instanceId)
+	public L2Npc addEventNpc(int npcId, int x, int y, int z, int heading, Team team, String title, boolean randomOffset, int instanceId)
 	{
 		// We generate our npc spawn
 		L2Npc npc = null;
@@ -252,6 +360,11 @@ public abstract class AbstractEvent
 				spawn.setInstanceId(instanceId);
 				npc = spawn.doSpawn();// isSummonSpawn.
 				npc.setTeam(team);
+				
+				if (title != null)
+				{
+					npc.setTitle(title);
+				}
 				
 				SpawnTable.getInstance().addNewSpawn(spawn, false);
 				spawn.init();
@@ -309,29 +422,6 @@ public abstract class AbstractEvent
 		npc.deleteMe();
 		
 		_eventNpc.remove(npc.getObjectId());
-	}
-	
-	// SPAWNS TEAMS ---------------------------------------------------------------------------------- //
-	private final Map<Team, Location> _teamSapwn = new HashMap<>();
-	
-	/**
-	 * We define a team spawns.
-	 * @param team
-	 * @param loc
-	 */
-	public void setTeamSpawn(Team team, Location loc)
-	{
-		_teamSapwn.put(team, loc);
-	}
-	
-	/**
-	 * We get the spawn of a particular team.
-	 * @param team
-	 * @return Location
-	 */
-	public Location getTeamSpawn(Team team)
-	{
-		return _teamSapwn.get(team);
 	}
 	
 	// PLAYERS IN EVENT ----------------------------------------------------------------------------- //
@@ -442,10 +532,10 @@ public abstract class AbstractEvent
 	}
 	
 	/**
-	 * @param player
+	 * @param ph
 	 * @param npc
 	 */
-	public abstract void onInteract(PlayerHolder player, L2Npc npc);
+	public abstract void onInteract(PlayerHolder ph, L2Npc npc);
 	
 	/**
 	 * @param playable
@@ -469,10 +559,10 @@ public abstract class AbstractEvent
 	}
 	
 	/**
-	 * @param player
+	 * @param ph
 	 * @param target
 	 */
-	public abstract void onKill(PlayerHolder player, L2Character target);
+	public abstract void onKill(PlayerHolder ph, L2Character target);
 	
 	/**
 	 * @param player
@@ -488,9 +578,9 @@ public abstract class AbstractEvent
 	}
 	
 	/**
-	 * @param player
+	 * @param ph
 	 */
-	public abstract void onDeath(PlayerHolder player);
+	public abstract void onDeath(PlayerHolder ph);
 	
 	public boolean listenerOnAttack(L2Playable playable, L2Character target)
 	{
@@ -511,11 +601,11 @@ public abstract class AbstractEvent
 			if (activeTarget != null)
 			{
 				// AllVsAll style events do not have a defined team players.
-				if ((activePlayer.getPcInstance().getTeam() == Team.NONE) || (activeTarget.getPcInstance().getTeam() == Team.NONE))
+				if ((activePlayer.getTeamType() == TeamType.WHITE) || (activeTarget.getTeamType() == TeamType.WHITE))
 				{
 					// Nothing
 				}
-				else if (activePlayer.getPcInstance().getTeam() == activeTarget.getPcInstance().getTeam())
+				else if (activePlayer.getTeamType() == activeTarget.getTeamType())
 				{
 					return true;
 				}
@@ -526,11 +616,11 @@ public abstract class AbstractEvent
 	}
 	
 	/**
-	 * @param player
+	 * @param ph
 	 * @param target
 	 * @return true -> only in the event that an attack not want q continue its normal progress.
 	 */
-	public abstract boolean onAttack(PlayerHolder player, L2Character target);
+	public abstract boolean onAttack(PlayerHolder ph, L2Character target);
 	
 	/**
 	 * @param playable
@@ -569,11 +659,11 @@ public abstract class AbstractEvent
 			if ((activeTarget != null) && skill.isDamage())
 			{
 				// AllVsAll style events do not have a defined team players.
-				if ((activePlayer.getPcInstance().getTeam() == Team.NONE) || (activeTarget.getPcInstance().getTeam() == Team.NONE))
+				if ((activePlayer.getTeamType() == TeamType.WHITE) || (activeTarget.getTeamType() == TeamType.WHITE))
 				{
 					// Nothing
 				}
-				else if (activePlayer.getPcInstance().getTeam() == activeTarget.getPcInstance().getTeam())
+				else if (activePlayer.getTeamType() == activeTarget.getTeamType())
 				{
 					return true;
 				}
@@ -585,12 +675,12 @@ public abstract class AbstractEvent
 	}
 	
 	/**
-	 * @param player
+	 * @param ph
 	 * @param target
 	 * @param skill
 	 * @return true -> only in the event that an item not want that continue its normal progress.
 	 */
-	public abstract boolean onUseSkill(PlayerHolder player, L2Character target, Skill skill);
+	public abstract boolean onUseSkill(PlayerHolder ph, L2Character target, Skill skill);
 	
 	/**
 	 * @param player
@@ -647,7 +737,7 @@ public abstract class AbstractEvent
 		}
 	}
 	
-	public abstract void onLogout(PlayerHolder player);
+	public abstract void onLogout(PlayerHolder ph);
 	
 	// VARIOUS METHODS. -------------------------------------------------------------------------------- //
 	
@@ -656,24 +746,28 @@ public abstract class AbstractEvent
 	 */
 	protected void teleportAllPlayers(int radius)
 	{
-		for (PlayerHolder player : getAllEventPlayers())
+		for (PlayerHolder ph : getAllEventPlayers())
 		{
-			revivePlayer(player);
-			teleportPlayer(player, radius);
+			revivePlayer(ph);
+			teleportPlayer(ph, radius);
 		}
 	}
 	
 	/**
 	 * Teleport to a specific player to its original location within the event.
-	 * @param player
+	 * @param ph
 	 */
-	protected void teleportPlayer(PlayerHolder player, int radius)
+	protected void teleportPlayer(PlayerHolder ph, int radius)
 	{
 		// get the spawn defined at the start of each event
-		Location loc = getTeamSpawn(player.getPcInstance().getTeam());
-		// teleport to character
-		player.getPcInstance().teleToLocation(loc.getX() + Rnd.get(-radius, radius), loc.getY() + Rnd.get(-radius, radius), loc.getZ(), loc.getHeading(), player.getDinamicInstanceId());
+		Location loc = getTeamSpawn(ph.getTeamType());
 		
+		loc.setInstanceId(ph.getDinamicInstanceId());
+		loc.setX(loc.getX() + Rnd.get(-radius, radius));
+		loc.setY(loc.getY() + Rnd.get(-radius, radius));
+		
+		// teleport to character
+		ph.getPcInstance().teleToLocation(loc, false);
 	}
 	
 	/**
@@ -690,27 +784,27 @@ public abstract class AbstractEvent
 	 */
 	public void prepareToStart()
 	{
-		for (PlayerHolder player : getAllEventPlayers())
+		for (PlayerHolder ph : getAllEventPlayers())
 		{
 			// Cancel target
-			player.getPcInstance().setTarget(null);
+			ph.getPcInstance().setTarget(null);
 			// Cancel any attack in progress
-			player.getPcInstance().abortAttack();
-			player.getPcInstance().breakAttack();
+			ph.getPcInstance().abortAttack();
+			ph.getPcInstance().breakAttack();
 			// Cancel any skill in progress
-			player.getPcInstance().abortCast();
-			player.getPcInstance().breakCast();
+			ph.getPcInstance().abortCast();
+			ph.getPcInstance().breakCast();
 			// Cancel all character effects
-			player.getPcInstance().stopAllEffects();
+			ph.getPcInstance().stopAllEffects();
 			
-			if (player.getPcInstance().getSummon() != null)
+			if (ph.getPcInstance().getSummon() != null)
 			{
-				player.getPcInstance().getSummon().stopAllEffects();
-				player.getPcInstance().getSummon().unSummon(player.getPcInstance());
+				ph.getPcInstance().getSummon().stopAllEffects();
+				ph.getPcInstance().getSummon().unSummon(ph.getPcInstance());
 			}
 			
 			// Cancel all character cubics
-			for (L2CubicInstance cubic : player.getPcInstance().getCubics().values())
+			for (L2CubicInstance cubic : ph.getPcInstance().getCubics().values())
 			{
 				cubic.cancelDisappear();
 			}
@@ -727,9 +821,9 @@ public abstract class AbstractEvent
 	 */
 	public void prepareToFight()
 	{
-		for (PlayerHolder player : getAllEventPlayers())
+		for (PlayerHolder ph : getAllEventPlayers())
 		{
-			giveBuffPlayer(player.getPcInstance());
+			giveBuffPlayer(ph.getPcInstance());
 		}
 	}
 	
@@ -749,33 +843,31 @@ public abstract class AbstractEvent
 	{
 		stopAllPendingRevive();
 		
-		for (PlayerHolder player : getAllEventPlayers())
+		for (PlayerHolder ph : getAllEventPlayers())
 		{
 			// Cancel target
-			player.getPcInstance().setTarget(null);
+			ph.getPcInstance().setTarget(null);
 			// Cancel any attack in progress
-			player.getPcInstance().abortAttack();
-			player.getPcInstance().breakAttack();
+			ph.getPcInstance().abortAttack();
+			ph.getPcInstance().breakAttack();
 			// Cancel any skill in progress<
-			player.getPcInstance().abortCast();
-			player.getPcInstance().breakCast();
+			ph.getPcInstance().abortCast();
+			ph.getPcInstance().breakCast();
 			// Cancel all effects
-			player.getPcInstance().stopAllEffects();
+			ph.getPcInstance().stopAllEffects();
 			// Recover the title and color of the participants.
-			player.recoverOriginalColorTitle();
-			player.recoverOriginalTitle();
-			// We canceled the Team
-			player.getPcInstance().setTeam(Team.NONE);
+			ph.recoverOriginalColorTitle();
+			ph.recoverOriginalTitle();
 			// It out of the world created for the event
 			
-			InstanceWorld world = InstanceManager.getInstance().getPlayerWorld(player.getPcInstance());
-			world.removeAllowed(player.getPcInstance().getObjectId());
-			player.getPcInstance().setInstanceId(0);
+			InstanceWorld world = InstanceManager.getInstance().getPlayerWorld(ph.getPcInstance());
+			world.removeAllowed(ph.getPcInstance().getObjectId());
+			ph.getPcInstance().setInstanceId(0);
 			
-			revivePlayer(player);
+			revivePlayer(ph);
 			
 			// FIXME We send a character to their actual instance and turn
-			player.getPcInstance().teleToLocation(83437, 148634, -3403, 0, 0);// GIRAN CENTER
+			ph.getPcInstance().teleToLocation(83437, 148634, -3403, 0, 0);// GIRAN CENTER
 		}
 		_taskControlTime.cancel(true);
 	}
@@ -801,17 +893,13 @@ public abstract class AbstractEvent
 		{
 			EventUtil.sendEventMessage(player, MessageData.getInstance().getMsgByLang(player.getPcInstance(), "revive_in", true).replace("%time%", time + ""));
 			
-			_revivePending.add(ThreadPoolManager.getInstance().scheduleGeneral(new Runnable()
+			_revivePending.add(ThreadPoolManager.getInstance().scheduleGeneral(() ->
 			{
-				@Override
-				public void run()
-				{
-					revivePlayer(player);
-					giveBuffPlayer(player.getPcInstance());
-					teleportPlayer(player, radiusTeleport);
-				}
+				revivePlayer(player);
+				giveBuffPlayer(player.getPcInstance());
+				teleportPlayer(player, radiusTeleport);
 				
-			}, time * 1000));
+			} , time * 1000));
 		}
 		catch (Exception e)
 		{
@@ -828,18 +916,18 @@ public abstract class AbstractEvent
 	 * <li>Cancel the DecayTask.</li><br>
 	 * <li>Revive the character.</li><br>
 	 * <li>Set max cp, hp and mp.</li><br>
-	 * @param player
+	 * @param ph
 	 */
-	protected void revivePlayer(PlayerHolder player)
+	protected void revivePlayer(PlayerHolder ph)
 	{
-		if (player.getPcInstance().isDead())
+		if (ph.getPcInstance().isDead())
 		{
-			DecayTaskManager.getInstance().cancel(player.getPcInstance());
-			player.getPcInstance().doRevive();
+			DecayTaskManager.getInstance().cancel(ph.getPcInstance());
+			ph.getPcInstance().doRevive();
 			// heal to max
-			player.getPcInstance().setCurrentCp(player.getPcInstance().getMaxCp());
-			player.getPcInstance().setCurrentHp(player.getPcInstance().getMaxHp());
-			player.getPcInstance().setCurrentMp(player.getPcInstance().getMaxMp());
+			ph.getPcInstance().setCurrentCp(ph.getPcInstance().getMaxCp());
+			ph.getPcInstance().setCurrentHp(ph.getPcInstance().getMaxHp());
+			ph.getPcInstance().setCurrentMp(ph.getPcInstance().getMaxMp());
 		}
 	}
 	
@@ -900,17 +988,10 @@ public abstract class AbstractEvent
 		time += ConfigData.getInstance().EVENT_DURATION * 60 * 1000;
 		addScheduledEvent(new ChangeToEndEvent(time));
 		
-		_taskControlTime = ThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(new ControlTimeTask(), 10 * 1000, 1000);
-	}
-	
-	private class ControlTimeTask implements Runnable
-	{
-		@Override
-		public void run()
+		_taskControlTime = ThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(() ->
 		{
 			_currentTime += 1000;
 			checkScheduledEvents();
-		}
-		
+		} , 10 * 1000, 1000);
 	}
 }
