@@ -27,16 +27,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
-import net.sf.eventengine.ai.NpcManager;
-import net.sf.eventengine.datatables.BuffListData;
-import net.sf.eventengine.datatables.ConfigData;
-import net.sf.eventengine.datatables.EventData;
-import net.sf.eventengine.datatables.MessageData;
-import net.sf.eventengine.enums.EventEngineState;
-import net.sf.eventengine.events.handler.AbstractEvent;
-import net.sf.eventengine.events.holders.PlayerHolder;
-import net.sf.eventengine.task.EventEngineTask;
-
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.instancemanager.InstanceManager;
 import com.l2jserver.gameserver.model.actor.L2Character;
@@ -48,6 +38,16 @@ import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
 import com.l2jserver.gameserver.network.serverpackets.CreatureSay;
 import com.l2jserver.util.Rnd;
+
+import net.sf.eventengine.ai.NpcManager;
+import net.sf.eventengine.datatables.BuffListData;
+import net.sf.eventengine.datatables.ConfigData;
+import net.sf.eventengine.datatables.EventData;
+import net.sf.eventengine.datatables.MessageData;
+import net.sf.eventengine.enums.EventEngineState;
+import net.sf.eventengine.events.handler.AbstractEvent;
+import net.sf.eventengine.events.holders.PlayerHolder;
+import net.sf.eventengine.task.EventEngineTask;
 
 /**
  * @author fissban
@@ -230,13 +230,13 @@ public class EventEngineManager
 	 * @param player
 	 * @param target
 	 */
-	public void listenerOnInteract(L2PcInstance player, L2Npc target)
+	public boolean listenerOnInteract(L2PcInstance player, L2Npc target)
 	{
 		if (_currentEvent != null)
 		{
 			try
 			{
-				_currentEvent.listenerOnInteract(player, target);
+				return _currentEvent.listenerOnInteract(player, target);
 			}
 			catch (Exception e)
 			{
@@ -244,6 +244,8 @@ public class EventEngineManager
 				e.printStackTrace();
 			}
 		}
+		
+		return true;
 	}
 	
 	/**
@@ -552,7 +554,8 @@ public class EventEngineManager
 	
 	/**
 	 * Obtenemos si la cantidad de jugadores registrados es 0
-	 * @return <li>True - > no hay jugadores registrados.</li><br>
+	 * @return
+	 * 		<li>True - > no hay jugadores registrados.</li><br>
 	 *         <li>False - > hay al menos un jugador registrado.</li><br>
 	 */
 	public boolean isEmptyRegisteredPlayers()
@@ -562,7 +565,8 @@ public class EventEngineManager
 	
 	/**
 	 * Obtenemos si el jugador se encuentra registrado
-	 * @return <li>True - > Está registrado.</li><br>
+	 * @return
+	 * 		<li>True - > Está registrado.</li><br>
 	 *         <li>False - > No está registrado.</li><br>
 	 */
 	public boolean isRegistered(L2PcInstance player)
@@ -573,7 +577,8 @@ public class EventEngineManager
 	/**
 	 * Agregamos un player al registro
 	 * @param player
-	 * @return <li>True - > si el registro es exitoso.</li><br>
+	 * @return
+	 * 		<li>True - > si el registro es exitoso.</li><br>
 	 *         <li>False - > si el player ya estaba registrado.</li><br>
 	 */
 	public boolean registerPlayer(L2PcInstance player)
@@ -584,7 +589,8 @@ public class EventEngineManager
 	/**
 	 * Eliminamos un player del registro
 	 * @param player
-	 * @return <li>True - > si el player estaba registrado.</li><br>
+	 * @return
+	 * 		<li>True - > si el player estaba registrado.</li><br>
 	 *         <li>False - > si el player no estaba registrado.</li><br>
 	 */
 	public boolean unRegisterPlayer(L2PcInstance player)

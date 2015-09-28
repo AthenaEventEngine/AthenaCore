@@ -169,8 +169,8 @@ public class ConfigData
 		settings = new EventPropertiesParser(CTF_CONFIG);
 		CTF_EVENT_ENABLED = settings.getBoolean("EventEnabled", false);
 		CTF_INSTANCE_FILE = settings.getString("EventInstanceFile", "EventEngine.xml");
-		CTF_NPC_FLAG_ID = settings.getInt("EventBlueFlagNpcId", 36601);
-		CTF_NPC_HOLDER_ID = settings.getInt("EventBlueHolderNpcId", 36603);
+		CTF_NPC_FLAG_ID = settings.getInt("EventFlagNpcId", 36601);
+		CTF_NPC_HOLDER_ID = settings.getInt("EventHolderNpcId", 36603);
 		CTF_REWARD_PLAYER_WIN = settings.getItemHolderList("EventReward");
 		CTF_REWARD_KILLER_ENABLED = settings.getBoolean("EventRewardKillEnabled", false);
 		CTF_REWARD_KILLER = settings.getItemHolderList("EventRewardKill");

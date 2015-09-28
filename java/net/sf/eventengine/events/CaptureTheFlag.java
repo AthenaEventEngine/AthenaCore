@@ -23,6 +23,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import net.sf.eventengine.datatables.ConfigData;
+import net.sf.eventengine.datatables.MessageData;
+import net.sf.eventengine.enums.CollectionTarget;
+import net.sf.eventengine.enums.EventState;
+import net.sf.eventengine.enums.TeamType;
+import net.sf.eventengine.events.handler.AbstractEvent;
+import net.sf.eventengine.events.holders.PlayerHolder;
+import net.sf.eventengine.events.holders.TeamHolder;
+import net.sf.eventengine.events.schedules.AnnounceNearEndEvent;
+import net.sf.eventengine.util.EventUtil;
+import net.sf.eventengine.util.SortUtil;
+
 import com.l2jserver.gameserver.datatables.ItemTable;
 import com.l2jserver.gameserver.enums.Team;
 import com.l2jserver.gameserver.model.actor.L2Character;
@@ -35,18 +47,6 @@ import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
 import com.l2jserver.gameserver.network.serverpackets.MagicSkillUse;
-
-import net.sf.eventengine.datatables.ConfigData;
-import net.sf.eventengine.datatables.MessageData;
-import net.sf.eventengine.enums.CollectionTarget;
-import net.sf.eventengine.enums.EventState;
-import net.sf.eventengine.enums.TeamType;
-import net.sf.eventengine.events.handler.AbstractEvent;
-import net.sf.eventengine.events.holders.PlayerHolder;
-import net.sf.eventengine.events.holders.TeamHolder;
-import net.sf.eventengine.events.schedules.AnnounceNearEndEvent;
-import net.sf.eventengine.util.EventUtil;
-import net.sf.eventengine.util.SortUtil;
 
 /**
  * @author fissban
@@ -92,12 +92,13 @@ public class CaptureTheFlag extends AbstractEvent
 				spawnFlagsAndHolders();
 				teleportAllPlayers(RADIUS_SPAWN_PLAYER);
 				break;
-				
+			
 			case FIGHT:
 				prepareToFight(); // General Method
 				break;
-				
+			
 			case END:
+				clearFlags();
 				giveRewardsTeams();
 				prepareToEnd(); // General Method
 				break;
@@ -105,13 +106,13 @@ public class CaptureTheFlag extends AbstractEvent
 	}
 	
 	@Override
-	public void onInteract(PlayerHolder ph, L2Npc npc)
+	public boolean onInteract(PlayerHolder ph, L2Npc npc)
 	{
 		if (npc.getId() == FLAG)
 		{
 			if (hasFlag(ph))
 			{
-				return;
+				return false;
 			}
 			
 			TeamType flagTeam = _flagSpawn.get(npc);
@@ -155,6 +156,8 @@ public class CaptureTheFlag extends AbstractEvent
 				}
 			}
 		}
+		
+		return false;
 	}
 	
 	@Override
@@ -332,10 +335,6 @@ public class CaptureTheFlag extends AbstractEvent
 			{
 				EventUtil.announceTo(Say2.BATTLEFIELD, "team_winner", "%holder%", team.getTeamType().name(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
 			}
-			else
-			{
-				EventUtil.announceTo(Say2.BATTLEFIELD, "teams_tie", "%holder%", team.getTeamType().name(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
-			}
 		}
 	}
 	
@@ -411,5 +410,17 @@ public class CaptureTheFlag extends AbstractEvent
 		map.put("%holder%", ph.getPcInstance().getName());
 		map.put("%flag%", th.getTeamType().name());
 		EventUtil.announceTo(Say2.BATTLEFIELD, "player_dropped_flag", map, CollectionTarget.ALL_PLAYERS_IN_EVENT);
+	}
+	
+	/**
+	 * Remove all the flags equipped
+	 */
+	private void clearFlags()
+	{
+		for (PlayerHolder ph : _flagHasPlayer.keySet())
+		{
+			unequiFlag(ph);
+		}
+		_flagHasPlayer.clear();
 	}
 }

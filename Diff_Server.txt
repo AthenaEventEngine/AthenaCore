@@ -29,9 +29,15 @@ index 05e3150..0b47f01 100644
 +	<classpathentry kind="lib" path="dist/libs/L2J_EventEngine.jar"/>
 +	<classpathentry kind="output" path="bin"/>
 +</classpath>
+diff --git a/L2J_Server/dist/libs/._L2J_GeoDriver.jar3291838113424536152.tmp b/L2J_Server/dist/libs/._L2J_GeoDriver.jar3291838113424536152.tmp
+new file mode 100644
+index 0000000..ae15f5e
+--- /dev/null
++++ b/L2J_Server/dist/libs/._L2J_GeoDriver.jar3291838113424536152.tmp
+Binary files differ
 diff --git a/L2J_Server/dist/libs/L2J_EventEngine.jar b/L2J_Server/dist/libs/L2J_EventEngine.jar
 new file mode 100644
-index 0000000..223838b
+index 0000000..de6afba
 --- /dev/null
 +++ b/L2J_Server/dist/libs/L2J_EventEngine.jar
 Binary files differ
@@ -137,7 +143,7 @@ index cbe50df..12fc0f3 100644
  		if ((returnBack != null) && returnBack.terminate())
  		{
 diff --git a/L2J_Server/java/com/l2jserver/gameserver/model/actor/instance/L2PcInstance.java b/L2J_Server/java/com/l2jserver/gameserver/model/actor/instance/L2PcInstance.java
-index ebe0026..30bc90d 100644
+index ebe0026..978a3e2 100644
 --- a/L2J_Server/java/com/l2jserver/gameserver/model/actor/instance/L2PcInstance.java
 +++ b/L2J_Server/java/com/l2jserver/gameserver/model/actor/instance/L2PcInstance.java
 @@ -48,6 +48,8 @@
@@ -176,28 +182,18 @@ index ebe0026..30bc90d 100644
  		{
  			return;
  		}
-@@ -8254,6 +8258,12 @@
- 				return true;
- 			}
+@@ -8256,6 +8260,12 @@
  			return false;
-+		}
-+		
+ 		}
+ 		
 +		// L2J EventEngine
 +		if (EventEngineManager.getInstance().isPlayerInEvent(this))
 +		{
 +			return true;
- 		}
- 		
- 		// Check if the attacker is in TvT and TvT is started
-@@ -11430,6 +11440,9 @@
- 			_log.log(Level.SEVERE, "deleteMe()", e);
- 		}
- 		
-+		// L2J EventEngine
-+		EventEngineManager.getInstance().listenerOnLogout(this);
++		}
 +		
- 		// TvT Event removal
- 		try
+ 		// Check if the attacker is in TvT and TvT is started
+ 		if (isOnEvent())
  		{
 diff --git a/L2J_Server/java/com/l2jserver/gameserver/model/olympiad/AbstractOlympiadGame.java b/L2J_Server/java/com/l2jserver/gameserver/model/olympiad/AbstractOlympiadGame.java
 index 3f038d0..a353c38 100644
@@ -247,6 +243,52 @@ index 3d3da22..f1b3a77 100644
 +		
  		SevenSigns.getInstance().sendCurrentPeriodMsg(activeChar);
  		AnnouncementsTable.getInstance().showAnnouncements(activeChar);
+ 		
+diff --git a/L2J_Server/java/com/l2jserver/gameserver/network/clientpackets/Logout.java b/L2J_Server/java/com/l2jserver/gameserver/network/clientpackets/Logout.java
+index 460d77c..94c89b8 100644
+--- a/L2J_Server/java/com/l2jserver/gameserver/network/clientpackets/Logout.java
++++ b/L2J_Server/java/com/l2jserver/gameserver/network/clientpackets/Logout.java
+@@ -22,6 +22,8 @@
+ import java.util.logging.LogRecord;
+ import java.util.logging.Logger;
+ 
++import net.sf.eventengine.EventEngineManager;
++
+ import com.l2jserver.Config;
+ import com.l2jserver.gameserver.SevenSignsFestival;
+ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+@@ -125,6 +127,9 @@
+ 		});
+ 		_logAccounting.log(record);
+ 		
++		// L2J EventEngine
++		EventEngineManager.getInstance().listenerOnLogout(player);
++		
+ 		player.logout();
+ 	}
+ 	
+diff --git a/L2J_Server/java/com/l2jserver/gameserver/network/clientpackets/RequestRestart.java b/L2J_Server/java/com/l2jserver/gameserver/network/clientpackets/RequestRestart.java
+index 7ea3781..f0b4dc9 100644
+--- a/L2J_Server/java/com/l2jserver/gameserver/network/clientpackets/RequestRestart.java
++++ b/L2J_Server/java/com/l2jserver/gameserver/network/clientpackets/RequestRestart.java
+@@ -22,6 +22,8 @@
+ import java.util.logging.LogRecord;
+ import java.util.logging.Logger;
+ 
++import net.sf.eventengine.EventEngineManager;
++
+ import com.l2jserver.Config;
+ import com.l2jserver.gameserver.SevenSignsFestival;
+ import com.l2jserver.gameserver.enums.PrivateStoreType;
+@@ -130,6 +132,9 @@
+ 		});
+ 		_logAccounting.log(record);
+ 		
++		// L2J EventEngine
++		EventEngineManager.getInstance().listenerOnLogout(player);
++		
+ 		// detach the client from the char so that the connection isnt closed in the deleteMe
+ 		player.setClient(null);
  		
 diff --git a/L2J_Server/java/com/l2jserver/gameserver/network/clientpackets/UseItem.java b/L2J_Server/java/com/l2jserver/gameserver/network/clientpackets/UseItem.java
 index 640e695..8267663 100644

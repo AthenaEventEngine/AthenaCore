@@ -18,10 +18,18 @@
  */
 package net.sf.eventengine.events;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import com.l2jserver.gameserver.ThreadPoolManager;
+import com.l2jserver.gameserver.model.actor.L2Character;
+import com.l2jserver.gameserver.model.actor.L2Npc;
+import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
+import com.l2jserver.gameserver.model.items.L2Item;
+import com.l2jserver.gameserver.model.skills.Skill;
 
 import net.sf.eventengine.EventEngineManager;
 import net.sf.eventengine.datatables.ConfigData;
@@ -34,13 +42,6 @@ import net.sf.eventengine.events.holders.PlayerHolder;
 import net.sf.eventengine.events.schedules.AnnounceNearEndEvent;
 import net.sf.eventengine.util.EventUtil;
 import net.sf.eventengine.util.SortUtil;
-
-import com.l2jserver.gameserver.ThreadPoolManager;
-import com.l2jserver.gameserver.model.actor.L2Character;
-import com.l2jserver.gameserver.model.actor.L2Npc;
-import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
-import com.l2jserver.gameserver.model.items.L2Item;
-import com.l2jserver.gameserver.model.skills.Skill;
 
 /**
  * @author fissban
@@ -73,11 +74,11 @@ public class OneVsOne extends AbstractEvent
 				createTeams(ConfigData.getInstance().OVO_COUNT_TEAM);
 				teleportAllPlayers(RADIUS_SPAWN_PLAYER);
 				break;
-			
+				
 			case FIGHT:
 				prepareToFight(); // General Method
 				break;
-			
+				
 			case END:
 				giveRewardsTeams();
 				prepareToEnd(); // General Method
@@ -156,9 +157,9 @@ public class OneVsOne extends AbstractEvent
 	}
 	
 	@Override
-	public void onInteract(PlayerHolder ph, L2Npc npc)
+	public boolean onInteract(PlayerHolder ph, L2Npc npc)
 	{
-		//
+		return true;
 	}
 	
 	@Override
@@ -197,6 +198,8 @@ public class OneVsOne extends AbstractEvent
 		
 		Iterator<PlayerHolder> players = getAllEventPlayers().iterator();
 		
+		List<PlayerHolder> phRemove = new ArrayList<>();
+		
 		while (players.hasNext())
 		{
 			// removemos personajes hasta obtener la cantidad justa para realizar eventos 1vs1,1vs1vs1
@@ -204,7 +207,7 @@ public class OneVsOne extends AbstractEvent
 			{
 				leaveOutParticipant--;
 				// removemos al personaje impar del evento.
-				getAllEventPlayers().remove(players.next());
+				phRemove.add(players.next());
 				// TODO falta agregar un mensaje avisando de la accion.
 			}
 			else
@@ -228,6 +231,11 @@ public class OneVsOne extends AbstractEvent
 				
 				_instancesTeams.put(world.getInstanceId(), teams);
 			}
+		}
+		
+		for (PlayerHolder ph : phRemove)
+		{
+			getAllEventPlayers().remove(ph);
 		}
 	}
 	
@@ -277,7 +285,7 @@ public class OneVsOne extends AbstractEvent
 				}
 			}
 			
-		}, TIME_BETWEEN_FIGHT * 1000);
+		} , TIME_BETWEEN_FIGHT * 1000);
 	}
 	
 	/**
