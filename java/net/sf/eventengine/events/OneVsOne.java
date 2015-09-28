@@ -157,9 +157,9 @@ public class OneVsOne extends AbstractEvent
 	}
 	
 	@Override
-	public void onInteract(PlayerHolder ph, L2Npc npc)
+	public boolean onInteract(PlayerHolder ph, L2Npc npc)
 	{
-		//
+		return true;
 	}
 	
 	@Override

@@ -105,13 +105,13 @@ public class CaptureTheFlag extends AbstractEvent
 	}
 	
 	@Override
-	public void onInteract(PlayerHolder ph, L2Npc npc)
+	public boolean onInteract(PlayerHolder ph, L2Npc npc)
 	{
 		if (npc.getId() == FLAG)
 		{
 			if (hasFlag(ph))
 			{
-				return;
+				return false;
 			}
 			
 			TeamType flagTeam = _flagSpawn.get(npc);
@@ -155,6 +155,8 @@ public class CaptureTheFlag extends AbstractEvent
 				}
 			}
 		}
+		
+		return false;
 	}
 	
 	@Override

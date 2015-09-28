@@ -20,6 +20,13 @@ package net.sf.eventengine.events;
 
 import java.util.List;
 
+import com.l2jserver.gameserver.model.actor.L2Character;
+import com.l2jserver.gameserver.model.actor.L2Npc;
+import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
+import com.l2jserver.gameserver.model.items.L2Item;
+import com.l2jserver.gameserver.model.skills.Skill;
+import com.l2jserver.gameserver.network.clientpackets.Say2;
+
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.CollectionTarget;
@@ -31,13 +38,6 @@ import net.sf.eventengine.events.holders.TeamHolder;
 import net.sf.eventengine.events.schedules.AnnounceNearEndEvent;
 import net.sf.eventengine.util.EventUtil;
 import net.sf.eventengine.util.SortUtil;
-
-import com.l2jserver.gameserver.model.actor.L2Character;
-import com.l2jserver.gameserver.model.actor.L2Npc;
-import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
-import com.l2jserver.gameserver.model.items.L2Item;
-import com.l2jserver.gameserver.model.skills.Skill;
-import com.l2jserver.gameserver.network.clientpackets.Say2;
 
 /**
  * @author fissban
@@ -69,12 +69,12 @@ public class TeamVsTeam extends AbstractEvent
 				createTeams(ConfigData.getInstance().TVT_COUNT_TEAM);
 				teleportAllPlayers(RADIUS_SPAWN_PLAYER);
 				break;
-			
+				
 			case FIGHT:
 				prepareToFight(); // General Method
 				showPoint();
 				break;
-			
+				
 			case END:
 				// showResult();
 				giveRewardsTeams();
@@ -137,9 +137,9 @@ public class TeamVsTeam extends AbstractEvent
 	}
 	
 	@Override
-	public void onInteract(PlayerHolder ph, L2Npc npc)
+	public boolean onInteract(PlayerHolder ph, L2Npc npc)
 	{
-		return;
+		return true;
 	}
 	
 	@Override

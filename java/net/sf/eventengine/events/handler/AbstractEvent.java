@@ -518,24 +518,25 @@ public abstract class AbstractEvent
 	// LISTENERS ------------------------------------------------------------------------------------ //
 	
 	/**
+	 * Si se retorna "false" no se mostrara ningun html
 	 * @param player
 	 * @param target
 	 */
-	public void listenerOnInteract(L2PcInstance player, L2Npc target)
+	public boolean listenerOnInteract(L2PcInstance player, L2Npc target)
 	{
 		if (!isPlayableInEvent(player) && !isNpcInEvent(target))
 		{
-			return;
+			return true;
 		}
 		
-		onInteract(getEventPlayer(player), target);
+		return onInteract(getEventPlayer(player), target);
 	}
 	
 	/**
 	 * @param ph
 	 * @param npc
 	 */
-	public abstract void onInteract(PlayerHolder ph, L2Npc npc);
+	public abstract boolean onInteract(PlayerHolder ph, L2Npc npc);
 	
 	/**
 	 * @param playable
