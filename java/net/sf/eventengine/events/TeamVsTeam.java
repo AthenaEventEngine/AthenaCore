@@ -220,10 +220,6 @@ public class TeamVsTeam extends AbstractEvent
 			{
 				EventUtil.announceTo(Say2.BATTLEFIELD, "team_winner", "%holder%", team.getTeamType().name(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
 			}
-			else
-			{
-				EventUtil.announceTo(Say2.BATTLEFIELD, "teams_tie", "%holder%", team.getTeamType().name(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
-			}
 		}
 	}
 	

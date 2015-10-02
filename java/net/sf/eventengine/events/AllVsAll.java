@@ -212,7 +212,7 @@ public class AllVsAll extends AbstractEvent
 		
 		for (PlayerHolder ph : listOrdered)
 		{
-			winners += ph.getPcInstance().getName() + " // ";
+			winners += ph.getPcInstance().getName();
 			giveItems(ph, ConfigData.getInstance().AVA_REWARD_PLAYER_WIN);
 		}
 		
