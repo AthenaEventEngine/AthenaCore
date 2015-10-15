@@ -98,9 +98,21 @@ public class CaptureTheFlag extends AbstractEvent
 				break;
 				
 			case END:
+				removeFlagAllPlayers();
 				giveRewardsTeams();
 				prepareToEnd(); // General Method
 				break;
+		}
+	}
+	
+	private void removeFlagAllPlayers()
+	{
+		for (PlayerHolder ph : getAllEventPlayers())
+		{
+			if (hasFlag(ph))
+			{
+				unequiFlag(ph);
+			}
 		}
 	}
 	
