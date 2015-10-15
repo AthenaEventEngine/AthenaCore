@@ -21,19 +21,19 @@ package net.sf.eventengine.ai;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import net.sf.eventengine.EventEngineManager;
-import net.sf.eventengine.datatables.BuffListData;
-import net.sf.eventengine.datatables.ConfigData;
-import net.sf.eventengine.datatables.EventData;
-import net.sf.eventengine.datatables.MessageData;
-import net.sf.eventengine.events.handler.AbstractEvent;
-
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
 import com.l2jserver.util.StringUtil;
+
+import net.sf.eventengine.EventEngineManager;
+import net.sf.eventengine.datatables.BuffListData;
+import net.sf.eventengine.datatables.ConfigData;
+import net.sf.eventengine.datatables.EventData;
+import net.sf.eventengine.datatables.MessageData;
+import net.sf.eventengine.events.handler.AbstractEvent;
 
 /**
  * @author swarlog, Zephyr, fissban
@@ -68,14 +68,14 @@ public class NpcManager extends Quest
 			case "index":
 				sendHtmlIndex(player);
 				break;
-			
+				
 			case "engine":
 				final NpcHtmlMessage html = new NpcHtmlMessage();
 				html.setFile(player.getHtmlPrefix(), "data/html/events/event_engine.htm");
 				html.replace("%buttonMain%", MessageData.getInstance().getMsgByLang(player, "button_main", false));
 				player.sendPacket(html);
 				break;
-			
+				
 			case "vote":
 				// Add vote event
 				Class<? extends AbstractEvent> type = EventData.getInstance().getEvent(st.nextToken());
@@ -86,14 +86,14 @@ public class NpcManager extends Quest
 				}
 				sendHtmlIndex(player);
 				break;
-			
+				
 			case "info":
 				String eventName = st.nextToken();
 				sendHtmlInfo(player, eventName);
 				break;
-			
+				
 			case "register":
-				if (EventEngineManager.getInstance().registerPlayer(player))
+				if (!EventEngineManager.getInstance().isRegistered(player))
 				{
 					// Check for register
 					if (player.getLevel() < ConfigData.getInstance().MIN_LVL_IN_EVENT)
@@ -110,6 +110,7 @@ public class NpcManager extends Quest
 					}
 					else
 					{
+						EventEngineManager.getInstance().registerPlayer(player);
 						player.sendMessage(MessageData.getInstance().getMsgByLang(player, "registering_registered", true));
 					}
 				}
@@ -120,7 +121,7 @@ public class NpcManager extends Quest
 				
 				sendHtmlIndex(player);
 				break;
-			
+				
 			case "unregister":
 				if (EventEngineManager.getInstance().isOpenRegister())
 				{
@@ -140,12 +141,12 @@ public class NpcManager extends Quest
 				
 				sendHtmlIndex(player);
 				break;
-			
+				
 			// Multi-Language System menu
 			case "menulang":
 				sendHtmlLang(player);
 				break;
-			
+				
 			// Multi-Language System set language
 			case "setlang":
 				String lang = st.nextToken();
@@ -153,7 +154,7 @@ public class NpcManager extends Quest
 				player.sendMessage(MessageData.getInstance().getMsgByLang(player, "lang_current_successfully", false) + " " + lang);
 				sendHtmlIndex(player);
 				break;
-			
+				
 			case "buffs":
 				int page = 1;
 				
