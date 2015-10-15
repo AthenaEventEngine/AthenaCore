@@ -18,26 +18,23 @@
  */
 package net.sf.eventengine.events;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import com.l2jserver.gameserver.enums.Team;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 import com.l2jserver.gameserver.model.items.L2Item;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
-import com.l2jserver.util.Rnd;
 
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.CollectionTarget;
 import net.sf.eventengine.enums.EventState;
-import net.sf.eventengine.enums.PlayerColorType;
+import net.sf.eventengine.enums.TeamType;
+import net.sf.eventengine.events.handler.AbstractEvent;
+import net.sf.eventengine.events.holders.PlayerHolder;
 import net.sf.eventengine.events.schedules.AnnounceNearEndEvent;
-import net.sf.eventengine.handler.AbstractEvent;
-import net.sf.eventengine.holder.PlayerHolder;
 import net.sf.eventengine.util.EventUtil;
 import net.sf.eventengine.util.SortUtil;
 
@@ -47,16 +44,15 @@ import net.sf.eventengine.util.SortUtil;
 public class AllVsAll extends AbstractEvent
 {
 	// Radius spawn
-	private static final int RADIUS_SPAWN_PLAYER = 150;
+	private static final int RADIUS_SPAWN_PLAYER = 100;
 	// Time for resurrection
 	private static final int TIME_RES_PLAYER = 10;
 	
 	public AllVsAll()
 	{
 		super();
+		// Definimos la instancia en que se ejecutara el evento.
 		setInstanceFile(ConfigData.getInstance().AVA_INSTANCE_FILE);
-		// We define the main spawn of equipment
-		setTeamSpawn(Team.NONE, ConfigData.getInstance().AVA_COORDINATES_PLAYER);
 		// Announce near end event
 		int timeLeft = (ConfigData.getInstance().EVENT_DURATION * 60 * 1000) - (ConfigData.getInstance().EVENT_TEXT_TIME_FOR_END * 1000);
 		addScheduledEvent(new AnnounceNearEndEvent(timeLeft));
@@ -69,7 +65,7 @@ public class AllVsAll extends AbstractEvent
 		{
 			case START:
 				prepareToStart(); // General Method
-				createTeam();
+				createTeam(1);
 				teleportAllPlayers(RADIUS_SPAWN_PLAYER);
 				break;
 				
@@ -87,76 +83,76 @@ public class AllVsAll extends AbstractEvent
 	
 	// LISTENERS -----------------------------------------------------------------------
 	@Override
-	public void onKill(PlayerHolder player, L2Character target)
+	public void onKill(PlayerHolder ph, L2Character target)
 	{
 		// Increase the amount of one character kills.
-		player.increaseKills();
-		updateTitle(player);
+		ph.increaseKills();
+		updateTitle(ph);
 		
 		// Reward for kills
 		if (ConfigData.getInstance().AVA_REWARD_KILLER_ENABLED)
 		{
-			giveItems(player, ConfigData.getInstance().AVA_REWARD_KILLER);
+			giveItems(ph, ConfigData.getInstance().AVA_REWARD_KILLER);
 		}
 		
 		// Reward pvp for kills
 		if (ConfigData.getInstance().AVA_REWARD_PVP_KILLER_ENABLED)
 		{
-			player.getPcInstance().setPvpKills(player.getPcInstance().getPvpKills() + ConfigData.getInstance().AVA_REWARD_PVP_KILLER);
-			EventUtil.sendEventMessage(player, MessageData.getInstance().getMsgByLang(player.getPcInstance(), "reward_text_pvp", true).replace("%count%", ConfigData.getInstance().AVA_REWARD_PVP_KILLER + ""));
+			ph.getPcInstance().setPvpKills(ph.getPcInstance().getPvpKills() + ConfigData.getInstance().AVA_REWARD_PVP_KILLER);
+			EventUtil.sendEventMessage(ph, MessageData.getInstance().getMsgByLang(ph.getPcInstance(), "reward_text_pvp", true).replace("%count%", ConfigData.getInstance().AVA_REWARD_PVP_KILLER + ""));
 		}
 		
 		// Reward fame for kills
 		if (ConfigData.getInstance().AVA_REWARD_FAME_KILLER_ENABLED)
 		{
-			player.getPcInstance().setFame(player.getPcInstance().getFame() + ConfigData.getInstance().AVA_REWARD_FAME_KILLER);
-			EventUtil.sendEventMessage(player, MessageData.getInstance().getMsgByLang(player.getPcInstance(), "reward_text_fame", true).replace("%count%", ConfigData.getInstance().AVA_REWARD_FAME_KILLER + ""));
+			ph.getPcInstance().setFame(ph.getPcInstance().getFame() + ConfigData.getInstance().AVA_REWARD_FAME_KILLER);
+			EventUtil.sendEventMessage(ph, MessageData.getInstance().getMsgByLang(ph.getPcInstance(), "reward_text_fame", true).replace("%count%", ConfigData.getInstance().AVA_REWARD_FAME_KILLER + ""));
 		}
 		
 		// Message Kill
 		if (ConfigData.getInstance().EVENT_KILLER_MESSAGE)
 		{
-			EventUtil.messageKill(player, target);
+			EventUtil.messageKill(ph, target);
 		}
 	}
 	
 	@Override
-	public boolean onAttack(PlayerHolder player, L2Character target)
+	public boolean onAttack(PlayerHolder ph, L2Character target)
 	{
 		return false;
 	}
 	
 	@Override
-	public boolean onUseSkill(PlayerHolder player, L2Character target, Skill skill)
+	public boolean onUseSkill(PlayerHolder ph, L2Character target, Skill skill)
 	{
 		return false;
 	}
 	
 	@Override
-	public void onDeath(PlayerHolder player)
+	public void onDeath(PlayerHolder ph)
 	{
 		// We generated a task to revive the player
-		giveResurrectPlayer(player, TIME_RES_PLAYER, RADIUS_SPAWN_PLAYER);
+		giveResurrectPlayer(ph, TIME_RES_PLAYER, RADIUS_SPAWN_PLAYER);
 		// Increase the amount of one character deaths.
-		player.increaseDeaths();
+		ph.increaseDeaths();
 		// We update the title character
-		updateTitle(player);
+		updateTitle(ph);
 	}
 	
 	@Override
-	public void onInteract(PlayerHolder player, L2Npc npc)
+	public boolean onInteract(PlayerHolder ph, L2Npc npc)
 	{
-		return;
+		return true;
 	}
 	
 	@Override
-	public boolean onUseItem(PlayerHolder player, L2Item item)
+	public boolean onUseItem(PlayerHolder ph, L2Item item)
 	{
 		return false;
 	}
 	
 	@Override
-	public void onLogout(PlayerHolder player)
+	public void onLogout(PlayerHolder ph)
 	{
 		//
 	}
@@ -164,38 +160,45 @@ public class AllVsAll extends AbstractEvent
 	// VARIOUS METHODS ------------------------------------------------------------------
 	
 	/**
-	 * We create teams
+	 * We all players who are at the event and generate the teams
+	 * @param countTeams
 	 */
-	private void createTeam()
+	private void createTeam(int countTeams)
 	{
+		// Definimos la cantidad de teams que se requieren
+		setCountTeams(countTeams);
+		// We define each team spawns
+		setSpawnTeams(ConfigData.getInstance().AVA_COORDINATES_TEAM);
+		
 		// We create the instance and the world
 		InstanceWorld world = createNewInstanceWorld();
 		
-		for (PlayerHolder player : getAllEventPlayers())
+		// Obtenemos el team -> WHITE
+		TeamType team = getEnabledTeams()[0];
+		
+		for (PlayerHolder ph : getAllEventPlayers())
 		{
+			// Definimos el team del jugador
+			ph.setTeam(team);
 			// We add the character to the world and then be teleported
-			world.addAllowed(player.getPcInstance().getObjectId());
-			// Adjust the character team
-			player.getPcInstance().setTeam(Team.NONE);
+			world.addAllowed(ph.getPcInstance().getObjectId());
 			// Adjust the instance that owns the character
-			player.setDinamicInstanceId(world.getInstanceId());
-			// Adjust the color of the title
-			player.setNewColorTitle(PlayerColorType.values()[Rnd.get(PlayerColorType.values().length - 1)]);
+			ph.setDinamicInstanceId(world.getInstanceId());
 			// Update Title
-			updateTitle(player);
+			updateTitle(ph);
 		}
 	}
 	
 	/**
 	 * Update the title of a character depending on the number of deaths or kills have
-	 * @param player
+	 * @param ph
 	 */
-	private void updateTitle(PlayerHolder player)
+	private void updateTitle(PlayerHolder ph)
 	{
 		// Adjust the title character
-		player.setNewTitle("Kills " + player.getKills() + " | " + player.getDeaths() + " Death");
+		ph.setNewTitle("Kills " + ph.getKills() + " | " + ph.getDeaths() + " Death");
 		// We update the status of the character
-		player.getPcInstance().updateAndBroadcastStatus(2);
+		ph.getPcInstance().updateAndBroadcastStatus(2);
 	}
 	
 	/**
@@ -203,23 +206,14 @@ public class AllVsAll extends AbstractEvent
 	 */
 	public void giveRewardsTeams()
 	{
-		if (getAllEventPlayers().isEmpty())
-		{
-			return;
-		}
-		
-		// auxiliary list
-		List<PlayerHolder> playersInEvent = new ArrayList<>();
-		
-		playersInEvent.addAll(getAllEventPlayers());
-		ArrayList<List<PlayerHolder>> listOrdered = SortUtil.getOrderedByKills(playersInEvent, 1);
+		List<PlayerHolder> listOrdered = SortUtil.getOrderedByKills(getAllEventPlayers(), 1).get(0);
 		
 		String winners = "";
 		
-		for (PlayerHolder player : listOrdered.get(0))
+		for (PlayerHolder ph : listOrdered)
 		{
-			winners += player.getPcInstance().getName() + " // ";
-			giveItems(player, ConfigData.getInstance().AVA_REWARD_PLAYER_WIN);
+			winners += ph.getPcInstance().getName();
+			giveItems(ph, ConfigData.getInstance().AVA_REWARD_PLAYER_WIN);
 		}
 		
 		EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "ava_first_place", "%holder%", winners, CollectionTarget.ALL_PLAYERS_IN_EVENT);

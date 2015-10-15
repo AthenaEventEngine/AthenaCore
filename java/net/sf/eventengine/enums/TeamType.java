@@ -21,7 +21,7 @@ package net.sf.eventengine.enums;
 /**
  * @author fissban
  */
-public enum PlayerColorType
+public enum TeamType
 {
 	WHITE(Integer.decode("0xFFFFFF")),
 	RED(Integer.decode("0x0000FF")),
@@ -40,7 +40,7 @@ public enum PlayerColorType
 	
 	private int _color;
 	
-	PlayerColorType(int color)
+	TeamType(int color)
 	{
 		_color = color;
 	}

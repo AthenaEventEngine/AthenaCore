@@ -41,7 +41,7 @@ import net.sf.eventengine.EventEngineManager;
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.CollectionTarget;
-import net.sf.eventengine.holder.PlayerHolder;
+import net.sf.eventengine.events.holders.PlayerHolder;
 
 /**
  * @author fissban, Zephyr

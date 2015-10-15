@@ -21,8 +21,8 @@ package net.sf.eventengine.events.schedules;
 import net.sf.eventengine.EventEngineManager;
 import net.sf.eventengine.enums.EventEngineState;
 import net.sf.eventengine.enums.EventState;
-import net.sf.eventengine.holder.PlayerHolder;
-import net.sf.eventengine.interfaces.EventScheduled;
+import net.sf.eventengine.events.holders.PlayerHolder;
+import net.sf.eventengine.events.schedules.interfaces.EventScheduled;
 import net.sf.eventengine.util.EventUtil;
 
 /**

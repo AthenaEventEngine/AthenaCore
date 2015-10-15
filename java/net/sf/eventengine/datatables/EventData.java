@@ -10,7 +10,7 @@ import net.sf.eventengine.events.CaptureTheFlag;
 import net.sf.eventengine.events.OneVsOne;
 import net.sf.eventengine.events.Survive;
 import net.sf.eventengine.events.TeamVsTeam;
-import net.sf.eventengine.handler.AbstractEvent;
+import net.sf.eventengine.events.handler.AbstractEvent;
 
 import com.l2jserver.util.Rnd;
 
