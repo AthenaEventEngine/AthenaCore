@@ -21,7 +21,7 @@ package net.sf.eventengine.events.schedules;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
 
 import net.sf.eventengine.enums.CollectionTarget;
-import net.sf.eventengine.interfaces.EventScheduled;
+import net.sf.eventengine.events.schedules.interfaces.EventScheduled;
 import net.sf.eventengine.util.EventUtil;
 
 /**

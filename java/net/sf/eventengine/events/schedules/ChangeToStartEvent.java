@@ -20,7 +20,7 @@ package net.sf.eventengine.events.schedules;
 
 import net.sf.eventengine.EventEngineManager;
 import net.sf.eventengine.enums.EventState;
-import net.sf.eventengine.interfaces.EventScheduled;
+import net.sf.eventengine.events.schedules.interfaces.EventScheduled;
 
 /**
  * @author Zephyr

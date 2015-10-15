@@ -6,25 +6,13 @@
 			<height normal="22.25" />
 		</collision>
 	</npc>
-	<npc id="36601" displayId="35062" name="Flag" usingServerSideName="true" title="BLUE" usingServerSideTitle="true" type="L2Npc">
+	<npc id="36601" displayId="35062" name="Flag" usingServerSideName="true" title="" usingServerSideTitle="true" type="L2Npc">
 		<collision>
 			<radius normal="11" />
 			<height normal="22.25" />
 		</collision>
 	</npc>
-	<npc id="36602" displayId="35062" name="Flag" usingServerSideName="true" title="RED" usingServerSideTitle="true" type="L2Npc">
-		<collision>
-			<radius normal="11" />
-			<height normal="22.25" />
-		</collision>
-	</npc>
-	<npc id="36603" displayId="32027" name="Holder" usingServerSideName="true" title="BLUE" usingServerSideTitle="true" type="L2Npc">
-		<collision>
-			<radius normal="11" />
-			<height normal="22.25" />
-		</collision>
-	</npc>
-	<npc id="36604" displayId="32027" name="Holder" usingServerSideName="true" title="RED" usingServerSideTitle="true" type="L2Npc">
+	<npc id="36603" displayId="32027" name="Holder" usingServerSideName="true" title="" usingServerSideTitle="true" type="L2Npc">
 		<collision>
 			<radius normal="11" />
 			<height normal="22.25" />

@@ -33,11 +33,13 @@ import com.l2jserver.util.Rnd;
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.enums.CollectionTarget;
 import net.sf.eventengine.enums.EventState;
-import net.sf.eventengine.enums.PlayerColorType;
+import net.sf.eventengine.enums.TeamType;
+import net.sf.eventengine.events.handler.AbstractEvent;
+import net.sf.eventengine.events.holders.PlayerHolder;
+import net.sf.eventengine.events.holders.TeamHolder;
 import net.sf.eventengine.events.schedules.AnnounceNearEndEvent;
-import net.sf.eventengine.handler.AbstractEvent;
-import net.sf.eventengine.holder.PlayerHolder;
 import net.sf.eventengine.util.EventUtil;
+import net.sf.eventengine.util.SortUtil;
 
 /**
  * Event survival<br>
@@ -51,7 +53,7 @@ public class Survive extends AbstractEvent
 	// Variable that helps us keep track of the number of dead mobs.
 	private int _auxKillMonsters = 0;
 	// Radius spawn
-	private static final int RADIUS_SPAWN_PLAYER = 150;
+	private static final int RADIUS_SPAWN_PLAYER = 200;
 	
 	// Monsters ids
 	private final List<Integer> MONSTERS_ID = ConfigData.getInstance().SURVIVE_MONSTERS_ID;
@@ -59,9 +61,8 @@ public class Survive extends AbstractEvent
 	public Survive()
 	{
 		super();
+		// Definimos la instancia en que transcurria el evento
 		setInstanceFile(ConfigData.getInstance().SURVIVE_INSTANCE_FILE);
-		// We define the main spawn of equipment
-		setTeamSpawn(Team.BLUE, ConfigData.getInstance().SURVIVE_COORDINATES_PLAYER);
 		// Announce near end event
 		int timeLeft = (ConfigData.getInstance().EVENT_DURATION * 60 * 1000) - (ConfigData.getInstance().EVENT_TEXT_TIME_FOR_END * 1000);
 		addScheduledEvent(new AnnounceNearEndEvent(timeLeft));
@@ -74,7 +75,7 @@ public class Survive extends AbstractEvent
 		{
 			case START:
 				prepareToStart(); // General Method
-				createTeam();
+				createTeam(ConfigData.getInstance().SURVIVE_COUNT_TEAM);
 				teleportAllPlayers(RADIUS_SPAWN_PLAYER);
 				break;
 				
@@ -85,24 +86,25 @@ public class Survive extends AbstractEvent
 				
 			case END:
 				// showResult();
+				giveRewardsTeams();
 				prepareToEnd(); // General Method
 				break;
 		}
 	}
 	
 	@Override
-	public void onInteract(PlayerHolder player, L2Npc npc)
+	public boolean onInteract(PlayerHolder ph, L2Npc npc)
 	{
-		//
+		return true;
 	}
 	
 	@Override
-	public void onKill(PlayerHolder player, L2Character target)
+	public void onKill(PlayerHolder ph, L2Character target)
 	{
-		// We serve to keep count of how many mobs killed.
-		player.increaseKills();
+		// Incrementamos en uno la cantidad de puntos del equipo
+		getPlayerTeam(ph).increasePoints(1);
 		// Update title character
-		updateTitle(player);
+		updateTitle(ph);
 		// One increasing the amount of dead mobs
 		_auxKillMonsters++;
 		// Verify the number of dead mobs, if any killed all increase by one the stage.
@@ -120,18 +122,18 @@ public class Survive extends AbstractEvent
 		// Message Kill
 		if (ConfigData.getInstance().EVENT_KILLER_MESSAGE)
 		{
-			EventUtil.messageKill(player, target);
+			EventUtil.messageKill(ph, target);
 		}
 	}
 	
 	@Override
-	public void onDeath(PlayerHolder player)
+	public void onDeath(PlayerHolder ph)
 	{
 		//
 	}
 	
 	@Override
-	public boolean onAttack(PlayerHolder player, L2Character target)
+	public boolean onAttack(PlayerHolder ph, L2Character target)
 	{
 		if (target.isPlayable())
 		{
@@ -141,35 +143,58 @@ public class Survive extends AbstractEvent
 	}
 	
 	@Override
-	public boolean onUseSkill(PlayerHolder player, L2Character target, Skill skill)
+	public boolean onUseSkill(PlayerHolder ph, L2Character target, Skill skill)
 	{
 		return false;
 	}
 	
 	@Override
-	public boolean onUseItem(PlayerHolder player, L2Item item)
+	public boolean onUseItem(PlayerHolder ph, L2Item item)
 	{
 		return false;
 	}
 	
 	@Override
-	public void onLogout(PlayerHolder player)
+	public void onLogout(PlayerHolder ph)
 	{
 		//
 	}
 	
 	// MISC ---------------------------------------------------------------------------------------
-	public void giveRewardsTeams()
+	/**
+	 * Solo entregamos premio al equipo que mas monstruos mato
+	 */
+	private void giveRewardsTeams()
 	{
 		if (getAllEventPlayers().isEmpty())
 		{
 			return;
 		}
 		
-		for (PlayerHolder player : getAllEventPlayers())
+		// Obtenemos una lista ordenada de los que obtuvieron mas puntos.
+		List<TeamHolder> winners = SortUtil.getOrderedByPoints(getAllTeams(), 1).get(0);
+		
+		for (PlayerHolder ph : getAllEventPlayers())
 		{
-			EventUtil.sendEventScreenMessage(player, "Congratulations survivor!");
-			giveItems(player, ConfigData.getInstance().SURVIVE_REWARD_PLAYER_WIN);
+			// FIXME agregar al sistema de lang
+			EventUtil.sendEventScreenMessage(ph, "Congratulations survivor!");
+			
+			if (winners.contains(ph))
+			{
+				giveItems(ph, ConfigData.getInstance().SURVIVE_REWARD_PLAYER_WIN);
+			}
+		}
+		
+		for (TeamHolder team : getAllTeams())
+		{
+			if (winners.contains(team))
+			{
+				EventUtil.announceTo(Say2.BATTLEFIELD, "team_winner", "%holder%", team.getTeamType().name(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
+			}
+			else
+			{
+				EventUtil.announceTo(Say2.BATTLEFIELD, "teams_tie", "%holder%", team.getTeamType().name(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
+			}
 		}
 	}
 	
@@ -178,46 +203,62 @@ public class Survive extends AbstractEvent
 		EventUtil.announceTo(Say2.BATTLEFIELD, "survive_spawns_mobs", CollectionTarget.ALL_PLAYERS_IN_EVENT);
 		
 		// After 5 secs spawn run.
-		ThreadPoolManager.getInstance().scheduleGeneral(new Runnable()
+		ThreadPoolManager.getInstance().scheduleGeneral(() ->
 		{
-			@Override
-			public void run()
+			for (int i = 0; i < (_stage * ConfigData.getInstance().SURVIVE_MONSTER_SPAWN_FOR_STAGE); i++)
 			{
-				for (int i = 0; i < (_stage * ConfigData.getInstance().SURVIVE_MONSTER_SPAWN_FOR_STAGE); i++)
-				{
-					addEventNpc(MONSTERS_ID.get(Rnd.get(MONSTERS_ID.size() - 1)), ConfigData.getInstance().SURVIVE_COORDINATES_PLAYER, Team.RED, true, getInstancesWorlds().get(0).getInstanceId());
-				}
-				
-				// We notify the characters in the event that stage they are currently.
-				for (PlayerHolder ph : getAllEventPlayers())
-				{
-					EventUtil.sendEventScreenMessage(ph, "Stage " + _stage, 5000);
-				}
+				addEventNpc(MONSTERS_ID.get(Rnd.get(MONSTERS_ID.size() - 1)), ConfigData.getInstance().SURVIVE_COORDINATES_MOBS, Team.RED, true, getInstancesWorlds().get(0).getInstanceId());
 			}
-		}, 5000L);
+			
+			// We notify the characters in the event that stage they are currently.
+			for (PlayerHolder ph : getAllEventPlayers())
+			{
+				// FIXME agregar al sistema de lang
+				EventUtil.sendEventScreenMessage(ph, "Stage " + _stage, 5000);
+			}
+		} , 5000L);
 		
 	}
 	
 	/**
 	 * We create the computer that will play the characters.
+	 * @param countTeams
 	 */
-	private void createTeam()
+	private void createTeam(int countTeams)
 	{
+		// Definimos la cantidad de teams que se requieren
+		setCountTeams(countTeams);
+		// We define the main spawn of equipment
+		setSpawnTeams(ConfigData.getInstance().SURVIVE_COORDINATES_TEAM);
+		
 		// We create the instance and the world
 		InstanceWorld world = createNewInstanceWorld();
 		
+		int aux = 1;
+		
 		for (PlayerHolder ph : getAllEventPlayers())
 		{
-			// We add the character to the world and then be teleported
-			world.addAllowed(ph.getPcInstance().getObjectId());
-			// Adjust the team of character
-			ph.getPcInstance().setTeam(Team.BLUE);
+			// Obtenemos el team
+			TeamType team = getEnabledTeams()[aux - 1];
+			// Definimos el team del jugador
+			ph.setTeam(team);
+			// Ajustamos el titulo del personaje segun su team
+			ph.setNewTitle("[ " + team.name() + " ]");// [ BLUE ], [ RED ] ....
 			// Adjust the instance that owns the character
 			ph.setDinamicInstanceId(world.getInstanceId());
-			// Adjust the color of the title
-			ph.setNewColorTitle(PlayerColorType.YELLOW_OCHRE);
+			// We add the character to the world and then be teleported
+			world.addAllowed(ph.getPcInstance().getObjectId());
 			// Adjust the title character.
 			updateTitle(ph);
+			
+			if (aux % countTeams == 0)
+			{
+				aux = 1;
+			}
+			else
+			{
+				aux++;
+			}
 		}
 	}
 	
@@ -227,6 +268,7 @@ public class Survive extends AbstractEvent
 	 */
 	private void updateTitle(PlayerHolder player)
 	{
+		// FIXME agregar al sistema de lang
 		// Adjust the title character.
 		player.setNewTitle("Monster Death " + player.getKills());
 		// Adjust the status character.

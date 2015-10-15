@@ -26,7 +26,7 @@ import net.sf.eventengine.datatables.BuffListData;
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.EventData;
 import net.sf.eventengine.datatables.MessageData;
-import net.sf.eventengine.handler.AbstractEvent;
+import net.sf.eventengine.events.handler.AbstractEvent;
 
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
