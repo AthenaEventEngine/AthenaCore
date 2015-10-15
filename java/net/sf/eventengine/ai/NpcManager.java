@@ -77,6 +77,11 @@ public class NpcManager extends Quest
 				break;
 			
 			case "vote":
+				if (!EventEngineManager.getInstance().isOpenVote())
+				{
+					// bypaseando o simplemente tuvo mucho tiempo abierta la ventana?
+					break;
+				}
 				// Add vote event
 				Class<? extends AbstractEvent> type = EventData.getInstance().getEvent(st.nextToken());
 				if (type != null)
@@ -93,29 +98,34 @@ public class NpcManager extends Quest
 				break;
 			
 			case "register":
-				if (EventEngineManager.getInstance().registerPlayer(player))
+				if (!EventEngineManager.getInstance().isOpenRegister())
 				{
-					// Check for register
-					if (player.getLevel() < ConfigData.getInstance().MIN_LVL_IN_EVENT)
-					{
-						player.sendMessage(MessageData.getInstance().getMsgByLang(player, "registering_lowLevel", true));
-					}
-					else if (player.getLevel() > ConfigData.getInstance().MAX_LVL_IN_EVENT)
-					{
-						player.sendMessage(MessageData.getInstance().getMsgByLang(player, "registering_highLevel", true));
-					}
-					else if (EventEngineManager.getInstance().getAllRegisteredPlayers().size() >= ConfigData.getInstance().MAX_PLAYERS_IN_EVENT)
-					{
-						player.sendMessage(MessageData.getInstance().getMsgByLang(player, "registering_maxPlayers", true));
-					}
-					else
-					{
-						player.sendMessage(MessageData.getInstance().getMsgByLang(player, "registering_registered", true));
-					}
+					// bypaseando o simplemente tuvo mucho tiempo abierta la ventana?
+					break;
+				}
+				else if (EventEngineManager.getInstance().isRegistered(player))
+				{
+					player.sendMessage(MessageData.getInstance().getMsgByLang(player, "registering_registered", true));
+				}
+				else if (player.getLevel() < ConfigData.getInstance().MIN_LVL_IN_EVENT)
+				{
+					player.sendMessage(MessageData.getInstance().getMsgByLang(player, "registering_lowLevel", true));
+				}
+				else if (player.getLevel() > ConfigData.getInstance().MAX_LVL_IN_EVENT)
+				{
+					player.sendMessage(MessageData.getInstance().getMsgByLang(player, "registering_highLevel", true));
+				}
+				else if (EventEngineManager.getInstance().getAllRegisteredPlayers().size() >= ConfigData.getInstance().MAX_PLAYERS_IN_EVENT)
+				{
+					player.sendMessage(MessageData.getInstance().getMsgByLang(player, "registering_maxPlayers", true));
+				}
+				else if (EventEngineManager.getInstance().checkMultiBox(player))
+				{
+					player.sendMessage(MessageData.getInstance().getMsgByLang(player, "registering_maxPlayersPerPc", true));
 				}
 				else
 				{
-					player.sendMessage(MessageData.getInstance().getMsgByLang(player, "registering_already_registered", true));
+					EventEngineManager.getInstance().registerPlayer(player);
 				}
 				
 				sendHtmlIndex(player);
@@ -155,6 +165,11 @@ public class NpcManager extends Quest
 				break;
 			
 			case "buffs":
+				// prevenimos de que mantengan la ventana abierta durante el evento y cambien sus buffs
+				if (EventEngineManager.getInstance().getCurrentEvent() != null)
+				{
+					break;
+				}
 				int page = 1;
 				
 				if (st.hasMoreTokens())
