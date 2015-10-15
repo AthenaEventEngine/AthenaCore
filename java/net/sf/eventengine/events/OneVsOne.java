@@ -18,11 +18,13 @@
  */
 package net.sf.eventengine.events;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import com.l2jserver.gameserver.ThreadPoolManager;
-import com.l2jserver.gameserver.enums.Team;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
@@ -34,11 +36,12 @@ import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.EventEngineState;
 import net.sf.eventengine.enums.EventState;
-import net.sf.eventengine.enums.PlayerColorType;
+import net.sf.eventengine.enums.TeamType;
+import net.sf.eventengine.events.handler.AbstractEvent;
+import net.sf.eventengine.events.holders.PlayerHolder;
 import net.sf.eventengine.events.schedules.AnnounceNearEndEvent;
-import net.sf.eventengine.handler.AbstractEvent;
-import net.sf.eventengine.holder.PlayerHolder;
 import net.sf.eventengine.util.EventUtil;
+import net.sf.eventengine.util.SortUtil;
 
 /**
  * @author fissban
@@ -47,17 +50,15 @@ public class OneVsOne extends AbstractEvent
 {
 	// Time between fights in sec
 	private static final int TIME_BETWEEN_FIGHT = 10;
-	private Map<Integer, InstancesTeams> _instancesTeams = new HashMap<>();
+	private Map<Integer, Map<TeamType, PlayerHolder>> _instancesTeams = new HashMap<>();
 	// Radius spawn
 	private static final int RADIUS_SPAWN_PLAYER = 0;
 	
 	public OneVsOne()
 	{
 		super();
+		// Definimos la instancia en que transcurria el evento
 		setInstanceFile(ConfigData.getInstance().OVO_INSTANCE_FILE);
-		// We define each team spawns
-		setTeamSpawn(Team.RED, ConfigData.getInstance().OVO_COORDINATES_TEAM_RED);
-		setTeamSpawn(Team.BLUE, ConfigData.getInstance().OVO_COORDINATES_TEAM_BLUE);
 		// Announce near end event
 		int timeLeft = (ConfigData.getInstance().EVENT_DURATION * 60 * 1000) - (ConfigData.getInstance().EVENT_TEXT_TIME_FOR_END * 1000);
 		addScheduledEvent(new AnnounceNearEndEvent(timeLeft));
@@ -70,7 +71,7 @@ public class OneVsOne extends AbstractEvent
 		{
 			case START:
 				prepareToStart(); // General Method
-				createTeams();
+				createTeams(ConfigData.getInstance().OVO_COUNT_TEAM);
 				teleportAllPlayers(RADIUS_SPAWN_PLAYER);
 				break;
 				
@@ -87,74 +88,88 @@ public class OneVsOne extends AbstractEvent
 	
 	// LISTENERS ------------------------------------------------------
 	@Override
-	public boolean onUseSkill(PlayerHolder player, L2Character target, Skill skill)
+	public boolean onUseSkill(PlayerHolder ph, L2Character target, Skill skill)
 	{
 		return false;
 	}
 	
 	@Override
-	public boolean onAttack(PlayerHolder player, L2Character target)
+	public boolean onAttack(PlayerHolder ph, L2Character target)
 	{
 		return false;
 	}
 	
 	@Override
-	public void onKill(PlayerHolder player, L2Character target)
+	public void onKill(PlayerHolder ph, L2Character target)
 	{
-		nextFight(player);
+		// Obtenemos el id de la instancia del personaje en cuestion
+		int instanceId = ph.getDinamicInstanceId();
 		// One we increased the amount of kills you have the participants.
-		player.increaseKills();
-		showPoint(_instancesTeams.get(player.getDinamicInstanceId()));
+		ph.increaseKills();
+		
+		int auxDeath = 0;
+		// Verificamos si los otros participantes de la instancia estan muertos.
+		for (PlayerHolder playerHolder : _instancesTeams.get(instanceId).values())
+		{
+			if (playerHolder.equals(ph))
+			{
+				continue;
+			}
+			auxDeath++;
+		}
+		
+		// Si todos estan muertos generamos la proxima pelea.
+		if (auxDeath == ConfigData.getInstance().OVO_COUNT_TEAM - 1)
+		{
+			nextFight(instanceId);
+		}
+		
+		showPoint(instanceId);
 		
 		// Reward for kills
 		if (ConfigData.getInstance().OVO_REWARD_KILLER_ENABLED)
 		{
-			giveItems(player, ConfigData.getInstance().OVO_REWARD_KILLER);
+			giveItems(ph, ConfigData.getInstance().OVO_REWARD_KILLER);
 		}
-		
 		// Reward pvp for kills
 		if (ConfigData.getInstance().OVO_REWARD_PVP_KILLER_ENABLED)
 		{
-			player.getPcInstance().setPvpKills(player.getPcInstance().getPvpKills() + ConfigData.getInstance().OVO_REWARD_PVP_KILLER);
-			EventUtil.sendEventMessage(player, MessageData.getInstance().getMsgByLang(player.getPcInstance(), "reward_text_pvp", true).replace("%count%", ConfigData.getInstance().OVO_REWARD_PVP_KILLER + ""));
+			ph.getPcInstance().setPvpKills(ph.getPcInstance().getPvpKills() + ConfigData.getInstance().OVO_REWARD_PVP_KILLER);
+			EventUtil.sendEventMessage(ph, MessageData.getInstance().getMsgByLang(ph.getPcInstance(), "reward_text_pvp", true).replace("%count%", ConfigData.getInstance().OVO_REWARD_PVP_KILLER + ""));
 		}
-		
 		// Reward fame for kills
 		if (ConfigData.getInstance().OVO_REWARD_FAME_KILLER_ENABLED)
 		{
-			player.getPcInstance().setFame(player.getPcInstance().getFame() + ConfigData.getInstance().OVO_REWARD_FAME_KILLER);
-			EventUtil.sendEventMessage(player, MessageData.getInstance().getMsgByLang(player.getPcInstance(), "reward_text_fame", true).replace("%count%", ConfigData.getInstance().OVO_REWARD_FAME_KILLER + ""));
+			ph.getPcInstance().setFame(ph.getPcInstance().getFame() + ConfigData.getInstance().OVO_REWARD_FAME_KILLER);
+			EventUtil.sendEventMessage(ph, MessageData.getInstance().getMsgByLang(ph.getPcInstance(), "reward_text_fame", true).replace("%count%", ConfigData.getInstance().OVO_REWARD_FAME_KILLER + ""));
 		}
-		
 		// Message Kill
 		if (ConfigData.getInstance().EVENT_KILLER_MESSAGE)
 		{
-			EventUtil.messageKill(player, target);
+			EventUtil.messageKill(ph, target);
 		}
 	}
 	
 	@Override
-	public void onDeath(PlayerHolder player)
-	{
-		giveResurrectPlayer(player, TIME_BETWEEN_FIGHT, RADIUS_SPAWN_PLAYER);
-		// One we increased the amount of deaths you have the participants.
-		player.increaseDeaths();
-	}
-	
-	@Override
-	public void onInteract(PlayerHolder player, L2Npc npc)
+	public void onDeath(PlayerHolder ph)
 	{
 		//
 	}
 	
 	@Override
-	public boolean onUseItem(PlayerHolder player, L2Item item)
+	public boolean onInteract(PlayerHolder ph, L2Npc npc)
+	{
+		return true;
+	}
+	
+	@Override
+	public boolean onUseItem(PlayerHolder ph, L2Item item)
 	{
 		return false;
 	}
 	
 	@Override
-	public void onLogout(PlayerHolder player)
+	public void onLogout(PlayerHolder ph)
 	{
 		//
 	}
@@ -163,83 +178,64 @@ public class OneVsOne extends AbstractEvent
 	
 	/**
 	 * We all players who are registered at the event and generate the teams
+	 * @param countTeams
 	 */
-	private void createTeams()
+	private void createTeams(int countTeams)
 	{
-		// control variable to find out which team will be the player.
-		boolean blueOrRed = true;
-		// control variable for the amount of players per team.
-		boolean createWorld = true;
-		
-		PlayerHolder playerBlue = null;
-		PlayerHolder playerRed = null;
-		
-		InstanceWorld world = null;
+		// Definimos la cantidad de teams que se requieren
+		setCountTeams(countTeams);
+		// We define each team spawns
+		setSpawnTeams(ConfigData.getInstance().OVO_COORDINATES_TEAM);
 		
 		// We verified that we have an even number of participants.
 		// If not, let out a participant at random.
-		boolean leaveOutParticipant = false;
-		PlayerHolder removePlayer = null;
-		if (getAllEventPlayers().size() % 2 != 0)
+		int leaveOutParticipant = 0;
+		
+		if ((getAllEventPlayers().size() % countTeams) != 0)
 		{
-			leaveOutParticipant = true;
+			leaveOutParticipant = countTeams - 1;
 		}
 		
-		for (PlayerHolder player : getAllEventPlayers())
+		Iterator<PlayerHolder> players = getAllEventPlayers().iterator();
+		
+		List<PlayerHolder> phRemove = new ArrayList<>();
+		
+		while (players.hasNext())
 		{
-			if (leaveOutParticipant)
+			// removemos personajes hasta obtener la cantidad justa para realizar eventos 1vs1,1vs1vs1
+			if (leaveOutParticipant > 0)
 			{
-				removePlayer = player;
-				leaveOutParticipant = false;
-				continue;
-			}
-			// We create the instance and the world
-			if (createWorld)
-			{
-				world = createNewInstanceWorld();
-				createWorld = false;
-			}
-			
-			// We distributed one for each team
-			if (blueOrRed)
-			{
-				playerBlue = player;
-				// Adjust the color of the title and the title character.
-				player.getPcInstance().setTeam(Team.BLUE);
-				player.setNewColorTitle(PlayerColorType.BLUE);
-				player.setNewTitle("[ BLUE ]");
-				// Assigned to the instance that owns the player.
-				player.setDinamicInstanceId(world.getInstanceId());
+				leaveOutParticipant--;
+				// removemos al personaje impar del evento.
+				phRemove.add(players.next());
+				// TODO falta agregar un mensaje avisando de la accion.
 			}
 			else
 			{
-				playerRed = player;
-				// Adjust the color of the title and the title character.
-				player.getPcInstance().setTeam(Team.RED);
-				player.setNewColorTitle(PlayerColorType.RED);
-				player.setNewTitle("[ RED ]");
-				// Assigned to the instance that owns the player.
-				player.setDinamicInstanceId(world.getInstanceId());
-			}
-			
-			blueOrRed = !blueOrRed;
-			
-			if ((playerRed != null) && (playerBlue != null))
-			{
-				// We charge different teams
-				_instancesTeams.put(world.getInstanceId(), new InstancesTeams(playerRed, playerBlue));
-				// init variable
-				createWorld = true;
-				playerRed = null;
-				playerBlue = null;
+				// We create the instance and the world
+				InstanceWorld world = createNewInstanceWorld();
+				// auxiliar para llevar la personajes de cada isntancia del evento
+				Map<TeamType, PlayerHolder> teams = new HashMap<>();
+				
+				for (int i = 0; i < countTeams; i++)
+				{
+					PlayerHolder ph = players.next();
+					// Obtenemos el team
+					TeamType team = getEnabledTeams()[i];
+					// Definimos algunas caracteristicas generales de cada poersonaje.
+					ph.setTeam(team);
+					ph.setNewTitle("[ " + team.name() + " ]");
+					ph.setDinamicInstanceId(world.getInstanceId());
+					teams.put(team, ph);
+				}
+				
+				_instancesTeams.put(world.getInstanceId(), teams);
 			}
 		}
 		
-		// stir a character of the event.
-		if (removePlayer != null)
+		for (PlayerHolder ph : phRemove)
 		{
-			// TODO podriamos enviarle un mensaje notificando lo sucedido.
-			getAllEventPlayers().remove(removePlayer);
+			getAllEventPlayers().remove(ph);
 		}
 	}
 	
@@ -253,99 +249,74 @@ public class OneVsOne extends AbstractEvent
 			return;
 		}
 		
-		for (InstancesTeams team : _instancesTeams.values())
+		// Recorremos nuestra variable instancia a instancia
+		// y vamos entregando los premios a los ganadores.
+		for (Map<TeamType, PlayerHolder> instances : _instancesTeams.values())
 		{
-			// If both players are offline any prize will be awarded.
-			if (team._playerRed.getPcInstance() == null && team._playerBlue.getPcInstance() == null)
+			if (instances.isEmpty())
 			{
 				continue;
 			}
 			
-			/** Verify that the blue player follow in the event. */
-			if (team._playerBlue.getPcInstance() == null)
+			List<PlayerHolder> winners = SortUtil.getOrderedByKills(instances.values(), 0).get(0);
+			
+			// Entregamos los rewards
+			for (PlayerHolder ph : winners)
 			{
-				EventUtil.sendEventScreenMessage(team._playerRed, MessageData.getInstance().getMsgByLang(team._playerBlue.getPcInstance(), "winner_red", false));
-				giveItems(team._playerRed, ConfigData.getInstance().OVO_REWARD_PLAYER_WIN);
-			}
-			/** Verify that the red player follow in the event.. */
-			else if (team._playerRed.getPcInstance() == null)
-			{
-				EventUtil.sendEventScreenMessage(team._playerBlue, MessageData.getInstance().getMsgByLang(team._playerBlue.getPcInstance(), "winner_blue", false));
-				giveItems(team._playerBlue, ConfigData.getInstance().OVO_REWARD_PLAYER_WIN);
-			}
-			/** If both players continue to verify the event points. */
-			else
-			{
-				int pointsBlue = team._playerBlue.getKills();
-				int pointsRed = team._playerRed.getKills();
-				
-				if (pointsBlue == pointsRed) // tie
+				if (ph.getPcInstance() != null)
 				{
-					
-					EventUtil.sendEventScreenMessage(team._playerBlue, MessageData.getInstance().getMsgByLang(team._playerBlue.getPcInstance(), "event_tie", false));
-					EventUtil.sendEventScreenMessage(team._playerRed, MessageData.getInstance().getMsgByLang(team._playerRed.getPcInstance(), "event_tie", false));
-				}
-				else if (pointsBlue < pointsRed) // win red
-				{
-					EventUtil.sendEventScreenMessage(team._playerRed, MessageData.getInstance().getMsgByLang(team._playerRed.getPcInstance(), "winner_red", false));
-					giveItems(team._playerRed, ConfigData.getInstance().OVO_REWARD_PLAYER_WIN);
-				}
-				else if (pointsBlue > pointsRed) // win blue
-				{
-					EventUtil.sendEventScreenMessage(team._playerBlue, MessageData.getInstance().getMsgByLang(team._playerBlue.getPcInstance(), "winner_blue", false));
-					giveItems(team._playerBlue, ConfigData.getInstance().OVO_REWARD_PLAYER_WIN);
+					// FIXME agregar al sistema de lang
+					EventUtil.sendEventScreenMessage(ph, "WINNER " + ph.getPcInstance().getName());
+					giveItems(ph, ConfigData.getInstance().OVO_REWARD_PLAYER_WIN);
 				}
 			}
 		}
 	}
 	
-	private void nextFight(PlayerHolder ph)
+	private void nextFight(int instanceId)
 	{
-		ThreadPoolManager.getInstance().scheduleGeneral(new Runnable()
+		ThreadPoolManager.getInstance().scheduleGeneral(() ->
 		{
-			@Override
-			public void run()
+			if (EventEngineManager.getInstance().getEventEngineState() == EventEngineState.RUNNING_EVENT)
 			{
-				if (EventEngineManager.getInstance().getEventEngineState() == EventEngineState.RUNNING_EVENT)
+				Map<TeamType, PlayerHolder> teams = _instancesTeams.get(instanceId);
+				
+				for (PlayerHolder ph : teams.values())
 				{
-					// heal to max
-					ph.getPcInstance().setCurrentCp(ph.getPcInstance().getMaxCp());
-					ph.getPcInstance().setCurrentHp(ph.getPcInstance().getMaxHp());
-					ph.getPcInstance().setCurrentMp(ph.getPcInstance().getMaxMp());
+					if (ph.getPcInstance().isDead())
+					{
+						// revive
+						revivePlayer(ph);
+					}
 					// teleport
-					revivePlayer(ph);
 					teleportPlayer(ph, 0);
 					// buff
 					giveBuffPlayer(ph.getPcInstance());
 				}
 			}
 			
-		}, TIME_BETWEEN_FIGHT * 1000);
+		} , TIME_BETWEEN_FIGHT * 1000);
 	}
 	
 	/**
 	 * Show on screen the number of points that each team
 	 */
-	private void showPoint(InstancesTeams instTeams)
+	private void showPoint(int instanceId)
 	{
-		EventUtil.sendEventScreenMessage(instTeams._playerBlue, "RED " + instTeams._playerRed.getPoints() + " | " + instTeams._playerBlue.getPoints() + " BLUE", 10000);
-		EventUtil.sendEventScreenMessage(instTeams._playerRed, "RED " + instTeams._playerRed.getPoints() + " | " + instTeams._playerBlue.getPoints() + " BLUE", 10000);
-		// ph.getPcInstance().sendPacket(new EventParticipantStatus(_pointsRed, _pointsBlue));
-	}
-	
-	/**
-	 * Class responsible for managing the points of the teams in each instance
-	 * @author fissban
-	 */
-	private class InstancesTeams
-	{
-		private PlayerHolder _playerRed;
-		private PlayerHolder _playerBlue;
+		StringBuilder sb = new StringBuilder();
 		
-		public InstancesTeams(PlayerHolder playerRed, PlayerHolder playerBlue)
+		for (PlayerHolder ph : _instancesTeams.get(instanceId).values())
 		{
-			_playerRed = playerRed;
-			_playerBlue = playerBlue;
+			sb.append(" | ");
+			sb.append(ph.getTeamType().name());
+			sb.append(" ");
+			sb.append(ph.getKills());
+		}
+		sb.append(" | ");
+		
+		for (PlayerHolder ph : _instancesTeams.get(instanceId).values())
+		{
+			EventUtil.sendEventScreenMessage(ph, sb.toString(), 10000);
 		}
 	}
 }

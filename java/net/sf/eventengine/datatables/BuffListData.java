@@ -55,7 +55,7 @@ public class BuffListData implements IXmlReader
 	public void load()
 	{
 		parseDatapackFile("config/EventEngine/xml/buff_list.xml");
-		LOGGER.info("{}: Loaded {} Buffs.", getClass().getSimpleName(), _buffList.size());
+		LOG.info("Loaded Buffs: " + _buffList.size());
 	}
 	
 	@Override

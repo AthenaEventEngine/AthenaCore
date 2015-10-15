@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
@@ -37,7 +38,7 @@ import com.l2jserver.gameserver.model.holders.ItemHolder;
  */
 public final class EventPropertiesParser
 {
-	private static final Logger _log = Logger.getLogger(EventPropertiesParser.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(EventPropertiesParser.class.getName());
 	
 	private final Properties _properties = new Properties();
 	private final File _file;
@@ -59,7 +60,7 @@ public final class EventPropertiesParser
 		}
 		catch (Exception e)
 		{
-			_log.warning("[" + _file.getName() + "] There was an error loading config reason: " + e.getMessage());
+			LOGGER.warning("[" + _file.getName() + "] There was an error loading config reason: " + e.getMessage());
 		}
 	}
 	
@@ -79,7 +80,7 @@ public final class EventPropertiesParser
 		String value = getValue(key);
 		if (value == null)
 		{
-			_log.warning("[" + _file.getName() + "] missing property for key: " + key + " using default value: " + defaultValue);
+			LOGGER.warning("[" + _file.getName() + "] missing property for key: " + key + " using default value: " + defaultValue);
 			return defaultValue;
 		}
 		
@@ -93,7 +94,7 @@ public final class EventPropertiesParser
 		}
 		else
 		{
-			_log.warning("[" + _file.getName() + "] Invalid value specified for key: " + key + " specified value: " + value + " should be \"boolean\" using default value: " + defaultValue);
+			LOGGER.warning("[" + _file.getName() + "] Invalid value specified for key: " + key + " specified value: " + value + " should be \"boolean\" using default value: " + defaultValue);
 			return defaultValue;
 		}
 	}
@@ -103,7 +104,7 @@ public final class EventPropertiesParser
 		String value = getValue(key);
 		if (value == null)
 		{
-			_log.warning("[" + _file.getName() + "] missing property for key: " + key + " using default value: " + defaultValue);
+			LOGGER.warning("[" + _file.getName() + "] missing property for key: " + key + " using default value: " + defaultValue);
 			return defaultValue;
 		}
 		
@@ -113,7 +114,7 @@ public final class EventPropertiesParser
 		}
 		catch (NumberFormatException e)
 		{
-			_log.warning("[" + _file.getName() + "] Invalid value specified for key: " + key + " specified value: " + value + " should be \"byte\" using default value: " + defaultValue);
+			LOGGER.warning("[" + _file.getName() + "] Invalid value specified for key: " + key + " specified value: " + value + " should be \"byte\" using default value: " + defaultValue);
 			return defaultValue;
 		}
 	}
@@ -123,7 +124,7 @@ public final class EventPropertiesParser
 		String value = getValue(key);
 		if (value == null)
 		{
-			_log.warning("[" + _file.getName() + "] missing property for key: " + key + " using default value: " + defaultValue);
+			LOGGER.warning("[" + _file.getName() + "] missing property for key: " + key + " using default value: " + defaultValue);
 			return defaultValue;
 		}
 		
@@ -133,7 +134,7 @@ public final class EventPropertiesParser
 		}
 		catch (NumberFormatException e)
 		{
-			_log.warning("[" + _file.getName() + "] Invalid value specified for key: " + key + " specified value: " + value + " should be \"short\" using default value: " + defaultValue);
+			LOGGER.warning("[" + _file.getName() + "] Invalid value specified for key: " + key + " specified value: " + value + " should be \"short\" using default value: " + defaultValue);
 			return defaultValue;
 		}
 	}
@@ -143,7 +144,7 @@ public final class EventPropertiesParser
 		String value = getValue(key);
 		if (value == null)
 		{
-			_log.warning("[" + _file.getName() + "] missing property for key: " + key + " using default value: " + defaultValue);
+			LOGGER.warning("[" + _file.getName() + "] missing property for key: " + key + " using default value: " + defaultValue);
 			return defaultValue;
 		}
 		
@@ -153,7 +154,7 @@ public final class EventPropertiesParser
 		}
 		catch (NumberFormatException e)
 		{
-			_log.warning("[" + _file.getName() + "] Invalid value specified for key: " + key + " specified value: " + value + " should be \"int\" using default value: " + defaultValue);
+			LOGGER.warning("[" + _file.getName() + "] Invalid value specified for key: " + key + " specified value: " + value + " should be \"int\" using default value: " + defaultValue);
 			return defaultValue;
 		}
 	}
@@ -163,7 +164,7 @@ public final class EventPropertiesParser
 		String value = getValue(key);
 		if (value == null)
 		{
-			_log.warning("[" + _file.getName() + "] missing property for key: " + key + " using default value: " + defaultValue);
+			LOGGER.warning("[" + _file.getName() + "] missing property for key: " + key + " using default value: " + defaultValue);
 			return defaultValue;
 		}
 		
@@ -173,7 +174,7 @@ public final class EventPropertiesParser
 		}
 		catch (NumberFormatException e)
 		{
-			_log.warning("[" + _file.getName() + "] Invalid value specified for key: " + key + " specified value: " + value + " should be \"long\" using default value: " + defaultValue);
+			LOGGER.warning("[" + _file.getName() + "] Invalid value specified for key: " + key + " specified value: " + value + " should be \"long\" using default value: " + defaultValue);
 			return defaultValue;
 		}
 	}
@@ -183,7 +184,7 @@ public final class EventPropertiesParser
 		String value = getValue(key);
 		if (value == null)
 		{
-			_log.warning("[" + _file.getName() + "] missing property for key: " + key + " using default value: " + defaultValue);
+			LOGGER.warning("[" + _file.getName() + "] missing property for key: " + key + " using default value: " + defaultValue);
 			return defaultValue;
 		}
 		
@@ -193,7 +194,7 @@ public final class EventPropertiesParser
 		}
 		catch (NumberFormatException e)
 		{
-			_log.warning("[" + _file.getName() + "] Invalid value specified for key: " + key + " specified value: " + value + " should be \"float\" using default value: " + defaultValue);
+			LOGGER.warning("[" + _file.getName() + "] Invalid value specified for key: " + key + " specified value: " + value + " should be \"float\" using default value: " + defaultValue);
 			return defaultValue;
 		}
 	}
@@ -203,7 +204,7 @@ public final class EventPropertiesParser
 		String value = getValue(key);
 		if (value == null)
 		{
-			_log.warning("[" + _file.getName() + "] missing property for key: " + key + " using default value: " + defaultValue);
+			LOGGER.warning("[" + _file.getName() + "] missing property for key: " + key + " using default value: " + defaultValue);
 			return defaultValue;
 		}
 		
@@ -213,7 +214,7 @@ public final class EventPropertiesParser
 		}
 		catch (NumberFormatException e)
 		{
-			_log.warning("[" + _file.getName() + "] Invalid value specified for key: " + key + " specified value: " + value + " should be \"double\" using default value: " + defaultValue);
+			LOGGER.warning("[" + _file.getName() + "] Invalid value specified for key: " + key + " specified value: " + value + " should be \"double\" using default value: " + defaultValue);
 			return defaultValue;
 		}
 	}
@@ -223,7 +224,7 @@ public final class EventPropertiesParser
 		String value = getValue(key);
 		if (value == null)
 		{
-			_log.warning("[" + _file.getName() + "] missing property for key: " + key + " using default value: " + defaultValue);
+			LOGGER.warning("[" + _file.getName() + "] missing property for key: " + key + " using default value: " + defaultValue);
 			return defaultValue;
 		}
 		return value;
@@ -234,7 +235,7 @@ public final class EventPropertiesParser
 		String value = getValue(key);
 		if (value == null)
 		{
-			_log.warning("[" + _file.getName() + "] missing property for key: " + key + " using default value: " + defaultValue);
+			LOGGER.warning("[" + _file.getName() + "] missing property for key: " + key + " using default value: " + defaultValue);
 			return defaultValue;
 		}
 		
@@ -244,7 +245,7 @@ public final class EventPropertiesParser
 		}
 		catch (IllegalArgumentException e)
 		{
-			_log.warning("[" + _file.getName() + "] Invalid value specified for key: " + key + " specified value: " + value + " should be enum value of \"" + clazz.getSimpleName() + "\" using default value: " + defaultValue);
+			LOGGER.warning("[" + _file.getName() + "] Invalid value specified for key: " + key + " specified value: " + value + " should be enum value of \"" + clazz.getSimpleName() + "\" using default value: " + defaultValue);
 			return defaultValue;
 		}
 	}
@@ -257,22 +258,22 @@ public final class EventPropertiesParser
 	 */
 	public List<ItemHolder> getItemHolderList(String key)
 	{
-		List<ItemHolder> auxList = new ArrayList<>();
+		List<ItemHolder> itemList = new ArrayList<>();
 		try
 		{
 			StringTokenizer st = new StringTokenizer(getValue(key), ";");
 			while (st.hasMoreTokens())
 			{
 				StringTokenizer st1 = new StringTokenizer(st.nextToken(), ",");
-				auxList.add(new ItemHolder(Integer.parseInt(st1.nextToken()), Integer.parseInt(st1.nextToken())));
+				itemList.add(new ItemHolder(Integer.parseInt(st1.nextToken()), Integer.parseInt(st1.nextToken())));
 			}
 		}
 		catch (Exception e)
 		{
-			_log.warning(getClass().getSimpleName() + ": fail to read config -> " + key);
+			LOGGER.warning(getClass().getSimpleName() + ": fail to read config -> " + key);
 		}
 		
-		return auxList;
+		return itemList;
 	}
 	
 	/**
@@ -290,10 +291,39 @@ public final class EventPropertiesParser
 		}
 		catch (Exception e)
 		{
-			_log.warning(getClass().getSimpleName() + ": fail to read config -> " + key);
+			LOGGER.warning(getClass().getSimpleName() + ": fail to read config -> " + key);
 		}
 		
 		return new Location(167616, 20315, -3332);
+	}
+	
+	/**
+	 * Parseamos un config usando "," para diferenciar entre cada coordenada y un ";" entre cada team. <br>
+	 * Ejemplo -> "xx,xx,xx"
+	 * @param key
+	 * @return List<Location>
+	 */
+	public List<Location> getLocationList(String key)
+	{
+		try
+		{
+			List<Location> locList = new ArrayList<>();
+			
+			StringTokenizer st = new StringTokenizer(getValue(key), ";");
+			while (st.hasMoreTokens())
+			{
+				StringTokenizer stLoc = new StringTokenizer(st.nextToken(), ",");
+				locList.add(new Location(Integer.parseInt(stLoc.nextToken()), Integer.parseInt(stLoc.nextToken()), Integer.parseInt(stLoc.nextToken())));
+			}
+			
+			return locList;
+		}
+		catch (Exception e)
+		{
+			LOGGER.warning(getClass().getSimpleName() + ": fail to read config -> " + key);
+		}
+		
+		return Collections.emptyList();
 	}
 	
 	/**
@@ -304,20 +334,20 @@ public final class EventPropertiesParser
 	 */
 	public List<Integer> getListInteger(String key)
 	{
-		List<Integer> auxList = new ArrayList<>();
+		List<Integer> integerList = new ArrayList<>();
 		try
 		{
 			StringTokenizer st = new StringTokenizer(getValue(key), ",");
 			while (st.hasMoreTokens())
 			{
-				auxList.add(Integer.parseInt(st.nextToken()));
+				integerList.add(Integer.parseInt(st.nextToken()));
 			}
 		}
 		catch (Exception e)
 		{
-			_log.warning(getClass().getSimpleName() + ": fail to read config -> " + key);
+			LOGGER.warning(getClass().getSimpleName() + ": fail to read config -> " + key);
 		}
 		
-		return auxList;
+		return integerList;
 	}
 }

@@ -19,16 +19,18 @@
 package net.sf.eventengine.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-import net.sf.eventengine.holder.PlayerHolder;
+import net.sf.eventengine.events.holders.PlayerHolder;
+import net.sf.eventengine.events.holders.TeamHolder;
 
 /**
  * @author Zephyr
  */
 public class SortUtil
 {
-	public static ArrayList<List<PlayerHolder>> getOrderedByKills(List<PlayerHolder> list, int level)
+	public static ArrayList<List<PlayerHolder>> getOrderedByKills(Collection<PlayerHolder> list, int level)
 	{
 		int max = -1;
 		int previousMax = 10000;
@@ -55,6 +57,43 @@ public class SortUtil
 				if (player.getKills() == max)
 				{
 					result.get(index).add(player);
+				}
+			}
+			previousMax = max;
+			max = -1;
+			level--;
+		}
+		
+		return result;
+	}
+	
+	public static ArrayList<List<TeamHolder>> getOrderedByPoints(Collection<TeamHolder> list, int level)
+	{
+		int max = -1;
+		int previousMax = 10000;
+		int index = -1;
+		ArrayList<List<TeamHolder>> result = new ArrayList<>();
+		
+		while (level > 0)
+		{
+			// Get the max value
+			for (TeamHolder team : list)
+			{
+				if (team.getPoints() < previousMax && team.getPoints() > max)
+				{
+					max = team.getPoints();
+				}
+			}
+			
+			result.add(new ArrayList<>());
+			index++;
+			
+			// Put the players with the max value
+			for (TeamHolder team : list)
+			{
+				if (team.getPoints() == max)
+				{
+					result.get(index).add(team);
 				}
 			}
 			previousMax = max;

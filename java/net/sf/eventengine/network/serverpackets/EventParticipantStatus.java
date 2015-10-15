@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sf.eventengine.EventEngineManager;
-import net.sf.eventengine.holder.PlayerHolder;
+import net.sf.eventengine.events.holders.PlayerHolder;
 
 import com.l2jserver.gameserver.network.serverpackets.L2GameServerPacket;
 
