@@ -23,18 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import net.sf.eventengine.datatables.ConfigData;
-import net.sf.eventengine.datatables.MessageData;
-import net.sf.eventengine.enums.CollectionTarget;
-import net.sf.eventengine.enums.EventState;
-import net.sf.eventengine.enums.TeamType;
-import net.sf.eventengine.events.handler.AbstractEvent;
-import net.sf.eventengine.events.holders.PlayerHolder;
-import net.sf.eventengine.events.holders.TeamHolder;
-import net.sf.eventengine.events.schedules.AnnounceNearEndEvent;
-import net.sf.eventengine.util.EventUtil;
-import net.sf.eventengine.util.SortUtil;
-
 import com.l2jserver.gameserver.datatables.ItemTable;
 import com.l2jserver.gameserver.enums.Team;
 import com.l2jserver.gameserver.model.actor.L2Character;
@@ -47,6 +35,18 @@ import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
 import com.l2jserver.gameserver.network.serverpackets.MagicSkillUse;
+
+import net.sf.eventengine.datatables.ConfigData;
+import net.sf.eventengine.datatables.MessageData;
+import net.sf.eventengine.enums.CollectionTarget;
+import net.sf.eventengine.enums.EventState;
+import net.sf.eventengine.enums.TeamType;
+import net.sf.eventengine.events.handler.AbstractEvent;
+import net.sf.eventengine.events.holders.PlayerHolder;
+import net.sf.eventengine.events.holders.TeamHolder;
+import net.sf.eventengine.events.schedules.AnnounceNearEndEvent;
+import net.sf.eventengine.util.EventUtil;
+import net.sf.eventengine.util.SortUtil;
 
 /**
  * @author fissban
@@ -92,29 +92,17 @@ public class CaptureTheFlag extends AbstractEvent
 				spawnFlagsAndHolders();
 				teleportAllPlayers(RADIUS_SPAWN_PLAYER);
 				break;
-			
+				
 			case FIGHT:
 				prepareToFight(); // General Method
 				break;
-			
+				
 			case END:
 				clearFlags();
 				giveRewardsTeams();
 				prepareToEnd(); // General Method
 				break;
 		}
-	}
-	
-	/**
-	 * Remove all the flags equipped
-	 */
-	private void clearFlags()
-	{
-		for (PlayerHolder ph : _flagHasPlayer.keySet())
-		{
-			unequiFlag(ph);
-		}
-		_flagHasPlayer.clear();
 	}
 	
 	@Override
