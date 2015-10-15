@@ -328,6 +328,11 @@ public class CaptureTheFlag extends AbstractEvent
 	 */
 	private void giveRewardsTeams()
 	{
+		if (getAllEventPlayers().isEmpty())
+		{
+			return;
+		}
+		
 		List<TeamHolder> winners = SortUtil.getOrderedByPoints(getAllTeams(), 1).get(0);
 		
 		for (PlayerHolder ph : getAllEventPlayers())
