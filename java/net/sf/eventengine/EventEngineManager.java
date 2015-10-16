@@ -47,6 +47,7 @@ import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.EventEngineState;
 import net.sf.eventengine.events.handler.AbstractEvent;
 import net.sf.eventengine.events.holders.PlayerHolder;
+import net.sf.eventengine.task.AntiAfkTask;
 import net.sf.eventengine.task.EventEngineTask;
 
 /**
@@ -89,6 +90,12 @@ public class EventEngineManager
 			// lanzamos el task principal
 			_time = 0;
 			ThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(new EventEngineTask(), 10 * 1000, 1000);
+			
+			// Anti AFK Task
+			if (ConfigData.ANTI_AFK_ENABLED)
+			{
+				ThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(new AntiAfkTask(), ConfigData.ANTI_AFK_TIME_CHECK * 1000, ConfigData.ANTI_AFK_TIME_CHECK * 1000);
+			}
 		}
 		catch (Exception e)
 		{
