@@ -237,6 +237,11 @@ public class OneVsOne extends AbstractEvent
 		{
 			getAllEventPlayers().remove(ph);
 		}
+		
+		for (PlayerHolder ph : phRemove)
+		{
+			getAllEventPlayers().remove(ph);
+		}
 	}
 	
 	/**
