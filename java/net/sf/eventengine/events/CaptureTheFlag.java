@@ -26,13 +26,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.CollectionTarget;
+import net.sf.eventengine.enums.EventState;
+import net.sf.eventengine.enums.ScoreType;
 import net.sf.eventengine.enums.TeamType;
 import net.sf.eventengine.events.handler.AbstractEvent;
 import net.sf.eventengine.events.holders.PlayerHolder;
 import net.sf.eventengine.events.holders.TeamHolder;
 import net.sf.eventengine.events.schedules.AnnounceNearEndEvent;
 import net.sf.eventengine.util.EventUtil;
-import net.sf.eventengine.util.SortUtil;
+import net.sf.eventengine.util.SortUtils;
 
 import com.l2jserver.gameserver.datatables.ItemTable;
 import com.l2jserver.gameserver.enums.Team;
@@ -300,7 +302,7 @@ public class CaptureTheFlag extends AbstractEvent
 	 */
 	private void giveRewardsTeams()
 	{
-		List<TeamHolder> winners = SortUtil.getOrderedByPoints(getAllTeams(), 1).get(0);
+		List<TeamHolder> winners = SortUtils.getOrdered(getAllTeams(), ScoreType.POINT).get(0);
 		
 		for (PlayerHolder ph : getAllEventPlayers())
 		{

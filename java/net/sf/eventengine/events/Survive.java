@@ -22,13 +22,25 @@ import java.util.List;
 
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.enums.CollectionTarget;
+import net.sf.eventengine.enums.EventState;
+import net.sf.eventengine.enums.ScoreType;
 import net.sf.eventengine.enums.TeamType;
 import net.sf.eventengine.events.handler.AbstractEvent;
 import net.sf.eventengine.events.holders.PlayerHolder;
 import net.sf.eventengine.events.holders.TeamHolder;
 import net.sf.eventengine.events.schedules.AnnounceNearEndEvent;
 import net.sf.eventengine.util.EventUtil;
-import net.sf.eventengine.util.SortUtil;
+import net.sf.eventengine.util.SortUtils;
+
+import com.l2jserver.gameserver.ThreadPoolManager;
+import com.l2jserver.gameserver.enums.Team;
+import com.l2jserver.gameserver.model.actor.L2Character;
+import com.l2jserver.gameserver.model.actor.L2Npc;
+import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
+import com.l2jserver.gameserver.model.items.L2Item;
+import com.l2jserver.gameserver.model.skills.Skill;
+import com.l2jserver.gameserver.network.clientpackets.Say2;
+import com.l2jserver.util.Rnd;
 
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.enums.Team;
@@ -127,8 +139,8 @@ public class Survive extends AbstractEvent
 	 */
 	private void giveRewardsTeams()
 	{
-		// Obtenemos una lista ordenada de los que obtuvieron mas puntos.
-		List<TeamHolder> winners = SortUtil.getOrderedByPoints(getAllTeams(), 1).get(0);
+		// Get the teams winner by total points
+		List<TeamHolder> winners = SortUtils.getOrdered(getAllTeams(), ScoreType.POINT).get(0);
 		
 		for (PlayerHolder ph : getAllEventPlayers())
 		{

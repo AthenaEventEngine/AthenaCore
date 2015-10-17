@@ -21,13 +21,14 @@ package net.sf.eventengine.events.holders;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import net.sf.eventengine.enums.TeamType;
+import net.sf.eventengine.interfaces.ParticipantHolder;
 
 import com.l2jserver.gameserver.model.Location;
 
 /**
  * @author fissban
  */
-public class TeamHolder
+public class TeamHolder implements ParticipantHolder
 {
 	// Tipo de team
 	private TeamType _teamType;
@@ -79,6 +80,24 @@ public class TeamHolder
 	public int getPoints()
 	{
 		return _points.intValue();
+	}
+	
+	/**
+	 * Team kills
+	 * @return
+	 */
+	public int getKills()
+	{
+		return 0; // TODO: Do it
+	}
+	
+	/**
+	 * Team deaths
+	 * @return
+	 */
+	public int getDeaths()
+	{
+		return 0; // TODO: Do it
 	}
 	
 	/**
