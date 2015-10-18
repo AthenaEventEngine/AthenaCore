@@ -287,18 +287,12 @@ public abstract class AbstractEvent
 	
 	protected void addScheduledEvent(EventScheduled event)
 	{
-		List<EventScheduled> list;
 		if (!_scheduledEvents.containsKey(event.getTime()))
 		{
-			list = new ArrayList<>();
-			_scheduledEvents.put(event.getTime(), list);
-		}
-		else
-		{
-			list = _scheduledEvents.get(event.getTime());
+			_scheduledEvents.put(event.getTime(), new ArrayList<>());
 		}
 		
-		list.add(event);
+		_scheduledEvents.get(event.getTime()).add(event);
 	}
 	
 	private void checkScheduledEvents()
