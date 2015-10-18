@@ -206,6 +206,11 @@ public class AllVsAll extends AbstractEvent
 	 */
 	public void giveRewardsTeams()
 	{
+		if (getAllEventPlayers().isEmpty())
+		{
+			return;
+		}
+		
 		List<PlayerHolder> listOrdered = SortUtil.getOrderedByKills(getAllEventPlayers(), 1).get(0);
 		
 		String winners = "";

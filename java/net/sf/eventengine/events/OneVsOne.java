@@ -237,6 +237,11 @@ public class OneVsOne extends AbstractEvent
 		{
 			getAllEventPlayers().remove(ph);
 		}
+		
+		for (PlayerHolder ph : phRemove)
+		{
+			getAllEventPlayers().remove(ph);
+		}
 	}
 	
 	/**
@@ -244,10 +249,20 @@ public class OneVsOne extends AbstractEvent
 	 */
 	private void giveRewardsTeams()
 	{
+		if (getAllEventPlayers().isEmpty())
+		{
+			return;
+		}
+		
 		// Recorremos nuestra variable instancia a instancia
 		// y vamos entregando los premios a los ganadores.
 		for (Map<TeamType, PlayerHolder> instances : _instancesTeams.values())
 		{
+			if (instances.isEmpty())
+			{
+				continue;
+			}
+			
 			List<PlayerHolder> winners = SortUtil.getOrderedByKills(instances.values(), 0).get(0);
 			
 			// Entregamos los rewards

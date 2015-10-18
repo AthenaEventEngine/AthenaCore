@@ -166,6 +166,11 @@ public class Survive extends AbstractEvent
 	 */
 	private void giveRewardsTeams()
 	{
+		if (getAllEventPlayers().isEmpty())
+		{
+			return;
+		}
+		
 		// Obtenemos una lista ordenada de los que obtuvieron mas puntos.
 		List<TeamHolder> winners = SortUtil.getOrderedByPoints(getAllTeams(), 1).get(0);
 		
