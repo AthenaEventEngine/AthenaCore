@@ -254,7 +254,7 @@ public class NpcManager extends Quest
 		html.replace("%buffTextCount%", MessageData.getInstance().getMsgByLang(player, "buff_text_count", false));
 		html.replace("%buffTextMax%", MessageData.getInstance().getMsgByLang(player, "buff_text_max", false));
 		html.replace("%buffCount%", " <font color=LEVEL>" + BuffListData.getInstance().getBuffsPlayer(player).size() + "</font>");
-		html.replace("%buffMax%", " <font color=LEVEL>" + ConfigData.MAX_BUFF_COUNT + "</font>");
+		html.replace("%buffMax%", " <font color=LEVEL>" + ConfigData.getInstance().MAX_BUFF_COUNT + "</font>");
 		html.replace("%buttonMain%", MessageData.getInstance().getMsgByLang(player, "button_main", false));
 		
 		StringBuilder sb = new StringBuilder();
@@ -270,7 +270,7 @@ public class NpcManager extends Quest
 			
 			if (!BuffListData.getInstance().getBuffPlayer(player, sh))
 			{
-				if (BuffListData.getInstance().getBuffsPlayer(player).size() >= ConfigData.MAX_BUFF_COUNT)
+				if (BuffListData.getInstance().getBuffsPlayer(player).size() >= ConfigData.getInstance().MAX_BUFF_COUNT)
 				{
 					sb.append("<td width=32 height=32></td>");
 				}
