@@ -21,20 +21,19 @@ package net.sf.eventengine.events.holders;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import net.sf.eventengine.enums.TeamType;
-
-import com.l2jserver.gameserver.model.Location;
+import net.sf.eventengine.model.Locations;
 
 /**
  * @author fissban
  */
 public class TeamHolder
 {
-	// Tipo de team
+	// Team type
 	private TeamType _teamType;
-	// Cantidad de puntos
+	// Amount of points
 	private AtomicInteger _points = new AtomicInteger(0);
-	// Spawn del team
-	private Location _teamSpawn = new Location(0, 0, 0);
+	// List of team spawns
+	private Locations _teamSpawns;
 	
 	/**
 	 * Constructor
@@ -46,7 +45,7 @@ public class TeamHolder
 	}
 	
 	/**
-	 * Obtenemos el color del team
+	 * Get the team color
 	 * @return
 	 */
 	public TeamType getTeamType()
@@ -55,25 +54,25 @@ public class TeamHolder
 	}
 	
 	/**
-	 * Definimos el spawn de un team.
+	 * Set the team spawns
 	 * @param loc
 	 */
-	public void setSpawn(Location loc)
+	public void setSpawns(Locations locs)
 	{
-		_teamSpawn = loc;
+		_teamSpawns = locs;
 	}
 	
 	/**
-	 * Obtenemos el spawn de un team.
+	 * Get the team spawns
 	 * @return
 	 */
-	public Location getSpawn()
+	public Locations getSpawns()
 	{
-		return _teamSpawn;
+		return _teamSpawns;
 	}
 	
 	/**
-	 * Puntos del team
+	 * Get team points
 	 * @return
 	 */
 	public int getPoints()
@@ -82,7 +81,7 @@ public class TeamHolder
 	}
 	
 	/**
-	 * Incrementamos la cantidad de puntos
+	 * Increase the points
 	 */
 	public void increasePoints(int points)
 	{
@@ -90,7 +89,7 @@ public class TeamHolder
 	}
 	
 	/**
-	 * Disminiumos la cantidad de puntos
+	 * Reduce the points
 	 */
 	public void decreasePoints(int points)
 	{

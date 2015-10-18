@@ -22,10 +22,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import net.sf.eventengine.model.Locations;
+import net.sf.eventengine.util.EventPropertiesParser;
+
 import com.l2jserver.gameserver.model.Location;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
-
-import net.sf.eventengine.util.EventPropertiesParser;
 
 /**
  * Load the config from "properties"
@@ -76,7 +77,7 @@ public class ConfigData
 	public int CTF_POINTS_CONQUER_FLAG;
 	public int CTF_POINTS_KILL;
 	public int CTF_COUNT_TEAM;
-	public List<Location> CTF_COORDINATES_TEAM;
+	public ArrayList<Locations> CTF_COORDINATES_TEAM;
 	
 	// -------------------------------------------------------------------------------
 	// Configs All Vs All
@@ -90,8 +91,7 @@ public class ConfigData
 	public int AVA_REWARD_PVP_KILLER;
 	public boolean AVA_REWARD_FAME_KILLER_ENABLED;
 	public int AVA_REWARD_FAME_KILLER;
-	
-	public List<Location> AVA_COORDINATES_TEAM;
+	public ArrayList<Locations> AVA_COORDINATES_TEAM;
 	
 	// -------------------------------------------------------------------------------
 	// Configs One Vs One
@@ -106,7 +106,7 @@ public class ConfigData
 	public boolean OVO_REWARD_FAME_KILLER_ENABLED;
 	public int OVO_REWARD_FAME_KILLER;
 	public int OVO_COUNT_TEAM;
-	public List<Location> OVO_COORDINATES_TEAM;
+	public ArrayList<Locations> OVO_COORDINATES_TEAM;
 	
 	// -------------------------------------------------------------------------------
 	// Configs Team Vs Team
@@ -121,7 +121,7 @@ public class ConfigData
 	public boolean TVT_REWARD_FAME_KILLER_ENABLED;
 	public int TVT_REWARD_FAME_KILLER;
 	public int TVT_COUNT_TEAM;
-	public List<Location> TVT_COORDINATES_TEAM;
+	public ArrayList<Locations> TVT_COORDINATES_TEAM;
 	
 	// -------------------------------------------------------------------------------
 	// Configs Survive
@@ -133,7 +133,7 @@ public class ConfigData
 	public List<Integer> SURVIVE_MONSTERS_ID = new ArrayList<>();
 	public int SURVIVE_MONSTER_SPAWN_FOR_STAGE;
 	public int SURVIVE_COUNT_TEAM;
-	public List<Location> SURVIVE_COORDINATES_TEAM;
+	public ArrayList<Locations> SURVIVE_COORDINATES_TEAM;
 	
 	public ConfigData()
 	{
@@ -180,9 +180,9 @@ public class ConfigData
 		CTF_REWARD_FAME_KILLER = settings.getInt("EventRewardFameKill", 10);
 		CTF_POINTS_CONQUER_FLAG = settings.getInt("EventPointsConquerFlag", 10);
 		CTF_POINTS_KILL = settings.getInt("EventPointsKill", 1);
-		CTF_COORDINATES_TEAM = settings.getLocationList("EventTeamCoordinates");
+		CTF_COORDINATES_TEAM = settings.getMultipleLocationList("EventTeamCoordinates");
 		CTF_COUNT_TEAM = settings.getInt("EventCountTeam", 2);
-		checkTeamAndSpawn("CaptureTheFlag", CTF_COORDINATES_TEAM, CTF_COUNT_TEAM);
+		checkTeamAndMultipleSpawn("CaptureTheFlag", CTF_COORDINATES_TEAM, CTF_COUNT_TEAM);
 		
 		// ------------------------------------------------------------------------------------- //
 		// AllVsAll.properties
@@ -198,7 +198,7 @@ public class ConfigData
 		AVA_REWARD_FAME_KILLER_ENABLED = settings.getBoolean("EventRewardFameKillEnabled", false);
 		AVA_REWARD_FAME_KILLER = settings.getInt("EventRewardFameKill", 10);
 		
-		AVA_COORDINATES_TEAM = settings.getLocationList("EventTeamCoordinates");
+		AVA_COORDINATES_TEAM = settings.getMultipleLocationList("EventTeamCoordinates");
 		
 		// ------------------------------------------------------------------------------------- //
 		// OneVsOne.properties
@@ -214,8 +214,8 @@ public class ConfigData
 		OVO_REWARD_FAME_KILLER_ENABLED = settings.getBoolean("EventRewardFameKillEnabled", false);
 		OVO_REWARD_FAME_KILLER = settings.getInt("EventRewardFameKill", 10);
 		OVO_COUNT_TEAM = settings.getInt("EventCountTeam", 2);
-		OVO_COORDINATES_TEAM = settings.getLocationList("EventTeamCoordinates");
-		checkTeamAndSpawn("OneVsOne", OVO_COORDINATES_TEAM, OVO_COUNT_TEAM);
+		OVO_COORDINATES_TEAM = settings.getMultipleLocationList("EventTeamCoordinates");
+		checkTeamAndMultipleSpawn("OneVsOne", OVO_COORDINATES_TEAM, OVO_COUNT_TEAM);
 		
 		// ------------------------------------------------------------------------------------- //
 		// TeamVsTeam.properties
@@ -232,8 +232,8 @@ public class ConfigData
 		TVT_REWARD_FAME_KILLER = settings.getInt("EventRewardFameKill", 10);
 		
 		TVT_COUNT_TEAM = settings.getInt("EventCountTeam", 2);
-		TVT_COORDINATES_TEAM = settings.getLocationList("EventTeamCoordinates");
-		checkTeamAndSpawn("TeamVsTeam", TVT_COORDINATES_TEAM, TVT_COUNT_TEAM);
+		TVT_COORDINATES_TEAM = settings.getMultipleLocationList("EventTeamCoordinates");
+		checkTeamAndMultipleSpawn("TeamVsTeam", TVT_COORDINATES_TEAM, TVT_COUNT_TEAM);
 		
 		// ------------------------------------------------------------------------------------- //
 		// Survive.properties
@@ -246,20 +246,19 @@ public class ConfigData
 		SURVIVE_MONSTERS_ID = settings.getListInteger("EventMobsID");
 		SURVIVE_MONSTER_SPAWN_FOR_STAGE = settings.getInt("EventMobsSpawnForStage", 5);
 		SURVIVE_COUNT_TEAM = settings.getInt("EventCountTeam", 2);
-		SURVIVE_COORDINATES_TEAM = settings.getLocationList("EventTeamCoordinates");
+		SURVIVE_COORDINATES_TEAM = settings.getMultipleLocationList("EventTeamCoordinates");
 	}
 	
 	/**
-	 * Chequemos la cantidad de teams indicados en cada evento y que cada uno tenga un spawn definido.
+	 * Chequemos la cantidad de teams indicados en cada evento y que cada uno tenga un grupo de spawns definidos.
 	 */
-	private void checkTeamAndSpawn(String eventName, List<Location> locs, int teams)
+	private void checkTeamAndMultipleSpawn(String eventName, ArrayList<Locations> locs, int teams)
 	{
 		if (locs.size() != teams)
 		{
-			LOGGER.warning(ConfigData.class.getSimpleName() + ": " + eventName + "-> La cantidad de teams no coincide con la cantidad de spawns");
+			LOGGER.warning(ConfigData.class.getSimpleName() + ": " + eventName + "-> The amount of teams is not equals to amount of locations");
 			LOGGER.info("locs.size() " + locs.size());
 			LOGGER.info("teams " + teams);
-			
 		}
 	}
 	
