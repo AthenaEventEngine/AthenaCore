@@ -20,13 +20,6 @@ package net.sf.eventengine.events;
 
 import java.util.List;
 
-import com.l2jserver.gameserver.model.actor.L2Character;
-import com.l2jserver.gameserver.model.actor.L2Npc;
-import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
-import com.l2jserver.gameserver.model.items.L2Item;
-import com.l2jserver.gameserver.model.skills.Skill;
-import com.l2jserver.gameserver.network.clientpackets.Say2;
-
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.CollectionTarget;
@@ -38,13 +31,20 @@ import net.sf.eventengine.events.schedules.AnnounceNearEndEvent;
 import net.sf.eventengine.util.EventUtil;
 import net.sf.eventengine.util.SortUtil;
 
+import com.l2jserver.gameserver.model.actor.L2Character;
+import com.l2jserver.gameserver.model.actor.L2Npc;
+import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
+import com.l2jserver.gameserver.model.items.L2Item;
+import com.l2jserver.gameserver.model.skills.Skill;
+import com.l2jserver.gameserver.network.clientpackets.Say2;
+
 /**
  * @author fissban
  */
 public class AllVsAll extends AbstractEvent
 {
 	// Radius spawn
-	private static final int RADIUS_SPAWN_PLAYER = 100;
+	private static final int RADIUS_SPAWN_PLAYER = 10;
 	// Time for resurrection
 	private static final int TIME_RES_PLAYER = 10;
 	
@@ -68,11 +68,11 @@ public class AllVsAll extends AbstractEvent
 				createTeam(1);
 				teleportAllPlayers(RADIUS_SPAWN_PLAYER);
 				break;
-				
+			
 			case FIGHT:
 				prepareToFight(); // General Method
 				break;
-				
+			
 			case END:
 				giveRewardsTeams();
 				prepareToEnd(); // General Method

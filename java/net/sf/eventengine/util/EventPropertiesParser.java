@@ -23,11 +23,12 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.logging.Logger;
+
+import net.sf.eventengine.model.Locations;
 
 import com.l2jserver.gameserver.model.Location;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
@@ -298,22 +299,20 @@ public final class EventPropertiesParser
 	}
 	
 	/**
-	 * Parseamos un config usando "," para diferenciar entre cada coordenada y un ";" entre cada team. <br>
-	 * Ejemplo -> "xx,xx,xx"
+	 * Transform a string with the following format 'XX,XX,XX;XX,XX,XX#XX,XX,XX' to list of Locations.<br>
 	 * @param key
 	 * @return List<Location>
 	 */
-	public List<Location> getLocationList(String key)
+	public ArrayList<Locations> getMultipleLocationList(String key)
 	{
 		try
 		{
-			List<Location> locList = new ArrayList<>();
+			ArrayList<Locations> locList = new ArrayList<>();
 			
-			StringTokenizer st = new StringTokenizer(getValue(key), ";");
+			StringTokenizer st = new StringTokenizer(getValue(key), "#");
 			while (st.hasMoreTokens())
 			{
-				StringTokenizer stLoc = new StringTokenizer(st.nextToken(), ",");
-				locList.add(new Location(Integer.parseInt(stLoc.nextToken()), Integer.parseInt(stLoc.nextToken()), Integer.parseInt(stLoc.nextToken())));
+				locList.add(getLocationList(st.nextToken().toString()));
 			}
 			
 			return locList;
@@ -323,7 +322,35 @@ public final class EventPropertiesParser
 			LOGGER.warning(getClass().getSimpleName() + ": fail to read config -> " + key);
 		}
 		
-		return Collections.emptyList();
+		return new ArrayList<>();
+	}
+	
+	/**
+	 * Transform a string with the following format 'XX,XX,XX;XX,XX,XX' to Locations object.<br>
+	 * @param key
+	 * @return Locations
+	 */
+	public Locations getLocationList(String key)
+	{
+		Locations locList = new Locations();
+		
+		try
+		{
+			StringTokenizer st = new StringTokenizer(key, ";");
+			while (st.hasMoreTokens())
+			{
+				StringTokenizer stLoc = new StringTokenizer(st.nextToken(), ",");
+				locList.addLoc(new Location(Integer.parseInt(stLoc.nextToken()), Integer.parseInt(stLoc.nextToken()), Integer.parseInt(stLoc.nextToken())));
+			}
+			
+			return locList;
+		}
+		catch (Exception e)
+		{
+			LOGGER.warning(getClass().getSimpleName() + ": fail to read config -> " + key);
+		}
+		
+		return locList;
 	}
 	
 	/**

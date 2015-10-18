@@ -37,6 +37,7 @@ import net.sf.eventengine.util.SortUtil;
 
 import com.l2jserver.gameserver.datatables.ItemTable;
 import com.l2jserver.gameserver.enums.Team;
+import com.l2jserver.gameserver.model.Location;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
@@ -63,7 +64,7 @@ public class CaptureTheFlag extends AbstractEvent
 	private final int POINTS_CONQUER_FLAG = ConfigData.getInstance().CTF_POINTS_CONQUER_FLAG;
 	private final int POINTS_KILL = ConfigData.getInstance().CTF_POINTS_KILL;
 	// Radius spawn
-	private static final int RADIUS_SPAWN_PLAYER = 100;
+	private static final int RADIUS_SPAWN_PLAYER = 10;
 	// Time for resurrection
 	private static final int TIME_RES_PLAYER = 10;
 	
@@ -148,7 +149,8 @@ public class CaptureTheFlag extends AbstractEvent
 					
 					TeamHolder th = getTeam(_flagHasPlayer.remove(ph));
 					// We created the flag again
-					_flagSpawn.put(addEventNpc(FLAG, th.getSpawn().getX(), th.getSpawn().getY(), th.getSpawn().getZ(), 0, Team.NONE, th.getTeamType().name(), false, getInstancesWorlds().get(0).getInstanceId()), th.getTeamType());
+					Location loc = th.getSpawns().getRandomSpawn();
+					_flagSpawn.put(addEventNpc(FLAG, loc.getX(), loc.getY(), loc.getZ(), 0, Team.NONE, th.getTeamType().name(), false, getInstancesWorlds().get(0).getInstanceId()), th.getTeamType());
 					// We announced that a flag was taken
 					EventUtil.announceTo(Say2.BATTLEFIELD, "ctf_conquered_the_flag", "%holder%", th.getTeamType().name(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
 					// Show points of each team
@@ -262,9 +264,11 @@ public class CaptureTheFlag extends AbstractEvent
 		
 		for (TeamHolder th : getAllTeams())
 		{
-			int x = th.getSpawn().getX();
-			int y = th.getSpawn().getY();
-			int z = th.getSpawn().getZ();
+			Location loc = th.getSpawns().getRandomSpawn();
+			
+			int x = loc.getX();
+			int y = loc.getY();
+			int z = loc.getZ();
 			TeamType tt = th.getTeamType();
 			
 			_flagSpawn.put(addEventNpc(FLAG, x, y, z, 0, Team.NONE, th.getTeamType().name(), false, instanceId), tt);

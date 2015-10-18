@@ -28,6 +28,23 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledFuture;
 import java.util.logging.Logger;
 
+import net.sf.eventengine.EventEngineManager;
+import net.sf.eventengine.EventEngineWorld;
+import net.sf.eventengine.datatables.BuffListData;
+import net.sf.eventengine.datatables.ConfigData;
+import net.sf.eventengine.datatables.MessageData;
+import net.sf.eventengine.enums.EventState;
+import net.sf.eventengine.enums.TeamType;
+import net.sf.eventengine.events.holders.PlayerHolder;
+import net.sf.eventengine.events.holders.TeamHolder;
+import net.sf.eventengine.events.schedules.AnnounceTeleportEvent;
+import net.sf.eventengine.events.schedules.ChangeToEndEvent;
+import net.sf.eventengine.events.schedules.ChangeToFightEvent;
+import net.sf.eventengine.events.schedules.ChangeToStartEvent;
+import net.sf.eventengine.events.schedules.interfaces.EventScheduled;
+import net.sf.eventengine.model.Locations;
+import net.sf.eventengine.util.EventUtil;
+
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.data.xml.impl.NpcData;
 import com.l2jserver.gameserver.datatables.SpawnTable;
@@ -51,22 +68,6 @@ import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.network.serverpackets.MagicSkillUse;
 import com.l2jserver.gameserver.taskmanager.DecayTaskManager;
 import com.l2jserver.util.Rnd;
-
-import net.sf.eventengine.EventEngineManager;
-import net.sf.eventengine.EventEngineWorld;
-import net.sf.eventengine.datatables.BuffListData;
-import net.sf.eventengine.datatables.ConfigData;
-import net.sf.eventengine.datatables.MessageData;
-import net.sf.eventengine.enums.EventState;
-import net.sf.eventengine.enums.TeamType;
-import net.sf.eventengine.events.holders.PlayerHolder;
-import net.sf.eventengine.events.holders.TeamHolder;
-import net.sf.eventengine.events.schedules.AnnounceTeleportEvent;
-import net.sf.eventengine.events.schedules.ChangeToEndEvent;
-import net.sf.eventengine.events.schedules.ChangeToFightEvent;
-import net.sf.eventengine.events.schedules.ChangeToStartEvent;
-import net.sf.eventengine.events.schedules.interfaces.EventScheduled;
-import net.sf.eventengine.util.EventUtil;
 
 /**
  * @author fissban
@@ -147,7 +148,8 @@ public abstract class AbstractEvent
 	 * @param team
 	 * @param locs
 	 */
-	public void setSpawnTeams(List<Location> locs)
+	
+	public void setSpawnTeams(ArrayList<Locations> locs)
 	{
 		if (locs.size() < _countTeams)
 		{
@@ -156,32 +158,31 @@ public abstract class AbstractEvent
 			LOGGER.warning(AbstractEvent.class.getSimpleName() + ": Cantidad de locs: " + locs.size());
 			return;
 		}
-		
 		for (int i = 0; i < _countTeams; i++)
 		{
-			setSpawn(TeamType.values()[i + 1], locs.get(i));
+			setSpawns(TeamType.values()[i + 1], locs.get(i));
 		}
 	}
 	
 	/**
-	 * We define a team spawns.
+	 * Set the team spawns.
 	 * @param team
 	 * @param loc
 	 */
-	public void setSpawn(TeamType team, Location loc)
+	
+	public void setSpawns(TeamType team, Locations loc)
 	{
-		_teams.get(team).setSpawn(loc);
+		_teams.get(team).setSpawns(loc);
 	}
 	
 	/**
-	 * We get the spawn of a particular team.
+	 * Get the spawns of a particular team.
 	 * @param team
 	 * @return Location
 	 */
-	public Location getTeamSpawn(TeamType team)
-	{
-		return _teams.get(team).getSpawn();
-	}
+	/*
+	 * public Location getTeamSpawn(TeamType team) { return _teams.get(team).getSpawns(); }
+	 */
 	
 	// XXX DINAMIC INSTANCE ------------------------------------------------------------------------------
 	private String _instanceFile = "";
@@ -760,8 +761,7 @@ public abstract class AbstractEvent
 	 */
 	protected void teleportPlayer(PlayerHolder ph, int radius)
 	{
-		// get the spawn defined at the start of each event
-		Location loc = getTeamSpawn(ph.getTeamType());
+		Location loc = getTeam(ph.getTeamType()).getSpawns().getRandomSpawn();
 		
 		loc.setInstanceId(ph.getDinamicInstanceId());
 		loc.setX(loc.getX() + Rnd.get(-radius, radius));
@@ -900,7 +900,7 @@ public abstract class AbstractEvent
 				giveBuffPlayer(player.getPcInstance());
 				teleportPlayer(player, radiusTeleport);
 				
-			} , time * 1000));
+			}, time * 1000));
 		}
 		catch (Exception e)
 		{
@@ -993,6 +993,6 @@ public abstract class AbstractEvent
 		{
 			_currentTime += 1000;
 			checkScheduledEvents();
-		} , 10 * 1000, 1000);
+		}, 10 * 1000, 1000);
 	}
 }
