@@ -54,7 +54,15 @@ public class NpcManager extends Quest
 	@Override
 	public String onFirstTalk(L2Npc npc, L2PcInstance player)
 	{
-		sendHtmlIndex(player);
+		if (player.isGM())
+		{
+			sendHtmlAdmin(player);
+		}
+		else
+		{
+			sendHtmlIndex(player);
+		}
+		
 		return null;
 	}
 	
@@ -68,7 +76,11 @@ public class NpcManager extends Quest
 			case "index":
 				sendHtmlIndex(player);
 				break;
-				
+			
+			case "admin":
+				sendHtmlAdmin(player);
+				break;
+			
 			case "engine":
 				final NpcHtmlMessage html = new NpcHtmlMessage();
 				html.setFile(player.getHtmlPrefix(), "data/html/events/event_engine.htm");
@@ -376,6 +388,27 @@ public class NpcManager extends Quest
 			html.replace("%menuInfo%", MessageData.getInstance().getMsgByLang(player, "event_reloading", false));
 			html.replace("%button%", "");
 		}
+		// Send html
+		player.sendPacket(html);
+	}
+	
+	private static void sendHtmlAdmin(L2PcInstance player)
+	{
+		final NpcHtmlMessage html = new NpcHtmlMessage();
+		html.setFile(player.getHtmlPrefix(), "data/html/events/admin_menu.htm");
+		
+		// Info general
+		html.replace("%texTitle%", MessageData.getInstance().getMsgByLang(player, "admin_menu_title", false));
+		html.replace("%texDescription%", MessageData.getInstance().getMsgByLang(player, "admin_menu_description", false));
+		
+		// TODO: System Properties
+		// TODO: System Language
+		// TODO: System Events
+		// TODO: System Npc
+		
+		// Button
+		html.replace("%buttonMain%", MessageData.getInstance().getMsgByLang(player, "button_main", false));
+		
 		// Send html
 		player.sendPacket(html);
 	}

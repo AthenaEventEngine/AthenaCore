@@ -74,6 +74,10 @@
 	<message id="lang_current_language" text="Current language:"/>
 	<message id="lang_current_successfully" text="Language successfully set to:"/>
 	
+	<!-- HTML: Admin Setting -->
+	<message id="admin_menu_title" text="Admin Menu Setting"/>
+	<message id="admin_menu_description" text="General Setting of Event Engine"/>
+	
 	<!-- Teleport -->
 	<message id="teleport_seconds" text="You will be teleported to the event in seconds." />
 	
