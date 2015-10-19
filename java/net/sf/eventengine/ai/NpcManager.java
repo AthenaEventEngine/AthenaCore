@@ -78,7 +78,10 @@ public class NpcManager extends Quest
 				break;
 			
 			case "admin":
-				sendHtmlAdmin(player);
+				if (player.isGM())
+				{
+					sendHtmlAdmin(player);
+				}
 				break;
 			
 			case "engine":
