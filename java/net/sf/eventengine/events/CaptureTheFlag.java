@@ -26,7 +26,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.CollectionTarget;
-import net.sf.eventengine.enums.EventState;
 import net.sf.eventengine.enums.TeamType;
 import net.sf.eventengine.events.handler.AbstractEvent;
 import net.sf.eventengine.events.holders.PlayerHolder;
@@ -44,7 +43,6 @@ import com.l2jserver.gameserver.model.itemcontainer.Inventory;
 import com.l2jserver.gameserver.model.items.L2Item;
 import com.l2jserver.gameserver.model.items.L2Weapon;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
-import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
 import com.l2jserver.gameserver.network.serverpackets.MagicSkillUse;
 
@@ -82,27 +80,24 @@ public class CaptureTheFlag extends AbstractEvent
 	}
 	
 	@Override
-	public void runEventState(EventState state)
+	protected void onEventStart()
 	{
-		switch (state)
-		{
-			case START:
-				prepareToStart(); // General Method
-				createTeams(ConfigData.getInstance().CTF_COUNT_TEAM);
-				spawnFlagsAndHolders();
-				teleportAllPlayers(RADIUS_SPAWN_PLAYER);
-				break;
-			
-			case FIGHT:
-				prepareToFight(); // General Method
-				break;
-			
-			case END:
-				clearFlags();
-				giveRewardsTeams();
-				prepareToEnd(); // General Method
-				break;
-		}
+		createTeams(ConfigData.getInstance().CTF_COUNT_TEAM);
+		spawnFlagsAndHolders();
+		teleportAllPlayers(RADIUS_SPAWN_PLAYER);
+	}
+	
+	@Override
+	protected void onEventFight()
+	{
+		// Nothing
+	}
+	
+	@Override
+	protected void onEventEnd()
+	{
+		clearFlags();
+		giveRewardsTeams();
 	}
 	
 	@Override
@@ -209,18 +204,6 @@ public class CaptureTheFlag extends AbstractEvent
 	public void onDeath(PlayerHolder ph)
 	{
 		giveResurrectPlayer(ph, TIME_RES_PLAYER, RADIUS_SPAWN_PLAYER);
-	}
-	
-	@Override
-	public boolean onAttack(PlayerHolder ph, L2Character target)
-	{
-		return false;
-	}
-	
-	@Override
-	public boolean onUseSkill(PlayerHolder ph, L2Character target, Skill skill)
-	{
-		return false;
 	}
 	
 	@Override
