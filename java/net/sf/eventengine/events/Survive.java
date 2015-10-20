@@ -20,19 +20,8 @@ package net.sf.eventengine.events;
 
 import java.util.List;
 
-import com.l2jserver.gameserver.ThreadPoolManager;
-import com.l2jserver.gameserver.enums.Team;
-import com.l2jserver.gameserver.model.actor.L2Character;
-import com.l2jserver.gameserver.model.actor.L2Npc;
-import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
-import com.l2jserver.gameserver.model.items.L2Item;
-import com.l2jserver.gameserver.model.skills.Skill;
-import com.l2jserver.gameserver.network.clientpackets.Say2;
-import com.l2jserver.util.Rnd;
-
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.enums.CollectionTarget;
-import net.sf.eventengine.enums.EventState;
 import net.sf.eventengine.enums.TeamType;
 import net.sf.eventengine.events.handler.AbstractEvent;
 import net.sf.eventengine.events.holders.PlayerHolder;
@@ -40,6 +29,13 @@ import net.sf.eventengine.events.holders.TeamHolder;
 import net.sf.eventengine.events.schedules.AnnounceNearEndEvent;
 import net.sf.eventengine.util.EventUtil;
 import net.sf.eventengine.util.SortUtil;
+
+import com.l2jserver.gameserver.ThreadPoolManager;
+import com.l2jserver.gameserver.enums.Team;
+import com.l2jserver.gameserver.model.actor.L2Character;
+import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
+import com.l2jserver.gameserver.network.clientpackets.Say2;
+import com.l2jserver.util.Rnd;
 
 /**
  * Event survival<br>
@@ -69,33 +65,22 @@ public class Survive extends AbstractEvent
 	}
 	
 	@Override
-	public void runEventState(EventState state)
+	protected void onEventStart()
 	{
-		switch (state)
-		{
-			case START:
-				prepareToStart(); // General Method
-				createTeam(ConfigData.getInstance().SURVIVE_COUNT_TEAM);
-				teleportAllPlayers(RADIUS_SPAWN_PLAYER);
-				break;
-				
-			case FIGHT:
-				prepareToFight(); // General Method
-				spawnsMobs();
-				break;
-				
-			case END:
-				// showResult();
-				giveRewardsTeams();
-				prepareToEnd(); // General Method
-				break;
-		}
+		createTeam(ConfigData.getInstance().SURVIVE_COUNT_TEAM);
+		teleportAllPlayers(RADIUS_SPAWN_PLAYER);
 	}
 	
 	@Override
-	public boolean onInteract(PlayerHolder ph, L2Npc npc)
+	protected void onEventFight()
 	{
-		return true;
+		spawnsMobs();
+	}
+	
+	@Override
+	protected void onEventEnd()
+	{
+		giveRewardsTeams();
 	}
 	
 	@Override
@@ -127,12 +112,6 @@ public class Survive extends AbstractEvent
 	}
 	
 	@Override
-	public void onDeath(PlayerHolder ph)
-	{
-		//
-	}
-	
-	@Override
 	public boolean onAttack(PlayerHolder ph, L2Character target)
 	{
 		if (target.isPlayable())
@@ -140,24 +119,6 @@ public class Survive extends AbstractEvent
 			return true;
 		}
 		return false;
-	}
-	
-	@Override
-	public boolean onUseSkill(PlayerHolder ph, L2Character target, Skill skill)
-	{
-		return false;
-	}
-	
-	@Override
-	public boolean onUseItem(PlayerHolder ph, L2Item item)
-	{
-		return false;
-	}
-	
-	@Override
-	public void onLogout(PlayerHolder ph)
-	{
-		//
 	}
 	
 	// MISC ---------------------------------------------------------------------------------------
@@ -211,7 +172,7 @@ public class Survive extends AbstractEvent
 				// FIXME agregar al sistema de lang
 				EventUtil.sendEventScreenMessage(ph, "Stage " + _stage, 5000);
 			}
-		} , 5000L);
+		}, 5000L);
 		
 	}
 	

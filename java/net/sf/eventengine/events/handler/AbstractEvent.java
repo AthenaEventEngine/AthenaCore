@@ -28,6 +28,22 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledFuture;
 import java.util.logging.Logger;
 
+import net.sf.eventengine.EventEngineManager;
+import net.sf.eventengine.EventEngineWorld;
+import net.sf.eventengine.datatables.BuffListData;
+import net.sf.eventengine.datatables.ConfigData;
+import net.sf.eventengine.datatables.MessageData;
+import net.sf.eventengine.enums.EventState;
+import net.sf.eventengine.enums.TeamType;
+import net.sf.eventengine.events.holders.PlayerHolder;
+import net.sf.eventengine.events.holders.TeamHolder;
+import net.sf.eventengine.events.schedules.AnnounceTeleportEvent;
+import net.sf.eventengine.events.schedules.ChangeToEndEvent;
+import net.sf.eventengine.events.schedules.ChangeToFightEvent;
+import net.sf.eventengine.events.schedules.ChangeToStartEvent;
+import net.sf.eventengine.events.schedules.interfaces.EventScheduled;
+import net.sf.eventengine.util.EventUtil;
+
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.data.xml.impl.NpcData;
 import com.l2jserver.gameserver.datatables.SpawnTable;
@@ -52,22 +68,6 @@ import com.l2jserver.gameserver.network.serverpackets.MagicSkillUse;
 import com.l2jserver.gameserver.taskmanager.DecayTaskManager;
 import com.l2jserver.util.Rnd;
 
-import net.sf.eventengine.EventEngineManager;
-import net.sf.eventengine.EventEngineWorld;
-import net.sf.eventengine.datatables.BuffListData;
-import net.sf.eventengine.datatables.ConfigData;
-import net.sf.eventengine.datatables.MessageData;
-import net.sf.eventengine.enums.EventState;
-import net.sf.eventengine.enums.TeamType;
-import net.sf.eventengine.events.holders.PlayerHolder;
-import net.sf.eventengine.events.holders.TeamHolder;
-import net.sf.eventengine.events.schedules.AnnounceTeleportEvent;
-import net.sf.eventengine.events.schedules.ChangeToEndEvent;
-import net.sf.eventengine.events.schedules.ChangeToFightEvent;
-import net.sf.eventengine.events.schedules.ChangeToStartEvent;
-import net.sf.eventengine.events.schedules.interfaces.EventScheduled;
-import net.sf.eventengine.util.EventUtil;
-
 /**
  * @author fissban
  */
@@ -83,8 +83,33 @@ public abstract class AbstractEvent
 		initControlTime();
 	}
 	
-	/** Necessary to keep track of the states of the event. */
-	public abstract void runEventState(EventState state);
+	/** Necessary to hadle the event states. */
+	public final void runEventState(EventState state)
+	{
+		switch (state)
+		{
+			case START:
+				prepareToStart();
+				onEventStart();
+				break;
+			
+			case FIGHT:
+				prepareToFight();
+				onEventFight();
+				break;
+			
+			case END:
+				onEventEnd();
+				prepareToEnd();
+				break;
+		}
+	}
+	
+	protected abstract void onEventStart();
+	
+	protected abstract void onEventFight();
+	
+	protected abstract void onEventEnd();
 	
 	// XXX TEAMS -----------------------------------------------------------------------------------------
 	private final Map<TeamType, TeamHolder> _teams = new HashMap<>();
@@ -536,7 +561,10 @@ public abstract class AbstractEvent
 	 * @param ph
 	 * @param npc
 	 */
-	public abstract boolean onInteract(PlayerHolder ph, L2Npc npc);
+	public boolean onInteract(PlayerHolder ph, L2Npc npc)
+	{
+		return true;
+	}
 	
 	/**
 	 * @param playable
@@ -563,7 +591,10 @@ public abstract class AbstractEvent
 	 * @param ph
 	 * @param target
 	 */
-	public abstract void onKill(PlayerHolder ph, L2Character target);
+	public void onKill(PlayerHolder ph, L2Character target)
+	{
+		// Nothing
+	}
 	
 	/**
 	 * @param player
@@ -581,7 +612,10 @@ public abstract class AbstractEvent
 	/**
 	 * @param ph
 	 */
-	public abstract void onDeath(PlayerHolder ph);
+	public void onDeath(PlayerHolder ph)
+	{
+		// Nothing
+	}
 	
 	public boolean listenerOnAttack(L2Playable playable, L2Character target)
 	{
@@ -621,7 +655,10 @@ public abstract class AbstractEvent
 	 * @param target
 	 * @return true -> only in the event that an attack not want q continue its normal progress.
 	 */
-	public abstract boolean onAttack(PlayerHolder ph, L2Character target);
+	public boolean onAttack(PlayerHolder ph, L2Character target)
+	{
+		return false;
+	}
 	
 	/**
 	 * @param playable
@@ -681,7 +718,10 @@ public abstract class AbstractEvent
 	 * @param skill
 	 * @return true -> only in the event that an item not want that continue its normal progress.
 	 */
-	public abstract boolean onUseSkill(PlayerHolder ph, L2Character target, Skill skill);
+	public boolean onUseSkill(PlayerHolder ph, L2Character target, Skill skill)
+	{
+		return false;
+	}
 	
 	/**
 	 * @param player
@@ -710,7 +750,10 @@ public abstract class AbstractEvent
 	 * @param item
 	 * @return true -> only in the event that an skill not want q continue its normal progress.
 	 */
-	public abstract boolean onUseItem(PlayerHolder player, L2Item item);
+	public boolean onUseItem(PlayerHolder player, L2Item item)
+	{
+		return false;
+	}
 	
 	public void listenerOnLogout(L2PcInstance player)
 	{
@@ -738,7 +781,10 @@ public abstract class AbstractEvent
 		}
 	}
 	
-	public abstract void onLogout(PlayerHolder ph);
+	public void onLogout(PlayerHolder ph)
+	{
+		// Nothing
+	}
 	
 	// VARIOUS METHODS. -------------------------------------------------------------------------------- //
 	
@@ -900,7 +946,7 @@ public abstract class AbstractEvent
 				giveBuffPlayer(player.getPcInstance());
 				teleportPlayer(player, radiusTeleport);
 				
-			} , time * 1000));
+			}, time * 1000));
 		}
 		catch (Exception e)
 		{
@@ -993,6 +1039,6 @@ public abstract class AbstractEvent
 		{
 			_currentTime += 1000;
 			checkScheduledEvents();
-		} , 10 * 1000, 1000);
+		}, 10 * 1000, 1000);
 	}
 }

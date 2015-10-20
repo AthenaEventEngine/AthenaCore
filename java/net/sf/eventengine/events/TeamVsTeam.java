@@ -20,17 +20,9 @@ package net.sf.eventengine.events;
 
 import java.util.List;
 
-import com.l2jserver.gameserver.model.actor.L2Character;
-import com.l2jserver.gameserver.model.actor.L2Npc;
-import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
-import com.l2jserver.gameserver.model.items.L2Item;
-import com.l2jserver.gameserver.model.skills.Skill;
-import com.l2jserver.gameserver.network.clientpackets.Say2;
-
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.CollectionTarget;
-import net.sf.eventengine.enums.EventState;
 import net.sf.eventengine.enums.TeamType;
 import net.sf.eventengine.events.handler.AbstractEvent;
 import net.sf.eventengine.events.holders.PlayerHolder;
@@ -38,6 +30,10 @@ import net.sf.eventengine.events.holders.TeamHolder;
 import net.sf.eventengine.events.schedules.AnnounceNearEndEvent;
 import net.sf.eventengine.util.EventUtil;
 import net.sf.eventengine.util.SortUtil;
+
+import com.l2jserver.gameserver.model.actor.L2Character;
+import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
+import com.l2jserver.gameserver.network.clientpackets.Say2;
 
 /**
  * @author fissban
@@ -60,42 +56,26 @@ public class TeamVsTeam extends AbstractEvent
 	}
 	
 	@Override
-	public void runEventState(EventState state)
+	protected void onEventStart()
 	{
-		switch (state)
-		{
-			case START:
-				prepareToStart(); // General Method
-				createTeams(ConfigData.getInstance().TVT_COUNT_TEAM);
-				teleportAllPlayers(RADIUS_SPAWN_PLAYER);
-				break;
-				
-			case FIGHT:
-				prepareToFight(); // General Method
-				showPoint();
-				break;
-				
-			case END:
-				// showResult();
-				giveRewardsTeams();
-				prepareToEnd(); // General Method
-				break;
-		}
+		createTeams(ConfigData.getInstance().TVT_COUNT_TEAM);
+		teleportAllPlayers(RADIUS_SPAWN_PLAYER);
+	}
+	
+	@Override
+	protected void onEventFight()
+	{
+		showPoint();
+	}
+	
+	@Override
+	protected void onEventEnd()
+	{
+		// showResult();
+		giveRewardsTeams();
 	}
 	
 	// LISTENERS ------------------------------------------------------
-	@Override
-	public boolean onUseSkill(PlayerHolder ph, L2Character target, Skill skill)
-	{
-		return false;
-	}
-	
-	@Override
-	public boolean onAttack(PlayerHolder ph, L2Character target)
-	{
-		return false;
-	}
-	
 	@Override
 	public void onKill(PlayerHolder ph, L2Character target)
 	{
@@ -134,24 +114,6 @@ public class TeamVsTeam extends AbstractEvent
 		giveResurrectPlayer(ph, TIME_RES_PLAYER, RADIUS_SPAWN_PLAYER);
 		// Incremented by one the number of deaths Character
 		ph.increaseDeaths();
-	}
-	
-	@Override
-	public boolean onInteract(PlayerHolder ph, L2Npc npc)
-	{
-		return true;
-	}
-	
-	@Override
-	public boolean onUseItem(PlayerHolder ph, L2Item item)
-	{
-		return false;
-	}
-	
-	@Override
-	public void onLogout(PlayerHolder ph)
-	{
-		//
 	}
 	
 	// VARIOUS METHODS -------------------------------------------------
