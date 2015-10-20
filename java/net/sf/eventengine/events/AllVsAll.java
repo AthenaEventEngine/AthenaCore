@@ -23,7 +23,6 @@ import java.util.List;
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.CollectionTarget;
-import net.sf.eventengine.enums.EventState;
 import net.sf.eventengine.enums.ScoreType;
 import net.sf.eventengine.enums.TeamType;
 import net.sf.eventengine.events.handler.AbstractEvent;
@@ -31,13 +30,6 @@ import net.sf.eventengine.events.holders.PlayerHolder;
 import net.sf.eventengine.events.schedules.AnnounceNearEndEvent;
 import net.sf.eventengine.util.EventUtil;
 import net.sf.eventengine.util.SortUtils;
-
-import com.l2jserver.gameserver.model.actor.L2Character;
-import com.l2jserver.gameserver.model.actor.L2Npc;
-import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
-import com.l2jserver.gameserver.model.items.L2Item;
-import com.l2jserver.gameserver.model.skills.Skill;
-import com.l2jserver.gameserver.network.clientpackets.Say2;
 
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
@@ -57,10 +49,10 @@ public class AllVsAll extends AbstractEvent
 	{
 		super();
 		// Definimos la instancia en que se ejecutara el evento.
-		setInstanceFile(ConfigData.getInstance().AVA_INSTANCE_FILE);
+		getInstanceWorldManager().setInstanceFile(ConfigData.getInstance().AVA_INSTANCE_FILE);
 		// Announce near end event
 		int timeLeft = (ConfigData.getInstance().EVENT_DURATION * 60 * 1000) - (ConfigData.getInstance().EVENT_TEXT_TIME_FOR_END * 1000);
-		addScheduledEvent(new AnnounceNearEndEvent(timeLeft));
+		getScheduledEventsManager().addScheduledEvent(new AnnounceNearEndEvent(timeLeft));
 	}
 	
 	@Override
@@ -137,17 +129,17 @@ public class AllVsAll extends AbstractEvent
 	private void createTeam(int countTeams)
 	{
 		// Definimos la cantidad de teams que se requieren
-		setCountTeams(countTeams);
+		getTeamsManager().setCountTeams(countTeams);
 		// We define each team spawns
-		setSpawnTeams(ConfigData.getInstance().AVA_COORDINATES_TEAM);
+		getTeamsManager().setSpawnTeams(ConfigData.getInstance().AVA_COORDINATES_TEAM);
 		
 		// We create the instance and the world
-		InstanceWorld world = createNewInstanceWorld();
+		InstanceWorld world = getInstanceWorldManager().createNewInstanceWorld();
 		
 		// Obtenemos el team -> WHITE
-		TeamType team = getEnabledTeams()[0];
+		TeamType team = getTeamsManager().getEnabledTeams()[0];
 		
-		for (PlayerHolder ph : getAllEventPlayers())
+		for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
 		{
 			// Definimos el team del jugador
 			ph.setTeam(team);
@@ -177,7 +169,12 @@ public class AllVsAll extends AbstractEvent
 	 */
 	public void giveRewardsTeams()
 	{
-		List<PlayerHolder> listOrdered = SortUtils.getOrdered(getAllEventPlayers(), ScoreType.KILL).get(0);
+		if (getPlayerEventManager().getAllEventPlayers().isEmpty())
+		{
+			return;
+		}
+		
+		List<PlayerHolder> listOrdered = SortUtils.getOrdered(this.getPlayerEventManager().getAllEventPlayers(), ScoreType.KILL).get(0);
 		
 		String winners = "";
 		
