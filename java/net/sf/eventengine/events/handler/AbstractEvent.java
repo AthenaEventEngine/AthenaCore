@@ -965,7 +965,7 @@ public abstract class AbstractEvent
 	 * <li>Set max cp, hp and mp.</li><br>
 	 * @param ph
 	 */
-	protected void revivePlayer(PlayerHolder ph)
+	public void revivePlayer(PlayerHolder ph)
 	{
 		if (ph.getPcInstance().isDead())
 		{
