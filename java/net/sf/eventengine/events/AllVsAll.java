@@ -23,12 +23,21 @@ import java.util.List;
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.CollectionTarget;
+import net.sf.eventengine.enums.EventState;
+import net.sf.eventengine.enums.ScoreType;
 import net.sf.eventengine.enums.TeamType;
 import net.sf.eventengine.events.handler.AbstractEvent;
 import net.sf.eventengine.events.holders.PlayerHolder;
 import net.sf.eventengine.events.schedules.AnnounceNearEndEvent;
 import net.sf.eventengine.util.EventUtil;
-import net.sf.eventengine.util.SortUtil;
+import net.sf.eventengine.util.SortUtils;
+
+import com.l2jserver.gameserver.model.actor.L2Character;
+import com.l2jserver.gameserver.model.actor.L2Npc;
+import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
+import com.l2jserver.gameserver.model.items.L2Item;
+import com.l2jserver.gameserver.model.skills.Skill;
+import com.l2jserver.gameserver.network.clientpackets.Say2;
 
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
@@ -164,15 +173,16 @@ public class AllVsAll extends AbstractEvent
 	}
 	
 	/**
-	 * We deliver rewards.<br>
+	 * Give rewards.<br>
 	 */
 	public void giveRewardsTeams()
 	{
-		List<PlayerHolder> listOrdered = SortUtil.getOrderedByKills(getAllEventPlayers(), 1).get(0);
+		List<PlayerHolder> listOrdered = SortUtils.getOrdered(getAllEventPlayers(), ScoreType.KILL).get(0);
 		
 		String winners = "";
 		
-		for (PlayerHolder ph : listOrdered)
+		// Get the players with more kills and less deaths
+		for (PlayerHolder ph : SortUtils.getOrdered(listOrdered, ScoreType.DEATH, SortUtils.Order.ASCENDENT).get(0))
 		{
 			winners += ph.getPcInstance().getName();
 			giveItems(ph, ConfigData.getInstance().AVA_REWARD_PLAYER_WIN);

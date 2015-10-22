@@ -19,6 +19,7 @@
 package net.sf.eventengine.events.holders;
 
 import net.sf.eventengine.enums.TeamType;
+import net.sf.eventengine.interfaces.ParticipantHolder;
 
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 
@@ -26,7 +27,7 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
  * Clase encargada de administrar los datos de los players que participan del evento.
  * @author fissban
  */
-public class PlayerHolder
+public class PlayerHolder implements ParticipantHolder
 {
 	private final L2PcInstance _player;
 	
@@ -55,7 +56,7 @@ public class PlayerHolder
 	// METODOS VARIOS -----------------------------------------------------------
 	
 	/**
-	 * Aacceso directo a todos los metodos de L2PcInstance.
+	 * Acceso directo a todos los metodos de L2PcInstance.
 	 * @return
 	 */
 	public L2PcInstance getPcInstance()

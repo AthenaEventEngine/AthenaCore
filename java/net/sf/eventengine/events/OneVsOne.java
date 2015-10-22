@@ -28,12 +28,21 @@ import net.sf.eventengine.EventEngineManager;
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.EventEngineState;
+import net.sf.eventengine.enums.EventState;
+import net.sf.eventengine.enums.ScoreType;
 import net.sf.eventengine.enums.TeamType;
 import net.sf.eventengine.events.handler.AbstractEvent;
 import net.sf.eventengine.events.holders.PlayerHolder;
 import net.sf.eventengine.events.schedules.AnnounceNearEndEvent;
 import net.sf.eventengine.util.EventUtil;
-import net.sf.eventengine.util.SortUtil;
+import net.sf.eventengine.util.SortUtils;
+
+import com.l2jserver.gameserver.ThreadPoolManager;
+import com.l2jserver.gameserver.model.actor.L2Character;
+import com.l2jserver.gameserver.model.actor.L2Npc;
+import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
+import com.l2jserver.gameserver.model.items.L2Item;
+import com.l2jserver.gameserver.model.skills.Skill;
 
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.model.actor.L2Character;
@@ -205,7 +214,7 @@ public class OneVsOne extends AbstractEvent
 		// y vamos entregando los premios a los ganadores.
 		for (Map<TeamType, PlayerHolder> instances : _instancesTeams.values())
 		{
-			List<PlayerHolder> winners = SortUtil.getOrderedByKills(instances.values(), 0).get(0);
+			List<PlayerHolder> winners = SortUtils.getOrdered(instances.values(), ScoreType.KILL).get(0);
 			
 			// Entregamos los rewards
 			for (PlayerHolder ph : winners)
