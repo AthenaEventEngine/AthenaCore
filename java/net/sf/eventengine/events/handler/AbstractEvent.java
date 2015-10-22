@@ -35,6 +35,7 @@ import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.EventState;
 import net.sf.eventengine.enums.TeamType;
+import net.sf.eventengine.events.handler.managers.AntiAfkManager;
 import net.sf.eventengine.events.holders.PlayerHolder;
 import net.sf.eventengine.events.holders.TeamHolder;
 import net.sf.eventengine.events.schedules.AnnounceTeleportEvent;
@@ -110,6 +111,14 @@ public abstract class AbstractEvent
 	protected abstract void onEventFight();
 	
 	protected abstract void onEventEnd();
+	
+	// XXX ANTI AFK SYSTEM -------------------------------------------------------------------------------
+	private AntiAfkManager _antiAfkManager = new AntiAfkManager();
+	
+	private AntiAfkManager getAntiAfkManager()
+	{
+		return _antiAfkManager;
+	}
 	
 	// XXX TEAMS -----------------------------------------------------------------------------------------
 	private final Map<TeamType, TeamHolder> _teams = new HashMap<>();
@@ -285,7 +294,7 @@ public abstract class AbstractEvent
 	
 	private final Map<Integer, List<EventScheduled>> _scheduledEvents = new HashMap<>();
 	
-	protected void addScheduledEvent(EventScheduled event)
+	public void addScheduledEvent(EventScheduled event)
 	{
 		if (!_scheduledEvents.containsKey(event.getTime()))
 		{
@@ -869,7 +878,7 @@ public abstract class AbstractEvent
 	}
 	
 	/**
-	 * We prepare the player for the end of the event<br>
+	 * We prepare the all players for the end of the event<br>
 	 * <ul>
 	 * <b>Actions: </b>
 	 * </ul>
@@ -886,31 +895,48 @@ public abstract class AbstractEvent
 		
 		for (PlayerHolder ph : getAllEventPlayers())
 		{
-			// Cancel target
-			ph.getPcInstance().setTarget(null);
-			// Cancel any attack in progress
-			ph.getPcInstance().abortAttack();
-			ph.getPcInstance().breakAttack();
-			// Cancel any skill in progress<
-			ph.getPcInstance().abortCast();
-			ph.getPcInstance().breakCast();
-			// Cancel all effects
-			ph.getPcInstance().stopAllEffects();
-			// Recover the title and color of the participants.
-			ph.recoverOriginalColorTitle();
-			ph.recoverOriginalTitle();
-			// It out of the world created for the event
-			
-			InstanceWorld world = InstanceManager.getInstance().getPlayerWorld(ph.getPcInstance());
-			world.removeAllowed(ph.getPcInstance().getObjectId());
-			ph.getPcInstance().setInstanceId(0);
-			
-			revivePlayer(ph);
-			
-			// FIXME We send a character to their actual instance and turn
-			ph.getPcInstance().teleToLocation(83437, 148634, -3403, 0, 0);// GIRAN CENTER
+			prepareToRemovePlayerFromEvent(ph);
 		}
 		_taskControlTime.cancel(true);
+	}
+	
+	/**
+	 * We prepare the player for the end of the event<br>
+	 * <ul>
+	 * <b>Actions: </b>
+	 * </ul>
+	 * <li>Cancel any attack in progress</li><br>
+	 * <li>Cancel any skill in progress</li><br>
+	 * <li>Cancel all effects</li><br>
+	 * <li>Recover the title and color of the participants.</li><br>
+	 * <li>We canceled the Team</li><br>
+	 * <li>It out of the world we created for the event</li>
+	 */
+	public void prepareToRemovePlayerFromEvent(PlayerHolder ph)
+	{
+		// Cancel target
+		ph.getPcInstance().setTarget(null);
+		// Cancel any attack in progress
+		ph.getPcInstance().abortAttack();
+		ph.getPcInstance().breakAttack();
+		// Cancel any skill in progress<
+		ph.getPcInstance().abortCast();
+		ph.getPcInstance().breakCast();
+		// Cancel all effects
+		ph.getPcInstance().stopAllEffects();
+		// Recover the title and color of the participants.
+		ph.recoverOriginalColorTitle();
+		ph.recoverOriginalTitle();
+		// It out of the world created for the event
+		
+		InstanceWorld world = InstanceManager.getInstance().getPlayerWorld(ph.getPcInstance());
+		world.removeAllowed(ph.getPcInstance().getObjectId());
+		ph.getPcInstance().setInstanceId(0);
+		
+		revivePlayer(ph);
+		
+		// FIXME HARDCODE
+		ph.getPcInstance().teleToLocation(83437, 148634, -3403, 0, 0);// GIRAN CENTER
 	}
 	
 	/**
@@ -959,7 +985,7 @@ public abstract class AbstractEvent
 	 * <li>Set max cp, hp and mp.</li><br>
 	 * @param ph
 	 */
-	protected void revivePlayer(PlayerHolder ph)
+	public void revivePlayer(PlayerHolder ph)
 	{
 		if (ph.getPcInstance().isDead())
 		{
@@ -999,21 +1025,19 @@ public abstract class AbstractEvent
 	}
 	
 	/**
-	 * We control the timing of events<br>
+	 * We control the timing of events
 	 * <ul>
 	 * <b>Actions: </b>
 	 * </ul>
-	 * <li>-> step 1: We announced that participants will be teleported</li><br>
-	 * <li>Wait 3 secs</li><br>
-	 * <li>-> step 2: Adjust the status of the event -> START</li><br>
-	 * <li>We hope 1 sec to actions within each event is executed..</li><br>
-	 * <li>-> step 3: Adjust the status of the event -> FIGHT</li><br>
-	 * <li>-> step 3: We sent a message that they are ready to fight.</li><br>
-	 * <li>We wait until the event ends</li><br>
-	 * <li>-> step 4: Adjust the status of the event -> END</li><br>
-	 * <li>-> step 4: We sent a message warning that term event</li><br>
-	 * <li>Esperamos 1 seg</li><br>
-	 * <li>-> step 5: We alerted the event ended EventEngineManager</li><br>
+	 * <li>Wait 1 secs</li>
+	 * <li>-> We announced that participants will be teleported</li>
+	 * <li>Wait 3 secs</li>
+	 * <li>-> Adjust the status of the event -> START</li>
+	 * <li>Wait 1 sec to actions within each event is executed..</li>
+	 * <li>-> Adjust the status of the event -> FIGHT</li>
+	 * <li>-> We sent a message that they are ready to fight.</li>
+	 * <li>Wait until the event ends</li>
+	 * <li>-> Adjust the status of the event -> END</li>
 	 */
 	private void initControlTime()
 	{
@@ -1025,9 +1049,12 @@ public abstract class AbstractEvent
 		addScheduledEvent(new ChangeToStartEvent(time));
 		time += 1000;
 		addScheduledEvent(new ChangeToFightEvent(time));
+		getAntiAfkManager().startTask(time);
+		
 		// TODO: Maybe some events don't need a finish time, like korean pvp style
 		time += ConfigData.getInstance().EVENT_DURATION * 60 * 1000;
 		addScheduledEvent(new ChangeToEndEvent(time));
+		getAntiAfkManager().stopTask(time);
 		
 		_taskControlTime = ThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(() ->
 		{

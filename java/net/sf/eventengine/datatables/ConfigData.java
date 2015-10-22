@@ -57,7 +57,9 @@ public class ConfigData
 	public int MAX_PLAYERS_IN_EVENT;
 	public int MIN_LVL_IN_EVENT;
 	public int MAX_LVL_IN_EVENT;
-	public static int MAX_BUFF_COUNT;
+	public int MAX_BUFF_COUNT;
+	public boolean ANTI_AFK_ENABLE;
+	public int AFK_CHECK_TIME;
 	
 	// -------------------------------------------------------------------------------
 	// Configs Capture The Flag
@@ -162,6 +164,9 @@ public class ConfigData
 		MIN_LVL_IN_EVENT = settings.getInt("EventMinPlayerLevel", 40);
 		MAX_LVL_IN_EVENT = settings.getInt("EventMaxPlayerLevel", 78);
 		MAX_BUFF_COUNT = settings.getInt("EventMaxBuffCount", 5);
+		
+		ANTI_AFK_ENABLE = settings.getBoolean("EventAntiAfk", true);
+		AFK_CHECK_TIME = settings.getInt("EventAfkTime", 30);
 		
 		// ------------------------------------------------------------------------------------- //
 		// CaptureTheFlag.properties
