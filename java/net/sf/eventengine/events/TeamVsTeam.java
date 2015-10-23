@@ -20,6 +20,10 @@ package net.sf.eventengine.events;
 
 import java.util.List;
 
+import com.l2jserver.gameserver.model.actor.L2Character;
+import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
+import com.l2jserver.gameserver.network.clientpackets.Say2;
+
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.CollectionTarget;
@@ -31,10 +35,6 @@ import net.sf.eventengine.events.holders.TeamHolder;
 import net.sf.eventengine.events.schedules.AnnounceNearEndEvent;
 import net.sf.eventengine.util.EventUtil;
 import net.sf.eventengine.util.SortUtils;
-
-import com.l2jserver.gameserver.model.actor.L2Character;
-import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
-import com.l2jserver.gameserver.network.clientpackets.Say2;
 
 /**
  * @author fissban
@@ -169,12 +169,13 @@ public class TeamVsTeam extends AbstractEvent
 			return;
 		}
 		// Get the teams winner by total points
-		List<TeamHolder> winners = SortUtils.getOrdered(getTeamsManager().getAllTeams(), ScoreType.POINT).get(0);
+		List<TeamHolder> teamWinner = SortUtils.getOrdered(getTeamsManager().getAllTeams(), ScoreType.POINT).get(0);
 		
 		for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
 		{
+			TeamHolder phTeam = getTeamsManager().getPlayerTeam(ph);
 			// We deliver rewards
-			if (winners.contains(ph.getTeamType()))
+			if (teamWinner.contains(phTeam))
 			{
 				// We deliver rewards
 				giveItems(ph, ConfigData.getInstance().TVT_REWARD_PLAYER_WIN);
@@ -183,7 +184,7 @@ public class TeamVsTeam extends AbstractEvent
 		
 		for (TeamHolder team : getTeamsManager().getAllTeams())
 		{
-			if (winners.contains(team))
+			if (teamWinner.contains(team))
 			{
 				EventUtil.announceTo(Say2.BATTLEFIELD, "team_winner", "%holder%", team.getTeamType().name(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
 			}
