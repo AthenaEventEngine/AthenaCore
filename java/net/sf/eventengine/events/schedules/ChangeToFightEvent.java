@@ -49,7 +49,7 @@ public class ChangeToFightEvent implements EventScheduled
 		EventEngineManager.getInstance().getCurrentEvent().runEventState(EventState.FIGHT);
 		
 		// Enviamos un mensaje especial para los participantes
-		for (PlayerHolder player : EventEngineManager.getInstance().getCurrentEvent().getAllEventPlayers())
+		for (PlayerHolder player : EventEngineManager.getInstance().getCurrentEvent().getPlayerEventManager().getAllEventPlayers())
 		{
 			EventUtil.sendEventSpecialMessage(player, 2, "status_started");
 		}

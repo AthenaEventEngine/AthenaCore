@@ -286,11 +286,11 @@ public class EventEngineManager
 		}
 		else
 		{
-			if (_currentEvent.isPlayableInEvent(player))
+			if (_currentEvent.getPlayerEventManager().isPlayableInEvent(player))
 			{
 				try
 				{
-					PlayerHolder ph = _currentEvent.getEventPlayer(player);
+					PlayerHolder ph = _currentEvent.getPlayerEventManager().getEventPlayer(player);
 					// recobramos el color del titulo original
 					ph.recoverOriginalColorTitle();
 					// recobramos el titulo original
@@ -298,7 +298,7 @@ public class EventEngineManager
 					// remobemos al personaje del mundo creado
 					InstanceManager.getInstance().getWorld(ph.getDinamicInstanceId()).removeAllowed(ph.getPcInstance().getObjectId());
 					
-					_currentEvent.getAllEventPlayers().remove(ph);
+					_currentEvent.getPlayerEventManager().getAllEventPlayers().remove(ph);
 				}
 				catch (Exception e)
 				{
@@ -621,7 +621,7 @@ public class EventEngineManager
 			return false;
 		}
 		
-		return _currentEvent.isPlayableInEvent(player);
+		return _currentEvent.getPlayerEventManager().isPlayableInEvent(player);
 	}
 	
 	/**
@@ -636,7 +636,7 @@ public class EventEngineManager
 			return false;
 		}
 		
-		return _currentEvent.isPlayableInEvent(playable);
+		return _currentEvent.getPlayerEventManager().isPlayableInEvent(playable);
 	}
 	
 	public static EventEngineManager getInstance()

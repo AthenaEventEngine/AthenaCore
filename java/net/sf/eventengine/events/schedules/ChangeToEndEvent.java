@@ -50,10 +50,10 @@ public class ChangeToEndEvent implements EventScheduled
 		EventEngineManager.getInstance().getCurrentEvent().runEventState(EventState.END);
 		
 		// Borramos todos los spawns de npc
-		EventEngineManager.getInstance().getCurrentEvent().removeAllEventNpc();
+		EventEngineManager.getInstance().getCurrentEvent().getSpawnManager().removeAllEventNpc();
 		
 		// Enviamos un mensaje especial para los participantes
-		for (PlayerHolder player : EventEngineManager.getInstance().getCurrentEvent().getAllEventPlayers())
+		for (PlayerHolder player : EventEngineManager.getInstance().getCurrentEvent().getPlayerEventManager().getAllEventPlayers())
 		{
 			EventUtil.sendEventSpecialMessage(player, 1, "status_finished");
 		}

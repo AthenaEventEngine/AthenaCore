@@ -22,7 +22,6 @@ import java.util.List;
 
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.enums.CollectionTarget;
-import net.sf.eventengine.enums.EventState;
 import net.sf.eventengine.enums.ScoreType;
 import net.sf.eventengine.enums.TeamType;
 import net.sf.eventengine.events.handler.AbstractEvent;
@@ -31,16 +30,6 @@ import net.sf.eventengine.events.holders.TeamHolder;
 import net.sf.eventengine.events.schedules.AnnounceNearEndEvent;
 import net.sf.eventengine.util.EventUtil;
 import net.sf.eventengine.util.SortUtils;
-
-import com.l2jserver.gameserver.ThreadPoolManager;
-import com.l2jserver.gameserver.enums.Team;
-import com.l2jserver.gameserver.model.actor.L2Character;
-import com.l2jserver.gameserver.model.actor.L2Npc;
-import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
-import com.l2jserver.gameserver.model.items.L2Item;
-import com.l2jserver.gameserver.model.skills.Skill;
-import com.l2jserver.gameserver.network.clientpackets.Say2;
-import com.l2jserver.util.Rnd;
 
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.enums.Team;
@@ -70,10 +59,10 @@ public class Survive extends AbstractEvent
 	{
 		super();
 		// Definimos la instancia en que transcurria el evento
-		setInstanceFile(ConfigData.getInstance().SURVIVE_INSTANCE_FILE);
+		getInstanceWorldManager().setInstanceFile(ConfigData.getInstance().SURVIVE_INSTANCE_FILE);
 		// Announce near end event
 		int timeLeft = (ConfigData.getInstance().EVENT_DURATION * 60 * 1000) - (ConfigData.getInstance().EVENT_TEXT_TIME_FOR_END * 1000);
-		addScheduledEvent(new AnnounceNearEndEvent(timeLeft));
+		getScheduledEventsManager().addScheduledEvent(new AnnounceNearEndEvent(timeLeft));
 	}
 	
 	@Override
@@ -99,7 +88,7 @@ public class Survive extends AbstractEvent
 	public void onKill(PlayerHolder ph, L2Character target)
 	{
 		// Incrementamos en uno la cantidad de puntos del equipo
-		getPlayerTeam(ph).increasePoints(1);
+		getTeamsManager().getPlayerTeam(ph).increasePoints(1);
 		// Update title character
 		updateTitle(ph);
 		// One increasing the amount of dead mobs
@@ -139,10 +128,14 @@ public class Survive extends AbstractEvent
 	 */
 	private void giveRewardsTeams()
 	{
+		if (getPlayerEventManager().getAllEventPlayers().isEmpty())
+		{
+			return;
+		}
 		// Get the teams winner by total points
-		List<TeamHolder> winners = SortUtils.getOrdered(getAllTeams(), ScoreType.POINT).get(0);
+		List<TeamHolder> winners = SortUtils.getOrdered(getTeamsManager().getAllTeams(), ScoreType.POINT).get(0);
 		
-		for (PlayerHolder ph : getAllEventPlayers())
+		for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
 		{
 			// FIXME agregar al sistema de lang
 			EventUtil.sendEventScreenMessage(ph, "Congratulations survivor!");
@@ -153,7 +146,7 @@ public class Survive extends AbstractEvent
 			}
 		}
 		
-		for (TeamHolder team : getAllTeams())
+		for (TeamHolder team : getTeamsManager().getAllTeams())
 		{
 			if (winners.contains(team))
 			{
@@ -175,11 +168,11 @@ public class Survive extends AbstractEvent
 		{
 			for (int i = 0; i < (_stage * ConfigData.getInstance().SURVIVE_MONSTER_SPAWN_FOR_STAGE); i++)
 			{
-				addEventNpc(MONSTERS_ID.get(Rnd.get(MONSTERS_ID.size() - 1)), ConfigData.getInstance().SURVIVE_COORDINATES_MOBS, Team.RED, true, getInstancesWorlds().get(0).getInstanceId());
+				getSpawnManager().addEventNpc(MONSTERS_ID.get(Rnd.get(MONSTERS_ID.size() - 1)), ConfigData.getInstance().SURVIVE_COORDINATES_MOBS, Team.RED, true, getInstanceWorldManager().getAllInstancesWorlds().get(0).getInstanceId());
 			}
 			
 			// We notify the characters in the event that stage they are currently.
-			for (PlayerHolder ph : getAllEventPlayers())
+			for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
 			{
 				// FIXME agregar al sistema de lang
 				EventUtil.sendEventScreenMessage(ph, "Stage " + _stage, 5000);
@@ -195,19 +188,19 @@ public class Survive extends AbstractEvent
 	private void createTeam(int countTeams)
 	{
 		// Definimos la cantidad de teams que se requieren
-		setCountTeams(countTeams);
+		getTeamsManager().setCountTeams(countTeams);
 		// We define the main spawn of equipment
-		setSpawnTeams(ConfigData.getInstance().SURVIVE_COORDINATES_TEAM);
+		getTeamsManager().setSpawnTeams(ConfigData.getInstance().SURVIVE_COORDINATES_TEAM);
 		
 		// We create the instance and the world
-		InstanceWorld world = createNewInstanceWorld();
+		InstanceWorld world = getInstanceWorldManager().createNewInstanceWorld();
 		
 		int aux = 1;
 		
-		for (PlayerHolder ph : getAllEventPlayers())
+		for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
 		{
 			// Obtenemos el team
-			TeamType team = getEnabledTeams()[aux - 1];
+			TeamType team = getTeamsManager().getEnabledTeams()[aux - 1];
 			// Definimos el team del jugador
 			ph.setTeam(team);
 			// Ajustamos el titulo del personaje segun su team

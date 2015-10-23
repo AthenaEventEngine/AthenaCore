@@ -292,7 +292,7 @@ public class EventUtil
 				break;
 			case ALL_PLAYERS_IN_EVENT:
 				players = new ArrayList<>();
-				for (PlayerHolder ph : EventEngineManager.getInstance().getCurrentEvent().getAllEventPlayers())
+				for (PlayerHolder ph : EventEngineManager.getInstance().getCurrentEvent().getPlayerEventManager().getAllEventPlayers())
 				{
 					players.add(ph.getPcInstance());
 				}

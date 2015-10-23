@@ -23,7 +23,6 @@ import java.util.List;
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.CollectionTarget;
-import net.sf.eventengine.enums.EventState;
 import net.sf.eventengine.enums.ScoreType;
 import net.sf.eventengine.enums.TeamType;
 import net.sf.eventengine.events.handler.AbstractEvent;
@@ -32,13 +31,6 @@ import net.sf.eventengine.events.holders.TeamHolder;
 import net.sf.eventengine.events.schedules.AnnounceNearEndEvent;
 import net.sf.eventengine.util.EventUtil;
 import net.sf.eventengine.util.SortUtils;
-
-import com.l2jserver.gameserver.model.actor.L2Character;
-import com.l2jserver.gameserver.model.actor.L2Npc;
-import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
-import com.l2jserver.gameserver.model.items.L2Item;
-import com.l2jserver.gameserver.model.skills.Skill;
-import com.l2jserver.gameserver.network.clientpackets.Say2;
 
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
@@ -58,10 +50,10 @@ public class TeamVsTeam extends AbstractEvent
 	{
 		super();
 		// Definimos la instancia en que transcurria el evento
-		setInstanceFile(ConfigData.getInstance().TVT_INSTANCE_FILE);
+		getInstanceWorldManager().setInstanceFile(ConfigData.getInstance().TVT_INSTANCE_FILE);
 		// Announce near end event
 		int timeLeft = (ConfigData.getInstance().EVENT_DURATION * 60 * 1000) - (ConfigData.getInstance().EVENT_TEXT_TIME_FOR_END * 1000);
-		addScheduledEvent(new AnnounceNearEndEvent(timeLeft));
+		getScheduledEventsManager().addScheduledEvent(new AnnounceNearEndEvent(timeLeft));
 	}
 	
 	@Override
@@ -89,7 +81,7 @@ public class TeamVsTeam extends AbstractEvent
 	public void onKill(PlayerHolder ph, L2Character target)
 	{
 		// We increased the team's points.
-		getPlayerTeam(ph).increasePoints(1);
+		getTeamsManager().getPlayerTeam(ph).increasePoints(1);
 		
 		// Reward for kills
 		if (ConfigData.getInstance().TVT_REWARD_KILLER_ENABLED)
@@ -134,18 +126,18 @@ public class TeamVsTeam extends AbstractEvent
 	private void createTeams(int countTeams)
 	{
 		// Definimos la cantidad de teams que se requieren
-		setCountTeams(countTeams);
+		getTeamsManager().setCountTeams(countTeams);
 		// We define each team spawns
-		setSpawnTeams(ConfigData.getInstance().TVT_COORDINATES_TEAM);
+		getTeamsManager().setSpawnTeams(ConfigData.getInstance().TVT_COORDINATES_TEAM);
 		// We create the instance and the world
-		InstanceWorld world = createNewInstanceWorld();
+		InstanceWorld world = getInstanceWorldManager().createNewInstanceWorld();
 		
 		int aux = 1;
 		
-		for (PlayerHolder ph : getAllEventPlayers())
+		for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
 		{
 			// Obtenemos el team
-			TeamType team = getEnabledTeams()[aux - 1];
+			TeamType team = getTeamsManager().getEnabledTeams()[aux - 1];
 			// Definimos el team del jugador
 			ph.setTeam(team);
 			// Ajustamos el titulo del personaje segun su team
@@ -172,10 +164,14 @@ public class TeamVsTeam extends AbstractEvent
 	 */
 	private void giveRewardsTeams()
 	{
+		if (getPlayerEventManager().getAllEventPlayers().isEmpty())
+		{
+			return;
+		}
 		// Get the teams winner by total points
-		List<TeamHolder> winners = SortUtils.getOrdered(getAllTeams(), ScoreType.POINT).get(0);
+		List<TeamHolder> winners = SortUtils.getOrdered(getTeamsManager().getAllTeams(), ScoreType.POINT).get(0);
 		
-		for (PlayerHolder ph : getAllEventPlayers())
+		for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
 		{
 			// We deliver rewards
 			if (winners.contains(ph.getTeamType()))
@@ -185,7 +181,7 @@ public class TeamVsTeam extends AbstractEvent
 			}
 		}
 		
-		for (TeamHolder team : getAllTeams())
+		for (TeamHolder team : getTeamsManager().getAllTeams())
 		{
 			if (winners.contains(team))
 			{
@@ -201,7 +197,7 @@ public class TeamVsTeam extends AbstractEvent
 	{
 		StringBuilder sb = new StringBuilder();
 		
-		for (TeamHolder team : getAllTeams())
+		for (TeamHolder team : getTeamsManager().getAllTeams())
 		{
 			sb.append(" | ");
 			sb.append(team.getTeamType().name());
@@ -210,7 +206,7 @@ public class TeamVsTeam extends AbstractEvent
 		}
 		sb.append(" | ");
 		
-		for (PlayerHolder ph : getAllEventPlayers())
+		for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
 		{
 			EventUtil.sendEventScreenMessage(ph, sb.toString(), 10000);
 			// ph.getPcInstance().sendPacket(new EventParticipantStatus(_pointsRed, _pointsBlue));

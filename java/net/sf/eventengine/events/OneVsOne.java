@@ -63,10 +63,10 @@ public class OneVsOne extends AbstractEvent
 	{
 		super();
 		// Definimos la instancia en que transcurria el evento
-		setInstanceFile(ConfigData.getInstance().OVO_INSTANCE_FILE);
+		getInstanceWorldManager().setInstanceFile(ConfigData.getInstance().OVO_INSTANCE_FILE);
 		// Announce near end event
 		int timeLeft = (ConfigData.getInstance().EVENT_DURATION * 60 * 1000) - (ConfigData.getInstance().EVENT_TEXT_TIME_FOR_END * 1000);
-		addScheduledEvent(new AnnounceNearEndEvent(timeLeft));
+		getScheduledEventsManager().addScheduledEvent(new AnnounceNearEndEvent(timeLeft));
 	}
 	
 	@Override
@@ -149,20 +149,20 @@ public class OneVsOne extends AbstractEvent
 	private void createTeams(int countTeams)
 	{
 		// Definimos la cantidad de teams que se requieren
-		setCountTeams(countTeams);
+		getTeamsManager().setCountTeams(countTeams);
 		// We define each team spawns
-		setSpawnTeams(ConfigData.getInstance().OVO_COORDINATES_TEAM);
+		getTeamsManager().setSpawnTeams(ConfigData.getInstance().OVO_COORDINATES_TEAM);
 		
 		// We verified that we have an even number of participants.
 		// If not, let out a participant at random.
 		int leaveOutParticipant = 0;
 		
-		if ((getAllEventPlayers().size() % countTeams) != 0)
+		if ((getPlayerEventManager().getAllEventPlayers().size() % countTeams) != 0)
 		{
 			leaveOutParticipant = countTeams - 1;
 		}
 		
-		Iterator<PlayerHolder> players = getAllEventPlayers().iterator();
+		Iterator<PlayerHolder> players = getPlayerEventManager().getAllEventPlayers().iterator();
 		
 		List<PlayerHolder> phRemove = new ArrayList<>();
 		
@@ -179,7 +179,7 @@ public class OneVsOne extends AbstractEvent
 			else
 			{
 				// We create the instance and the world
-				InstanceWorld world = createNewInstanceWorld();
+				InstanceWorld world = getInstanceWorldManager().createNewInstanceWorld();
 				// auxiliar para llevar la personajes de cada isntancia del evento
 				Map<TeamType, PlayerHolder> teams = new HashMap<>();
 				
@@ -187,7 +187,7 @@ public class OneVsOne extends AbstractEvent
 				{
 					PlayerHolder ph = players.next();
 					// Obtenemos el team
-					TeamType team = getEnabledTeams()[i];
+					TeamType team = getTeamsManager().getEnabledTeams()[i];
 					// Definimos algunas caracteristicas generales de cada poersonaje.
 					ph.setTeam(team);
 					ph.setNewTitle("[ " + team.name() + " ]");
@@ -201,7 +201,7 @@ public class OneVsOne extends AbstractEvent
 		
 		for (PlayerHolder ph : phRemove)
 		{
-			getAllEventPlayers().remove(ph);
+			getPlayerEventManager().getAllEventPlayers().remove(ph);
 		}
 	}
 	
@@ -210,6 +210,11 @@ public class OneVsOne extends AbstractEvent
 	 */
 	private void giveRewardsTeams()
 	{
+		if (getPlayerEventManager().getAllEventPlayers().isEmpty())
+		{
+			return;
+		}
+		
 		// Recorremos nuestra variable instancia a instancia
 		// y vamos entregando los premios a los ganadores.
 		for (Map<TeamType, PlayerHolder> instances : _instancesTeams.values())
