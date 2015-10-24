@@ -18,10 +18,10 @@
  */
 package net.sf.eventengine.events.holders;
 
+import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+
 import net.sf.eventengine.enums.TeamType;
 import net.sf.eventengine.interfaces.ParticipantHolder;
-
-import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 
 /**
  * Clase encargada de administrar los datos de los players que participan del evento.
@@ -36,9 +36,9 @@ public class PlayerHolder implements ParticipantHolder
 	// Contador de deaths obtenidas.
 	private int _deaths = 0;
 	// Color original de un personaje por si en algun evento es cambiado.
-	private int _oriColorTitle = TeamType.WHITE.getColor();
+	private int _oriColorTitle;
 	// Titulo original de un personaje por si en algun evento es cambiado.
-	private String _oriTitle = "";
+	private String _oriTitle;
 	// Team al que pertenece el usuario
 	private TeamType _team;
 	
@@ -68,15 +68,18 @@ public class PlayerHolder implements ParticipantHolder
 	 * <ul>
 	 * <b>Acciones:</b>
 	 * </ul>
-	 * <li>Definimos el team al que pertenece el personaje.</li><br>
-	 * <li>Ajustamos el color del personaje segun su team</li><br>
+	 * <li>Definimos el team al que pertenece el personaje.</li>
+	 * <li>Ajustamos el color del personaje segun su team</li>
 	 * @param team
 	 */
 	public void setTeam(TeamType team)
 	{
-		_team = team;
-		// definimos el color del titulo del personaje
+		// Almacenamos el color del titulo y el titulo original del personaje.
 		_oriColorTitle = _player.getAppearance().getTitleColor();
+		_oriTitle = _player.getTitle();
+		// Team del personaje
+		_team = team;
+		// Nuevo color del titulo del personaje segun su team
 		_player.getAppearance().setTitleColor(team.getColor());
 	}
 	
@@ -157,7 +160,6 @@ public class PlayerHolder implements ParticipantHolder
 	 */
 	public void setNewTitle(String title)
 	{
-		_oriTitle = _player.getTitle();
 		_player.setTitle(title);
 	}
 	
