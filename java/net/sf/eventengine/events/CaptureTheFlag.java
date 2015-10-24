@@ -306,13 +306,13 @@ public class CaptureTheFlag extends AbstractEvent
 			return;
 		}
 		
-		List<TeamHolder> teamWinner = SortUtils.getOrdered(getTeamsManager().getAllTeams(), ScoreType.POINT).get(0);
+		List<TeamHolder> teamWinners = SortUtils.getOrdered(getTeamsManager().getAllTeams(), ScoreType.POINT).get(0);
 		
 		for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
 		{
 			TeamHolder phTeam = getTeamsManager().getPlayerTeam(ph);
 			// We deliver rewards
-			if (teamWinner.contains(phTeam))
+			if (teamWinners.contains(phTeam))
 			{
 				// We deliver rewards
 				giveItems(ph, ConfigData.getInstance().CTF_REWARD_PLAYER_WIN);
@@ -321,7 +321,7 @@ public class CaptureTheFlag extends AbstractEvent
 		
 		for (TeamHolder team : getTeamsManager().getAllTeams())
 		{
-			if (teamWinner.contains(team))
+			if (teamWinners.contains(team))
 			{
 				EventUtil.announceTo(Say2.BATTLEFIELD, "team_winner", "%holder%", team.getTeamType().name(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
 			}
