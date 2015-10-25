@@ -1,5 +1,5 @@
 diff --git a/L2J_Server/.classpath b/L2J_Server/.classpath
-index 05e3150..0b47f01 100644
+index 05e3150..0057726 100644
 --- a/L2J_Server/.classpath
 +++ b/L2J_Server/.classpath
 @@ -1,13 +1,14 @@
@@ -18,7 +18,7 @@ index 05e3150..0b47f01 100644
 -</classpath>
 \ No newline at end of file
 +	<classpathentry kind="src" path="java"/>
-+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.8.0_45"/>
++	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 +	<classpathentry kind="lib" path="dist/libs/c3p0-0.9.5.jar"/>
 +	<classpathentry kind="lib" path="dist/libs/jython.jar"/>
 +	<classpathentry kind="lib" path="dist/libs/jython-engine-2.2.1.jar"/>
@@ -31,29 +31,29 @@ index 05e3150..0b47f01 100644
 +</classpath>
 diff --git a/L2J_Server/dist/libs/._L2J_GeoDriver.jar3291838113424536152.tmp b/L2J_Server/dist/libs/._L2J_GeoDriver.jar3291838113424536152.tmp
 new file mode 100644
-index 0000000..ae15f5e
+index 0000000..f2363d0
 --- /dev/null
 +++ b/L2J_Server/dist/libs/._L2J_GeoDriver.jar3291838113424536152.tmp
 Binary files differ
 diff --git a/L2J_Server/dist/libs/L2J_EventEngine.jar b/L2J_Server/dist/libs/L2J_EventEngine.jar
 new file mode 100644
-index 0000000..de6afba
+index 0000000..ad0e4d8
 --- /dev/null
 +++ b/L2J_Server/dist/libs/L2J_EventEngine.jar
 Binary files differ
 diff --git a/L2J_Server/java/com/l2jserver/gameserver/GameServer.java b/L2J_Server/java/com/l2jserver/gameserver/GameServer.java
-index 25de90c..29c8050 100644
+index 25de90c..761ae37 100644
 --- a/L2J_Server/java/com/l2jserver/gameserver/GameServer.java
 +++ b/L2J_Server/java/com/l2jserver/gameserver/GameServer.java
-@@ -30,6 +30,8 @@
- import java.util.logging.LogManager;
- import java.util.logging.Logger;
+@@ -141,6 +141,8 @@
+ import com.l2jserver.util.DeadLockDetector;
+ import com.l2jserver.util.IPv4Filter;
  
 +import net.sf.eventengine.EventEngineManager;
 +
- import com.l2jserver.Config;
- import com.l2jserver.L2DatabaseFactory;
- import com.l2jserver.Server;
+ public final class GameServer
+ {
+ 	private static final Logger _log = Logger.getLogger(GameServer.class.getName());
 @@ -391,6 +393,11 @@
  		{
  			_deadDetectThread = null;
@@ -195,6 +195,22 @@ index ebe0026..978a3e2 100644
  		// Check if the attacker is in TvT and TvT is started
  		if (isOnEvent())
  		{
+diff --git a/L2J_Server/java/com/l2jserver/gameserver/model/actor/templates/L2NpcTemplate.java b/L2J_Server/java/com/l2jserver/gameserver/model/actor/templates/L2NpcTemplate.java
+index 6258bcf..a00a31c 100644
+--- a/L2J_Server/java/com/l2jserver/gameserver/model/actor/templates/L2NpcTemplate.java
++++ b/L2J_Server/java/com/l2jserver/gameserver/model/actor/templates/L2NpcTemplate.java
+@@ -215,6 +215,11 @@
+ 		return _title;
+ 	}
+ 	
++	public void setTitle(String title)
++	{
++		_title = title;
++	}
++	
+ 	public boolean isUsingServerSideTitle()
+ 	{
+ 		return _usingServerSideTitle;
 diff --git a/L2J_Server/java/com/l2jserver/gameserver/model/olympiad/AbstractOlympiadGame.java b/L2J_Server/java/com/l2jserver/gameserver/model/olympiad/AbstractOlympiadGame.java
 index 3f038d0..a353c38 100644
 --- a/L2J_Server/java/com/l2jserver/gameserver/model/olympiad/AbstractOlympiadGame.java
@@ -316,6 +332,37 @@ index 640e695..8267663 100644
  		// If the item has reuse time and it has not passed.
  		// Message from reuse delay must come from item.
  		final int reuseDelay = item.getReuseDelay();
+diff --git a/L2J_Server/java/com/l2jserver/gameserver/network/serverpackets/AbstractNpcInfo.java b/L2J_Server/java/com/l2jserver/gameserver/network/serverpackets/AbstractNpcInfo.java
+index 1f406be..b1ae84e 100644
+--- a/L2J_Server/java/com/l2jserver/gameserver/network/serverpackets/AbstractNpcInfo.java
++++ b/L2J_Server/java/com/l2jserver/gameserver/network/serverpackets/AbstractNpcInfo.java
+@@ -33,6 +33,9 @@
+ import com.l2jserver.gameserver.model.skills.AbnormalVisualEffect;
+ import com.l2jserver.gameserver.model.zone.ZoneId;
+ 
++import net.sf.eventengine.EventEngineManager;
++import net.sf.eventengine.events.holders.NpcHolder;
++
+ public abstract class AbstractNpcInfo extends L2GameServerPacket
+ {
+ 	protected int _x, _y, _z, _heading;
+@@ -112,6 +115,16 @@
+ 				_title = cha.getTitle(); // On every subclass
+ 			}
+ 			
++			if (EventEngineManager.getInstance().isRunning())
++			{
++				NpcHolder eventNpc = EventEngineManager.getInstance().getCurrentEvent().getSpawnManager().getEventNpc(cha);
++				
++				if (eventNpc != null)
++				{
++					_title = eventNpc.getTitle();
++				}
++			}
++			
+ 			if (Config.SHOW_NPC_LVL && (_npc instanceof L2MonsterInstance))
+ 			{
+ 				String t = "Lv " + cha.getLevel() + (cha.isAggressive() ? "*" : "");
 diff --git a/L2J_Server/java/com/l2jserver/gameserver/network/serverpackets/Die.java b/L2J_Server/java/com/l2jserver/gameserver/network/serverpackets/Die.java
 index 108ae76..bb14a3a 100644
 --- a/L2J_Server/java/com/l2jserver/gameserver/network/serverpackets/Die.java

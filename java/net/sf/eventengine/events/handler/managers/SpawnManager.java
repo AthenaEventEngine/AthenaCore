@@ -32,13 +32,15 @@ import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
 import com.l2jserver.gameserver.network.serverpackets.MagicSkillUse;
 import com.l2jserver.util.Rnd;
 
+import net.sf.eventengine.events.holders.NpcHolder;
+
 /**
  * @author fissban
  */
 public class SpawnManager
 {
 	// List of NPC in the event.
-	private final Map<Integer, L2Npc> _eventNpc = new ConcurrentHashMap<>();
+	private final Map<Integer, NpcHolder> _eventNpc = new ConcurrentHashMap<>();
 	
 	public SpawnManager()
 	{
@@ -48,7 +50,7 @@ public class SpawnManager
 	/**
 	 * We generate a new spawn in our event and added to the list.
 	 */
-	public L2Npc addEventNpc(int npcId, Location loc, Team team, int instanceId)
+	public NpcHolder addEventNpc(int npcId, Location loc, Team team, int instanceId)
 	{
 		return addEventNpc(npcId, loc.getX(), loc.getY(), loc.getZ(), loc.getHeading(), team, null, false, instanceId);
 	}
@@ -56,7 +58,7 @@ public class SpawnManager
 	/**
 	 * We generate a new spawn in our event and added to the list.
 	 */
-	public L2Npc addEventNpc(int npcId, Location loc, Team team, boolean randomOffset, int instanceId)
+	public NpcHolder addEventNpc(int npcId, Location loc, Team team, boolean randomOffset, int instanceId)
 	{
 		return addEventNpc(npcId, loc.getX(), loc.getY(), loc.getZ(), loc.getHeading(), team, null, randomOffset, instanceId);
 	}
@@ -64,7 +66,7 @@ public class SpawnManager
 	/**
 	 * We generate a new spawn in our event and added to the list.
 	 */
-	public L2Npc addEventNpc(int npcId, Location loc, Team team, String title, boolean randomOffset, int instanceId)
+	public NpcHolder addEventNpc(int npcId, Location loc, Team team, String title, boolean randomOffset, int instanceId)
 	{
 		return addEventNpc(npcId, loc.getX(), loc.getY(), loc.getZ(), loc.getHeading(), team, null, randomOffset, instanceId);
 	}
@@ -76,10 +78,13 @@ public class SpawnManager
 	 * @param y
 	 * @param z
 	 * @param heading
-	 * @param randomOffset -> +/- 1000
-	 * @return L2Npc
+	 * @param team
+	 * @param title
+	 * @param randomOffset
+	 * @param instanceId
+	 * @return
 	 */
-	public L2Npc addEventNpc(int npcId, int x, int y, int z, int heading, Team team, String title, boolean randomOffset, int instanceId)
+	public NpcHolder addEventNpc(int npcId, int x, int y, int z, int heading, Team team, String title, boolean randomOffset, int instanceId)
 	{
 		// We generate our npc spawn
 		L2Npc npc = null;
@@ -101,13 +106,9 @@ public class SpawnManager
 				spawn.setZ(z + 20);
 				spawn.setAmount(1);
 				spawn.setInstanceId(instanceId);
+				
 				npc = spawn.doSpawn();// isSummonSpawn.
 				npc.setTeam(team);
-				
-				if (title != null)
-				{
-					npc.setTitle(title);
-				}
 				
 				SpawnTable.getInstance().addNewSpawn(spawn, false);
 				spawn.init();
@@ -120,17 +121,27 @@ public class SpawnManager
 			e.printStackTrace();
 			return null;
 		}
-		// We add our npc to the list.
-		_eventNpc.put(npc.getObjectId(), npc);
 		
-		return npc;
+		NpcHolder npcHolder = new NpcHolder(npc);
+		// Set custom title
+		if (title != null)
+		{
+			npcHolder.setTitle(title);
+			// Actualizamos los datos del npc para los que estan en el evento.
+			npcHolder.getNpcInstance().broadcastInfo();
+		}
+		
+		// Add our npc to the list.
+		_eventNpc.put(npc.getObjectId(), npcHolder);
+		
+		return npcHolder;
 	}
 	
 	/**
 	 * We get the complete list of all the NPC during the event.<br>
 	 * @return Collection<PlayerHolder>
 	 */
-	public Collection<L2Npc> getAllEventNpc()
+	public Collection<NpcHolder> getAllEventNpc()
 	{
 		return _eventNpc.values();
 	}
@@ -140,14 +151,16 @@ public class SpawnManager
 	 */
 	public void removeAllEventNpc()
 	{
-		for (L2Npc npc : _eventNpc.values())
+		for (NpcHolder npcHolder : _eventNpc.values())
 		{
-			if (npc == null)
+			if (npcHolder == null)
 			{
 				continue;
 			}
 			
-			// We stopped the npc spawn.
+			// Instance Npc
+			L2Npc npc = npcHolder.getNpcInstance();
+			// Stop the Respawn
 			npc.getSpawn().stopRespawn();
 			// Delete the npc.
 			npc.deleteMe();
@@ -166,9 +179,16 @@ public class SpawnManager
 		return _eventNpc.containsValue(npc.getObjectId());
 	}
 	
-	public void removeNpc(L2Npc npc)
+	public NpcHolder getEventNpc(L2Npc npc)
 	{
-		// We stopped the npc spawn.
+		return _eventNpc.get(npc.getObjectId());
+	}
+	
+	public void removeNpc(NpcHolder npcHolder)
+	{
+		// Instance Npc
+		L2Npc npc = npcHolder.getNpcInstance();
+		// Stop the Respawn
 		npc.getSpawn().stopRespawn();
 		// Delete the npc.
 		npc.deleteMe();

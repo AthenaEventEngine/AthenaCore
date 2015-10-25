@@ -20,7 +20,7 @@ index cd1f3e2..3b01913 100644
 +	<classpathentry kind="output" path="bin"/>
 +</classpath>
 diff --git a/L2J_DataPack/dist/game/data/scripts/handlers/actionhandlers/L2NpcAction.java b/L2J_DataPack/dist/game/data/scripts/handlers/actionhandlers/L2NpcAction.java
-index 94fe9c4..a4d690e 100644
+index 94fe9c4..24c486b 100644
 --- a/L2J_DataPack/dist/game/data/scripts/handlers/actionhandlers/L2NpcAction.java
 +++ b/L2J_DataPack/dist/game/data/scripts/handlers/actionhandlers/L2NpcAction.java
 @@ -34,6 +34,8 @@
@@ -61,16 +61,16 @@ index 94fe9c4..a4d690e 100644
  	 * @param activeChar The L2PcInstance that start an action on the L2Npc
  	 */
  	@Override
-@@ -132,7 +132,11 @@
+@@ -132,6 +132,12 @@
  						}
  						else
  						{
--							npc.showChatWindow(activeChar);
 +							// L2J EventEngine
-+							if (EventEngineManager.getInstance().listenerOnInteract(activeChar, npc))
++							if (!EventEngineManager.getInstance().listenerOnInteract(activeChar, npc))
 +							{
-+								npc.showChatWindow(activeChar);
++								return true;
 +							}
++							
+ 							npc.showChatWindow(activeChar);
  						}
  					}
- 					if ((Config.PLAYER_MOVEMENT_BLOCK_TIME > 0) && !activeChar.isGM())
