@@ -195,22 +195,6 @@ index ebe0026..978a3e2 100644
  		// Check if the attacker is in TvT and TvT is started
  		if (isOnEvent())
  		{
-diff --git a/L2J_Server/java/com/l2jserver/gameserver/model/actor/templates/L2NpcTemplate.java b/L2J_Server/java/com/l2jserver/gameserver/model/actor/templates/L2NpcTemplate.java
-index 6258bcf..a00a31c 100644
---- a/L2J_Server/java/com/l2jserver/gameserver/model/actor/templates/L2NpcTemplate.java
-+++ b/L2J_Server/java/com/l2jserver/gameserver/model/actor/templates/L2NpcTemplate.java
-@@ -215,6 +215,11 @@
- 		return _title;
- 	}
- 	
-+	public void setTitle(String title)
-+	{
-+		_title = title;
-+	}
-+	
- 	public boolean isUsingServerSideTitle()
- 	{
- 		return _usingServerSideTitle;
 diff --git a/L2J_Server/java/com/l2jserver/gameserver/model/olympiad/AbstractOlympiadGame.java b/L2J_Server/java/com/l2jserver/gameserver/model/olympiad/AbstractOlympiadGame.java
 index 3f038d0..a353c38 100644
 --- a/L2J_Server/java/com/l2jserver/gameserver/model/olympiad/AbstractOlympiadGame.java
