@@ -182,7 +182,8 @@ public class ConfigData
 		CTF_POINTS_KILL = settings.getInt("EventPointsKill", 1);
 		CTF_COORDINATES_TEAM = settings.getLocationList("EventTeamCoordinates");
 		CTF_COUNT_TEAM = settings.getInt("EventCountTeam", 2);
-		checkTeamAndSpawn("CaptureTheFlag", CTF_COORDINATES_TEAM, CTF_COUNT_TEAM);
+		checkCountTeamAndSpawn("CaptureTheFlag", CTF_COORDINATES_TEAM, CTF_COUNT_TEAM);
+		checkCountTeamdAndMinPlayers("CaptureTheFlag", MIN_PLAYERS_IN_EVENT, CTF_COUNT_TEAM);
 		
 		// ------------------------------------------------------------------------------------- //
 		// AllVsAll.properties
@@ -197,7 +198,6 @@ public class ConfigData
 		AVA_REWARD_PVP_KILLER = settings.getInt("EventRewardPvPKill", 1);
 		AVA_REWARD_FAME_KILLER_ENABLED = settings.getBoolean("EventRewardFameKillEnabled", false);
 		AVA_REWARD_FAME_KILLER = settings.getInt("EventRewardFameKill", 10);
-		
 		AVA_COORDINATES_TEAM = settings.getLocationList("EventTeamCoordinates");
 		
 		// ------------------------------------------------------------------------------------- //
@@ -215,7 +215,8 @@ public class ConfigData
 		OVO_REWARD_FAME_KILLER = settings.getInt("EventRewardFameKill", 10);
 		OVO_COUNT_TEAM = settings.getInt("EventCountTeam", 2);
 		OVO_COORDINATES_TEAM = settings.getLocationList("EventTeamCoordinates");
-		checkTeamAndSpawn("OneVsOne", OVO_COORDINATES_TEAM, OVO_COUNT_TEAM);
+		checkCountTeamAndSpawn("OneVsOne", OVO_COORDINATES_TEAM, OVO_COUNT_TEAM);
+		checkCountTeamdAndMinPlayers("OneVsOne", MIN_PLAYERS_IN_EVENT, OVO_COUNT_TEAM);
 		
 		// ------------------------------------------------------------------------------------- //
 		// TeamVsTeam.properties
@@ -233,7 +234,8 @@ public class ConfigData
 		
 		TVT_COUNT_TEAM = settings.getInt("EventCountTeam", 2);
 		TVT_COORDINATES_TEAM = settings.getLocationList("EventTeamCoordinates");
-		checkTeamAndSpawn("TeamVsTeam", TVT_COORDINATES_TEAM, TVT_COUNT_TEAM);
+		checkCountTeamAndSpawn("TeamVsTeam", TVT_COORDINATES_TEAM, TVT_COUNT_TEAM);
+		checkCountTeamdAndMinPlayers("TeamVsTeam", MIN_PLAYERS_IN_EVENT, TVT_COUNT_TEAM);
 		
 		// ------------------------------------------------------------------------------------- //
 		// Survive.properties
@@ -247,19 +249,26 @@ public class ConfigData
 		SURVIVE_MONSTER_SPAWN_FOR_STAGE = settings.getInt("EventMobsSpawnForStage", 5);
 		SURVIVE_COUNT_TEAM = settings.getInt("EventCountTeam", 2);
 		SURVIVE_COORDINATES_TEAM = settings.getLocationList("EventTeamCoordinates");
+		checkCountTeamdAndMinPlayers("Survive", MIN_PLAYERS_IN_EVENT, SURVIVE_COUNT_TEAM);
 	}
 	
-	/**
-	 * Chequemos la cantidad de teams indicados en cada evento y que cada uno tenga un spawn definido.
-	 */
-	private void checkTeamAndSpawn(String eventName, List<Location> locs, int teams)
+	private void checkCountTeamAndSpawn(String eventName, List<Location> locs, int teams)
 	{
 		if (locs.size() != teams)
 		{
-			LOGGER.warning(ConfigData.class.getSimpleName() + ": " + eventName + "-> La cantidad de teams no coincide con la cantidad de spawns");
-			LOGGER.info("locs.size() " + locs.size());
-			LOGGER.info("teams " + teams);
-			
+			LOGGER.warning(ConfigData.class.getSimpleName() + ": " + eventName + "-> The amount of equipment does not match the amount of spawns");
+			LOGGER.info("locs count: " + locs.size());
+			LOGGER.info("teams: " + teams);
+		}
+	}
+	
+	private void checkCountTeamdAndMinPlayers(String eventName, int minPlayers, int teams)
+	{
+		if (teams > minPlayers)
+		{
+			LOGGER.warning(ConfigData.class.getSimpleName() + ": " + eventName + "-> You must have at least one player for each team.");
+			LOGGER.info("minPlayers: " + minPlayers);
+			LOGGER.info("teams: " + teams);
 		}
 	}
 	
