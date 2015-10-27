@@ -142,9 +142,6 @@ public class TeamVsTeam extends AbstractEvent
 			ph.setTeam(team);
 			// Ajustamos el titulo del personaje segun su team
 			ph.setNewTitle("[ " + team.toString() + " ]");// [ BLUE ], [ RED ] ....
-			
-			// We add the character to the world and then be teleported
-			world.addAllowed(ph.getPcInstance().getObjectId());
 			// Adjust the instance which will own the character
 			ph.setDinamicInstanceId(world.getInstanceId());
 			

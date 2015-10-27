@@ -282,8 +282,6 @@ public class CaptureTheFlag extends AbstractEvent
 			ph.setNewTitle("[ " + team.name() + " ]");// [ BLUE ], [ RED ] ....
 			// Adjust the instance that owns the character
 			ph.setDinamicInstanceId(world.getInstanceId());
-			// We add the character to the world and then be teleported
-			world.addAllowed(ph.getPcInstance().getObjectId());
 			
 			if (aux % countTeams == 0)
 			{

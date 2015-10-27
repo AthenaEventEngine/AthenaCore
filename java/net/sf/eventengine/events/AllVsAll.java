@@ -20,6 +20,10 @@ package net.sf.eventengine.events;
 
 import java.util.List;
 
+import com.l2jserver.gameserver.model.actor.L2Character;
+import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
+import com.l2jserver.gameserver.network.clientpackets.Say2;
+
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.CollectionTarget;
@@ -30,10 +34,6 @@ import net.sf.eventengine.events.holders.PlayerHolder;
 import net.sf.eventengine.events.schedules.AnnounceNearEndEvent;
 import net.sf.eventengine.util.EventUtil;
 import net.sf.eventengine.util.SortUtils;
-
-import com.l2jserver.gameserver.model.actor.L2Character;
-import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
-import com.l2jserver.gameserver.network.clientpackets.Say2;
 
 /**
  * @author fissban
@@ -143,8 +143,6 @@ public class AllVsAll extends AbstractEvent
 		{
 			// Definimos el team del jugador
 			ph.setTeam(team);
-			// We add the character to the world and then be teleported
-			world.addAllowed(ph.getPcInstance().getObjectId());
 			// Adjust the instance that owns the character
 			ph.setDinamicInstanceId(world.getInstanceId());
 			// Update Title
