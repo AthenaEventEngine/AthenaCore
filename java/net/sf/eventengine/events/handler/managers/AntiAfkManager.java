@@ -18,8 +18,8 @@
  */
 package net.sf.eventengine.events.handler.managers;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledFuture;
 
 import com.l2jserver.gameserver.ThreadPoolManager;
@@ -30,38 +30,43 @@ import net.sf.eventengine.events.handler.AbstractEvent;
 import net.sf.eventengine.events.holders.PlayerHolder;
 
 /**
+ * Simple system to run every x time and controls the actions of the players.<br>
+ * Each you see that a player performs an action that will be added to "_playersAfkCheck".<br>
+ * If the character is not in this list will be sent event.<br>
  * @author fissban
  */
 public class AntiAfkManager
 {
-	private final Map<PlayerHolder, ActionsPlayers> _playersAfkCheck = new ConcurrentHashMap<>();
+	private final List<PlayerHolder> _playersAfkCheck = new CopyOnWriteArrayList<>();
 	
 	private ScheduledFuture<?> _taskAntiAfk;
 	
 	public AntiAfkManager()
 	{
-		// Initialize variable.
-		for (PlayerHolder ph : EventEngineManager.getInstance().getCurrentEvent().getPlayerEventManager().getAllEventPlayers())
-		{
-			_playersAfkCheck.put(ph, new ActionsPlayers());
-		}
+		//
 	}
 	
-	public void addActionPlayer(PlayerHolder ph, ActionsPlayerType action)
+	/**
+	 * Add a character to the list of "excluded" from the next control system
+	 * @param ph
+	 */
+	public void addPlayer(PlayerHolder ph)
 	{
-		_playersAfkCheck.get(ph).addAction(action);
+		_playersAfkCheck.add(ph);
 	}
 	
-	public void removePlayerFromCheckAfk(PlayerHolder ph)
+	/**
+	 * @param ph
+	 */
+	public void removePlayer(PlayerHolder ph)
 	{
 		_playersAfkCheck.remove(ph);
 	}
 	
 	/**
 	 * Start thread responsible for controlling the actions of the players from time to time.
-	 * @param time -> It defines the time when the thread starts
 	 */
-	public void startTask(int time)
+	public void startTask()
 	{
 		_taskAntiAfk = ThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(() ->
 		{
@@ -69,90 +74,24 @@ public class AntiAfkManager
 			
 			for (PlayerHolder ph : currentEvent.getPlayerEventManager().getAllEventPlayers())
 			{
-				ActionsPlayers phOldActions = _playersAfkCheck.get(ph);
-				if (phOldActions != null)
+				if (!_playersAfkCheck.contains(ph))
 				{
-					if (!phOldActions.getActions())
-					{
-						currentEvent.cancelAllEffects(ph);
-						currentEvent.removePlayerFromEvent(ph, true);
-						
-						removePlayerFromCheckAfk(ph);
-						continue;
-					}
+					currentEvent.cancelAllEffects(ph);
+					currentEvent.removePlayerFromEvent(ph, true);
 				}
 			}
-		} , time, ConfigData.getInstance().AFK_CHECK_TIME * 1000);
+			
+			// Init list
+			_playersAfkCheck.clear();
+			
+		} , ConfigData.getInstance().AFK_CHECK_TIME * 1000, ConfigData.getInstance().AFK_CHECK_TIME * 1000);
 	}
 	
 	/**
 	 * Stop the task responsible for controlling the locations of the players.
-	 * @param time -> It defines the time when the thread end
 	 */
-	public void stopTask(int time)
+	public void stopTask()
 	{
-		ThreadPoolManager.getInstance().scheduleGeneral(() ->
-		{
-			_taskAntiAfk.cancel(true);
-		} , time);
-	}
-	
-	public enum ActionsPlayerType
-	{
-		ATTACK,
-		KILL,
-		SKILL,
-		ITEM,
-		INTERACT_NPC,
-		MOVEMENT,
-	}
-	
-	public class ActionsPlayers
-	{
-		private boolean _attack;
-		private boolean _kill;
-		private boolean _useSkill;
-		private boolean _useItem;
-		private boolean _interactNpc;
-		private boolean _movement;
-		
-		public ActionsPlayers()
-		{
-			_kill = false;
-			_useSkill = false;
-			_useItem = false;
-			_interactNpc = false;
-			_movement = false;
-		}
-		
-		public void addAction(ActionsPlayerType action)
-		{
-			switch (action)
-			{
-				case ATTACK:
-					_attack = true;
-					break;
-				case KILL:
-					_kill = true;
-					break;
-				case SKILL:
-					_useSkill = true;
-					break;
-				case ITEM:
-					_useItem = true;
-					break;
-				case INTERACT_NPC:
-					_interactNpc = true;
-					break;
-				case MOVEMENT:
-					_movement = true;
-					break;
-			}
-		}
-		
-		public boolean getActions()
-		{
-			return _attack || _kill || _useSkill || _useItem || _interactNpc || _movement;
-		}
+		_taskAntiAfk.cancel(true);
 	}
 }

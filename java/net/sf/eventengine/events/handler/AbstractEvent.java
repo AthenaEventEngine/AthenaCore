@@ -46,7 +46,6 @@ import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.EventState;
 import net.sf.eventengine.enums.TeamType;
 import net.sf.eventengine.events.handler.managers.AntiAfkManager;
-import net.sf.eventengine.events.handler.managers.AntiAfkManager.ActionsPlayerType;
 import net.sf.eventengine.events.handler.managers.InstanceWorldManager;
 import net.sf.eventengine.events.handler.managers.PlayersManager;
 import net.sf.eventengine.events.handler.managers.ScheduledEventsManager;
@@ -182,7 +181,7 @@ public abstract class AbstractEvent
 		PlayerHolder ph = getPlayerEventManager().getEventPlayer(player);
 		if (getAntiAfkManager() != null)
 		{
-			getAntiAfkManager().addActionPlayer(ph, ActionsPlayerType.MOVEMENT);
+			getAntiAfkManager().addPlayer(ph);
 		}
 		
 		onMovement(ph);
@@ -212,7 +211,7 @@ public abstract class AbstractEvent
 		PlayerHolder ph = getPlayerEventManager().getEventPlayer(player);
 		if (getAntiAfkManager() != null)
 		{
-			getAntiAfkManager().addActionPlayer(ph, ActionsPlayerType.INTERACT_NPC);
+			getAntiAfkManager().addPlayer(ph);
 		}
 		
 		return onInteract(ph, target);
@@ -241,7 +240,7 @@ public abstract class AbstractEvent
 		PlayerHolder ph = getPlayerEventManager().getEventPlayer(playable);
 		if (getAntiAfkManager() != null)
 		{
-			getAntiAfkManager().addActionPlayer(ph, ActionsPlayerType.KILL);
+			getAntiAfkManager().addPlayer(ph);
 		}
 		
 		// ignoramos siempre si matan algun summon.
@@ -296,7 +295,7 @@ public abstract class AbstractEvent
 		
 		if (getAntiAfkManager() != null)
 		{
-			getAntiAfkManager().addActionPlayer(activePlayer, ActionsPlayerType.ATTACK);
+			getAntiAfkManager().addPlayer(activePlayer);
 		}
 		
 		// CHECK FRIENDLY_FIRE ----------------------------------------
@@ -362,7 +361,7 @@ public abstract class AbstractEvent
 		
 		if (getAntiAfkManager() != null)
 		{
-			getAntiAfkManager().addActionPlayer(activePlayer, ActionsPlayerType.SKILL);
+			getAntiAfkManager().addPlayer(activePlayer);
 		}
 		
 		// CHECK FRIENDLY_FIRE ----------------------------------------
@@ -415,7 +414,7 @@ public abstract class AbstractEvent
 		PlayerHolder ph = getPlayerEventManager().getEventPlayer(player);
 		if (getAntiAfkManager() != null)
 		{
-			getAntiAfkManager().addActionPlayer(ph, ActionsPlayerType.ITEM);
+			getAntiAfkManager().addPlayer(ph);
 		}
 		
 		// We will not allow the use of pots or scroll.
@@ -450,7 +449,7 @@ public abstract class AbstractEvent
 				
 				if (getAntiAfkManager() != null)
 				{
-					getAntiAfkManager().removePlayerFromCheckAfk(ph);
+					getAntiAfkManager().addPlayer(ph);
 				}
 				
 				removePlayerFromEvent(ph, true);

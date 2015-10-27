@@ -26,9 +26,7 @@ import java.util.concurrent.ScheduledFuture;
 
 import com.l2jserver.gameserver.ThreadPoolManager;
 
-import net.sf.eventengine.EventEngineManager;
 import net.sf.eventengine.datatables.ConfigData;
-import net.sf.eventengine.events.handler.AbstractEvent;
 import net.sf.eventengine.events.schedules.AnnounceTeleportEvent;
 import net.sf.eventengine.events.schedules.ChangeToEndEvent;
 import net.sf.eventengine.events.schedules.ChangeToFightEvent;
@@ -71,7 +69,6 @@ public class ScheduledEventsManager
 	 */
 	public void startScheduledEvents()
 	{
-		AbstractEvent currentEvent = EventEngineManager.getInstance().getCurrentEvent();
 		int time = 1000;
 		addScheduledEvent(new AnnounceTeleportEvent(time));
 		time += 3000;
@@ -79,19 +76,9 @@ public class ScheduledEventsManager
 		time += 1000;
 		addScheduledEvent(new ChangeToFightEvent(time));
 		
-		if (currentEvent.getAntiAfkManager() != null)
-		{
-			currentEvent.getAntiAfkManager().startTask(time);
-		}
-		
 		// TODO: Maybe some events don't need a finish time, like korean pvp style
 		time += ConfigData.getInstance().EVENT_DURATION * 60 * 1000;
 		addScheduledEvent(new ChangeToEndEvent(time));
-		
-		if (currentEvent.getAntiAfkManager() != null)
-		{
-			currentEvent.getAntiAfkManager().stopTask(time);
-		}
 	}
 	
 	public void startTaskControlTime()

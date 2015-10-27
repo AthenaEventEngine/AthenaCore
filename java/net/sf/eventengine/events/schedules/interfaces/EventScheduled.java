@@ -18,6 +18,9 @@
  */
 package net.sf.eventengine.events.schedules.interfaces;
 
+/**
+ * @author Zephyr
+ */
 public interface EventScheduled
 {
 	public int getTime();
