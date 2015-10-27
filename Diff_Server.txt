@@ -1,5 +1,5 @@
 diff --git a/L2J_Server/.classpath b/L2J_Server/.classpath
-index 05e3150..0b47f01 100644
+index 05e3150..0057726 100644
 --- a/L2J_Server/.classpath
 +++ b/L2J_Server/.classpath
 @@ -1,13 +1,14 @@
@@ -18,7 +18,7 @@ index 05e3150..0b47f01 100644
 -</classpath>
 \ No newline at end of file
 +	<classpathentry kind="src" path="java"/>
-+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.8.0_45"/>
++	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 +	<classpathentry kind="lib" path="dist/libs/c3p0-0.9.5.jar"/>
 +	<classpathentry kind="lib" path="dist/libs/jython.jar"/>
 +	<classpathentry kind="lib" path="dist/libs/jython-engine-2.2.1.jar"/>
@@ -31,29 +31,29 @@ index 05e3150..0b47f01 100644
 +</classpath>
 diff --git a/L2J_Server/dist/libs/._L2J_GeoDriver.jar3291838113424536152.tmp b/L2J_Server/dist/libs/._L2J_GeoDriver.jar3291838113424536152.tmp
 new file mode 100644
-index 0000000..ae15f5e
+index 0000000..f2363d0
 --- /dev/null
 +++ b/L2J_Server/dist/libs/._L2J_GeoDriver.jar3291838113424536152.tmp
 Binary files differ
 diff --git a/L2J_Server/dist/libs/L2J_EventEngine.jar b/L2J_Server/dist/libs/L2J_EventEngine.jar
 new file mode 100644
-index 0000000..de6afba
+index 0000000..3a5276f
 --- /dev/null
 +++ b/L2J_Server/dist/libs/L2J_EventEngine.jar
 Binary files differ
 diff --git a/L2J_Server/java/com/l2jserver/gameserver/GameServer.java b/L2J_Server/java/com/l2jserver/gameserver/GameServer.java
-index 25de90c..29c8050 100644
+index 25de90c..761ae37 100644
 --- a/L2J_Server/java/com/l2jserver/gameserver/GameServer.java
 +++ b/L2J_Server/java/com/l2jserver/gameserver/GameServer.java
-@@ -30,6 +30,8 @@
- import java.util.logging.LogManager;
- import java.util.logging.Logger;
+@@ -141,6 +141,8 @@
+ import com.l2jserver.util.DeadLockDetector;
+ import com.l2jserver.util.IPv4Filter;
  
 +import net.sf.eventengine.EventEngineManager;
 +
- import com.l2jserver.Config;
- import com.l2jserver.L2DatabaseFactory;
- import com.l2jserver.Server;
+ public final class GameServer
+ {
+ 	private static final Logger _log = Logger.getLogger(GameServer.class.getName());
 @@ -391,6 +393,11 @@
  		{
  			_deadDetectThread = null;
@@ -316,6 +316,28 @@ index 640e695..8267663 100644
  		// If the item has reuse time and it has not passed.
  		// Message from reuse delay must come from item.
  		final int reuseDelay = item.getReuseDelay();
+diff --git a/L2J_Server/java/com/l2jserver/gameserver/network/clientpackets/ValidatePosition.java b/L2J_Server/java/com/l2jserver/gameserver/network/clientpackets/ValidatePosition.java
+index 95f8805..abc28eb 100644
+--- a/L2J_Server/java/com/l2jserver/gameserver/network/clientpackets/ValidatePosition.java
++++ b/L2J_Server/java/com/l2jserver/gameserver/network/clientpackets/ValidatePosition.java
+@@ -25,6 +25,8 @@
+ import com.l2jserver.gameserver.network.serverpackets.GetOnVehicle;
+ import com.l2jserver.gameserver.network.serverpackets.ValidateLocation;
+ 
++import net.sf.eventengine.EventEngineManager;
++
+ /**
+  * This class ...
+  * @version $Revision: 1.13.4.7 $ $Date: 2005/03/27 15:29:30 $
+@@ -62,6 +64,8 @@
+ 		final int realY = activeChar.getY();
+ 		int realZ = activeChar.getZ();
+ 		
++		EventEngineManager.getInstance().listenerOnMovement(activeChar);
++		
+ 		if (Config.DEVELOPER)
+ 		{
+ 			_log.fine("client pos: " + _x + " " + _y + " " + _z + " head " + _heading);
 diff --git a/L2J_Server/java/com/l2jserver/gameserver/network/serverpackets/Die.java b/L2J_Server/java/com/l2jserver/gameserver/network/serverpackets/Die.java
 index 108ae76..bb14a3a 100644
 --- a/L2J_Server/java/com/l2jserver/gameserver/network/serverpackets/Die.java

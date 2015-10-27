@@ -55,17 +55,17 @@ public class ScheduledEventsManager
 	 * <ul>
 	 * <b>Actions: </b>
 	 * </ul>
-	 * <li>-> step 1: We announced that participants will be teleported</li><br>
-	 * <li>Wait 3 secs</li><br>
-	 * <li>-> step 2: Adjust the status of the event -> START</li><br>
-	 * <li>We hope 1 sec to actions within each event is executed..</li><br>
-	 * <li>-> step 3: Adjust the status of the event -> FIGHT</li><br>
-	 * <li>-> step 3: We sent a message that they are ready to fight.</li><br>
-	 * <li>We wait until the event ends</li><br>
-	 * <li>-> step 4: Adjust the status of the event -> END</li><br>
-	 * <li>-> step 4: We sent a message warning that term event</li><br>
-	 * <li>Esperamos 1 seg</li><br>
-	 * <li>-> step 5: We alerted the event ended EventEngineManager</li><br>
+	 * <li>-> step 1: We announced that participants will be teleported</li>
+	 * <li>Wait 3 secs</li>
+	 * <li>-> step 2: Adjust the status of the event -> START</li>
+	 * <li>We hope 1 sec to actions within each event is executed..</li>
+	 * <li>-> step 3: Adjust the status of the event -> FIGHT</li>
+	 * <li>-> step 3: We sent a message that they are ready to fight.</li>
+	 * <li>We wait until the event ends</li>
+	 * <li>-> step 4: Adjust the status of the event -> END</li>
+	 * <li>-> step 4: We sent a message warning that term event</li>
+	 * <li>Esperamos 1 seg</li>
+	 * <li>-> step 5: We alerted the event ended EventEngineManager</li>
 	 */
 	public void startScheduledEvents()
 	{
@@ -75,6 +75,7 @@ public class ScheduledEventsManager
 		addScheduledEvent(new ChangeToStartEvent(time));
 		time += 1000;
 		addScheduledEvent(new ChangeToFightEvent(time));
+		
 		// TODO: Maybe some events don't need a finish time, like korean pvp style
 		time += ConfigData.getInstance().EVENT_DURATION * 60 * 1000;
 		addScheduledEvent(new ChangeToEndEvent(time));
