@@ -14,11 +14,12 @@
 	<message id="event_vote_notVoteState" text="The event is not in the vote state, you cannot vote now." />
 	<message id="event_reloading" text="Reloading" />
 	
+	<!-- login -->
 	<message id="event_login_participate" text="Come on! And participate!" />
 	<message id="event_login_vote" text="Vote for the next event!" />
+	
 	<message id="event_vote_done" text="Thank, event successfully voted!" />
 	<message id="event_vote_info" text="Vote for the desired event. The event with the most votes, will start!" />
-	
 	<message id="event_started" text="The event has started!" />
 	<message id="event_end" text="The event has ended!" />
 	<message id="event_start_time" text="Event starts in"/>
@@ -32,9 +33,12 @@
 	<message id="event_register_ended" text="The register time has ended." />
 	<message id="event_next" text="The next event will start in %time%" />
 	
+	<!-- Check lvl for vote and register -->
+	<message id="highLevel" text="Your level is higher than the max allowed level." />
+	<message id="lowLevel" text="Your level is lower than the min required level." />
+	
+	
 	<!-- Register -->
-	<message id="registering_highLevel" text="Your level is higher than the max allowed level." />
-	<message id="registering_lowLevel" text="Your level is lower than the min required level." />
 	<message id="registering_registered" text="You have successfully registered!" />
 	<message id="registering_already_registered" text="You are already registered." />
 	<message id="unregistering_unregistered" text="You have been unregistered." />
