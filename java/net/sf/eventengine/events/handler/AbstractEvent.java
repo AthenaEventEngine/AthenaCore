@@ -60,6 +60,7 @@ import com.l2jserver.util.Rnd;
 public abstract class AbstractEvent
 {
 	private static final Logger LOGGER = Logger.getLogger(AbstractEvent.class.getName());
+	private static final int DEFAULT_RADIUS = 10;
 	
 	public AbstractEvent()
 	{
@@ -78,6 +79,7 @@ public abstract class AbstractEvent
 			case START:
 				prepareToStart();
 				onEventStart();
+				initTeleportAllPlayers();
 				break;
 			
 			case FIGHT:
@@ -400,6 +402,15 @@ public abstract class AbstractEvent
 	}
 	
 	// VARIOUS METHODS. -------------------------------------------------------------------------------- //
+	
+	private void initTeleportAllPlayers()
+	{
+		for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
+		{
+			teleportPlayer(ph, DEFAULT_RADIUS);
+			getInstanceWorldManager().getWorld(ph.getDinamicInstanceId()).addAllowed(ph.getPcInstance().getObjectId());
+		}
+	}
 	
 	/**
 	 * Teleport to players of each team to their respective starting points<br>

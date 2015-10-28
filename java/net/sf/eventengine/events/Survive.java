@@ -20,13 +20,6 @@ package net.sf.eventengine.events;
 
 import java.util.List;
 
-import com.l2jserver.gameserver.ThreadPoolManager;
-import com.l2jserver.gameserver.enums.Team;
-import com.l2jserver.gameserver.model.actor.L2Character;
-import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
-import com.l2jserver.gameserver.network.clientpackets.Say2;
-import com.l2jserver.util.Rnd;
-
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.enums.CollectionTarget;
 import net.sf.eventengine.enums.ScoreType;
@@ -37,6 +30,12 @@ import net.sf.eventengine.events.holders.TeamHolder;
 import net.sf.eventengine.events.schedules.AnnounceNearEndEvent;
 import net.sf.eventengine.util.EventUtil;
 import net.sf.eventengine.util.SortUtils;
+
+import com.l2jserver.gameserver.ThreadPoolManager;
+import com.l2jserver.gameserver.enums.Team;
+import com.l2jserver.gameserver.model.actor.L2Character;
+import com.l2jserver.gameserver.network.clientpackets.Say2;
+import com.l2jserver.util.Rnd;
 
 /**
  * Event survival<br>
@@ -49,8 +48,6 @@ public class Survive extends AbstractEvent
 	private int _stage = 1;
 	// Variable that helps us keep track of the number of dead mobs.
 	private int _auxKillMonsters = 0;
-	// Radius spawn
-	private static final int RADIUS_SPAWN_PLAYER = 200;
 	
 	// Monsters ids
 	private final List<Integer> MONSTERS_ID = ConfigData.getInstance().SURVIVE_MONSTERS_ID;
@@ -68,8 +65,8 @@ public class Survive extends AbstractEvent
 	@Override
 	protected void onEventStart()
 	{
+		getInstanceWorldManager().createNewInstanceWorld(true);
 		createTeam(ConfigData.getInstance().SURVIVE_COUNT_TEAM);
-		teleportAllPlayers(RADIUS_SPAWN_PLAYER);
 	}
 	
 	@Override
@@ -170,7 +167,7 @@ public class Survive extends AbstractEvent
 		{
 			for (int i = 0; i < (_stage * ConfigData.getInstance().SURVIVE_MONSTER_SPAWN_FOR_STAGE); i++)
 			{
-				getSpawnManager().addEventNpc(MONSTERS_ID.get(Rnd.get(MONSTERS_ID.size() - 1)), ConfigData.getInstance().SURVIVE_COORDINATES_MOBS, Team.RED, true, getInstanceWorldManager().getAllInstancesWorlds().get(0).getInstanceId());
+				getSpawnManager().addEventNpc(MONSTERS_ID.get(Rnd.get(MONSTERS_ID.size() - 1)), ConfigData.getInstance().SURVIVE_COORDINATES_MOBS, Team.RED, true, getInstanceWorldManager().getMainWorldId());
 			}
 			
 			// We notify the characters in the event that stage they are currently.
@@ -179,7 +176,7 @@ public class Survive extends AbstractEvent
 				// FIXME agregar al sistema de lang
 				EventUtil.sendEventScreenMessage(ph, "Stage " + _stage, 5000);
 			}
-		} , 5000L);
+		}, 5000L);
 		
 	}
 	
@@ -194,9 +191,6 @@ public class Survive extends AbstractEvent
 		// We define the main spawn of equipment
 		getTeamsManager().setSpawnTeams(ConfigData.getInstance().SURVIVE_COORDINATES_TEAM);
 		
-		// We create the instance and the world
-		InstanceWorld world = getInstanceWorldManager().createNewInstanceWorld();
-		
 		int aux = 1;
 		
 		for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
@@ -208,9 +202,7 @@ public class Survive extends AbstractEvent
 			// Ajustamos el titulo del personaje segun su team
 			ph.setNewTitle("[ " + team.name() + " ]");// [ BLUE ], [ RED ] ....
 			// Adjust the instance that owns the character
-			ph.setDinamicInstanceId(world.getInstanceId());
-			// We add the character to the world and then be teleported
-			world.addAllowed(ph.getPcInstance().getObjectId());
+			ph.setDinamicInstanceId(getInstanceWorldManager().getMainWorldId());
 			// Adjust the title character.
 			updateTitle(ph);
 			

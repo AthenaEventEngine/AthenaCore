@@ -32,7 +32,6 @@ import net.sf.eventengine.util.EventUtil;
 import net.sf.eventengine.util.SortUtils;
 
 import com.l2jserver.gameserver.model.actor.L2Character;
-import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
 
 /**
@@ -58,8 +57,8 @@ public class AllVsAll extends AbstractEvent
 	@Override
 	protected void onEventStart()
 	{
+		getInstanceWorldManager().createNewInstanceWorld(true);
 		createTeam(1);
-		teleportAllPlayers(RADIUS_SPAWN_PLAYER);
 	}
 	
 	@Override
@@ -133,9 +132,6 @@ public class AllVsAll extends AbstractEvent
 		// We define each team spawns
 		getTeamsManager().setSpawnTeams(ConfigData.getInstance().AVA_COORDINATES_TEAM);
 		
-		// We create the instance and the world
-		InstanceWorld world = getInstanceWorldManager().createNewInstanceWorld();
-		
 		// Obtenemos el team -> WHITE
 		TeamType team = getTeamsManager().getEnabledTeams()[0];
 		
@@ -143,10 +139,8 @@ public class AllVsAll extends AbstractEvent
 		{
 			// Definimos el team del jugador
 			ph.setTeam(team);
-			// We add the character to the world and then be teleported
-			world.addAllowed(ph.getPcInstance().getObjectId());
 			// Adjust the instance that owns the character
-			ph.setDinamicInstanceId(world.getInstanceId());
+			ph.setDinamicInstanceId(getInstanceWorldManager().getMainWorldId());
 			// Update Title
 			updateTitle(ph);
 		}

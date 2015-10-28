@@ -22,12 +22,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import net.sf.eventengine.EventEngineManager;
+
 import com.l2jserver.gameserver.instancemanager.InstanceManager;
 import com.l2jserver.gameserver.model.actor.instance.L2DoorInstance;
 import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
-
-import net.sf.eventengine.EventEngineManager;
-import net.sf.eventengine.EventEngineWorld;
 
 /**
  * @author fissban
@@ -36,8 +35,11 @@ public class InstanceWorldManager
 {
 	private static final Logger LOGGER = Logger.getLogger(InstanceWorldManager.class.getName());
 	
+	private static final int TEMPLATE_ID = 100;
+	
 	private String _instanceFile = "";
-	private final List<InstanceWorld> _instanceWorlds = new ArrayList<>();
+	private int _mainInstanceWorldId = 0;
+	private final List<Integer> _instanceWorldIds = new ArrayList<>();
 	
 	/**
 	 * Constructor
@@ -57,29 +59,23 @@ public class InstanceWorldManager
 	 * @param count
 	 * @return InstanceWorld
 	 */
-	public InstanceWorld createNewInstanceWorld()
+	public InstanceWorld createNewInstanceWorld(boolean mainWorld)
 	{
 		InstanceWorld world = null;
 		try
 		{
 			int instanceId = InstanceManager.getInstance().createDynamicInstance(_instanceFile);
-			InstanceManager.getInstance().getInstance(instanceId).setAllowSummon(false);
-			InstanceManager.getInstance().getInstance(instanceId).setPvPInstance(true);
-			InstanceManager.getInstance().getInstance(instanceId).setEjectTime(10 * 60 * 1000); // prevent eject death players.
-			InstanceManager.getInstance().getInstance(instanceId).setEmptyDestroyTime(1000 + 60000L);
-			// We closed the doors of the instance if there
-			for (L2DoorInstance door : InstanceManager.getInstance().getInstance(instanceId).getDoors())
-			{
-				door.closeMe();
-			}
-			
-			world = new EventEngineWorld();
-			world.setInstanceId(instanceId);
-			world.setTemplateId(100); // TODO hardcode
+			world = new InstanceWorld();
+			world.setInstanceId(TEMPLATE_ID);
 			world.setStatus(0);
 			InstanceManager.getInstance().addWorld(world);
-			_instanceWorlds.add(world);
+			_instanceWorldIds.add(instanceId);
+			closeTheDoors(instanceId);
 			
+			if (mainWorld)
+			{
+				_mainInstanceWorldId = instanceId;
+			}
 		}
 		catch (Exception e)
 		{
@@ -90,8 +86,36 @@ public class InstanceWorldManager
 		return world;
 	}
 	
-	public List<InstanceWorld> getAllInstancesWorlds()
+	public void closeTheDoors(int instanceId)
 	{
-		return _instanceWorlds;
+		for (L2DoorInstance door : InstanceManager.getInstance().getInstance(instanceId).getDoors())
+		{
+			door.closeMe();
+		}
+	}
+	
+	public List<Integer> getAllInstancesWorldId()
+	{
+		return _instanceWorldIds;
+	}
+	
+	public InstanceWorld getWorld(int id)
+	{
+		return InstanceManager.getInstance().getWorld(id);
+	}
+	
+	public void setMainWorldId(int id)
+	{
+		_mainInstanceWorldId = id;
+	}
+	
+	public InstanceWorld getMainWorld()
+	{
+		return InstanceManager.getInstance().getWorld(_mainInstanceWorldId);
+	}
+	
+	public int getMainWorldId()
+	{
+		return _mainInstanceWorldId;
 	}
 }

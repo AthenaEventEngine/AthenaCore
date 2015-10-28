@@ -20,10 +20,6 @@ package net.sf.eventengine.events;
 
 import java.util.List;
 
-import com.l2jserver.gameserver.model.actor.L2Character;
-import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
-import com.l2jserver.gameserver.network.clientpackets.Say2;
-
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.CollectionTarget;
@@ -35,6 +31,9 @@ import net.sf.eventengine.events.holders.TeamHolder;
 import net.sf.eventengine.events.schedules.AnnounceNearEndEvent;
 import net.sf.eventengine.util.EventUtil;
 import net.sf.eventengine.util.SortUtils;
+
+import com.l2jserver.gameserver.model.actor.L2Character;
+import com.l2jserver.gameserver.network.clientpackets.Say2;
 
 /**
  * @author fissban
@@ -59,8 +58,8 @@ public class TeamVsTeam extends AbstractEvent
 	@Override
 	protected void onEventStart()
 	{
+		getInstanceWorldManager().createNewInstanceWorld(true);
 		createTeams(ConfigData.getInstance().TVT_COUNT_TEAM);
-		teleportAllPlayers(RADIUS_SPAWN_PLAYER);
 	}
 	
 	@Override
@@ -129,8 +128,6 @@ public class TeamVsTeam extends AbstractEvent
 		getTeamsManager().setCountTeams(countTeams);
 		// We define each team spawns
 		getTeamsManager().setSpawnTeams(ConfigData.getInstance().TVT_COORDINATES_TEAM);
-		// We create the instance and the world
-		InstanceWorld world = getInstanceWorldManager().createNewInstanceWorld();
 		
 		int aux = 1;
 		
@@ -143,10 +140,8 @@ public class TeamVsTeam extends AbstractEvent
 			// Ajustamos el titulo del personaje segun su team
 			ph.setNewTitle("[ " + team.toString() + " ]");// [ BLUE ], [ RED ] ....
 			
-			// We add the character to the world and then be teleported
-			world.addAllowed(ph.getPcInstance().getObjectId());
 			// Adjust the instance which will own the character
-			ph.setDinamicInstanceId(world.getInstanceId());
+			ph.setDinamicInstanceId(getInstanceWorldManager().getMainWorldId());
 			
 			if (aux % countTeams == 0)
 			{

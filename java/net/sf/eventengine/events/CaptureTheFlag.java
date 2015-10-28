@@ -23,18 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.l2jserver.gameserver.datatables.ItemTable;
-import com.l2jserver.gameserver.enums.Team;
-import com.l2jserver.gameserver.model.actor.L2Character;
-import com.l2jserver.gameserver.model.actor.L2Npc;
-import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
-import com.l2jserver.gameserver.model.itemcontainer.Inventory;
-import com.l2jserver.gameserver.model.items.L2Item;
-import com.l2jserver.gameserver.model.items.L2Weapon;
-import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
-import com.l2jserver.gameserver.network.clientpackets.Say2;
-import com.l2jserver.gameserver.network.serverpackets.MagicSkillUse;
-
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.CollectionTarget;
@@ -46,6 +34,17 @@ import net.sf.eventengine.events.holders.TeamHolder;
 import net.sf.eventengine.events.schedules.AnnounceNearEndEvent;
 import net.sf.eventengine.util.EventUtil;
 import net.sf.eventengine.util.SortUtils;
+
+import com.l2jserver.gameserver.datatables.ItemTable;
+import com.l2jserver.gameserver.enums.Team;
+import com.l2jserver.gameserver.model.actor.L2Character;
+import com.l2jserver.gameserver.model.actor.L2Npc;
+import com.l2jserver.gameserver.model.itemcontainer.Inventory;
+import com.l2jserver.gameserver.model.items.L2Item;
+import com.l2jserver.gameserver.model.items.L2Weapon;
+import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
+import com.l2jserver.gameserver.network.clientpackets.Say2;
+import com.l2jserver.gameserver.network.serverpackets.MagicSkillUse;
 
 /**
  * @author fissban
@@ -83,9 +82,9 @@ public class CaptureTheFlag extends AbstractEvent
 	@Override
 	protected void onEventStart()
 	{
+		getInstanceWorldManager().createNewInstanceWorld(true);
 		createTeams(ConfigData.getInstance().CTF_COUNT_TEAM);
 		spawnFlagsAndHolders();
-		teleportAllPlayers(RADIUS_SPAWN_PLAYER);
 	}
 	
 	@Override
@@ -144,7 +143,7 @@ public class CaptureTheFlag extends AbstractEvent
 					
 					TeamHolder th = getTeamsManager().getTeam(_flagHasPlayer.remove(ph));
 					// We created the flag again
-					_flagSpawn.put(getSpawnManager().addEventNpc(FLAG, th.getSpawn().getX(), th.getSpawn().getY(), th.getSpawn().getZ(), 0, Team.NONE, th.getTeamType().name(), false, getInstanceWorldManager().getAllInstancesWorlds().get(0).getInstanceId()), th.getTeamType());
+					_flagSpawn.put(getSpawnManager().addEventNpc(FLAG, th.getSpawn().getX(), th.getSpawn().getY(), th.getSpawn().getZ(), 0, Team.NONE, th.getTeamType().name(), false, getInstanceWorldManager().getMainWorldId()), th.getTeamType());
 					// We announced that a flag was taken
 					EventUtil.announceTo(Say2.BATTLEFIELD, "ctf_conquered_the_flag", "%holder%", th.getTeamType().name(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
 					// Show points of each team
@@ -242,7 +241,7 @@ public class CaptureTheFlag extends AbstractEvent
 	 */
 	private void spawnFlagsAndHolders()
 	{
-		int instanceId = getInstanceWorldManager().getAllInstancesWorlds().get(0).getInstanceId();
+		int instanceId = getInstanceWorldManager().getMainWorldId();
 		
 		for (TeamHolder th : getTeamsManager().getAllTeams())
 		{
@@ -267,9 +266,6 @@ public class CaptureTheFlag extends AbstractEvent
 		// We define each team spawns
 		getTeamsManager().setSpawnTeams(ConfigData.getInstance().CTF_COORDINATES_TEAM);
 		
-		// We create the instance and the world
-		InstanceWorld world = getInstanceWorldManager().createNewInstanceWorld();
-		
 		int aux = 1;
 		
 		for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
@@ -281,9 +277,7 @@ public class CaptureTheFlag extends AbstractEvent
 			// Ajustamos el titulo del personaje segun su team
 			ph.setNewTitle("[ " + team.name() + " ]");// [ BLUE ], [ RED ] ....
 			// Adjust the instance that owns the character
-			ph.setDinamicInstanceId(world.getInstanceId());
-			// We add the character to the world and then be teleported
-			world.addAllowed(ph.getPcInstance().getObjectId());
+			ph.setDinamicInstanceId(getInstanceWorldManager().getMainWorldId());
 			
 			if (aux % countTeams == 0)
 			{

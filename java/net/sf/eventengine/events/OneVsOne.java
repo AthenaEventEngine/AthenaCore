@@ -24,10 +24,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.l2jserver.gameserver.ThreadPoolManager;
-import com.l2jserver.gameserver.model.actor.L2Character;
-import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
-
 import net.sf.eventengine.EventEngineManager;
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.MessageData;
@@ -39,6 +35,10 @@ import net.sf.eventengine.events.holders.PlayerHolder;
 import net.sf.eventengine.events.schedules.AnnounceNearEndEvent;
 import net.sf.eventengine.util.EventUtil;
 import net.sf.eventengine.util.SortUtils;
+
+import com.l2jserver.gameserver.ThreadPoolManager;
+import com.l2jserver.gameserver.model.actor.L2Character;
+import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 
 /**
  * @author fissban
@@ -171,7 +171,7 @@ public class OneVsOne extends AbstractEvent
 			else
 			{
 				// We create the instance and the world
-				InstanceWorld world = getInstanceWorldManager().createNewInstanceWorld();
+				InstanceWorld world = getInstanceWorldManager().createNewInstanceWorld(false);
 				// auxiliar para llevar la personajes de cada isntancia del evento
 				Map<TeamType, PlayerHolder> teams = new HashMap<>();
 				
@@ -248,7 +248,7 @@ public class OneVsOne extends AbstractEvent
 				}
 			}
 			
-		} , TIME_BETWEEN_FIGHT * 1000);
+		}, TIME_BETWEEN_FIGHT * 1000);
 	}
 	
 	/**
