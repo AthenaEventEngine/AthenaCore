@@ -26,7 +26,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.l2jserver.gameserver.datatables.ItemTable;
 import com.l2jserver.gameserver.enums.Team;
 import com.l2jserver.gameserver.model.actor.L2Character;
-import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 import com.l2jserver.gameserver.model.itemcontainer.Inventory;
 import com.l2jserver.gameserver.model.items.L2Item;
@@ -41,6 +40,7 @@ import net.sf.eventengine.enums.CollectionTarget;
 import net.sf.eventengine.enums.ScoreType;
 import net.sf.eventengine.enums.TeamType;
 import net.sf.eventengine.events.handler.AbstractEvent;
+import net.sf.eventengine.events.holders.NpcHolder;
 import net.sf.eventengine.events.holders.PlayerHolder;
 import net.sf.eventengine.events.holders.TeamHolder;
 import net.sf.eventengine.events.schedules.AnnounceNearEndEvent;
@@ -66,8 +66,8 @@ public class CaptureTheFlag extends AbstractEvent
 	// Time for resurrection
 	private static final int TIME_RES_PLAYER = 10;
 	
-	private final Map<L2Npc, TeamType> _flagSpawn = new ConcurrentHashMap<>();
-	private final Map<L2Npc, TeamType> _holderSpawn = new ConcurrentHashMap<>();
+	private final Map<NpcHolder, TeamType> _flagSpawn = new ConcurrentHashMap<>();
+	private final Map<NpcHolder, TeamType> _holderSpawn = new ConcurrentHashMap<>();
 	private final Map<PlayerHolder, TeamType> _flagHasPlayer = new ConcurrentHashMap<>();
 	
 	public CaptureTheFlag()
@@ -102,36 +102,36 @@ public class CaptureTheFlag extends AbstractEvent
 	}
 	
 	@Override
-	public boolean onInteract(PlayerHolder ph, L2Npc npc)
+	public boolean onInteract(PlayerHolder ph, NpcHolder npcHolder)
 	{
-		if (npc.getId() == FLAG)
+		if (npcHolder.getNpcInstance().getId() == FLAG)
 		{
 			if (hasFlag(ph))
 			{
 				return false;
 			}
 			
-			TeamType flagTeam = _flagSpawn.get(npc);
+			TeamType flagTeam = _flagSpawn.get(npcHolder);
 			
 			if (ph.getTeamType() != flagTeam)
 			{
 				// Animacion
 				ph.getPcInstance().broadcastPacket(new MagicSkillUse(ph.getPcInstance(), ph.getPcInstance(), 1034, 1, 1, 1));
 				// Borramos del MAP la bandera
-				_flagSpawn.remove(npc);
+				_flagSpawn.remove(npcHolder);
 				// Guardamos que personaje lleva determinada bandera
 				_flagHasPlayer.put(ph, flagTeam);
 				// We remove the flag from his position
-				getSpawnManager().removeNpc(npc);
+				getSpawnManager().removeNpc(npcHolder);
 				// We equip flag
 				equipFlag(ph, flagTeam);
 				// We announced that a flag was taken
 				EventUtil.announceTo(Say2.BATTLEFIELD, "ctf_captured_the_flag", "%holder%", flagTeam.name(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
 			}
 		}
-		else if (npc.getId() == HOLDER)
+		else if (npcHolder.getNpcInstance().getId() == HOLDER)
 		{
-			if (ph.getTeamType() == _holderSpawn.get(npc))
+			if (ph.getTeamType() == _holderSpawn.get(npcHolder))
 			{
 				if (hasFlag(ph))
 				{

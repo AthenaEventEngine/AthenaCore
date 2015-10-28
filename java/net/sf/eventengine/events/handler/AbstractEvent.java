@@ -24,20 +24,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledFuture;
 import java.util.logging.Logger;
 
-import net.sf.eventengine.EventEngineManager;
-import net.sf.eventengine.datatables.BuffListData;
-import net.sf.eventengine.datatables.ConfigData;
-import net.sf.eventengine.datatables.MessageData;
-import net.sf.eventengine.enums.EventState;
-import net.sf.eventengine.enums.TeamType;
-import net.sf.eventengine.events.handler.managers.InstanceWorldManager;
-import net.sf.eventengine.events.handler.managers.PlayersManager;
-import net.sf.eventengine.events.handler.managers.ScheduledEventsManager;
-import net.sf.eventengine.events.handler.managers.SpawnManager;
-import net.sf.eventengine.events.handler.managers.TeamsManagers;
-import net.sf.eventengine.events.holders.PlayerHolder;
-import net.sf.eventengine.util.EventUtil;
-
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.instancemanager.InstanceManager;
 import com.l2jserver.gameserver.model.Location;
@@ -53,6 +39,21 @@ import com.l2jserver.gameserver.model.items.L2Item;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.taskmanager.DecayTaskManager;
 import com.l2jserver.util.Rnd;
+
+import net.sf.eventengine.EventEngineManager;
+import net.sf.eventengine.datatables.BuffListData;
+import net.sf.eventengine.datatables.ConfigData;
+import net.sf.eventengine.datatables.MessageData;
+import net.sf.eventengine.enums.EventState;
+import net.sf.eventengine.enums.TeamType;
+import net.sf.eventengine.events.handler.managers.InstanceWorldManager;
+import net.sf.eventengine.events.handler.managers.PlayersManager;
+import net.sf.eventengine.events.handler.managers.ScheduledEventsManager;
+import net.sf.eventengine.events.handler.managers.SpawnManager;
+import net.sf.eventengine.events.handler.managers.TeamsManagers;
+import net.sf.eventengine.events.holders.NpcHolder;
+import net.sf.eventengine.events.holders.PlayerHolder;
+import net.sf.eventengine.util.EventUtil;
 
 /**
  * @author fissban
@@ -79,12 +80,12 @@ public abstract class AbstractEvent
 				prepareToStart();
 				onEventStart();
 				break;
-			
+				
 			case FIGHT:
 				prepareToFight();
 				onEventFight();
 				break;
-			
+				
 			case END:
 				onEventEnd();
 				prepareToEnd();
@@ -167,14 +168,14 @@ public abstract class AbstractEvent
 			return true;
 		}
 		
-		return onInteract(getPlayerEventManager().getEventPlayer(player), target);
+		return onInteract(getPlayerEventManager().getEventPlayer(player), getSpawnManager().getEventNpc(target));
 	}
 	
 	/**
 	 * @param ph
 	 * @param npc
 	 */
-	public boolean onInteract(PlayerHolder ph, L2Npc npc)
+	public boolean onInteract(PlayerHolder ph, NpcHolder npc)
 	{
 		return true;
 	}
@@ -559,7 +560,7 @@ public abstract class AbstractEvent
 				giveBuffPlayer(player.getPcInstance());
 				teleportPlayer(player, radiusTeleport);
 				
-			}, time * 1000));
+			} , time * 1000));
 		}
 		catch (Exception e)
 		{
