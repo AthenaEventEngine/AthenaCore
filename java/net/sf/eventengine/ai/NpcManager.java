@@ -77,13 +77,26 @@ public class NpcManager extends Quest
 				break;
 				
 			case "vote":
-				// Add vote event
-				Class<? extends AbstractEvent> type = EventData.getInstance().getEvent(st.nextToken());
-				if (type != null)
+				// Check for vote
+				if (player.getLevel() < ConfigData.getInstance().MIN_LVL_IN_EVENT)
 				{
-					EventEngineManager.getInstance().increaseVote(player, type);
-					player.sendMessage(MessageData.getInstance().getMsgByLang(player, "event_vote_done", true));
+					player.sendMessage(MessageData.getInstance().getMsgByLang(player, "lowLevel", true));
 				}
+				else if (player.getLevel() > ConfigData.getInstance().MAX_LVL_IN_EVENT)
+				{
+					player.sendMessage(MessageData.getInstance().getMsgByLang(player, "highLevel", true));
+				}
+				else
+				{
+					// Add vote event
+					Class<? extends AbstractEvent> type = EventData.getInstance().getEvent(st.nextToken());
+					if (type != null)
+					{
+						EventEngineManager.getInstance().increaseVote(player, type);
+						player.sendMessage(MessageData.getInstance().getMsgByLang(player, "event_vote_done", true));
+					}
+				}
+				
 				sendHtmlIndex(player);
 				break;
 				
@@ -98,11 +111,11 @@ public class NpcManager extends Quest
 					// Check for register
 					if (player.getLevel() < ConfigData.getInstance().MIN_LVL_IN_EVENT)
 					{
-						player.sendMessage(MessageData.getInstance().getMsgByLang(player, "registering_lowLevel", true));
+						player.sendMessage(MessageData.getInstance().getMsgByLang(player, "lowLevel", true));
 					}
 					else if (player.getLevel() > ConfigData.getInstance().MAX_LVL_IN_EVENT)
 					{
-						player.sendMessage(MessageData.getInstance().getMsgByLang(player, "registering_highLevel", true));
+						player.sendMessage(MessageData.getInstance().getMsgByLang(player, "highLevel", true));
 					}
 					else if (EventEngineManager.getInstance().getAllRegisteredPlayers().size() >= ConfigData.getInstance().MAX_PLAYERS_IN_EVENT)
 					{
