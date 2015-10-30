@@ -18,8 +18,8 @@
  */
 package net.sf.eventengine.events.handler.managers;
 
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 
 import com.l2jserver.gameserver.ThreadPoolManager;
@@ -37,7 +37,7 @@ import net.sf.eventengine.events.holders.PlayerHolder;
  */
 public class AntiAfkManager
 {
-	private final List<PlayerHolder> _playersAfkCheck = new CopyOnWriteArrayList<>();
+	private final Set<PlayerHolder> _playersAfkCheck = ConcurrentHashMap.newKeySet();
 	
 	private ScheduledFuture<?> _taskAntiAfk;
 	
@@ -52,7 +52,10 @@ public class AntiAfkManager
 	 */
 	public void addPlayer(PlayerHolder ph)
 	{
-		_playersAfkCheck.add(ph);
+		if (!_playersAfkCheck.contains(ph))
+		{
+			_playersAfkCheck.add(ph);
+		}
 	}
 	
 	/**
@@ -60,7 +63,10 @@ public class AntiAfkManager
 	 */
 	public void removePlayer(PlayerHolder ph)
 	{
-		_playersAfkCheck.remove(ph);
+		if (_playersAfkCheck.contains(ph))
+		{
+			_playersAfkCheck.remove(ph);
+		}
 	}
 	
 	/**
