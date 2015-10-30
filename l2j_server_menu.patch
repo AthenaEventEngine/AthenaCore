@@ -1,0 +1,99 @@
+Index: game/config/adminCommands.xml
+===================================================================
+--- game/config/adminCommands.xml	(revision 22072)
++++ game/config/adminCommands.xml	(working copy)
+@@ -593,4 +593,7 @@
+ 	<admin command="banchat" accessLevel="7" />
+ 	<admin command="debug" accessLevel="7" />
+ 	<admin command="unbanchat" accessLevel="7" />
++	
++	<!-- EVENT ENGINE -->
++	<admin command="admin_engine" accessLevel="7" />
+ </list>
+\ No newline at end of file
+Index: game/data/html/admin/gm_menu.htm
+===================================================================
+--- game/data/html/admin/gm_menu.htm	(revision 22072)
++++ game/data/html/admin/gm_menu.htm	(working copy)
+@@ -29,6 +29,7 @@
+ <td><button value="Announces" action="bypass -h admin_announces list" width=65 height=21 back="L2UI_CT1.Button_DF_Down" fore="L2UI_CT1.Button_DF"></td>
+ <td><button value="Enhance" action="bypass -h admin_enchant" width=65 height=21 back="L2UI_CT1.Button_DF_Down" fore="L2UI_CT1.Button_DF"></td>
+ <td><button value="GM Shop" action="bypass -h admin_gmshop" width=65 height=21 back="L2UI_CT1.Button_DF_Down" fore="L2UI_CT1.Button_DF"></td>
++<td><button value="Engine" action="bypass -h admin_engine" width=65 height=21 back="L2UI_CT1.Button_DF_Down" fore="L2UI_CT1.Button_DF"></td>
+ </tr><tr>
+ <td><button value="Instance" action="bypass -h admin_html instancezone.htm" width=65 height=21 back="L2UI_CT1.Button_DF_Down" fore="L2UI_CT1.Button_DF"></td>
+ <td><button value="Events" action="bypass -h admin_event_menu" width=65 height=21 back="L2UI_CT1.Button_DF_Down" fore="L2UI_CT1.Button_DF"></td>
+Index: game/data/scripts/handlers/admincommandhandlers/AdminEngine.java
+===================================================================
+--- game/data/scripts/handlers/admincommandhandlers/AdminEngine.java	(revision 0)
++++ game/data/scripts/handlers/admincommandhandlers/AdminEngine.java	(working copy)
+@@ -0,0 +1,48 @@
++/*
++ * Copyright (C) 2004-2015 L2J DataPack
++ * 
++ * This file is part of L2J DataPack.
++ * 
++ * L2J DataPack is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ * 
++ * L2J DataPack is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
++ * General Public License for more details.
++ * 
++ * You should have received a copy of the GNU General Public License
++ * along with this program. If not, see <http://www.gnu.org/licenses/>.
++ */
++package handlers.admincommandhandlers;
++
++import com.l2jserver.gameserver.handler.IAdminCommandHandler;
++import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
++
++public class AdminEngine implements IAdminCommandHandler
++{
++	private static final String[] ADMIN_COMMANDS =
++	{
++		"admin_engine"
++	};
++	
++	@Override
++	public boolean useAdminCommand(String command, L2PcInstance activeChar)
++	{
++		if (command.equals("admin_engine"))
++		{
++			// TODO: FIXME
++			sendHtmlAdmin(player);
++		}
++		
++		return true;
++	}
++	
++	@Override
++	public String[] getAdminCommandList()
++	{
++		return ADMIN_COMMANDS;
++	}
++}
+\ No newline at end of file
+Index: game/data/scripts/handlers/MasterHandler.java
+===================================================================
+--- game/data/scripts/handlers/MasterHandler.java	(revision 22072)
++++ game/data/scripts/handlers/MasterHandler.java	(working copy)
+@@ -74,6 +74,7 @@
+ import handlers.admincommandhandlers.AdminEffects;
+ import handlers.admincommandhandlers.AdminElement;
+ import handlers.admincommandhandlers.AdminEnchant;
++import handlers.admincommandhandlers.AdminEngine;
+ import handlers.admincommandhandlers.AdminEventEngine;
+ import handlers.admincommandhandlers.AdminEvents;
+ import handlers.admincommandhandlers.AdminExpSp;
+@@ -348,6 +349,7 @@
+ 			AdminEffects.class,
+ 			AdminElement.class,
+ 			AdminEnchant.class,
++			AdminEngine.class,
+ 			AdminEventEngine.class,
+ 			AdminEvents.class,
+ 			AdminExpSp.class,
