@@ -162,6 +162,25 @@ public class EventEngineManager
 	
 	// XXX LISTENERS -------------------------------------------------------------------------------------
 	/**
+	 * @param player -> personaje
+	 */
+	public void listenerOnMovement(L2PcInstance player)
+	{
+		if (_currentEvent != null)
+		{
+			try
+			{
+				_currentEvent.listenerOnMovement(player);
+			}
+			catch (Exception e)
+			{
+				LOGGER.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnMovement() " + e);
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	/**
 	 * @param playable -> personaje o summon
 	 * @param target -> NO puede ser null
 	 * @return true -> solo en el caso de que no queremos q un ataque continue su progeso normal.
