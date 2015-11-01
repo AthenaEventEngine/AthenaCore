@@ -251,8 +251,8 @@ public final class EventPropertiesParser
 	}
 	
 	/**
-	 * Parseamos un config usando "," para diferenciar entre cada cordenada<br>
-	 * Ejemplo -> "xx,xx,xx;xx,xx,xx ..."
+	 * Parse using config "," to differentiate between each coordinate <br>
+	 * Example -> "xx, xx, xx, xx, xx, xx ..."
 	 * @param key
 	 * @return List<ItemHolder>
 	 */
@@ -277,8 +277,8 @@ public final class EventPropertiesParser
 	}
 	
 	/**
-	 * Parseamos un config usando "," para diferenciar entre cada coordenada<br>
-	 * Ejemplo -> "xx,xx,xx"
+	 * Parse using config "," to differentiate between each coordinate <br>
+	 * Example -> "xx, xx, xx"
 	 * @param key
 	 * @return Location
 	 */
@@ -298,8 +298,8 @@ public final class EventPropertiesParser
 	}
 	
 	/**
-	 * Parseamos un config usando "," para diferenciar entre cada coordenada y un ";" entre cada team. <br>
-	 * Ejemplo -> "xx,xx,xx"
+	 * Parse using config "," to differentiate between each coordinate and a ";" between each team. <br>
+	 * Example -> "xx, xx, xx"
 	 * @param key
 	 * @return List<Location>
 	 */
@@ -327,8 +327,8 @@ public final class EventPropertiesParser
 	}
 	
 	/**
-	 * Parseamos un config usando "," para diferenciar entre un valor y otro.<br>
-	 * Ejemplo -> xx,xx,xx,xx ....
+	 * Parse using config "," to differentiate between a value and a <br>
+	 * * Example -.> xx, xx, xx, xx ....
 	 * @param key
 	 * @return List<Integer>
 	 */

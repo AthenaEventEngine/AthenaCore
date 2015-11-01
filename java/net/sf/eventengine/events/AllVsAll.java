@@ -20,6 +20,10 @@ package net.sf.eventengine.events;
 
 import java.util.List;
 
+import com.l2jserver.gameserver.model.actor.L2Character;
+import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
+import com.l2jserver.gameserver.network.clientpackets.Say2;
+
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.CollectionTarget;
@@ -30,10 +34,6 @@ import net.sf.eventengine.events.holders.PlayerHolder;
 import net.sf.eventengine.events.schedules.AnnounceNearEndEvent;
 import net.sf.eventengine.util.EventUtil;
 import net.sf.eventengine.util.SortUtils;
-
-import com.l2jserver.gameserver.model.actor.L2Character;
-import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
-import com.l2jserver.gameserver.network.clientpackets.Say2;
 
 /**
  * @author fissban
@@ -48,7 +48,7 @@ public class AllVsAll extends AbstractEvent
 	public AllVsAll()
 	{
 		super();
-		// Definimos la instancia en que se ejecutara el evento.
+		// The instance in which the event is defined runs.
 		getInstanceWorldManager().setInstanceFile(ConfigData.getInstance().AVA_INSTANCE_FILE);
 		// Announce near end event
 		int timeLeft = (ConfigData.getInstance().EVENT_DURATION * 60 * 1000) - (ConfigData.getInstance().EVENT_TEXT_TIME_FOR_END * 1000);
@@ -116,7 +116,7 @@ public class AllVsAll extends AbstractEvent
 		giveResurrectPlayer(ph, TIME_RES_PLAYER, RADIUS_SPAWN_PLAYER);
 		// Increase the amount of one character deaths.
 		ph.increaseDeaths();
-		// We update the title character
+		// Update the title character
 		updateTitle(ph);
 	}
 	
@@ -128,22 +128,21 @@ public class AllVsAll extends AbstractEvent
 	 */
 	private void createTeam(int countTeams)
 	{
-		// Definimos la cantidad de teams que se requieren
+		// The number of team required are defined.
 		getTeamsManager().setCountTeams(countTeams);
-		// We define each team spawns
+		// Spawns teams are defined.
 		getTeamsManager().setSpawnTeams(ConfigData.getInstance().AVA_COORDINATES_TEAM);
 		
 		// We create the instance and the world
 		InstanceWorld world = getInstanceWorldManager().createNewInstanceWorld();
 		
-		// Obtenemos el team -> WHITE
 		TeamType team = getTeamsManager().getEnabledTeams()[0];
 		
 		for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
 		{
-			// Definimos el team del jugador
+			// The team defined character.
 			ph.setTeam(team);
-			// We add the character to the world and then be teleported
+			// Add the character to the world and then be teleported
 			world.addAllowed(ph.getPcInstance().getObjectId());
 			// Adjust the instance that owns the character
 			ph.setDinamicInstanceId(world.getInstanceId());

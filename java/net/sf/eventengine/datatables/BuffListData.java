@@ -34,16 +34,16 @@ import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.util.data.xml.IXmlReader;
 
 /**
- * Esta clase se encarga de:<br>
- * Cargar la lista de buffs que se podran usar en los eventos.<br>
- * Administrar la lista de buffs que fueron seleccionados por los personakes
+ * This class is responsible for: <br>
+ * Load the list of buffs that can be used at events. <br>
+ * Manage the list of buffs who were selected by the characters
  * @author fissban
  */
 public class BuffListData implements IXmlReader
 {
 	// BuffList
 	private final List<SkillHolder> _buffList = new ArrayList<>();
-	// Lista de buffs de los personajes
+	// List buffs characters
 	private final Map<Integer, Set<SkillHolder>> _buffsPlayers = new ConcurrentHashMap<>();
 	
 	public BuffListData()
@@ -83,7 +83,7 @@ public class BuffListData implements IXmlReader
 	}
 	
 	/**
-	 * Obtenemos el listado de buffs seleccionado por un personaje
+	 * List selected by a character buffs
 	 * @param player
 	 * @return List<SkillHolder>
 	 */
@@ -98,7 +98,7 @@ public class BuffListData implements IXmlReader
 	}
 	
 	/**
-	 * Verificamos si un personaje tiene un determinado skill
+	 * It checks whether a character has a specific skill
 	 * @param player
 	 * @return List<SkillHolder>
 	 */
@@ -119,7 +119,7 @@ public class BuffListData implements IXmlReader
 	}
 	
 	/**
-	 * Eliminamos un buff del listado de un player
+	 * A buff listing of a player is eliminated
 	 * @param player
 	 * @param sh
 	 */
@@ -136,7 +136,7 @@ public class BuffListData implements IXmlReader
 	}
 	
 	/**
-	 * Agregamos un buff al listado de un player
+	 * A buff is added to the listing of a player
 	 * @param player
 	 * @param sh
 	 */
@@ -156,7 +156,7 @@ public class BuffListData implements IXmlReader
 	}
 	
 	/**
-	 * Limpiamos la lista de buff de un personaje sin eliminar al personaje del listado.
+	 * Buff list without deleting a character from the character list is cleaned.
 	 * @param player
 	 */
 	public void clearBuffsPlayer(L2PcInstance player)

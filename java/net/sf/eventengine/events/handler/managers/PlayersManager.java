@@ -39,7 +39,7 @@ public class PlayersManager
 	
 	public PlayersManager()
 	{
-		// TODO Auto-generated constructor stub
+		//
 	}
 	
 	/**
@@ -111,7 +111,7 @@ public class PlayersManager
 	/**
 	 * Check if a player is participating in any event. <br>
 	 * In the case of dealing with a summon you verify the owner. <br>
-	 * For an event not perticipar returns <u> null </u>
+	 * For an event not participate returns <u> null </u>
 	 * @param character
 	 * @return PlayerHolder
 	 */

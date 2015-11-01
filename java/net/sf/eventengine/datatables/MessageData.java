@@ -43,7 +43,7 @@ public final class MessageData
 	private static final String DIRECTORY = "config/EventEngine/Language";
 	private static final String DEFAULT_LANG = "en";
 	
-	// Mapa para identificar el lenguaje de cada personaje
+	// Identify the language of each character
 	private Map<L2PcInstance, String> _playerCurrentLang = new HashMap<>();
 	private Map<String, String> _msgMap = new HashMap<>();
 	private Map<String, String> _languages = new HashMap<>();
@@ -138,24 +138,24 @@ public final class MessageData
 	}
 	
 	/**
-	 * Obtenemos un texto segun el lang q este usando el personaje.<br>
+	 * Text in the language you are using the character.<br>
 	 * @param player
 	 * @param text
-	 * @param addTag -> usado principalmente en los mensaje q salen por pantalla o el chat
+	 * @param addTag
 	 * @return String
 	 */
 	public String getMsgByLang(L2PcInstance player, String text, boolean addTag)
 	{
-		// Obtenemos el lenguaje por el que opto el usuario.
+		// Language by which the user chooses.
 		String lang = getLanguage(player);
 		
 		String tag = "";
-		// generamos el TAG propio de nuestro evento
+		// tag our own event
 		if (addTag)
 		{
 			if (_msgMap.containsKey(lang + "_" + "event_engine_tag"))
 			{
-				// buscamos la traduccion del texto en el lenguaje seleccionado por el personaje
+				// Translation of the text in the selected language for the character
 				tag = _msgMap.get(lang + "_" + "event_engine_tag") + " ";
 			}
 			else
@@ -167,25 +167,25 @@ public final class MessageData
 		StringBuilder msg = new StringBuilder(50);
 		
 		StringTokenizer st = new StringTokenizer(text, " ");
-		// generamos la traduccion de las diferentes partes del mensaje
+		// translating the various parts of the message
 		while (st.hasMoreTokens())
 		{
-			// texto a ser traducido
+			// text to be translated
 			String textLang = st.nextToken();
 			
 			if (_msgMap.containsKey(lang + "_" + textLang))
 			{
-				// buscamos la traduccion del texto en el lenguaje seleccionado por el personaje
+				// Translation of the text in the selected language for the character
 				msg.append(_msgMap.get(lang + "_" + textLang));
 			}
 			else if (_msgMap.containsKey(lang + "_" + textLang))
 			{
-				// buscamos la traduccion del texto en el lenguaje default -> "en"
+				// default language -> "en"
 				msg.append(_msgMap.get("en_" + textLang));
 			}
 			else
 			{
-				// agregamos el texto sin traduccion
+				// text translation
 				msg.append(textLang);
 			}
 		}
@@ -194,7 +194,7 @@ public final class MessageData
 	}
 	
 	/**
-	 * Definimos el idioma que quiere un personaje
+	 * Language to a character
 	 * @param player
 	 * @param lang
 	 */
@@ -204,7 +204,7 @@ public final class MessageData
 	}
 	
 	/**
-	 * Obtenemos el idioma de un personaje, en caso de no haberlo definido devolvemos "DEFAULT_LANG".
+	 * language of a character, if not having defined refund "DEFAULT_LANG".
 	 * @param player
 	 * @return String
 	 */
@@ -219,7 +219,7 @@ public final class MessageData
 	}
 	
 	/**
-	 * Obtenemos un mapa con todos los lenguajes que fueron cargados.
+	 * map with all the languages that were created.
 	 * @return
 	 */
 	public Map<String, String> getLanguages()

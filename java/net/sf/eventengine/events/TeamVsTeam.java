@@ -49,7 +49,7 @@ public class TeamVsTeam extends AbstractEvent
 	public TeamVsTeam()
 	{
 		super();
-		// Definimos la instancia en que transcurria el evento
+		// The instance in which the event is defined runs.
 		getInstanceWorldManager().setInstanceFile(ConfigData.getInstance().TVT_INSTANCE_FILE);
 		// Announce near end event
 		int timeLeft = (ConfigData.getInstance().EVENT_DURATION * 60 * 1000) - (ConfigData.getInstance().EVENT_TEXT_TIME_FOR_END * 1000);
@@ -125,9 +125,9 @@ public class TeamVsTeam extends AbstractEvent
 	 */
 	private void createTeams(int countTeams)
 	{
-		// Definimos la cantidad de teams que se requieren
+		// The number of team required are defined.
 		getTeamsManager().setCountTeams(countTeams);
-		// We define each team spawns
+		// Spawns teams are defined.
 		getTeamsManager().setSpawnTeams(ConfigData.getInstance().TVT_COORDINATES_TEAM);
 		// We create the instance and the world
 		InstanceWorld world = getInstanceWorldManager().createNewInstanceWorld();
@@ -136,14 +136,12 @@ public class TeamVsTeam extends AbstractEvent
 		
 		for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
 		{
-			// Obtenemos el team
 			TeamType team = getTeamsManager().getEnabledTeams()[aux - 1];
-			// Definimos el team del jugador
+			// The team defined character.
 			ph.setTeam(team);
-			// Ajustamos el titulo del personaje segun su team
+			// Adjust the title character as his team.
 			ph.setNewTitle("[ " + team.toString() + " ]");// [ BLUE ], [ RED ] ....
-			
-			// We add the character to the world and then be teleported
+			// Add the character to the world and then be teleported
 			world.addAllowed(ph.getPcInstance().getObjectId());
 			// Adjust the instance which will own the character
 			ph.setDinamicInstanceId(world.getInstanceId());

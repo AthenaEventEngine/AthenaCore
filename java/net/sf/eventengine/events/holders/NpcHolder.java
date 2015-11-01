@@ -21,7 +21,7 @@ package net.sf.eventengine.events.holders;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 
 /**
- * Clase encargada de administrar toda la informacion de los Npc de los eventos.
+ * Class responsible for administering all the information on the NPC of events.
  * @author fissban
  */
 public class NpcHolder
@@ -35,7 +35,7 @@ public class NpcHolder
 	}
 	
 	/**
-	 * Acceso directo a todos los metodos de L2Npc.
+	 * Direct access to all methods of L2Npc.
 	 * @return
 	 */
 	public L2Npc getNpcInstance()

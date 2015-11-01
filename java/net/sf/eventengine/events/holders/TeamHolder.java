@@ -20,35 +20,32 @@ package net.sf.eventengine.events.holders;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.l2jserver.gameserver.model.Location;
+
 import net.sf.eventengine.enums.TeamType;
 import net.sf.eventengine.interfaces.ParticipantHolder;
 
-import com.l2jserver.gameserver.model.Location;
-
 /**
+ * Class responsible for managing the information and actions of equipment.
  * @author fissban
  */
 public class TeamHolder implements ParticipantHolder
 {
-	// Tipo de team
+	// Type of team
 	private TeamType _teamType;
-	// Cantidad de puntos
+	// Number of points
 	private AtomicInteger _points = new AtomicInteger(0);
-	// Spawn del team
+	// Spawn team.
 	private Location _teamSpawn = new Location(0, 0, 0);
 	
-	/**
-	 * Constructor
-	 * @param teamColor
-	 */
 	public TeamHolder(TeamType teamColor)
 	{
 		_teamType = teamColor;
 	}
 	
 	/**
-	 * Obtenemos el color del team
-	 * @return
+	 * TeamType.
+	 * @return TeamType
 	 */
 	public TeamType getTeamType()
 	{
@@ -56,7 +53,7 @@ public class TeamHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Definimos el spawn de un team.
+	 * Team spawn defined.
 	 * @param loc
 	 */
 	public void setSpawn(Location loc)
@@ -65,8 +62,8 @@ public class TeamHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Obtenemos el spawn de un team.
-	 * @return
+	 * Team Spawn
+	 * @return Location
 	 */
 	public Location getSpawn()
 	{
@@ -74,8 +71,8 @@ public class TeamHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Puntos del team
-	 * @return
+	 * Points of team
+	 * @return int
 	 */
 	public int getPoints()
 	{
@@ -84,7 +81,7 @@ public class TeamHolder implements ParticipantHolder
 	
 	/**
 	 * Team kills
-	 * @return
+	 * @return int
 	 */
 	public int getKills()
 	{
@@ -93,7 +90,7 @@ public class TeamHolder implements ParticipantHolder
 	
 	/**
 	 * Team deaths
-	 * @return
+	 * @return int
 	 */
 	public int getDeaths()
 	{
@@ -101,7 +98,7 @@ public class TeamHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Incrementamos la cantidad de puntos
+	 * Increasing the amount of points
 	 */
 	public void increasePoints(int points)
 	{
@@ -109,13 +106,13 @@ public class TeamHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Disminiumos la cantidad de puntos
+	 * Decrease the amount of points
 	 */
 	public void decreasePoints(int points)
 	{
 		_points.getAndAdd(-points);
-		// prevenimos q el equipo tenga puntos negativos
-		// FIXME revisar por si algun evento requiera que sean negativos.
+		// We warn that the team has negative points
+		// FIXME check if some event requires to be negative.
 		if (_points.intValue() < 0)
 		{
 			_points.set(0);
