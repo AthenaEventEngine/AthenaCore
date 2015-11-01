@@ -73,7 +73,7 @@ public class CaptureTheFlag extends AbstractEvent
 	public CaptureTheFlag()
 	{
 		super();
-		// Definimos la instancia en que transcurria el evento
+		// The instance in which the event is defined runs.
 		getInstanceWorldManager().setInstanceFile(ConfigData.getInstance().CTF_INSTANCE_FILE);
 		// Announce near end event
 		int timeLeft = (ConfigData.getInstance().EVENT_DURATION * 60 * 1000) - (ConfigData.getInstance().EVENT_TEXT_TIME_FOR_END * 1000);
@@ -117,9 +117,9 @@ public class CaptureTheFlag extends AbstractEvent
 			{
 				// Animacion
 				ph.getPcInstance().broadcastPacket(new MagicSkillUse(ph.getPcInstance(), ph.getPcInstance(), 1034, 1, 1, 1));
-				// Borramos del MAP la bandera
+				// MAP delete flag
 				_flagSpawn.remove(npcHolder);
-				// Guardamos que personaje lleva determinada bandera
+				// It beware that particular character carries flag
 				_flagHasPlayer.put(ph, flagTeam);
 				// We remove the flag from his position
 				getSpawnManager().removeNpc(npcHolder);
@@ -135,7 +135,7 @@ public class CaptureTheFlag extends AbstractEvent
 			{
 				if (hasFlag(ph))
 				{
-					// Animacion -> Large FireWork
+					// Animation -> Large FireWork
 					ph.getPcInstance().broadcastPacket(new MagicSkillUse(ph.getPcInstance(), ph.getPcInstance(), 2025, 1, 1, 1));
 					// We increased the points
 					getTeamsManager().getPlayerTeam(ph).increasePoints(POINTS_CONQUER_FLAG);
@@ -262,11 +262,10 @@ public class CaptureTheFlag extends AbstractEvent
 	 */
 	private void createTeams(int countTeams)
 	{
-		// Definimos la cantidad de teams que se requieren
+		// The number of team required are defined.
 		getTeamsManager().setCountTeams(countTeams);
-		// We define each team spawns
+		// Spawns teams are defined.
 		getTeamsManager().setSpawnTeams(ConfigData.getInstance().CTF_COORDINATES_TEAM);
-		
 		// We create the instance and the world
 		InstanceWorld world = getInstanceWorldManager().createNewInstanceWorld();
 		
@@ -274,15 +273,14 @@ public class CaptureTheFlag extends AbstractEvent
 		
 		for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
 		{
-			// Obtenemos el team
 			TeamType team = getTeamsManager().getEnabledTeams()[aux - 1];
-			// Definimos el team del jugador
+			// The team defined character.
 			ph.setTeam(team);
-			// Ajustamos el titulo del personaje segun su team
+			// Adjust the title character as his team.
 			ph.setNewTitle("[ " + team.name() + " ]");// [ BLUE ], [ RED ] ....
 			// Adjust the instance that owns the character
 			ph.setDinamicInstanceId(world.getInstanceId());
-			// We add the character to the world and then be teleported
+			// Add the character to the world and then be teleported
 			world.addAllowed(ph.getPcInstance().getObjectId());
 			
 			if (aux % countTeams == 0)
@@ -396,7 +394,7 @@ public class CaptureTheFlag extends AbstractEvent
 		
 		Map<String, String> map = new HashMap<>();
 		
-		// We announced that a flag was taken
+		// Announced that a flag was taken
 		map.put("%holder%", ph.getPcInstance().getName());
 		map.put("%flag%", th.getTeamType().name());
 		EventUtil.announceTo(Say2.BATTLEFIELD, "player_dropped_flag", map, CollectionTarget.ALL_PLAYERS_IN_EVENT);

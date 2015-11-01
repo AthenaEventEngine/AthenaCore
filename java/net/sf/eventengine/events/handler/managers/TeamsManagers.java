@@ -41,22 +41,19 @@ public class TeamsManagers
 	private final Map<TeamType, TeamHolder> _teams = new HashMap<>();
 	private int _countTeams = 0;
 	
-	/**
-	 * Constructor
-	 */
 	public TeamsManagers()
 	{
 		//
 	}
 	
 	/**
-	 * Creamos la cantidad de teams indicados
+	 * It creates a certain amount of equipment
 	 * @param count
 	 */
 	public void setCountTeams(int count)
 	{
 		_countTeams = count;
-		// inicializamos el uno para evitar usar el color blanco como team.
+		// It starts in one to avoid using white as team.
 		for (int i = 1; i <= _countTeams; i++)
 		{
 			TeamType team = TeamType.values()[i];
@@ -65,7 +62,7 @@ public class TeamsManagers
 	}
 	
 	/**
-	 * Obtenemos un array con los TeamType de equipos creados previamente.
+	 * It is an array of previously created TeamType equipment.
 	 * @return
 	 */
 	public TeamType[] getEnabledTeams()
@@ -74,7 +71,7 @@ public class TeamsManagers
 	}
 	
 	/**
-	 * Obtenemos una colleccion con los teams creados previamente.
+	 * It is a collection of pre-made teams.
 	 * @return
 	 */
 	public Collection<TeamHolder> getAllTeams()
@@ -83,7 +80,7 @@ public class TeamsManagers
 	}
 	
 	/**
-	 * Obtenemos un team a partir del TeamType
+	 * A subject is obtained from TeamType
 	 * @param t
 	 * @return
 	 */
@@ -93,7 +90,7 @@ public class TeamsManagers
 	}
 	
 	/**
-	 * Obtenemos el team de un personaje
+	 * The team is a character
 	 * @return
 	 */
 	public TeamHolder getPlayerTeam(PlayerHolder player)
@@ -102,7 +99,7 @@ public class TeamsManagers
 	}
 	
 	/**
-	 * We define a team spawns.
+	 * It spawns teams defined.
 	 * @param team
 	 * @param locs
 	 */
@@ -110,9 +107,9 @@ public class TeamsManagers
 	{
 		if (locs.size() < _countTeams)
 		{
-			LOGGER.warning(AbstractEvent.class.getSimpleName() + ": No se han definido correctamente los spawns para los teams.");
-			LOGGER.warning(AbstractEvent.class.getSimpleName() + ": Cantidad de teams: " + _countTeams);
-			LOGGER.warning(AbstractEvent.class.getSimpleName() + ": Cantidad de locs: " + locs.size());
+			LOGGER.warning(AbstractEvent.class.getSimpleName() + ": No set correctly spawns for teams.");
+			LOGGER.warning(AbstractEvent.class.getSimpleName() + ": Number of teams: " + _countTeams);
+			LOGGER.warning(AbstractEvent.class.getSimpleName() + ": Number of locs: " + locs.size());
 			return;
 		}
 		

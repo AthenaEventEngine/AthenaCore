@@ -24,22 +24,22 @@ import net.sf.eventengine.enums.TeamType;
 import net.sf.eventengine.interfaces.ParticipantHolder;
 
 /**
- * Clase encargada de administrar los datos de los players que participan del evento.
+ * Class responsible for managing the data of players participating in the event.
  * @author fissban
  */
 public class PlayerHolder implements ParticipantHolder
 {
 	private final L2PcInstance _player;
 	
-	// Contador de kills realizados.
+	// Count kills obtained.
 	private int _kills = 0;
-	// Contador de deaths obtenidas.
+	// Count deaths obtained.
 	private int _deaths = 0;
-	// Color original de un personaje por si en algun evento es cambiado.
+	// Original color of a character
 	private int _oriColorTitle;
-	// Titulo original de un personaje por si en algun evento es cambiado.
+	// Title of a character.
 	private String _oriTitle;
-	// Team al que pertenece el usuario
+	// Team that owns the character.
 	private TeamType _team;
 	
 	private int _dinamicInstanceId = 0;
@@ -56,8 +56,8 @@ public class PlayerHolder implements ParticipantHolder
 	// METODOS VARIOS -----------------------------------------------------------
 	
 	/**
-	 * Acceso directo a todos los metodos de L2PcInstance.
-	 * @return
+	 * Direct access to all methods of L2PcInstance.
+	 * @return L2PcInstance
 	 */
 	public L2PcInstance getPcInstance()
 	{
@@ -66,26 +66,27 @@ public class PlayerHolder implements ParticipantHolder
 	
 	/**
 	 * <ul>
-	 * <b>Acciones:</b>
+	 * <b>Actions:</b>
 	 * </ul>
-	 * <li>Definimos el team al que pertenece el personaje.</li>
-	 * <li>Ajustamos el color del personaje segun su team</li>
+	 * <li>The color of the title and the title character is stored.</li>
+	 * <li>The team that defined the character belongs.</li>
+	 * <li>The color of the character fits./li>
 	 * @param team
 	 */
 	public void setTeam(TeamType team)
 	{
-		// Almacenamos el color del titulo y el titulo original del personaje.
+		// The color of the title and the title character is stored..
 		_oriColorTitle = _player.getAppearance().getTitleColor();
 		_oriTitle = _player.getTitle();
-		// Team del personaje
+		// Set team of character
 		_team = team;
-		// Nuevo color del titulo del personaje segun su team
+		// New Color of title character by team
 		_player.getAppearance().setTitleColor(team.getColor());
 	}
 	
 	/**
-	 * Obtenemos el team del personaje.
-	 * @return
+	 * The team's character is obtained.
+	 * @return TeamType
 	 */
 	public TeamType getTeamType()
 	{
@@ -93,7 +94,7 @@ public class PlayerHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Obtenemos el id de la instancia en la que participa dentro de los eventos.
+	 * The id of the instance in which it participates in the events is obtained.
 	 * @return
 	 */
 	public int getDinamicInstanceId()
@@ -102,7 +103,7 @@ public class PlayerHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Definimos el id de la instancia de la cual participa dentro de los eventos.
+	 * The id of the instance of which participates in the events defined.
 	 * @param dinamicInstanceId
 	 */
 	public void setDinamicInstanceId(int dinamicInstanceId)
@@ -111,7 +112,7 @@ public class PlayerHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Incrementamos en uno la cantidad de asesiantos.
+	 * Increases by one the number of muerders.
 	 */
 	public void increaseKills()
 	{
@@ -119,8 +120,8 @@ public class PlayerHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Obtenemos lacantidad de asesinatos.
-	 * @return
+	 * The number of murders is obtained.
+	 * @return int
 	 */
 	public int getKills()
 	{
@@ -128,7 +129,7 @@ public class PlayerHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Incrementamos en uno la cantidad de muertes.
+	 * Increases by one the number of deaths.
 	 */
 	public void increaseDeaths()
 	{
@@ -136,8 +137,8 @@ public class PlayerHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Cantidad de muertes que tiene.
-	 * @return
+	 * Number of deaths has.
+	 * @return int
 	 */
 	public int getDeaths()
 	{
@@ -145,8 +146,8 @@ public class PlayerHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Obtenemos la cant de puntos de un player.<br>
-	 * La formula se obtiene a partir de: (_kills-_deaths)<br>
+	 * The amount of points a character is obtained.<br>
+	 * The formula is obtained from: (_kills-_deaths)<br>
 	 * @return
 	 */
 	public int getPoints()
@@ -155,7 +156,7 @@ public class PlayerHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Definimos un nuevo titulo para elpersonaje
+	 * A new title for the character
 	 * @param title
 	 */
 	public void setNewTitle(String title)
@@ -164,7 +165,7 @@ public class PlayerHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Recuperamos el titulo original de un player
+	 * Recover original title
 	 */
 	public void recoverOriginalTitle()
 	{
@@ -172,7 +173,7 @@ public class PlayerHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Recuperamos el color original del titulo del player
+	 * Recover original color title
 	 */
 	public void recoverOriginalColorTitle()
 	{

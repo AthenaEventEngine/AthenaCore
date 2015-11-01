@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2015-2015 L2J EventEngine
+ *
+ * This file is part of L2J EventEngine.
+ *
+ * L2J EventEngine is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * L2J EventEngine is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package net.sf.eventengine.datatables;
 
 import java.util.ArrayList;
@@ -5,14 +23,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import com.l2jserver.util.Rnd;
+
 import net.sf.eventengine.events.AllVsAll;
 import net.sf.eventengine.events.CaptureTheFlag;
 import net.sf.eventengine.events.OneVsOne;
 import net.sf.eventengine.events.Survive;
 import net.sf.eventengine.events.TeamVsTeam;
 import net.sf.eventengine.events.handler.AbstractEvent;
-
-import com.l2jserver.util.Rnd;
 
 /**
  * @author Zephyr
@@ -36,8 +54,6 @@ public class EventData
 			_eventList.add(AllVsAll.class);
 			_eventMap.put(AllVsAll.class.getSimpleName(), AllVsAll.class);
 		}
-		
-		// EVENTS.put(EventType.CTF, CaptureTheFlag.class);
 		
 		if (ConfigData.getInstance().OVO_EVENT_ENABLED)
 		{

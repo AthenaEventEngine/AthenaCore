@@ -54,7 +54,7 @@ public class OneVsOne extends AbstractEvent
 	public OneVsOne()
 	{
 		super();
-		// Definimos la instancia en que transcurria el evento
+		// The instance in which the event is defined runs.
 		getInstanceWorldManager().setInstanceFile(ConfigData.getInstance().OVO_INSTANCE_FILE);
 		// Announce near end event
 		int timeLeft = (ConfigData.getInstance().EVENT_DURATION * 60 * 1000) - (ConfigData.getInstance().EVENT_TEXT_TIME_FOR_END * 1000);
@@ -84,13 +84,13 @@ public class OneVsOne extends AbstractEvent
 	@Override
 	public void onKill(PlayerHolder ph, L2Character target)
 	{
-		// Obtenemos el id de la instancia del personaje en cuestion
+		// The id of the instance of the character is obtained
 		int instanceId = ph.getDinamicInstanceId();
 		// One we increased the amount of kills you have the participants.
 		ph.increaseKills();
 		
 		int auxDeath = 0;
-		// Verificamos si los otros participantes de la instancia estan muertos.
+		// It checks whether the other participants of the instance are dead.
 		for (PlayerHolder playerHolder : _instancesTeams.get(instanceId).values())
 		{
 			if (playerHolder.equals(ph))
@@ -100,7 +100,7 @@ public class OneVsOne extends AbstractEvent
 			auxDeath++;
 		}
 		
-		// Si todos estan muertos generamos la proxima pelea.
+		// If they are all dead we generate the next fight.
 		if (auxDeath == ConfigData.getInstance().OVO_COUNT_TEAM - 1)
 		{
 			nextFight(instanceId);
@@ -140,9 +140,9 @@ public class OneVsOne extends AbstractEvent
 	 */
 	private void createTeams(int countTeams)
 	{
-		// Definimos la cantidad de teams que se requieren
+		// The number of team required are defined.
 		getTeamsManager().setCountTeams(countTeams);
-		// We define each team spawns
+		// Spawns teams are defined.
 		getTeamsManager().setSpawnTeams(ConfigData.getInstance().OVO_COORDINATES_TEAM);
 		
 		// We verified that we have an even number of participants.
@@ -160,28 +160,30 @@ public class OneVsOne extends AbstractEvent
 		
 		while (players.hasNext())
 		{
-			// removemos personajes hasta obtener la cantidad justa para realizar eventos 1vs1,1vs1vs1
+			// Characters are removed to get the right amount for events 1vs1,1vs1vs1
 			if (leaveOutParticipant > 0)
 			{
 				leaveOutParticipant--;
-				// removemos al personaje impar del evento.
+				// stir the odd character of the event.
 				phRemove.add(players.next());
-				// TODO falta agregar un mensaje avisando de la accion.
+				// TODO
+				// lack add a message warning of the action.
 			}
 			else
 			{
-				// We create the instance and the world
+				// Create the instance and the world
 				InstanceWorld world = getInstanceWorldManager().createNewInstanceWorld();
-				// auxiliar para llevar la personajes de cada isntancia del evento
+				
 				Map<TeamType, PlayerHolder> teams = new HashMap<>();
 				
 				for (int i = 0; i < countTeams; i++)
 				{
 					PlayerHolder ph = players.next();
-					// Obtenemos el team
+					
 					TeamType team = getTeamsManager().getEnabledTeams()[i];
-					// Definimos algunas caracteristicas generales de cada poersonaje.
+					// The team defined character.
 					ph.setTeam(team);
+					// Adjust the title character as his team.
 					ph.setNewTitle("[ " + team.name() + " ]");
 					ph.setDinamicInstanceId(world.getInstanceId());
 					teams.put(team, ph);
@@ -198,7 +200,7 @@ public class OneVsOne extends AbstractEvent
 	}
 	
 	/**
-	 * We deliver rewards for the moment we only support for 1 or 2 teams.
+	 * We deliver rewards.
 	 */
 	private void giveRewardsTeams()
 	{
@@ -207,18 +209,17 @@ public class OneVsOne extends AbstractEvent
 			return;
 		}
 		
-		// Recorremos nuestra variable instancia a instancia
-		// y vamos entregando los premios a los ganadores.
+		// The prizes to the winners in each instance is delivered.
 		for (Map<TeamType, PlayerHolder> instances : _instancesTeams.values())
 		{
 			List<PlayerHolder> winners = SortUtils.getOrdered(instances.values(), ScoreType.KILL).get(0);
 			
-			// Entregamos los rewards
 			for (PlayerHolder ph : winners)
 			{
 				if (ph.getPcInstance() != null)
 				{
-					// FIXME agregar al sistema de lang
+					// FIXME
+					// add lang system
 					EventUtil.sendEventScreenMessage(ph, "WINNER " + ph.getPcInstance().getName());
 					giveItems(ph, ConfigData.getInstance().OVO_REWARD_PLAYER_WIN);
 				}
