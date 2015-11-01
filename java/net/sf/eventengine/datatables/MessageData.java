@@ -44,7 +44,7 @@ public final class MessageData
 	private static final String DEFAULT_LANG = "en";
 	
 	// Mapa para identificar el lenguaje de cada personaje
-	private Map<L2PcInstance, String> _playerCurrentLang = new HashMap<>();
+	private Map<Integer, String> _playerCurrentLang = new HashMap<>();
 	private Map<String, String> _msgMap = new HashMap<>();
 	private Map<String, String> _languages = new HashMap<>();
 	
@@ -92,12 +92,13 @@ public final class MessageData
 		int count = 0;
 		String langName = "";
 		
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		factory.setValidating(false);
-		factory.setIgnoringComments(true);
 		Document doc = null;
 		if (file.exists())
 		{
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			factory.setValidating(false);
+			factory.setIgnoringComments(true);
+			
 			try
 			{
 				doc = factory.newDocumentBuilder().parse(file);
@@ -200,7 +201,7 @@ public final class MessageData
 	 */
 	public void setLanguage(L2PcInstance player, String lang)
 	{
-		_playerCurrentLang.put(player, lang);
+		_playerCurrentLang.put(player.getObjectId(), lang);
 	}
 	
 	/**
@@ -210,9 +211,9 @@ public final class MessageData
 	 */
 	public String getLanguage(L2PcInstance player)
 	{
-		if (_playerCurrentLang.containsKey(player))
+		if (_playerCurrentLang.containsKey(player.getObjectId()))
 		{
-			return _playerCurrentLang.get(player);
+			return _playerCurrentLang.get(player.getObjectId());
 			
 		}
 		return DEFAULT_LANG;
