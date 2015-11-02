@@ -316,6 +316,28 @@ index 640e695..8267663 100644
  		// If the item has reuse time and it has not passed.
  		// Message from reuse delay must come from item.
  		final int reuseDelay = item.getReuseDelay();
+diff --git a/L2J_Server/java/com/l2jserver/gameserver/network/clientpackets/ValidatePosition.java b/L2J_Server/java/com/l2jserver/gameserver/network/clientpackets/ValidatePosition.java
+index 95f8805..abc28eb 100644
+--- a/L2J_Server/java/com/l2jserver/gameserver/network/clientpackets/ValidatePosition.java
++++ b/L2J_Server/java/com/l2jserver/gameserver/network/clientpackets/ValidatePosition.java
+@@ -25,6 +25,8 @@
+ import com.l2jserver.gameserver.network.serverpackets.GetOnVehicle;
+ import com.l2jserver.gameserver.network.serverpackets.ValidateLocation;
+ 
++import net.sf.eventengine.EventEngineManager;
++
+ /**
+  * This class ...
+  * @version $Revision: 1.13.4.7 $ $Date: 2005/03/27 15:29:30 $
+@@ -62,6 +64,8 @@
+ 		final int realY = activeChar.getY();
+ 		int realZ = activeChar.getZ();
+ 		
++		EventEngineManager.getInstance().listenerOnMovement(activeChar);
++		
+ 		if (Config.DEVELOPER)
+ 		{
+ 			_log.fine("client pos: " + _x + " " + _y + " " + _z + " head " + _heading);
 diff --git a/L2J_Server/java/com/l2jserver/gameserver/network/serverpackets/AbstractNpcInfo.java b/L2J_Server/java/com/l2jserver/gameserver/network/serverpackets/AbstractNpcInfo.java
 index 1f406be..b1ae84e 100644
 --- a/L2J_Server/java/com/l2jserver/gameserver/network/serverpackets/AbstractNpcInfo.java
