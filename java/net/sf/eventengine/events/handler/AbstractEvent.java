@@ -69,6 +69,8 @@ public abstract class AbstractEvent
 		// We started the clock to control the sequence of internal events of the event.
 		getScheduledEventsManager().startScheduledEvents();
 		getScheduledEventsManager().startTaskControlTime();
+		// init anti afk
+		_antiAfkManager = new AntiAfkManager();
 	}
 	
 	/** Necessary to hadle the event states. */
