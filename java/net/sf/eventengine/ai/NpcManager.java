@@ -23,6 +23,8 @@ import java.util.StringTokenizer;
 
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.entity.L2Event;
+import com.l2jserver.gameserver.model.entity.TvTEvent;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
@@ -78,15 +80,7 @@ public class NpcManager extends Quest
 				
 			case "vote":
 				// Check for vote
-				if (player.getLevel() < ConfigData.getInstance().MIN_LVL_IN_EVENT)
-				{
-					player.sendMessage(MessageData.getInstance().getMsgByLang(player, "lowLevel", true));
-				}
-				else if (player.getLevel() > ConfigData.getInstance().MAX_LVL_IN_EVENT)
-				{
-					player.sendMessage(MessageData.getInstance().getMsgByLang(player, "highLevel", true));
-				}
-				else
+				if (checkPlayerCondition(player))
 				{
 					// Add vote event
 					Class<? extends AbstractEvent> type = EventData.getInstance().getEvent(st.nextToken());
@@ -109,22 +103,18 @@ public class NpcManager extends Quest
 				if (!EventEngineManager.getInstance().isRegistered(player))
 				{
 					// Check for register
-					if (player.getLevel() < ConfigData.getInstance().MIN_LVL_IN_EVENT)
+					if (checkPlayerCondition(player))
 					{
-						player.sendMessage(MessageData.getInstance().getMsgByLang(player, "lowLevel", true));
-					}
-					else if (player.getLevel() > ConfigData.getInstance().MAX_LVL_IN_EVENT)
-					{
-						player.sendMessage(MessageData.getInstance().getMsgByLang(player, "highLevel", true));
-					}
-					else if (EventEngineManager.getInstance().getAllRegisteredPlayers().size() >= ConfigData.getInstance().MAX_PLAYERS_IN_EVENT)
-					{
-						player.sendMessage(MessageData.getInstance().getMsgByLang(player, "registering_maxPlayers", true));
-					}
-					else
-					{
-						EventEngineManager.getInstance().registerPlayer(player);
-						player.sendMessage(MessageData.getInstance().getMsgByLang(player, "registering_registered", true));
+						// Check player size
+						if (EventEngineManager.getInstance().getAllRegisteredPlayers().size() >= ConfigData.getInstance().MAX_PLAYERS_IN_EVENT)
+						{
+							player.sendMessage(MessageData.getInstance().getMsgByLang(player, "registering_maxPlayers", true));
+						}
+						else
+						{
+							EventEngineManager.getInstance().registerPlayer(player);
+							player.sendMessage(MessageData.getInstance().getMsgByLang(player, "registering_registered", true));
+						}
 					}
 				}
 				else
@@ -391,5 +381,69 @@ public class NpcManager extends Quest
 		}
 		// Send html
 		player.sendPacket(html);
+	}
+	
+	private static boolean checkPlayerCondition(L2PcInstance player)
+	{
+		// Check level min
+		if (player.getLevel() < ConfigData.getInstance().MIN_LVL_IN_EVENT)
+		{
+			player.sendMessage(MessageData.getInstance().getMsgByLang(player, "lowLevel", true));
+			return false;
+		}
+		// Check level max
+		else if (player.getLevel() > ConfigData.getInstance().MAX_LVL_IN_EVENT)
+		{
+			player.sendMessage(MessageData.getInstance().getMsgByLang(player, "highLevel", true));
+			return false;
+		}
+		// Check dead mode player
+		else if (player.isDead() || player.isAlikeDead())
+		{
+			player.sendMessage(MessageData.getInstance().getMsgByLang(player, "deadMode", true));
+			return false;
+		}
+		// Check Olympiad Mode
+		else if (player.isInOlympiadMode())
+		{
+			player.sendMessage(MessageData.getInstance().getMsgByLang(player, "olympiadMode", true));
+			return false;
+		}
+		// Check Observer Mode
+		else if (player.inObserverMode())
+		{
+			player.sendMessage(MessageData.getInstance().getMsgByLang(player, "observerMode", true));
+			return false;
+		}
+		// Check in festival
+		else if (player.isFestivalParticipant())
+		{
+			player.sendMessage(MessageData.getInstance().getMsgByLang(player, "festivalMode", true));
+			return false;
+		}
+		// Check in Events
+		else if (L2Event.isParticipant(player))
+		{
+			player.sendMessage(MessageData.getInstance().getMsgByLang(player, "eventMode", true));
+			return false;
+		}
+		// Check in TvT Event
+		else if (TvTEvent.isPlayerParticipant(player.getObjectId()))
+		{
+			player.sendMessage(MessageData.getInstance().getMsgByLang(player, "tvtEvent", true));
+			return false;
+		}
+		// Check player state
+		else if ((player.getPvpFlag() > 0) || (player.isInCombat()) || (player.isInDuel()) || (player.getKarma() > 0) || (player.isCursedWeaponEquipped()))
+		{
+			// Check properties
+			if (!ConfigData.getInstance().EVENT_CHAOTIC_PLAYER_REGISTER)
+			{
+				player.sendMessage(MessageData.getInstance().getMsgByLang(player, "chaoticPlayer", true));
+				return false;
+			}
+		}
+		
+		return true;
 	}
 }

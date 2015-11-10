@@ -33,10 +33,16 @@
 	<message id="event_register_ended" text="The register time has ended." />
 	<message id="event_next" text="The next event will start in %time%" />
 	
-	<!-- Check lvl for vote and register -->
-	<message id="highLevel" text="Your level is higher than the max allowed level." />
+	<!-- Check for vote and register -->
 	<message id="lowLevel" text="Your level is lower than the min required level." />
-	
+	<message id="highLevel" text="Your level is higher than the max allowed level." />
+	<message id="deadMode" text="Your can not use this function while you are in dead mode." />
+	<message id="olympiadMode" text="Your can not use this function while you are in Olympiads." />
+	<message id="observerMode" text="Your can not use this function while you are in Observer Mode." />
+	<message id="festivalMode" text="Your can not use this function while you are in a Festival." />
+	<message id="eventMode" text="Your can not use this function while you are in a Event." />
+	<message id="tvtEvent" text="Your can not use this function while you are in TvT Event." />
+	<message id="chaoticPlayer" text="Your can not use this function while you are in flag, karma or combat mode." />
 	
 	<!-- Register -->
 	<message id="registering_registered" text="You have successfully registered!" />
