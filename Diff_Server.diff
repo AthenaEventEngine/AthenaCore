@@ -1,0 +1,52 @@
+diff --git a/src/main/java/com/l2jserver/gameserver/model/olympiad/AbstractOlympiadGame.java b/src/main/java/com/l2jserver/gameserver/model/olympiad/AbstractOlympiadGame.java
+index 14354b1..dbc234a 100644
+--- a/src/main/java/com/l2jserver/gameserver/model/olympiad/AbstractOlympiadGame.java
++++ b/src/main/java/com/l2jserver/gameserver/model/olympiad/AbstractOlympiadGame.java
+@@ -22,6 +22,8 @@ import java.util.List;
+ import java.util.logging.Level;
+ import java.util.logging.Logger;
+ 
++import net.sf.eventengine.EventEngineManager;
++
+ import com.l2jserver.Config;
+ import com.l2jserver.gameserver.ai.CtrlIntention;
+ import com.l2jserver.gameserver.instancemanager.AntiFeedManager;
+@@ -122,6 +124,12 @@ public abstract class AbstractOlympiadGame
+ 			return SystemMessage.getSystemMessage(SystemMessageId.THE_GAME_HAS_BEEN_CANCELLED_BECAUSE_THE_OTHER_PARTY_ENDS_THE_GAME);
+ 		}
+ 		
++		// L2J EventEngine
++		if (EventEngineManager.getInstance().isPlayableInEvent(player))
++		{
++			return SystemMessage.getSystemMessage(SystemMessageId.THE_GAME_HAS_BEEN_CANCELLED_BECAUSE_THE_OTHER_PARTY_DOES_NOT_MEET_THE_REQUIREMENTS_FOR_JOINING_THE_GAME);
++		}
++		
+ 		// safety precautions
+ 		if (player.inObserverMode() || TvTEvent.isPlayerParticipant(player.getObjectId()))
+ 		{
+diff --git a/src/main/java/com/l2jserver/gameserver/network/clientpackets/UseItem.java b/src/main/java/com/l2jserver/gameserver/network/clientpackets/UseItem.java
+index 640e695..263f1d7 100644
+--- a/src/main/java/com/l2jserver/gameserver/network/clientpackets/UseItem.java
++++ b/src/main/java/com/l2jserver/gameserver/network/clientpackets/UseItem.java
+@@ -21,6 +21,8 @@ package com.l2jserver.gameserver.network.clientpackets;
+ import java.util.concurrent.TimeUnit;
+ import java.util.logging.Level;
+ 
++import net.sf.eventengine.EventEngineManager;
++
+ import com.l2jserver.Config;
+ import com.l2jserver.gameserver.ThreadPoolManager;
+ import com.l2jserver.gameserver.ai.CtrlEvent;
+@@ -173,6 +175,12 @@ public final class UseItem extends L2GameClientPacket
+ 			}
+ 		}
+ 		
++		// L2J EventEngine
++		if (EventEngineManager.getInstance().listenerOnUseItem(activeChar, item.getItem()))
++		{
++			return;
++		}
++		
+ 		// If the item has reuse time and it has not passed.
+ 		// Message from reuse delay must come from item.
+ 		final int reuseDelay = item.getReuseDelay();

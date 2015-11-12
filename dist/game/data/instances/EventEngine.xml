@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <instance name="E" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../xsd/instance.xsd">
+	<PvPInstance val="true"/>
 	<doorlist>
 		<door doorId="24190001" />
 		<door doorId="24190002" />

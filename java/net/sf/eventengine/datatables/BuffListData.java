@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -41,6 +42,8 @@ import com.l2jserver.util.data.xml.IXmlReader;
  */
 public class BuffListData implements IXmlReader
 {
+	private static final Logger LOGGER = Logger.getLogger(BuffListData.class.getName());
+	
 	// BuffList
 	private final List<SkillHolder> _buffList = new ArrayList<>();
 	// Lista de buffs de los personajes

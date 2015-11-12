@@ -24,6 +24,22 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledFuture;
 import java.util.logging.Logger;
 
+import net.sf.eventengine.EventEngineManager;
+import net.sf.eventengine.datatables.BuffListData;
+import net.sf.eventengine.datatables.ConfigData;
+import net.sf.eventengine.datatables.MessageData;
+import net.sf.eventengine.enums.EventState;
+import net.sf.eventengine.enums.TeamType;
+import net.sf.eventengine.events.handler.managers.InstanceWorldManager;
+import net.sf.eventengine.events.handler.managers.PlayersManager;
+import net.sf.eventengine.events.handler.managers.ScheduledEventsManager;
+import net.sf.eventengine.events.handler.managers.SpawnManager;
+import net.sf.eventengine.events.handler.managers.TeamsManagers;
+import net.sf.eventengine.events.holders.NpcHolder;
+import net.sf.eventengine.events.holders.PlayerHolder;
+import net.sf.eventengine.events.listeners.EventEngineListener;
+import net.sf.eventengine.util.EventUtil;
+
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.instancemanager.InstanceManager;
 import com.l2jserver.gameserver.model.Location;
@@ -39,21 +55,6 @@ import com.l2jserver.gameserver.model.items.L2Item;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.taskmanager.DecayTaskManager;
 import com.l2jserver.util.Rnd;
-
-import net.sf.eventengine.EventEngineManager;
-import net.sf.eventengine.datatables.BuffListData;
-import net.sf.eventengine.datatables.ConfigData;
-import net.sf.eventengine.datatables.MessageData;
-import net.sf.eventengine.enums.EventState;
-import net.sf.eventengine.enums.TeamType;
-import net.sf.eventengine.events.handler.managers.InstanceWorldManager;
-import net.sf.eventengine.events.handler.managers.PlayersManager;
-import net.sf.eventengine.events.handler.managers.ScheduledEventsManager;
-import net.sf.eventengine.events.handler.managers.SpawnManager;
-import net.sf.eventengine.events.handler.managers.TeamsManagers;
-import net.sf.eventengine.events.holders.NpcHolder;
-import net.sf.eventengine.events.holders.PlayerHolder;
-import net.sf.eventengine.util.EventUtil;
 
 /**
  * @author fissban
@@ -80,12 +81,12 @@ public abstract class AbstractEvent
 				prepareToStart();
 				onEventStart();
 				break;
-				
+			
 			case FIGHT:
 				prepareToFight();
 				onEventFight();
 				break;
-				
+			
 			case END:
 				onEventEnd();
 				prepareToEnd();
@@ -386,6 +387,7 @@ public abstract class AbstractEvent
 				InstanceManager.getInstance().getWorld(ph.getDinamicInstanceId()).removeAllowed(ph.getPcInstance().getObjectId());
 				
 				getPlayerEventManager().getAllEventPlayers().remove(ph);
+				player.removeEventListener(EventEngineListener.class);
 			}
 			catch (Exception e)
 			{
@@ -526,6 +528,7 @@ public abstract class AbstractEvent
 			ph.getPcInstance().setInstanceId(0);
 			
 			revivePlayer(ph);
+			ph.getPcInstance().removeEventListener(EventEngineListener.class);
 			
 			// FIXME We send a character to their actual instance and turn
 			ph.getPcInstance().teleToLocation(83437, 148634, -3403, 0, 0);// GIRAN CENTER
@@ -560,7 +563,7 @@ public abstract class AbstractEvent
 				giveBuffPlayer(player.getPcInstance());
 				teleportPlayer(player, radiusTeleport);
 				
-			} , time * 1000));
+			}, time * 1000));
 		}
 		catch (Exception e)
 		{
