@@ -22,6 +22,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import net.sf.eventengine.events.holders.NpcHolder;
+
 import com.l2jserver.gameserver.data.xml.impl.NpcData;
 import com.l2jserver.gameserver.datatables.SpawnTable;
 import com.l2jserver.gameserver.enums.Team;
@@ -31,8 +33,6 @@ import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
 import com.l2jserver.gameserver.network.serverpackets.MagicSkillUse;
 import com.l2jserver.util.Rnd;
-
-import net.sf.eventengine.events.holders.NpcHolder;
 
 /**
  * @author fissban
@@ -110,6 +110,11 @@ public class SpawnManager
 				npc = spawn.doSpawn();// isSummonSpawn.
 				npc.setTeam(team);
 				
+				if (title != null)
+				{
+					npc.setTitle(title);
+				}
+				
 				SpawnTable.getInstance().addNewSpawn(spawn, false);
 				spawn.init();
 				// animation.
@@ -123,13 +128,6 @@ public class SpawnManager
 		}
 		
 		NpcHolder npcHolder = new NpcHolder(npc);
-		// Set custom title
-		if (title != null)
-		{
-			npcHolder.setTitle(title);
-			// Actualizamos los datos del npc para los que estan en el evento.
-			npcHolder.getNpcInstance().broadcastInfo();
-		}
 		
 		// Add our npc to the list.
 		_eventNpc.put(npc.getObjectId(), npcHolder);
