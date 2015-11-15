@@ -19,8 +19,8 @@
 package net.sf.eventengine.events.handler.managers;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import net.sf.eventengine.EventEngineManager;
 import net.sf.eventengine.events.holders.PlayerHolder;
@@ -36,12 +36,7 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
  */
 public class PlayersManager
 {
-	private final Map<Integer, PlayerHolder> _eventPlayers = new HashMap<>();
-	
-	public PlayersManager()
-	{
-		// TODO Auto-generated constructor stub
-	}
+	private final Map<Integer, PlayerHolder> _eventPlayers = new ConcurrentHashMap<>();
 	
 	/**
 	 * We obtain the full list of all players within an event.<br>

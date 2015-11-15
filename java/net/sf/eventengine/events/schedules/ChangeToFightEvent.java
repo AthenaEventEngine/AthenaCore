@@ -20,6 +20,7 @@ package net.sf.eventengine.events.schedules;
 
 import net.sf.eventengine.EventEngineManager;
 import net.sf.eventengine.enums.EventState;
+import net.sf.eventengine.events.handler.AbstractEvent;
 import net.sf.eventengine.events.holders.PlayerHolder;
 import net.sf.eventengine.events.schedules.interfaces.EventScheduled;
 import net.sf.eventengine.util.EventUtil;
@@ -46,12 +47,20 @@ public class ChangeToFightEvent implements EventScheduled
 	@Override
 	public void run()
 	{
-		EventEngineManager.getInstance().getCurrentEvent().runEventState(EventState.FIGHT);
+		AbstractEvent currentEvent = EventEngineManager.getInstance().getCurrentEvent();
 		
-		// Enviamos un mensaje especial para los participantes
-		for (PlayerHolder player : EventEngineManager.getInstance().getCurrentEvent().getPlayerEventManager().getAllEventPlayers())
+		currentEvent.runEventState(EventState.FIGHT);
+		
+		// Send a special message to the participants
+		for (PlayerHolder player : currentEvent.getPlayerEventManager().getAllEventPlayers())
 		{
 			EventUtil.sendEventSpecialMessage(player, 2, "status_started");
+		}
+		
+		// Start antiAfk task
+		if (currentEvent.getAntiAfkManager() != null)
+		{
+			currentEvent.getAntiAfkManager().startTask();
 		}
 	}
 }

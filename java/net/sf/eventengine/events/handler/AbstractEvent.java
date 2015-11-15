@@ -30,6 +30,7 @@ import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.EventState;
 import net.sf.eventengine.enums.TeamType;
+import net.sf.eventengine.events.handler.managers.AntiAfkManager;
 import net.sf.eventengine.events.handler.managers.InstanceWorldManager;
 import net.sf.eventengine.events.handler.managers.PlayersManager;
 import net.sf.eventengine.events.handler.managers.ScheduledEventsManager;
@@ -50,7 +51,6 @@ import com.l2jserver.gameserver.model.actor.instance.L2CubicInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
-import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 import com.l2jserver.gameserver.model.items.L2Item;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.taskmanager.DecayTaskManager;
@@ -70,9 +70,14 @@ public abstract class AbstractEvent
 		// We started the clock to control the sequence of internal events of the event.
 		getScheduledEventsManager().startScheduledEvents();
 		getScheduledEventsManager().startTaskControlTime();
+		
+		if (ConfigData.getInstance().ANTI_AFK_ENABLED)
+		{
+			_antiAfkManager = new AntiAfkManager();
+		}
 	}
 	
-	/** Necessary to hadle the event states. */
+	/** Necessary to handle the event states. */
 	public final void runEventState(EventState state)
 	{
 		switch (state)
@@ -99,6 +104,14 @@ public abstract class AbstractEvent
 	protected abstract void onEventFight();
 	
 	protected abstract void onEventEnd();
+	
+	// XXX ANTI AFK SYSTEM -------------------------------------------------------------------------------
+	private AntiAfkManager _antiAfkManager;
+	
+	public AntiAfkManager getAntiAfkManager()
+	{
+		return _antiAfkManager;
+	}
 	
 	// XXX TEAMS -----------------------------------------------------------------------------------------
 	private TeamsManagers _teamsManagers = new TeamsManagers();
@@ -169,7 +182,16 @@ public abstract class AbstractEvent
 			return true;
 		}
 		
-		return onInteract(getPlayerEventManager().getEventPlayer(player), getSpawnManager().getEventNpc(target));
+		// Get the player involved in our event.
+		PlayerHolder activePlayer = getPlayerEventManager().getEventPlayer(player);
+		
+		// Exclude the player from the next Anti Afk control
+		if (getAntiAfkManager() != null)
+		{
+			getAntiAfkManager().excludePlayer(activePlayer);
+		}
+		
+		return onInteract(activePlayer, getSpawnManager().getEventNpc(target));
 	}
 	
 	/**
@@ -199,7 +221,16 @@ public abstract class AbstractEvent
 			return;
 		}
 		
-		onKill(getPlayerEventManager().getEventPlayer(playable), target);
+		// Get the player involved in our event.
+		PlayerHolder activePlayer = getPlayerEventManager().getEventPlayer(playable);
+		
+		// Exclude the player from the next Anti Afk control
+		if (getAntiAfkManager() != null)
+		{
+			getAntiAfkManager().excludePlayer(activePlayer);
+		}
+		
+		onKill(activePlayer, target);
 	}
 	
 	/**
@@ -241,6 +272,12 @@ public abstract class AbstractEvent
 		
 		// We get the player involved in our event.
 		PlayerHolder activePlayer = getPlayerEventManager().getEventPlayer(playable);
+		
+		// Exclude the player from the next Anti Afk control
+		if (getAntiAfkManager() != null)
+		{
+			getAntiAfkManager().excludePlayer(activePlayer);
+		}
 		
 		// CHECK FRIENDLY_FIRE ----------------------------------------
 		if (ConfigData.getInstance().FRIENDLY_FIRE)
@@ -303,6 +340,12 @@ public abstract class AbstractEvent
 		// We get the player involved in our event.
 		PlayerHolder activePlayer = getPlayerEventManager().getEventPlayer(playable);
 		
+		// Exclude the player from the next Anti Afk control
+		if (getAntiAfkManager() != null)
+		{
+			getAntiAfkManager().excludePlayer(activePlayer);
+		}
+		
 		// CHECK FRIENDLY_FIRE ----------------------------------------
 		if (ConfigData.getInstance().FRIENDLY_FIRE)
 		{
@@ -357,7 +400,15 @@ public abstract class AbstractEvent
 			return true;
 		}
 		
-		return onUseItem(getPlayerEventManager().getEventPlayer(player), item);
+		PlayerHolder activePlayer = getPlayerEventManager().getEventPlayer(player);
+		
+		// Exclude the player from the next Anti Afk control
+		if (getAntiAfkManager() != null)
+		{
+			getAntiAfkManager().excludePlayer(activePlayer);
+		}
+		
+		return onUseItem(activePlayer, item);
 	}
 	
 	/**
@@ -376,18 +427,10 @@ public abstract class AbstractEvent
 		{
 			try
 			{
-				PlayerHolder ph = getPlayerEventManager().getEventPlayer(player);
+				PlayerHolder activePlayer = getPlayerEventManager().getEventPlayer(player);
 				// listener
-				onLogout(ph);
-				// recover the original color title
-				ph.recoverOriginalColorTitle();
-				// recover the original title
-				ph.recoverOriginalTitle();
-				// we remove the character of the created world
-				InstanceManager.getInstance().getWorld(ph.getDinamicInstanceId()).removeAllowed(ph.getPcInstance().getObjectId());
-				
-				getPlayerEventManager().getAllEventPlayers().remove(ph);
-				player.removeEventListener(EventEngineListener.class);
+				onLogout(activePlayer);
+				removePlayerFromEvent(activePlayer, true);
 			}
 			catch (Exception e)
 			{
@@ -449,28 +492,8 @@ public abstract class AbstractEvent
 	{
 		for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
 		{
-			// Cancel target
-			ph.getPcInstance().setTarget(null);
-			// Cancel any attack in progress
-			ph.getPcInstance().abortAttack();
-			ph.getPcInstance().breakAttack();
-			// Cancel any skill in progress
-			ph.getPcInstance().abortCast();
-			ph.getPcInstance().breakCast();
-			// Cancel all character effects
-			ph.getPcInstance().stopAllEffects();
-			
-			if (ph.getPcInstance().getSummon() != null)
-			{
-				ph.getPcInstance().getSummon().stopAllEffects();
-				ph.getPcInstance().getSummon().unSummon(ph.getPcInstance());
-			}
-			
-			// Cancel all character cubics
-			for (L2CubicInstance cubic : ph.getPcInstance().getCubics().values())
-			{
-				cubic.cancelDisappear();
-			}
+			cancelAllPlayerActions(ph);
+			cancelAllEffects(ph);
 		}
 	}
 	
@@ -508,30 +531,10 @@ public abstract class AbstractEvent
 		
 		for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
 		{
-			// Cancel target
-			ph.getPcInstance().setTarget(null);
-			// Cancel any attack in progress
-			ph.getPcInstance().abortAttack();
-			ph.getPcInstance().breakAttack();
-			// Cancel any skill in progress<
-			ph.getPcInstance().abortCast();
-			ph.getPcInstance().breakCast();
-			// Cancel all effects
-			ph.getPcInstance().stopAllEffects();
-			// Recover the title and color of the participants.
-			ph.recoverOriginalColorTitle();
-			ph.recoverOriginalTitle();
-			// It out of the world created for the event
-			
-			InstanceWorld world = InstanceManager.getInstance().getPlayerWorld(ph.getPcInstance());
-			world.removeAllowed(ph.getPcInstance().getObjectId());
-			ph.getPcInstance().setInstanceId(0);
-			
+			cancelAllPlayerActions(ph);
+			cancelAllEffects(ph);
+			removePlayerFromEvent(ph, false);
 			revivePlayer(ph);
-			ph.getPcInstance().removeEventListener(EventEngineListener.class);
-			
-			// FIXME We send a character to their actual instance and turn
-			ph.getPcInstance().teleToLocation(83437, 148634, -3403, 0, 0);// GIRAN CENTER
 		}
 		getScheduledEventsManager().cancelTaskControlTime();
 	}
@@ -619,5 +622,75 @@ public abstract class AbstractEvent
 		{
 			ph.getPcInstance().addItem("eventReward", reward.getId(), reward.getCount(), null, true);
 		}
+	}
+	
+	/**
+	 * <ul>
+	 * <b>Actions: </b>
+	 * </ul>
+	 * <li>Cancel target</li> <li>Cancel cast</li> <li>Cancel attack</li>
+	 * @param ph
+	 */
+	public void cancelAllPlayerActions(PlayerHolder ph)
+	{
+		// Cancel target
+		ph.getPcInstance().setTarget(null);
+		// Cancel any attack in progress
+		ph.getPcInstance().breakAttack();
+		// Cancel any skill in progress
+		ph.getPcInstance().breakCast();
+	}
+	
+	/**
+	 * <ul>
+	 * <b>Actions: </b>
+	 * </ul>
+	 * <li>Stop all effects from player and summon</li>
+	 * @param ph
+	 */
+	public void cancelAllEffects(PlayerHolder ph)
+	{
+		ph.getPcInstance().stopAllEffects();
+		
+		if (ph.getPcInstance().getSummon() != null)
+		{
+			ph.getPcInstance().getSummon().stopAllEffects();
+			ph.getPcInstance().getSummon().unSummon(ph.getPcInstance());
+		}
+		
+		// Cancel all character cubics
+		for (L2CubicInstance cubic : ph.getPcInstance().getCubics().values())
+		{
+			cubic.cancelDisappear();
+		}
+	}
+	
+	/**
+	 * <ul>
+	 * <b>Actions: </b>
+	 * </ul>
+	 * <li>Recover original title</li> <li>Recover original color title</li> <li>Remove from instance and back from InstanceId 0</li>
+	 * @param ph
+	 */
+	public void removePlayerFromEvent(PlayerHolder ph, boolean forceRemove)
+	{
+		// Recovers player's title and color
+		ph.recoverOriginalColorTitle();
+		ph.recoverOriginalTitle();
+		
+		// Remove the player from world instance
+		InstanceManager.getInstance().getPlayerWorld(ph.getPcInstance()).removeAllowed(ph.getPcInstance().getObjectId());
+		ph.getPcInstance().setInstanceId(0);
+		
+		// Remove the player from event listener (it's used to deny the manual ress)
+		ph.getPcInstance().removeEventListener(EventEngineListener.class);
+		
+		if (forceRemove)
+		{
+			getPlayerEventManager().getAllEventPlayers().remove(ph);
+		}
+		
+		// FIXME We send a character to their actual instance and turn
+		ph.getPcInstance().teleToLocation(83437, 148634, -3403, 0, 0);// GIRAN CENTER
 	}
 }
