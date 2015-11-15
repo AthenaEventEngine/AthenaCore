@@ -39,7 +39,7 @@ import net.sf.eventengine.events.holders.PlayerHolder;
 import net.sf.eventengine.task.EventEngineTask;
 
 import com.l2jserver.gameserver.ThreadPoolManager;
-import com.l2jserver.gameserver.instancemanager.InstanceManager;
+import com.l2jserver.gameserver.model.Location;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.L2Playable;
@@ -279,7 +279,6 @@ public class EventEngineManager
 	 */
 	public void listenerOnLogout(L2PcInstance player)
 	{
-		// Si no se esta corriendo no continuar el listener.
 		if (_currentEvent == null)
 		{
 			if (_state == EventEngineState.REGISTER || _state == EventEngineState.VOTING)
@@ -291,25 +290,14 @@ public class EventEngineManager
 		}
 		else
 		{
-			if (_currentEvent.getPlayerEventManager().isPlayableInEvent(player))
+			try
 			{
-				try
-				{
-					PlayerHolder ph = _currentEvent.getPlayerEventManager().getEventPlayer(player);
-					// recobramos el color del titulo original
-					ph.recoverOriginalColorTitle();
-					// recobramos el titulo original
-					ph.recoverOriginalTitle();
-					// remobemos al personaje del mundo creado
-					InstanceManager.getInstance().getWorld(ph.getDinamicInstanceId()).removeAllowed(ph.getPcInstance().getObjectId());
-					
-					_currentEvent.getPlayerEventManager().getAllEventPlayers().remove(ph);
-				}
-				catch (Exception e)
-				{
-					LOGGER.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnLogout() " + e);
-					e.printStackTrace();
-				}
+				_currentEvent.listenerOnLogout(player);
+			}
+			catch (Exception e)
+			{
+				LOGGER.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnLogout() " + e);
+				e.printStackTrace();
 			}
 		}
 	}
@@ -319,6 +307,7 @@ public class EventEngineManager
 	 */
 	public void listenerOnLogin(L2PcInstance player)
 	{
+		returnPlayerDisconnected(player);
 		player.sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", MessageData.getInstance().getMsgByLang(player, "event_login_participate", true)));
 		player.sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", MessageData.getInstance().getMsgByLang(player, "event_login_vote", true)));
 	}
@@ -600,6 +589,34 @@ public class EventEngineManager
 	}
 	
 	// XXX MISC ---------------------------------------------------------------------------------------
+	
+	private Map<Integer, Location> _playersDisconnected = new ConcurrentHashMap<>();
+	
+	/**
+	 * When the player is disconnected inside event<br>
+	 * It adds him to a list saving the original location<br>
+	 * @param ph
+	 */
+	public void addPlayerDisconnected(PlayerHolder ph)
+	{
+		_playersDisconnected.put(ph.getPcInstance().getObjectId(), ph.getReturnLoc());
+		
+	}
+	
+	/**
+	 * When the player relogs<br>
+	 * It teleports him to the original location if he disconnected inside event<br>
+	 * @param player
+	 */
+	public void returnPlayerDisconnected(L2PcInstance player)
+	{
+		Location returnLoc = _playersDisconnected.get(player.getObjectId());
+		if (returnLoc != null)
+		{
+			player.teleToLocation(returnLoc);
+		}
+	}
+	
 	/**
 	 * Cleanup variables to the next event
 	 */

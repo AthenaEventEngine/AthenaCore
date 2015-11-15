@@ -428,9 +428,10 @@ public abstract class AbstractEvent
 			try
 			{
 				PlayerHolder activePlayer = getPlayerEventManager().getEventPlayer(player);
-				// listener
+				// Listener
 				onLogout(activePlayer);
 				removePlayerFromEvent(activePlayer, true);
+				EventEngineManager.getInstance().addPlayerDisconnected(activePlayer);
 			}
 			catch (Exception e)
 			{
@@ -494,6 +495,9 @@ public abstract class AbstractEvent
 		{
 			cancelAllPlayerActions(ph);
 			cancelAllEffects(ph);
+			
+			Location returnLoc = ph.getPcInstance().getLocation();
+			ph.setReturnLoc(new Location(returnLoc.getX(), returnLoc.getY(), returnLoc.getZ()));
 		}
 	}
 	
@@ -669,8 +673,10 @@ public abstract class AbstractEvent
 	 * <ul>
 	 * <b>Actions: </b>
 	 * </ul>
-	 * <li>Recover original title</li> <li>Recover original color title</li> <li>Remove from instance and back from InstanceId 0</li>
+	 * <li>Recover original title</li> <li>Recover original color title</li> <li>Remove from instance and back 0</li>
 	 * @param ph
+	 * @param forceRemove
+	 * @param logout
 	 */
 	public void removePlayerFromEvent(PlayerHolder ph, boolean forceRemove)
 	{
@@ -690,7 +696,6 @@ public abstract class AbstractEvent
 			getPlayerEventManager().getAllEventPlayers().remove(ph);
 		}
 		
-		// FIXME We send a character to their actual instance and turn
-		ph.getPcInstance().teleToLocation(83437, 148634, -3403, 0, 0);// GIRAN CENTER
+		ph.getPcInstance().teleToLocation(ph.getReturnLoc());
 	}
 }
