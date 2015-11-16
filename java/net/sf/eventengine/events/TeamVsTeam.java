@@ -20,10 +20,6 @@ package net.sf.eventengine.events;
 
 import java.util.List;
 
-import com.l2jserver.gameserver.model.actor.L2Character;
-import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
-import com.l2jserver.gameserver.network.clientpackets.Say2;
-
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.CollectionTarget;
@@ -32,9 +28,12 @@ import net.sf.eventengine.enums.TeamType;
 import net.sf.eventengine.events.handler.AbstractEvent;
 import net.sf.eventengine.events.holders.PlayerHolder;
 import net.sf.eventengine.events.holders.TeamHolder;
-import net.sf.eventengine.events.schedules.AnnounceNearEndEvent;
 import net.sf.eventengine.util.EventUtil;
 import net.sf.eventengine.util.SortUtils;
+
+import com.l2jserver.gameserver.model.actor.L2Character;
+import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
+import com.l2jserver.gameserver.network.clientpackets.Say2;
 
 /**
  * @author fissban
@@ -48,12 +47,7 @@ public class TeamVsTeam extends AbstractEvent
 	
 	public TeamVsTeam()
 	{
-		super();
-		// Definimos la instancia en que transcurria el evento
-		getInstanceWorldManager().setInstanceFile(ConfigData.getInstance().TVT_INSTANCE_FILE);
-		// Announce near end event
-		int timeLeft = (ConfigData.getInstance().EVENT_DURATION * 60 * 1000) - (ConfigData.getInstance().EVENT_TEXT_TIME_FOR_END * 1000);
-		getScheduledEventsManager().addScheduledEvent(new AnnounceNearEndEvent(timeLeft));
+		super(ConfigData.getInstance().TVT_INSTANCE_FILE);
 	}
 	
 	@Override

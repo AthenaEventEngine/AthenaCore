@@ -24,14 +24,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ScheduledFuture;
 
-import com.l2jserver.gameserver.ThreadPoolManager;
-
-import net.sf.eventengine.datatables.ConfigData;
-import net.sf.eventengine.events.schedules.AnnounceTeleportEvent;
-import net.sf.eventengine.events.schedules.ChangeToEndEvent;
-import net.sf.eventengine.events.schedules.ChangeToFightEvent;
-import net.sf.eventengine.events.schedules.ChangeToStartEvent;
 import net.sf.eventengine.events.schedules.interfaces.EventScheduled;
+
+import com.l2jserver.gameserver.ThreadPoolManager;
 
 /**
  * @author Zephyr
@@ -45,41 +40,6 @@ public class ScheduledEventsManager
 	// Task that control the event time
 	private ScheduledFuture<?> _taskControlTime;
 	
-	public ScheduledEventsManager()
-	{
-		//
-	}
-	
-	/**
-	 * We control the timing of events<br>
-	 * <ul>
-	 * <b>Actions: </b>
-	 * </ul>
-	 * <li>-> step 1: We announced that participants will be teleported</li><br>
-	 * <li>Wait 3 secs</li><br>
-	 * <li>-> step 2: Adjust the status of the event -> START</li><br>
-	 * <li>We hope 1 sec to actions within each event is executed..</li><br>
-	 * <li>-> step 3: Adjust the status of the event -> FIGHT</li><br>
-	 * <li>-> step 3: We sent a message that they are ready to fight.</li><br>
-	 * <li>We wait until the event ends</li><br>
-	 * <li>-> step 4: Adjust the status of the event -> END</li><br>
-	 * <li>-> step 4: We sent a message warning that term event</li><br>
-	 * <li>Esperamos 1 seg</li><br>
-	 * <li>-> step 5: We alerted the event ended EventEngineManager</li><br>
-	 */
-	public void startScheduledEvents()
-	{
-		int time = 1000;
-		addScheduledEvent(new AnnounceTeleportEvent(time));
-		time += 3000;
-		addScheduledEvent(new ChangeToStartEvent(time));
-		time += 1000;
-		addScheduledEvent(new ChangeToFightEvent(time));
-		// TODO: Maybe some events don't need a finish time, like korean pvp style
-		time += ConfigData.getInstance().EVENT_DURATION * 60 * 1000;
-		addScheduledEvent(new ChangeToEndEvent(time));
-	}
-	
 	public void startTaskControlTime()
 	{
 		_currentTime = 0;
@@ -87,7 +47,7 @@ public class ScheduledEventsManager
 		{
 			_currentTime += 1000;
 			checkScheduledEvents();
-		} , 10 * 1000, 1000);
+		}, 10 * 1000, 1000);
 	}
 	
 	public void cancelTaskControlTime()
@@ -102,18 +62,11 @@ public class ScheduledEventsManager
 	
 	public void addScheduledEvent(EventScheduled event)
 	{
-		List<EventScheduled> list;
 		if (!_scheduledEvents.containsKey(event.getTime()))
 		{
-			list = new ArrayList<>();
-			_scheduledEvents.put(event.getTime(), list);
+			_scheduledEvents.put(event.getTime(), new ArrayList<>());
 		}
-		else
-		{
-			list = _scheduledEvents.get(event.getTime());
-		}
-		
-		list.add(event);
+		_scheduledEvents.get(event.getTime()).add(event);
 	}
 	
 	public void checkScheduledEvents()

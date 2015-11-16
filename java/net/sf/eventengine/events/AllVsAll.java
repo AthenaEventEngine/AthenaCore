@@ -27,7 +27,6 @@ import net.sf.eventengine.enums.ScoreType;
 import net.sf.eventengine.enums.TeamType;
 import net.sf.eventengine.events.handler.AbstractEvent;
 import net.sf.eventengine.events.holders.PlayerHolder;
-import net.sf.eventengine.events.schedules.AnnounceNearEndEvent;
 import net.sf.eventengine.util.EventUtil;
 import net.sf.eventengine.util.SortUtils;
 
@@ -47,12 +46,7 @@ public class AllVsAll extends AbstractEvent
 	
 	public AllVsAll()
 	{
-		super();
-		// Definimos la instancia en que se ejecutara el evento.
-		getInstanceWorldManager().setInstanceFile(ConfigData.getInstance().AVA_INSTANCE_FILE);
-		// Announce near end event
-		int timeLeft = (ConfigData.getInstance().EVENT_DURATION * 60 * 1000) - (ConfigData.getInstance().EVENT_TEXT_TIME_FOR_END * 1000);
-		getScheduledEventsManager().addScheduledEvent(new AnnounceNearEndEvent(timeLeft));
+		super(ConfigData.getInstance().AVA_INSTANCE_FILE);
 	}
 	
 	@Override

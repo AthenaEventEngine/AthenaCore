@@ -21,6 +21,7 @@ package net.sf.eventengine.events.schedules;
 import net.sf.eventengine.EventEngineManager;
 import net.sf.eventengine.enums.EventEngineState;
 import net.sf.eventengine.enums.EventState;
+import net.sf.eventengine.events.handler.AbstractEvent;
 import net.sf.eventengine.events.holders.PlayerHolder;
 import net.sf.eventengine.events.schedules.interfaces.EventScheduled;
 import net.sf.eventengine.util.EventUtil;
@@ -47,13 +48,21 @@ public class ChangeToEndEvent implements EventScheduled
 	@Override
 	public void run()
 	{
-		EventEngineManager.getInstance().getCurrentEvent().runEventState(EventState.END);
+		AbstractEvent currentEvent = EventEngineManager.getInstance().getCurrentEvent();
 		
-		// Borramos todos los spawns de npc
-		EventEngineManager.getInstance().getCurrentEvent().getSpawnManager().removeAllEventNpc();
+		currentEvent.runEventState(EventState.END);
+		
+		// Clear all the npcs spawned
+		currentEvent.getSpawnManager().removeAllEventNpc();
+		
+		// Finish antiAfkTask
+		if (currentEvent.getAntiAfkManager() != null)
+		{
+			currentEvent.getAntiAfkManager().finish();
+		}
 		
 		// Enviamos un mensaje especial para los participantes
-		for (PlayerHolder player : EventEngineManager.getInstance().getCurrentEvent().getPlayerEventManager().getAllEventPlayers())
+		for (PlayerHolder player : currentEvent.getPlayerEventManager().getAllEventPlayers())
 		{
 			EventUtil.sendEventSpecialMessage(player, 1, "status_finished");
 		}

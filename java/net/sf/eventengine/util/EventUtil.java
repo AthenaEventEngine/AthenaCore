@@ -26,6 +26,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import net.sf.eventengine.EventEngineManager;
+import net.sf.eventengine.datatables.ConfigData;
+import net.sf.eventengine.datatables.MessageData;
+import net.sf.eventengine.enums.CollectionTarget;
+import net.sf.eventengine.events.holders.PlayerHolder;
+
 import com.l2jserver.gameserver.datatables.SpawnTable;
 import com.l2jserver.gameserver.model.L2Spawn;
 import com.l2jserver.gameserver.model.L2World;
@@ -36,12 +42,6 @@ import com.l2jserver.gameserver.network.clientpackets.Say2;
 import com.l2jserver.gameserver.network.serverpackets.CreatureSay;
 import com.l2jserver.gameserver.network.serverpackets.ExEventMatchMessage;
 import com.l2jserver.gameserver.network.serverpackets.ExShowScreenMessage;
-
-import net.sf.eventengine.EventEngineManager;
-import net.sf.eventengine.datatables.ConfigData;
-import net.sf.eventengine.datatables.MessageData;
-import net.sf.eventengine.enums.CollectionTarget;
-import net.sf.eventengine.events.holders.PlayerHolder;
 
 /**
  * @author fissban, Zephyr
@@ -412,5 +412,16 @@ public class EventUtil
 		map.put("%killer%", player.getPcInstance().getName());
 		map.put("%target%", target.getName());
 		EventUtil.announceTo(Say2.TRADE, "event_player_killer", map, CollectionTarget.ALL_PLAYERS_IN_EVENT);
+	}
+	
+	/**
+	 * Send a message to player
+	 * @param player
+	 * @param textId
+	 */
+	public static void sendMessageToPlayer(PlayerHolder ph, String textId)
+	{
+		L2PcInstance player = ph.getPcInstance();
+		player.sendMessage(MessageData.getInstance().getMsgByLang(player, textId, true));
 	}
 }

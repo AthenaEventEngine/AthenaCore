@@ -18,29 +18,32 @@
  */
 package net.sf.eventengine.events.holders;
 
-import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
-
 import net.sf.eventengine.enums.TeamType;
 import net.sf.eventengine.interfaces.ParticipantHolder;
 
+import com.l2jserver.gameserver.model.Location;
+import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+
 /**
- * Clase encargada de administrar los datos de los players que participan del evento.
+ * It manages player's info that participates in an event
  * @author fissban
  */
 public class PlayerHolder implements ParticipantHolder
 {
 	private final L2PcInstance _player;
 	
-	// Contador de kills realizados.
+	// Player kills in current event
 	private int _kills = 0;
-	// Contador de deaths obtenidas.
+	// Player deaths in current event
 	private int _deaths = 0;
-	// Color original de un personaje por si en algun evento es cambiado.
+	// Original title color before teleporting to the event
 	private int _oriColorTitle;
-	// Titulo original de un personaje por si en algun evento es cambiado.
+	// Original title before teleporting to the event
 	private String _oriTitle;
-	// Team al que pertenece el usuario
+	// Player's team in the event
 	private TeamType _team;
+	// Previous location before participating in the event
+	private Location _returnLocation;
 	
 	private int _dinamicInstanceId = 0;
 	
@@ -56,7 +59,7 @@ public class PlayerHolder implements ParticipantHolder
 	// METODOS VARIOS -----------------------------------------------------------
 	
 	/**
-	 * Acceso directo a todos los metodos de L2PcInstance.
+	 * Get L2PcInstance
 	 * @return
 	 */
 	public L2PcInstance getPcInstance()
@@ -66,10 +69,9 @@ public class PlayerHolder implements ParticipantHolder
 	
 	/**
 	 * <ul>
-	 * <b>Acciones:</b>
+	 * <b>Actions:</b>
 	 * </ul>
-	 * <li>Definimos el team al que pertenece el personaje.</li>
-	 * <li>Ajustamos el color del personaje segun su team</li>
+	 * <li>Set the event team.</li> <li>Change the player color by team</li>
 	 * @param team
 	 */
 	public void setTeam(TeamType team)
@@ -84,7 +86,7 @@ public class PlayerHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Obtenemos el team del personaje.
+	 * Get the player's team
 	 * @return
 	 */
 	public TeamType getTeamType()
@@ -93,7 +95,7 @@ public class PlayerHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Obtenemos el id de la instancia en la que participa dentro de los eventos.
+	 * Get the event instance id
 	 * @return
 	 */
 	public int getDinamicInstanceId()
@@ -102,7 +104,7 @@ public class PlayerHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Definimos el id de la instancia de la cual participa dentro de los eventos.
+	 * Set the event instance id
 	 * @param dinamicInstanceId
 	 */
 	public void setDinamicInstanceId(int dinamicInstanceId)
@@ -111,7 +113,7 @@ public class PlayerHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Incrementamos en uno la cantidad de asesiantos.
+	 * Increase the kills by one
 	 */
 	public void increaseKills()
 	{
@@ -119,7 +121,7 @@ public class PlayerHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Obtenemos lacantidad de asesinatos.
+	 * Get the kills count
 	 * @return
 	 */
 	public int getKills()
@@ -128,7 +130,7 @@ public class PlayerHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Incrementamos en uno la cantidad de muertes.
+	 * Increase the deaths by one
 	 */
 	public void increaseDeaths()
 	{
@@ -136,7 +138,7 @@ public class PlayerHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Cantidad de muertes que tiene.
+	 * Get the deaths count
 	 * @return
 	 */
 	public int getDeaths()
@@ -145,8 +147,7 @@ public class PlayerHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Obtenemos la cant de puntos de un player.<br>
-	 * La formula se obtiene a partir de: (_kills-_deaths)<br>
+	 * Get the player's points<br>
 	 * @return
 	 */
 	public int getPoints()
@@ -155,7 +156,7 @@ public class PlayerHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Definimos un nuevo titulo para elpersonaje
+	 * Set a player's title
 	 * @param title
 	 */
 	public void setNewTitle(String title)
@@ -164,7 +165,7 @@ public class PlayerHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Recuperamos el titulo original de un player
+	 * Recover the original player title
 	 */
 	public void recoverOriginalTitle()
 	{
@@ -172,10 +173,26 @@ public class PlayerHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Recuperamos el color original del titulo del player
+	 * Recover the original color player title
 	 */
 	public void recoverOriginalColorTitle()
 	{
 		_player.getAppearance().setTitleColor(_oriColorTitle);
+	}
+	
+	/**
+	 * Get the original location before teleporting to the event
+	 */
+	public Location getReturnLoc()
+	{
+		return _returnLocation;
+	}
+	
+	/**
+	 * Set the original location before teleporting to the event
+	 */
+	public void setReturnLoc(Location loc)
+	{
+		_returnLocation = loc;
 	}
 }
