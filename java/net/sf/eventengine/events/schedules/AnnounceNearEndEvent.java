@@ -18,12 +18,11 @@
  */
 package net.sf.eventengine.events.schedules;
 
-import com.l2jserver.gameserver.network.clientpackets.Say2;
-
-import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.enums.CollectionTarget;
 import net.sf.eventengine.events.schedules.interfaces.EventScheduled;
 import net.sf.eventengine.util.EventUtil;
+
+import com.l2jserver.gameserver.network.clientpackets.Say2;
 
 /**
  * @author Zephyr
@@ -32,10 +31,12 @@ import net.sf.eventengine.util.EventUtil;
 public class AnnounceNearEndEvent implements EventScheduled
 {
 	int _time;
+	int _timeAnnounce;
 	
-	public AnnounceNearEndEvent(int time)
+	public AnnounceNearEndEvent(int time, int timeAnnounce)
 	{
 		_time = time;
+		_timeAnnounce = timeAnnounce;
 	}
 	
 	@Override
@@ -47,6 +48,6 @@ public class AnnounceNearEndEvent implements EventScheduled
 	@Override
 	public void run()
 	{
-		EventUtil.announceTime(ConfigData.getInstance().EVENT_TEXT_TIME_FOR_END, "event_end_soon", Say2.CRITICAL_ANNOUNCE, CollectionTarget.ALL_PLAYERS_IN_EVENT);
+		EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "event_end_soon", "%time%", String.valueOf(_timeAnnounce), CollectionTarget.ALL_PLAYERS_IN_EVENT);
 	}
 }

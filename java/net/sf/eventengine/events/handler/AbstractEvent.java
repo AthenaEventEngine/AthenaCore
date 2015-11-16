@@ -39,6 +39,11 @@ import net.sf.eventengine.events.handler.managers.TeamsManagers;
 import net.sf.eventengine.events.holders.NpcHolder;
 import net.sf.eventengine.events.holders.PlayerHolder;
 import net.sf.eventengine.events.listeners.EventEngineListener;
+import net.sf.eventengine.events.schedules.AnnounceNearEndEvent;
+import net.sf.eventengine.events.schedules.AnnounceTeleportEvent;
+import net.sf.eventengine.events.schedules.ChangeToEndEvent;
+import net.sf.eventengine.events.schedules.ChangeToFightEvent;
+import net.sf.eventengine.events.schedules.ChangeToStartEvent;
 import net.sf.eventengine.util.EventUtil;
 
 import com.l2jserver.gameserver.ThreadPoolManager;
@@ -63,18 +68,21 @@ public abstract class AbstractEvent
 {
 	private static final Logger LOGGER = Logger.getLogger(AbstractEvent.class.getName());
 	
-	public AbstractEvent()
+	public AbstractEvent(String instanceFile)
 	{
-		// We add every player registered for the event.
+		// Add every player registered for the event.
 		getPlayerEventManager().createEventPlayers();
-		// We started the clock to control the sequence of internal events of the event.
-		getScheduledEventsManager().startScheduledEvents();
-		getScheduledEventsManager().startTaskControlTime();
 		
 		if (ConfigData.getInstance().ANTI_AFK_ENABLED)
 		{
 			_antiAfkManager = new AntiAfkManager();
 		}
+		
+		initScheduledEvents();
+		// Starts the clock to control the sequence of internal events of the event.
+		getScheduledEventsManager().startTaskControlTime();
+		
+		getInstanceWorldManager().setInstanceFile(instanceFile);
 	}
 	
 	/** Necessary to handle the event states. */
@@ -136,6 +144,40 @@ public abstract class AbstractEvent
 	public ScheduledEventsManager getScheduledEventsManager()
 	{
 		return _scheduledEventsManager;
+	}
+	
+	/**
+	 * Init the scheduled events<br>
+	 * <ul>
+	 * <b>Actions: </b>
+	 * </ul>
+	 * <li>-> step 1: Announce participants will be teleported</li><br>
+	 * <li>Wait 3 secs</li><br>
+	 * <li>-> step 2: Adjust the status of the event -> START</li><br>
+	 * <li>We hope 1 sec to actions within each event is executed..</li><br>
+	 * <li>-> step 3: Adjust the status of the event -> FIGHT</li><br>
+	 * <li>-> step 3: We sent a message that they are ready to fight.</li><br>
+	 * <li>We wait until the event ends</li><br>
+	 * <li>-> step 4: Adjust the status of the event -> END</li><br>
+	 * <li>-> step 4: We sent a message warning that term event</li><br>
+	 * <li>Wait for 1 seg</li><br>
+	 * <li>-> step 5: Alert the event has ended</li><br>
+	 */
+	private void initScheduledEvents()
+	{
+		int time = 1000;
+		getScheduledEventsManager().addScheduledEvent(new AnnounceTeleportEvent(time));
+		time += 3000;
+		getScheduledEventsManager().addScheduledEvent(new ChangeToStartEvent(time));
+		time += 1000;
+		getScheduledEventsManager().addScheduledEvent(new ChangeToFightEvent(time));
+		time += ConfigData.getInstance().EVENT_DURATION * 60 * 1000;
+		getScheduledEventsManager().addScheduledEvent(new ChangeToEndEvent(time));
+		
+		// Announce near end event
+		int timeLeftAnnounce = ConfigData.getInstance().EVENT_TEXT_TIME_FOR_END * 1000;
+		getScheduledEventsManager().addScheduledEvent(new AnnounceNearEndEvent(time - timeLeftAnnounce, ConfigData.getInstance().EVENT_TEXT_TIME_FOR_END));
+		getScheduledEventsManager().addScheduledEvent(new AnnounceNearEndEvent(time - (timeLeftAnnounce / 2), ConfigData.getInstance().EVENT_TEXT_TIME_FOR_END / 2));
 	}
 	
 	// REVIVE --------------------------------------------------------------------------------------- //

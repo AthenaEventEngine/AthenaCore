@@ -23,6 +23,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import net.sf.eventengine.datatables.ConfigData;
+import net.sf.eventengine.datatables.MessageData;
+import net.sf.eventengine.enums.CollectionTarget;
+import net.sf.eventengine.enums.ScoreType;
+import net.sf.eventengine.enums.TeamType;
+import net.sf.eventengine.events.handler.AbstractEvent;
+import net.sf.eventengine.events.holders.NpcHolder;
+import net.sf.eventengine.events.holders.PlayerHolder;
+import net.sf.eventengine.events.holders.TeamHolder;
+import net.sf.eventengine.util.EventUtil;
+import net.sf.eventengine.util.SortUtils;
+
 import com.l2jserver.gameserver.datatables.ItemTable;
 import com.l2jserver.gameserver.enums.Team;
 import com.l2jserver.gameserver.model.actor.L2Character;
@@ -33,19 +45,6 @@ import com.l2jserver.gameserver.model.items.L2Weapon;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
 import com.l2jserver.gameserver.network.serverpackets.MagicSkillUse;
-
-import net.sf.eventengine.datatables.ConfigData;
-import net.sf.eventengine.datatables.MessageData;
-import net.sf.eventengine.enums.CollectionTarget;
-import net.sf.eventengine.enums.ScoreType;
-import net.sf.eventengine.enums.TeamType;
-import net.sf.eventengine.events.handler.AbstractEvent;
-import net.sf.eventengine.events.holders.NpcHolder;
-import net.sf.eventengine.events.holders.PlayerHolder;
-import net.sf.eventengine.events.holders.TeamHolder;
-import net.sf.eventengine.events.schedules.AnnounceNearEndEvent;
-import net.sf.eventengine.util.EventUtil;
-import net.sf.eventengine.util.SortUtils;
 
 /**
  * @author fissban
@@ -72,12 +71,7 @@ public class CaptureTheFlag extends AbstractEvent
 	
 	public CaptureTheFlag()
 	{
-		super();
-		// Definimos la instancia en que transcurria el evento
-		getInstanceWorldManager().setInstanceFile(ConfigData.getInstance().CTF_INSTANCE_FILE);
-		// Announce near end event
-		int timeLeft = (ConfigData.getInstance().EVENT_DURATION * 60 * 1000) - (ConfigData.getInstance().EVENT_TEXT_TIME_FOR_END * 1000);
-		getScheduledEventsManager().addScheduledEvent(new AnnounceNearEndEvent(timeLeft));
+		super(ConfigData.getInstance().CTF_INSTANCE_FILE);
 	}
 	
 	@Override
@@ -297,7 +291,7 @@ public class CaptureTheFlag extends AbstractEvent
 	}
 	
 	/**
-	 * We deliver rewards.
+	 * Give rewards.<br>
 	 */
 	private void giveRewardsTeams()
 	{
