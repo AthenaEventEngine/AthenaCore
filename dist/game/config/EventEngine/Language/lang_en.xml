@@ -81,8 +81,14 @@
 	<message id="lang_menu_title" text="Menu Setting"/>
 	<message id="lang_language_title" text="Language Setting"/>
 	<message id="lang_language_description" text="If you want to change the default language of the event engine, you only have to specify it. Choose your first language, come on!"/>
+	<message id="lang_language_admin_description" text="If you want to change the default language of the event engine, you only have to specify it. Choose default language of event engine!"/>
 	<message id="lang_current_language" text="Current language:"/>
 	<message id="lang_current_successfully" text="Language successfully set to:"/>
+	
+	<!-- HTML: Admin Setting -->
+	<message id="admin_menu_title" text="Admin Menu Setting"/>
+	<message id="admin_menu_description" text="General Setting of Event Engine"/>
+	<message id="admin_menu_info" text="All changes made since this panel are temporary, not recommended on live server. Best apply changes manually."/>
 	
 	<!-- Teleport -->
 	<message id="teleport_seconds" text="You will be teleported to the event in seconds." />
