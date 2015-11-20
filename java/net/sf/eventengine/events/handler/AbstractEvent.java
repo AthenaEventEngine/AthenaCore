@@ -218,7 +218,7 @@ public abstract class AbstractEvent
 	 */
 	public void listenerOnInteract(L2PcInstance player, L2Npc target)
 	{
-		if (!getPlayerEventManager().isPlayableInEvent(player) && !getSpawnManager().isNpcInEvent(target))
+		if (!getPlayerEventManager().isPlayableInEvent(player) || !getSpawnManager().isNpcInEvent(target))
 		{
 			return;
 		}
