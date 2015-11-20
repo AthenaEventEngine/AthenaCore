@@ -213,15 +213,14 @@ public abstract class AbstractEvent
 	// LISTENERS ------------------------------------------------------------------------------------ //
 	
 	/**
-	 * Si se retorna "false" no se mostrara ningun html
 	 * @param player
 	 * @param target
 	 */
-	public boolean listenerOnInteract(L2PcInstance player, L2Npc target)
+	public void listenerOnInteract(L2PcInstance player, L2Npc target)
 	{
 		if (!getPlayerEventManager().isPlayableInEvent(player) && !getSpawnManager().isNpcInEvent(target))
 		{
-			return true;
+			return;
 		}
 		
 		// Get the player involved in our event.
@@ -233,16 +232,16 @@ public abstract class AbstractEvent
 			getAntiAfkManager().excludePlayer(activePlayer);
 		}
 		
-		return onInteract(activePlayer, getSpawnManager().getEventNpc(target));
+		onInteract(activePlayer, getSpawnManager().getEventNpc(target));
 	}
 	
 	/**
 	 * @param ph
 	 * @param npc
 	 */
-	public boolean onInteract(PlayerHolder ph, NpcHolder npc)
+	public void onInteract(PlayerHolder ph, NpcHolder npc)
 	{
-		return true;
+		// Nothing
 	}
 	
 	/**
