@@ -96,30 +96,30 @@ public class CaptureTheFlag extends AbstractEvent
 	}
 	
 	@Override
-	public boolean onInteract(PlayerHolder ph, NpcHolder npcHolder)
+	public void onInteract(PlayerHolder ph, NpcHolder npcHolder)
 	{
 		if (npcHolder.getNpcInstance().getId() == FLAG)
 		{
 			if (hasFlag(ph))
 			{
-				return false;
+				return;
 			}
 			
 			TeamType flagTeam = _flagSpawn.get(npcHolder);
 			
 			if (ph.getTeamType() != flagTeam)
 			{
-				// Animacion
+				// Animation
 				ph.getPcInstance().broadcastPacket(new MagicSkillUse(ph.getPcInstance(), ph.getPcInstance(), 1034, 1, 1, 1));
-				// Borramos del MAP la bandera
+				// Delete the flag from the map
 				_flagSpawn.remove(npcHolder);
-				// Guardamos que personaje lleva determinada bandera
+				// Save the player has the flag
 				_flagHasPlayer.put(ph, flagTeam);
-				// We remove the flag from his position
+				// Remove the flag from its position
 				getSpawnManager().removeNpc(npcHolder);
-				// We equip flag
+				// Equip the flag
 				equipFlag(ph, flagTeam);
-				// We announced that a flag was taken
+				// Announce the flag was taken
 				EventUtil.announceTo(Say2.BATTLEFIELD, "ctf_captured_the_flag", "%holder%", flagTeam.name(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
 			}
 		}
@@ -129,25 +129,23 @@ public class CaptureTheFlag extends AbstractEvent
 			{
 				if (hasFlag(ph))
 				{
-					// Animacion -> Large FireWork
+					// Animation -> Large FireWork
 					ph.getPcInstance().broadcastPacket(new MagicSkillUse(ph.getPcInstance(), ph.getPcInstance(), 2025, 1, 1, 1));
-					// We increased the points
+					// Increase the points
 					getTeamsManager().getPlayerTeam(ph).increasePoints(POINTS_CONQUER_FLAG);
-					// Remove the flag character
+					// Remove the flag from player
 					unequiFlag(ph);
 					
 					TeamHolder th = getTeamsManager().getTeam(_flagHasPlayer.remove(ph));
-					// We created the flag again
+					// Spawn the flag again
 					_flagSpawn.put(getSpawnManager().addEventNpc(FLAG, th.getSpawn().getX(), th.getSpawn().getY(), th.getSpawn().getZ(), 0, Team.NONE, th.getTeamType().name(), false, getInstanceWorldManager().getAllInstancesWorlds().get(0).getInstanceId()), th.getTeamType());
-					// We announced that a flag was taken
+					// Announce the flag was taken
 					EventUtil.announceTo(Say2.BATTLEFIELD, "ctf_conquered_the_flag", "%holder%", th.getTeamType().name(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
-					// Show points of each team
+					// Show team points
 					showPoint();
 				}
 			}
 		}
-		
-		return false;
 	}
 	
 	@Override

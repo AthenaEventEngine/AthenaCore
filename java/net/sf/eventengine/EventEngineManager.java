@@ -235,13 +235,13 @@ public class EventEngineManager
 	 * @param player
 	 * @param target
 	 */
-	public boolean listenerOnInteract(L2PcInstance player, L2Npc target)
+	public void listenerOnInteract(L2PcInstance player, L2Npc target)
 	{
 		if (_currentEvent != null)
 		{
 			try
 			{
-				return _currentEvent.listenerOnInteract(player, target);
+				_currentEvent.listenerOnInteract(player, target);
 			}
 			catch (Exception e)
 			{
@@ -249,8 +249,6 @@ public class EventEngineManager
 				e.printStackTrace();
 			}
 		}
-		
-		return true;
 	}
 	
 	/**

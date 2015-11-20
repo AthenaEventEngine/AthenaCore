@@ -8,6 +8,7 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.events.EventType;
 import com.l2jserver.gameserver.model.events.ListenerRegisterType;
 import com.l2jserver.gameserver.model.events.annotations.Priority;
+import com.l2jserver.gameserver.model.events.annotations.Range;
 import com.l2jserver.gameserver.model.events.annotations.RegisterEvent;
 import com.l2jserver.gameserver.model.events.annotations.RegisterType;
 import com.l2jserver.gameserver.model.events.impl.character.OnCreatureAttack;
@@ -113,7 +114,9 @@ public class EventEngineAdapter extends Quest
 	
 	// When a player talks with npc
 	@RegisterEvent(EventType.ON_NPC_FIRST_TALK)
-	@RegisterType(ListenerRegisterType.GLOBAL_NPCS)
+	@RegisterType(ListenerRegisterType.NPC)
+	// The npc with ids from 36600 to 36699 are reserved for engine
+	@Range(from = 36600, to = 36699)
 	@Priority(Integer.MAX_VALUE)
 	public void onNpcInteract(OnNpcFirstTalk event)
 	{
