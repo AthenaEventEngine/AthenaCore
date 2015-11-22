@@ -321,7 +321,7 @@ public abstract class AbstractEvent
 		}
 		
 		// CHECK FRIENDLY_FIRE ----------------------------------------
-		if (ConfigData.getInstance().FRIENDLY_FIRE)
+		if (!ConfigData.getInstance().FRIENDLY_FIRE)
 		{
 			// If our target is L2Playable type and we do this in the event control.
 			PlayerHolder activeTarget = getPlayerEventManager().getEventPlayer(target);
@@ -388,7 +388,7 @@ public abstract class AbstractEvent
 		}
 		
 		// CHECK FRIENDLY_FIRE ----------------------------------------
-		if (ConfigData.getInstance().FRIENDLY_FIRE)
+		if (!ConfigData.getInstance().FRIENDLY_FIRE)
 		{
 			// If our target is L2Playable type and we do this in the event control.
 			PlayerHolder activeTarget = getPlayerEventManager().getEventPlayer(target);
