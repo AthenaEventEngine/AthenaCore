@@ -22,59 +22,35 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
-import com.l2jserver.gameserver.model.Location;
-
+import net.sf.eventengine.builders.TeamsBuilder;
 import net.sf.eventengine.enums.TeamType;
-import net.sf.eventengine.events.handler.AbstractEvent;
 import net.sf.eventengine.events.holders.PlayerHolder;
 import net.sf.eventengine.events.holders.TeamHolder;
+
+import com.l2jserver.gameserver.model.Location;
 
 /**
  * @author fissban
  */
 public class TeamsManagers
 {
-	private static final Logger LOGGER = Logger.getLogger(TeamsManagers.class.getName());
-	
 	private final Map<TeamType, TeamHolder> _teams = new HashMap<>();
-	private int _countTeams = 0;
 	
-	/**
-	 * Constructor
-	 */
-	public TeamsManagers()
+	public void createTeams(TeamsBuilder builder)
 	{
-		//
-	}
-	
-	/**
-	 * Creamos la cantidad de teams indicados
-	 * @param count
-	 */
-	public void setCountTeams(int count)
-	{
-		_countTeams = count;
-		// inicializamos el uno para evitar usar el color blanco como team.
-		for (int i = 1; i <= _countTeams; i++)
+		// TODO: do something if the teams object is null
+		List<TeamHolder> teams = builder.build();
+		
+		for (TeamHolder team : teams)
 		{
-			TeamType team = TeamType.values()[i];
-			_teams.put(team, new TeamHolder(team));
+			_teams.put(team.getTeamType(), team);
 		}
+		teams.clear();
 	}
 	
 	/**
-	 * Obtenemos un array con los TeamType de equipos creados previamente.
-	 * @return
-	 */
-	public TeamType[] getEnabledTeams()
-	{
-		return _teams.keySet().toArray(new TeamType[_countTeams]);
-	}
-	
-	/**
-	 * Obtenemos una colleccion con los teams creados previamente.
+	 * Get the collection of created teams
 	 * @return
 	 */
 	public Collection<TeamHolder> getAllTeams()
@@ -83,17 +59,17 @@ public class TeamsManagers
 	}
 	
 	/**
-	 * Obtenemos un team a partir del TeamType
-	 * @param t
+	 * Get a team by type
+	 * @param type
 	 * @return
 	 */
-	public TeamHolder getTeam(TeamType t)
+	public TeamHolder getTeam(TeamType type)
 	{
-		return _teams.get(t);
+		return _teams.get(type);
 	}
 	
 	/**
-	 * Obtenemos el team de un personaje
+	 * Get the team of player
 	 * @return
 	 */
 	public TeamHolder getPlayerTeam(PlayerHolder player)
@@ -102,28 +78,7 @@ public class TeamsManagers
 	}
 	
 	/**
-	 * We define a team spawns.
-	 * @param team
-	 * @param locs
-	 */
-	public void setSpawnTeams(List<Location> locs)
-	{
-		if (locs.size() < _countTeams)
-		{
-			LOGGER.warning(AbstractEvent.class.getSimpleName() + ": No se han definido correctamente los spawns para los teams.");
-			LOGGER.warning(AbstractEvent.class.getSimpleName() + ": Cantidad de teams: " + _countTeams);
-			LOGGER.warning(AbstractEvent.class.getSimpleName() + ": Cantidad de locs: " + locs.size());
-			return;
-		}
-		
-		for (int i = 0; i < _countTeams; i++)
-		{
-			setSpawn(TeamType.values()[i + 1], locs.get(i));
-		}
-	}
-	
-	/**
-	 * We define a team spawns.
+	 * Set the team spawn
 	 * @param team
 	 * @param loc
 	 */
@@ -133,7 +88,7 @@ public class TeamsManagers
 	}
 	
 	/**
-	 * We get the spawn of a particular team.
+	 * Get the team spawn
 	 * @param team
 	 * @return Location
 	 */

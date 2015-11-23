@@ -20,18 +20,17 @@ package net.sf.eventengine.events;
 
 import java.util.List;
 
+import net.sf.eventengine.builders.TeamsBuilder;
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.CollectionTarget;
 import net.sf.eventengine.enums.ScoreType;
-import net.sf.eventengine.enums.TeamType;
 import net.sf.eventengine.events.handler.AbstractEvent;
 import net.sf.eventengine.events.holders.PlayerHolder;
 import net.sf.eventengine.util.EventUtil;
 import net.sf.eventengine.util.SortUtils;
 
 import com.l2jserver.gameserver.model.actor.L2Character;
-import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
 
 /**
@@ -39,10 +38,11 @@ import com.l2jserver.gameserver.network.clientpackets.Say2;
  */
 public class AllVsAll extends AbstractEvent
 {
-	// Radius spawn
-	private static final int RADIUS_SPAWN_PLAYER = 100;
 	// Time for resurrection
 	private static final int TIME_RES_PLAYER = 10;
+	
+	// Radius spawn
+	protected int _radius = 100;
 	
 	public AllVsAll()
 	{
@@ -50,10 +50,18 @@ public class AllVsAll extends AbstractEvent
 	}
 	
 	@Override
+	protected TeamsBuilder onCreateTeams()
+	{
+		return new TeamsBuilder().addTeams(1, ConfigData.getInstance().AVA_COORDINATES_TEAM).setPlayers(getPlayerEventManager().getAllEventPlayers());
+	}
+	
+	@Override
 	protected void onEventStart()
 	{
-		createTeam(1);
-		teleportAllPlayers(RADIUS_SPAWN_PLAYER);
+		for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
+		{
+			updateTitle(ph);
+		}
 	}
 	
 	@Override
@@ -107,7 +115,7 @@ public class AllVsAll extends AbstractEvent
 	public void onDeath(PlayerHolder ph)
 	{
 		// We generated a task to revive the player
-		giveResurrectPlayer(ph, TIME_RES_PLAYER, RADIUS_SPAWN_PLAYER);
+		giveResurrectPlayer(ph, TIME_RES_PLAYER, _radius);
 		// Increase the amount of one character deaths.
 		ph.increaseDeaths();
 		// We update the title character
@@ -117,39 +125,10 @@ public class AllVsAll extends AbstractEvent
 	// VARIOUS METHODS ------------------------------------------------------------------
 	
 	/**
-	 * We all players who are at the event and generate the teams
-	 * @param countTeams
-	 */
-	private void createTeam(int countTeams)
-	{
-		// Definimos la cantidad de teams que se requieren
-		getTeamsManager().setCountTeams(countTeams);
-		// We define each team spawns
-		getTeamsManager().setSpawnTeams(ConfigData.getInstance().AVA_COORDINATES_TEAM);
-		
-		// We create the instance and the world
-		InstanceWorld world = getInstanceWorldManager().createNewInstanceWorld();
-		
-		// Obtenemos el team -> WHITE
-		TeamType team = getTeamsManager().getEnabledTeams()[0];
-		
-		for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
-		{
-			// Definimos el team del jugador
-			ph.setTeam(team);
-			// We add the character to the world and then be teleported
-			world.addAllowed(ph.getPcInstance().getObjectId());
-			// Adjust the instance that owns the character
-			ph.setDinamicInstanceId(world.getInstanceId());
-			// Update Title
-			updateTitle(ph);
-		}
-	}
-	
-	/**
 	 * Update the title of a character depending on the number of deaths or kills have
 	 * @param ph
 	 */
+	
 	private void updateTitle(PlayerHolder ph)
 	{
 		// Adjust the title character
@@ -168,7 +147,7 @@ public class AllVsAll extends AbstractEvent
 			return;
 		}
 		
-		List<PlayerHolder> listOrdered = SortUtils.getOrdered(this.getPlayerEventManager().getAllEventPlayers(), ScoreType.KILL).get(0);
+		List<PlayerHolder> listOrdered = SortUtils.getOrdered(getPlayerEventManager().getAllEventPlayers(), ScoreType.KILL).get(0);
 		
 		String winners = "";
 		

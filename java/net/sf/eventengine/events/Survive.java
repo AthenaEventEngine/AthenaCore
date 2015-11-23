@@ -20,10 +20,10 @@ package net.sf.eventengine.events;
 
 import java.util.List;
 
+import net.sf.eventengine.builders.TeamsBuilder;
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.enums.CollectionTarget;
 import net.sf.eventengine.enums.ScoreType;
-import net.sf.eventengine.enums.TeamType;
 import net.sf.eventengine.events.handler.AbstractEvent;
 import net.sf.eventengine.events.holders.PlayerHolder;
 import net.sf.eventengine.events.holders.TeamHolder;
@@ -33,7 +33,6 @@ import net.sf.eventengine.util.SortUtils;
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.enums.Team;
 import com.l2jserver.gameserver.model.actor.L2Character;
-import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
 import com.l2jserver.util.Rnd;
 
@@ -49,7 +48,7 @@ public class Survive extends AbstractEvent
 	// Variable that helps us keep track of the number of dead mobs.
 	private int _auxKillMonsters = 0;
 	// Radius spawn
-	private static final int RADIUS_SPAWN_PLAYER = 200;
+	protected int _radius = 200;
 	
 	// Monsters ids
 	private final List<Integer> MONSTERS_ID = ConfigData.getInstance().SURVIVE_MONSTERS_ID;
@@ -60,10 +59,18 @@ public class Survive extends AbstractEvent
 	}
 	
 	@Override
+	protected TeamsBuilder onCreateTeams()
+	{
+		return new TeamsBuilder().addTeams(ConfigData.getInstance().SURVIVE_COUNT_TEAM, ConfigData.getInstance().SURVIVE_COORDINATES_TEAM).setPlayers(getPlayerEventManager().getAllEventPlayers());
+	}
+	
+	@Override
 	protected void onEventStart()
 	{
-		createTeam(ConfigData.getInstance().SURVIVE_COUNT_TEAM);
-		teleportAllPlayers(RADIUS_SPAWN_PLAYER);
+		for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
+		{
+			updateTitle(ph);
+		}
 	}
 	
 	@Override
@@ -175,48 +182,6 @@ public class Survive extends AbstractEvent
 			}
 		}, 5000L);
 		
-	}
-	
-	/**
-	 * We create the computer that will play the characters.
-	 * @param countTeams
-	 */
-	private void createTeam(int countTeams)
-	{
-		// Definimos la cantidad de teams que se requieren
-		getTeamsManager().setCountTeams(countTeams);
-		// We define the main spawn of equipment
-		getTeamsManager().setSpawnTeams(ConfigData.getInstance().SURVIVE_COORDINATES_TEAM);
-		
-		// We create the instance and the world
-		InstanceWorld world = getInstanceWorldManager().createNewInstanceWorld();
-		
-		int aux = 1;
-		
-		for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
-		{
-			// Obtenemos el team
-			TeamType team = getTeamsManager().getEnabledTeams()[aux - 1];
-			// Definimos el team del jugador
-			ph.setTeam(team);
-			// Ajustamos el titulo del personaje segun su team
-			ph.setNewTitle("[ " + team.name() + " ]");// [ BLUE ], [ RED ] ....
-			// Adjust the instance that owns the character
-			ph.setDinamicInstanceId(world.getInstanceId());
-			// We add the character to the world and then be teleported
-			world.addAllowed(ph.getPcInstance().getObjectId());
-			// Adjust the title character.
-			updateTitle(ph);
-			
-			if (aux % countTeams == 0)
-			{
-				aux = 1;
-			}
-			else
-			{
-				aux++;
-			}
-		}
 	}
 	
 	/**

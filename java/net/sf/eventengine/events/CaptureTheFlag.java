@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import net.sf.eventengine.builders.TeamsBuilder;
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.CollectionTarget;
@@ -38,7 +39,6 @@ import net.sf.eventengine.util.SortUtils;
 import com.l2jserver.gameserver.datatables.ItemTable;
 import com.l2jserver.gameserver.enums.Team;
 import com.l2jserver.gameserver.model.actor.L2Character;
-import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 import com.l2jserver.gameserver.model.itemcontainer.Inventory;
 import com.l2jserver.gameserver.model.items.L2Item;
 import com.l2jserver.gameserver.model.items.L2Weapon;
@@ -60,10 +60,11 @@ public class CaptureTheFlag extends AbstractEvent
 	// Points to conquer the flag
 	private final int POINTS_CONQUER_FLAG = ConfigData.getInstance().CTF_POINTS_CONQUER_FLAG;
 	private final int POINTS_KILL = ConfigData.getInstance().CTF_POINTS_KILL;
-	// Radius spawn
-	private static final int RADIUS_SPAWN_PLAYER = 100;
 	// Time for resurrection
 	private static final int TIME_RES_PLAYER = 10;
+	
+	// Radius spawn
+	protected int _radius = 100;
 	
 	private final Map<NpcHolder, TeamType> _flagSpawn = new ConcurrentHashMap<>();
 	private final Map<NpcHolder, TeamType> _holderSpawn = new ConcurrentHashMap<>();
@@ -75,11 +76,19 @@ public class CaptureTheFlag extends AbstractEvent
 	}
 	
 	@Override
+	protected TeamsBuilder onCreateTeams()
+	{
+		return new TeamsBuilder().addTeams(ConfigData.getInstance().CTF_COUNT_TEAM, ConfigData.getInstance().CTF_COORDINATES_TEAM).setPlayers(getPlayerEventManager().getAllEventPlayers());
+	}
+	
+	@Override
 	protected void onEventStart()
 	{
-		createTeams(ConfigData.getInstance().CTF_COUNT_TEAM);
 		spawnFlagsAndHolders();
-		teleportAllPlayers(RADIUS_SPAWN_PLAYER);
+		for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
+		{
+			updateTitle(ph);
+		}
 	}
 	
 	@Override
@@ -196,7 +205,7 @@ public class CaptureTheFlag extends AbstractEvent
 	@Override
 	public void onDeath(PlayerHolder ph)
 	{
-		giveResurrectPlayer(ph, TIME_RES_PLAYER, RADIUS_SPAWN_PLAYER);
+		giveResurrectPlayer(ph, TIME_RES_PLAYER, _radius);
 	}
 	
 	@Override
@@ -245,46 +254,6 @@ public class CaptureTheFlag extends AbstractEvent
 			
 			_flagSpawn.put(getSpawnManager().addEventNpc(FLAG, x, y, z, 0, Team.NONE, th.getTeamType().name(), false, instanceId), tt);
 			_holderSpawn.put(getSpawnManager().addEventNpc(HOLDER, x - 100, y, z, 0, Team.NONE, th.getTeamType().name(), false, instanceId), tt);
-		}
-	}
-	
-	/**
-	 * We all players who are at the event and generate the teams
-	 * @param countTeams
-	 */
-	private void createTeams(int countTeams)
-	{
-		// Definimos la cantidad de teams que se requieren
-		getTeamsManager().setCountTeams(countTeams);
-		// We define each team spawns
-		getTeamsManager().setSpawnTeams(ConfigData.getInstance().CTF_COORDINATES_TEAM);
-		
-		// We create the instance and the world
-		InstanceWorld world = getInstanceWorldManager().createNewInstanceWorld();
-		
-		int aux = 1;
-		
-		for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
-		{
-			// Obtenemos el team
-			TeamType team = getTeamsManager().getEnabledTeams()[aux - 1];
-			// Definimos el team del jugador
-			ph.setTeam(team);
-			// Ajustamos el titulo del personaje segun su team
-			ph.setNewTitle("[ " + team.name() + " ]");// [ BLUE ], [ RED ] ....
-			// Adjust the instance that owns the character
-			ph.setDinamicInstanceId(world.getInstanceId());
-			// We add the character to the world and then be teleported
-			world.addAllowed(ph.getPcInstance().getObjectId());
-			
-			if (aux % countTeams == 0)
-			{
-				aux = 1;
-			}
-			else
-			{
-				aux++;
-			}
 		}
 	}
 	
@@ -404,5 +373,10 @@ public class CaptureTheFlag extends AbstractEvent
 			unequiFlag(ph);
 		}
 		_flagHasPlayer.clear();
+	}
+	
+	private void updateTitle(PlayerHolder ph)
+	{
+		ph.setNewTitle("[ " + getTeamsManager().getPlayerTeam(ph).getTeamType().name() + " ]");
 	}
 }

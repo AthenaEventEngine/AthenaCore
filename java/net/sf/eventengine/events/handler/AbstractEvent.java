@@ -25,6 +25,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.logging.Logger;
 
 import net.sf.eventengine.EventEngineManager;
+import net.sf.eventengine.builders.TeamsBuilder;
 import net.sf.eventengine.datatables.BuffListData;
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.MessageData;
@@ -56,6 +57,7 @@ import com.l2jserver.gameserver.model.actor.instance.L2CubicInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
+import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 import com.l2jserver.gameserver.model.items.L2Item;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.taskmanager.DecayTaskManager;
@@ -92,6 +94,7 @@ public abstract class AbstractEvent
 		{
 			case START:
 				prepareToStart();
+				initTeleportAllPlayers();
 				onEventStart();
 				break;
 			
@@ -106,6 +109,8 @@ public abstract class AbstractEvent
 				break;
 		}
 	}
+	
+	protected abstract TeamsBuilder onCreateTeams();
 	
 	protected abstract void onEventStart();
 	
@@ -145,6 +150,10 @@ public abstract class AbstractEvent
 	{
 		return _scheduledEventsManager;
 	}
+	
+	// XXX TELEPORT --------------------------------------------------------------
+	
+	protected int _radius = 50;
 	
 	/**
 	 * Init the scheduled events<br>
@@ -321,7 +330,7 @@ public abstract class AbstractEvent
 		}
 		
 		// CHECK FRIENDLY_FIRE ----------------------------------------
-		if (ConfigData.getInstance().FRIENDLY_FIRE)
+		if (!ConfigData.getInstance().FRIENDLY_FIRE)
 		{
 			// If our target is L2Playable type and we do this in the event control.
 			PlayerHolder activeTarget = getPlayerEventManager().getEventPlayer(target);
@@ -388,7 +397,7 @@ public abstract class AbstractEvent
 		}
 		
 		// CHECK FRIENDLY_FIRE ----------------------------------------
-		if (ConfigData.getInstance().FRIENDLY_FIRE)
+		if (!ConfigData.getInstance().FRIENDLY_FIRE)
 		{
 			// If our target is L2Playable type and we do this in the event control.
 			PlayerHolder activeTarget = getPlayerEventManager().getEventPlayer(target);
@@ -489,6 +498,20 @@ public abstract class AbstractEvent
 	
 	// VARIOUS METHODS. -------------------------------------------------------------------------------- //
 	
+	protected void initTeleportAllPlayers()
+	{
+		InstanceWorld world = getInstanceWorldManager().getAllInstancesWorlds().get(0);
+		
+		for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
+		{
+			// Adjust the instance that owns the character
+			ph.setDinamicInstanceId(world.getInstanceId());
+			// We add the character to the world and then be teleported
+			world.addAllowed(ph.getPcInstance().getObjectId());
+			teleportPlayer(ph, _radius);
+		}
+	}
+	
 	/**
 	 * Teleport to players of each team to their respective starting points<br>
 	 */
@@ -507,7 +530,7 @@ public abstract class AbstractEvent
 	 */
 	protected void teleportPlayer(PlayerHolder ph, int radius)
 	{
-		// get the spawn defined at the start of each event
+		// Get the spawn defined at the start of each event
 		Location loc = getTeamsManager().getTeamSpawn(ph.getTeamType());
 		
 		loc.setInstanceId(ph.getDinamicInstanceId());
@@ -519,16 +542,19 @@ public abstract class AbstractEvent
 	}
 	
 	/**
-	 * We prepare players to start the event<br>
+	 * Prepare players, teams and the instance to start<br>
 	 * <ul>
 	 * <b>Actions: </b>
 	 * </ul>
-	 * <li>Cancel any attack in progress</li><br>
-	 * <li>Cancel any skill in progress</li><br>
-	 * <li>We paralyzed the player</li><br>
+	 * <li>Cancel any player attack in progress</li><br>
+	 * <li>Cancel any player skill in progress</li><br>
+	 * <li>Paralyzed the player</li><br>
 	 * <li>Cancel all character effects</li><br>
 	 * <li>Cancel summon pet</li><br>
 	 * <li>Cancel all character cubics</li><br>
+	 * <li>Save the return player location</li><br>
+	 * <li>Create the teams</li><br>
+	 * <li>Create the instance world</li><br>
 	 */
 	public void prepareToStart()
 	{
@@ -540,6 +566,9 @@ public abstract class AbstractEvent
 			Location returnLoc = ph.getPcInstance().getLocation();
 			ph.setReturnLoc(new Location(returnLoc.getX(), returnLoc.getY(), returnLoc.getZ()));
 		}
+		
+		_teamsManagers.createTeams(onCreateTeams());
+		_instanceWorldManager.createNewInstanceWorld();
 	}
 	
 	/**
@@ -582,6 +611,7 @@ public abstract class AbstractEvent
 			revivePlayer(ph);
 		}
 		getScheduledEventsManager().cancelTaskControlTime();
+		getInstanceWorldManager().destroyWorldInstances();
 	}
 	
 	/**
