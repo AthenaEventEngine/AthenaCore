@@ -42,11 +42,6 @@ public class SpawnManager
 	// List of NPC in the event.
 	private final Map<Integer, NpcHolder> _eventNpc = new ConcurrentHashMap<>();
 	
-	public SpawnManager()
-	{
-		//
-	}
-	
 	/**
 	 * We generate a new spawn in our event and added to the list.
 	 */
@@ -174,7 +169,7 @@ public class SpawnManager
 	 */
 	public boolean isNpcInEvent(L2Npc npc)
 	{
-		return _eventNpc.containsValue(npc.getObjectId());
+		return _eventNpc.containsKey(npc.getObjectId());
 	}
 	
 	public NpcHolder getEventNpc(L2Npc npc)

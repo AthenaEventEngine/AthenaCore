@@ -20,11 +20,11 @@ package net.sf.eventengine.events;
 
 import java.util.List;
 
+import net.sf.eventengine.builders.TeamsBuilder;
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.CollectionTarget;
 import net.sf.eventengine.enums.ScoreType;
-import net.sf.eventengine.enums.TeamType;
 import net.sf.eventengine.events.handler.AbstractEvent;
 import net.sf.eventengine.events.holders.PlayerHolder;
 import net.sf.eventengine.events.holders.TeamHolder;
@@ -32,7 +32,6 @@ import net.sf.eventengine.util.EventUtil;
 import net.sf.eventengine.util.SortUtils;
 
 import com.l2jserver.gameserver.model.actor.L2Character;
-import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
 
 /**
@@ -40,10 +39,11 @@ import com.l2jserver.gameserver.network.clientpackets.Say2;
  */
 public class TeamVsTeam extends AbstractEvent
 {
-	// Radius spawn
-	private static final int RADIUS_SPAWN_PLAYER = 100;
 	// Time for resurrection
 	private static final int TIME_RES_PLAYER = 10;
+	
+	// Radius spawn
+	protected int _radius = 100;
 	
 	public TeamVsTeam()
 	{
@@ -51,10 +51,15 @@ public class TeamVsTeam extends AbstractEvent
 	}
 	
 	@Override
+	protected TeamsBuilder onCreateTeams()
+	{
+		return new TeamsBuilder().addTeams(ConfigData.getInstance().TVT_COUNT_TEAM, ConfigData.getInstance().TVT_COORDINATES_TEAM).setPlayers(getPlayerEventManager().getAllEventPlayers());
+	}
+	
+	@Override
 	protected void onEventStart()
 	{
-		createTeams(ConfigData.getInstance().TVT_COUNT_TEAM);
-		teleportAllPlayers(RADIUS_SPAWN_PLAYER);
+		// Nothing
 	}
 	
 	@Override
@@ -106,7 +111,7 @@ public class TeamVsTeam extends AbstractEvent
 	@Override
 	public void onDeath(PlayerHolder ph)
 	{
-		giveResurrectPlayer(ph, TIME_RES_PLAYER, RADIUS_SPAWN_PLAYER);
+		giveResurrectPlayer(ph, TIME_RES_PLAYER, _radius);
 		// Incremented by one the number of deaths Character
 		ph.increaseDeaths();
 	}
@@ -114,47 +119,7 @@ public class TeamVsTeam extends AbstractEvent
 	// VARIOUS METHODS -------------------------------------------------
 	
 	/**
-	 * We all players who are at the event and generate the teams
-	 * @param int countTeams
-	 */
-	private void createTeams(int countTeams)
-	{
-		// Definimos la cantidad de teams que se requieren
-		getTeamsManager().setCountTeams(countTeams);
-		// We define each team spawns
-		getTeamsManager().setSpawnTeams(ConfigData.getInstance().TVT_COORDINATES_TEAM);
-		// We create the instance and the world
-		InstanceWorld world = getInstanceWorldManager().createNewInstanceWorld();
-		
-		int aux = 1;
-		
-		for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
-		{
-			// Obtenemos el team
-			TeamType team = getTeamsManager().getEnabledTeams()[aux - 1];
-			// Definimos el team del jugador
-			ph.setTeam(team);
-			// Ajustamos el titulo del personaje segun su team
-			ph.setNewTitle("[ " + team.toString() + " ]");// [ BLUE ], [ RED ] ....
-			
-			// We add the character to the world and then be teleported
-			world.addAllowed(ph.getPcInstance().getObjectId());
-			// Adjust the instance which will own the character
-			ph.setDinamicInstanceId(world.getInstanceId());
-			
-			if (aux % countTeams == 0)
-			{
-				aux = 1;
-			}
-			else
-			{
-				aux++;
-			}
-		}
-	}
-	
-	/**
-	 * Entregamos los rewards
+	 * Give the rewards
 	 */
 	private void giveRewardsTeams()
 	{

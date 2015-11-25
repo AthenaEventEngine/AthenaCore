@@ -22,12 +22,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import net.sf.eventengine.EventEngineManager;
+import net.sf.eventengine.EventEngineWorld;
+
 import com.l2jserver.gameserver.instancemanager.InstanceManager;
 import com.l2jserver.gameserver.model.actor.instance.L2DoorInstance;
 import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
-
-import net.sf.eventengine.EventEngineManager;
-import net.sf.eventengine.EventEngineWorld;
 
 /**
  * @author fissban
@@ -93,5 +93,13 @@ public class InstanceWorldManager
 	public List<InstanceWorld> getAllInstancesWorlds()
 	{
 		return _instanceWorlds;
+	}
+	
+	public void destroyWorldInstances()
+	{
+		for (InstanceWorld instance : _instanceWorlds)
+		{
+			InstanceManager.getInstance().destroyInstance(instance.getInstanceId());
+		}
 	}
 }
