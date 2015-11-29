@@ -1,0 +1,35 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+defaultTasks('zip')
+
+repositories {
+    mavenCentral()
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    compile project(':L2J_Server')
+}
+
+jar {
+	archiveName = 'L2J_EventEngine.jar'
+}
+
+task zip(type: Zip) {
+	def fileName = 'L2J_EventEngine_' + new Date().format("yyyy-MM-dd")
+	baseName = fileName
+	from('dist')
+	into('libs') {
+		from(jar)
+	}
+	println 'Build in build/distributions/' + fileName + '.zip'
+}
+
+build.finalizedBy(zip)
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '2.9'
+}
