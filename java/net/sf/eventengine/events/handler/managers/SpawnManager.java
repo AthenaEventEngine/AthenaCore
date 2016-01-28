@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2015 L2J EventEngine
+ * Copyright (C) 2015-2016 L2J EventEngine
  *
  * This file is part of L2J EventEngine.
  *
