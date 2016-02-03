@@ -1,4 +1,4 @@
-# L2J_EventEngine Project Gitter:
+# L2J-Event Engine Project Gitter: [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/u3games/L2J_EventEngine?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 L2J-EventEngine is a professional Lineage II Java Event Engine, fully written in Java.<br>
 Authors: Fissban, Zephyr and u3games.
