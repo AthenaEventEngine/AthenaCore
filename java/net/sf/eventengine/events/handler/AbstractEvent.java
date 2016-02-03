@@ -24,6 +24,22 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledFuture;
 import java.util.logging.Logger;
 
+import com.l2jserver.gameserver.ThreadPoolManager;
+import com.l2jserver.gameserver.instancemanager.InstanceManager;
+import com.l2jserver.gameserver.model.Location;
+import com.l2jserver.gameserver.model.actor.L2Character;
+import com.l2jserver.gameserver.model.actor.L2Npc;
+import com.l2jserver.gameserver.model.actor.L2Playable;
+import com.l2jserver.gameserver.model.actor.instance.L2CubicInstance;
+import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.holders.ItemHolder;
+import com.l2jserver.gameserver.model.holders.SkillHolder;
+import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
+import com.l2jserver.gameserver.model.items.L2Item;
+import com.l2jserver.gameserver.model.skills.Skill;
+import com.l2jserver.gameserver.taskmanager.DecayTaskManager;
+import com.l2jserver.util.Rnd;
+
 import net.sf.eventengine.EventEngineManager;
 import net.sf.eventengine.builders.TeamsBuilder;
 import net.sf.eventengine.datatables.BuffListData;
@@ -46,22 +62,6 @@ import net.sf.eventengine.events.schedules.ChangeToEndEvent;
 import net.sf.eventengine.events.schedules.ChangeToFightEvent;
 import net.sf.eventengine.events.schedules.ChangeToStartEvent;
 import net.sf.eventengine.util.EventUtil;
-
-import com.l2jserver.gameserver.ThreadPoolManager;
-import com.l2jserver.gameserver.instancemanager.InstanceManager;
-import com.l2jserver.gameserver.model.Location;
-import com.l2jserver.gameserver.model.actor.L2Character;
-import com.l2jserver.gameserver.model.actor.L2Npc;
-import com.l2jserver.gameserver.model.actor.L2Playable;
-import com.l2jserver.gameserver.model.actor.instance.L2CubicInstance;
-import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
-import com.l2jserver.gameserver.model.holders.ItemHolder;
-import com.l2jserver.gameserver.model.holders.SkillHolder;
-import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
-import com.l2jserver.gameserver.model.items.L2Item;
-import com.l2jserver.gameserver.model.skills.Skill;
-import com.l2jserver.gameserver.taskmanager.DecayTaskManager;
-import com.l2jserver.util.Rnd;
 
 /**
  * @author fissban
@@ -97,12 +97,12 @@ public abstract class AbstractEvent
 				initTeleportAllPlayers();
 				onEventStart();
 				break;
-			
+				
 			case FIGHT:
 				prepareToFight();
 				onEventFight();
 				break;
-			
+				
 			case END:
 				onEventEnd();
 				prepareToEnd();
@@ -329,26 +329,23 @@ public abstract class AbstractEvent
 			getAntiAfkManager().excludePlayer(activePlayer);
 		}
 		
-		// CHECK FRIENDLY_FIRE ----------------------------------------
+		// Check Friendly Fire
 		if (!ConfigData.getInstance().FRIENDLY_FIRE)
 		{
 			// If our target is L2Playable type and we do this in the event control.
 			PlayerHolder activeTarget = getPlayerEventManager().getEventPlayer(target);
-			
 			if (activeTarget != null)
 			{
-				// AllVsAll style events do not have a defined team players.
-				if ((activePlayer.getTeamType() == TeamType.WHITE) || (activeTarget.getTeamType() == TeamType.WHITE))
+				if (activePlayer.getTeamType() == activeTarget.getTeamType())
 				{
-					// Nothing
-				}
-				else if (activePlayer.getTeamType() == activeTarget.getTeamType())
-				{
-					return true;
+					if ((activePlayer.getTeamType() != TeamType.WHITE) || (activeTarget.getTeamType() != TeamType.WHITE))
+					{
+						return true;
+					}
 				}
 			}
 		}
-		// CHECK FRIENDLY_FIRE ----------------------------------------
+		
 		return onAttack(activePlayer, target);
 	}
 	
@@ -396,26 +393,22 @@ public abstract class AbstractEvent
 			getAntiAfkManager().excludePlayer(activePlayer);
 		}
 		
-		// CHECK FRIENDLY_FIRE ----------------------------------------
+		// Check Friendly Fire
 		if (!ConfigData.getInstance().FRIENDLY_FIRE)
 		{
 			// If our target is L2Playable type and we do this in the event control.
 			PlayerHolder activeTarget = getPlayerEventManager().getEventPlayer(target);
-			
-			if ((activeTarget != null) && skill.isDamage())
+			if ((activeTarget != null) && (skill.isDamage() || skill.isDebuff()))
 			{
-				// AllVsAll style events do not have a defined team players.
-				if ((activePlayer.getTeamType() == TeamType.WHITE) || (activeTarget.getTeamType() == TeamType.WHITE))
+				if (activePlayer.getTeamType() == activeTarget.getTeamType())
 				{
-					// Nothing
-				}
-				else if (activePlayer.getTeamType() == activeTarget.getTeamType())
-				{
-					return true;
+					if ((activePlayer.getTeamType() != TeamType.WHITE) || (activeTarget.getTeamType() != TeamType.WHITE))
+					{
+						return true;
+					}
 				}
 			}
 		}
-		// CHECK FRIENDLY_FIRE ----------------------------------------
 		
 		return onUseSkill(activePlayer, target, skill);
 	}
@@ -641,7 +634,7 @@ public abstract class AbstractEvent
 				giveBuffPlayer(player.getPcInstance());
 				teleportPlayer(player, radiusTeleport);
 				
-			}, time * 1000));
+			} , time * 1000));
 		}
 		catch (Exception e)
 		{
@@ -703,7 +696,9 @@ public abstract class AbstractEvent
 	 * <ul>
 	 * <b>Actions: </b>
 	 * </ul>
-	 * <li>Cancel target</li> <li>Cancel cast</li> <li>Cancel attack</li>
+	 * <li>Cancel target</li>
+	 * <li>Cancel cast</li>
+	 * <li>Cancel attack</li>
 	 * @param ph
 	 */
 	public void cancelAllPlayerActions(PlayerHolder ph)
@@ -744,7 +739,9 @@ public abstract class AbstractEvent
 	 * <ul>
 	 * <b>Actions: </b>
 	 * </ul>
-	 * <li>Recover original title</li> <li>Recover original color title</li> <li>Remove from instance and back 0</li>
+	 * <li>Recover original title</li>
+	 * <li>Recover original color title</li>
+	 * <li>Remove from instance and back 0</li>
 	 * @param ph
 	 * @param forceRemove
 	 * @param logout
