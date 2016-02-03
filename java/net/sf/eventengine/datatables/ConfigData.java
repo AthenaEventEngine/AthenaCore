@@ -22,10 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import net.sf.eventengine.util.EventPropertiesParser;
-
 import com.l2jserver.gameserver.model.Location;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
+
+import net.sf.eventengine.util.EventPropertiesParser;
 
 /**
  * Load the config from "properties"
@@ -61,6 +61,8 @@ public class ConfigData
 	public static int MAX_BUFF_COUNT;
 	public boolean ANTI_AFK_ENABLED;
 	public int AFK_CHECK_TIME;
+	public static boolean DUAL_BOX_PROTECTION_ENABLED;
+	public static int DUAL_BOX_CHECK_MAX_PARTICIPANTS_PER_PC;
 	
 	// -------------------------------------------------------------------------------
 	// Configs Capture The Flag
@@ -168,6 +170,8 @@ public class ConfigData
 		MAX_BUFF_COUNT = settings.getInt("EventMaxBuffCount", 5);
 		ANTI_AFK_ENABLED = settings.getBoolean("EventAntiAfkEnabled", false);
 		AFK_CHECK_TIME = settings.getInt("EventAntiAfkCheckTime", 30);
+		DUAL_BOX_PROTECTION_ENABLED = settings.getBoolean("EventDualBoxProtectionEnabled", false);
+		DUAL_BOX_CHECK_MAX_PARTICIPANTS_PER_PC = settings.getInt("EventDualboxCheckMaxParticipantsPerPc", 0);
 		
 		// ------------------------------------------------------------------------------------- //
 		// CaptureTheFlag.properties

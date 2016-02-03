@@ -50,6 +50,7 @@
 	<message id="unregistering_unregistered" text="You have been unregistered." />
 	<message id="unregistering_notRegistered" text="You are not registered!" />
 	<message id="registering_maxPlayers" text="Sorry, since the maximum amount of players registered." />
+	<message id="registering_maxPlayersPerPc" text="Sorry, the maximum number of actions is exceeded by PC." />
 	
 	<!-- Events Info -->
 	<message id="event_allvsall_name" text="All vs All" />

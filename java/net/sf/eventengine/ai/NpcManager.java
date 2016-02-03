@@ -443,6 +443,12 @@ public class NpcManager extends Quest
 				return false;
 			}
 		}
+		// Check Dual Box
+		else if (EventEngineManager.getInstance().checkMultiBox(player))
+		{
+			player.sendMessage(MessageData.getInstance().getMsgByLang(player, "registering_maxPlayersPerPc", true));
+			return false;
+		}
 		
 		return true;
 	}

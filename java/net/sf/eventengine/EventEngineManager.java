@@ -27,17 +27,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
-import net.sf.eventengine.adapter.EventEngineAdapter;
-import net.sf.eventengine.ai.NpcManager;
-import net.sf.eventengine.datatables.BuffListData;
-import net.sf.eventengine.datatables.ConfigData;
-import net.sf.eventengine.datatables.EventData;
-import net.sf.eventengine.datatables.MessageData;
-import net.sf.eventengine.enums.EventEngineState;
-import net.sf.eventengine.events.handler.AbstractEvent;
-import net.sf.eventengine.events.holders.PlayerHolder;
-import net.sf.eventengine.task.EventEngineTask;
-
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.model.Location;
 import com.l2jserver.gameserver.model.actor.L2Character;
@@ -49,6 +38,17 @@ import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
 import com.l2jserver.gameserver.network.serverpackets.CreatureSay;
 import com.l2jserver.util.Rnd;
+
+import net.sf.eventengine.adapter.EventEngineAdapter;
+import net.sf.eventengine.ai.NpcManager;
+import net.sf.eventengine.datatables.BuffListData;
+import net.sf.eventengine.datatables.ConfigData;
+import net.sf.eventengine.datatables.EventData;
+import net.sf.eventengine.datatables.MessageData;
+import net.sf.eventengine.enums.EventEngineState;
+import net.sf.eventengine.events.handler.AbstractEvent;
+import net.sf.eventengine.events.holders.PlayerHolder;
+import net.sf.eventengine.task.EventEngineTask;
 
 /**
  * @author fissban
@@ -100,6 +100,129 @@ public class EventEngineManager
 			LOGGER.warning(EventEngineManager.class.getSimpleName() + ": -> load() " + e);
 			e.printStackTrace();
 		}
+	}
+	
+	// XXX TraceManager ------------------------------------------------------------------------------
+	
+	// Control Count for IP/TRACE
+	private Map<String, Integer> _addressManager = new ConcurrentHashMap<>();
+	
+	/**
+	 * Verificamos la cantidad de cuentas por pc.<br>
+	 * <b> Obs: </b><br>
+	 * Si en los configs (MAX_PARTICIPANT_PER_PC) se estipulo en 0 no se haran verificaciones de cuentas por pc<br>
+	 * En caso de no superar el maximo, agregamos/incrementamos a _addressManager en 1 dependiendo del IP/TRACE del jugador
+	 * @param activeChar
+	 * @return
+	 */
+	public boolean checkMultiBox(L2PcInstance activeChar)
+	{
+		if (ConfigData.DUAL_BOX_PROTECTION_ENABLED)
+		{
+			// Check Limits Participants
+			if (ConfigData.DUAL_BOX_CHECK_MAX_PARTICIPANTS_PER_PC == 0)
+			{
+				return false;
+			}
+			
+			// Check Participants Counts
+			String address = getAddress(activeChar);
+			if (getAddressCount(address) >= ConfigData.DUAL_BOX_CHECK_MAX_PARTICIPANTS_PER_PC)
+			{
+				return true;
+			}
+			else
+			{
+				addAddress(address);
+			}
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Obtenemos la cantidad de player registrados en un mismo IP/TRACE
+	 * @param address
+	 * @return
+	 */
+	private int getAddressCount(String address)
+	{
+		if (_addressManager.containsKey(address))
+		{
+			return _addressManager.get(address);
+		}
+		
+		return 0;
+	}
+	
+	/**
+	 * Incrementamos en 1 la cantidad de usuarios registrados en un mismo IP/TRACE
+	 * @param address
+	 */
+	private void addAddress(String address)
+	{
+		if (!_addressManager.containsKey(address))
+		{
+			_addressManager.put(address, 1);
+		}
+		else
+		{
+			int boxCount = _addressManager.get(address);
+			_addressManager.put(address, boxCount + 1);
+		}
+	}
+	
+	/**
+	 * Disminuimos en 1 la cantidad de usuarios registrados en un mismo IP/TRACE
+	 * @param L2PcInstance activeChar
+	 */
+	private void removeAddress(L2PcInstance activeChar)
+	{
+		String address = getAddress(activeChar);
+		if (_addressManager.containsKey(address))
+		{
+			int boxCount = _addressManager.get(address);
+			if (boxCount > 0)
+			{
+				_addressManager.put(address, boxCount - 1);
+			}
+		}
+	}
+	
+	/**
+	 * Limpiamos todos los IP/TRACE de los usuarios registrados.
+	 */
+	private void clearAddressManager()
+	{
+		_addressManager.clear();
+	}
+	
+	/**
+	 * Obtenemos el trace de un personaje con un formato especifico
+	 * @param activeChar
+	 * @return
+	 */
+	private String getAddress(L2PcInstance activeChar)
+	{
+		StringBuilder ip = new StringBuilder();
+		// agregamos el ip
+		ip.append(activeChar.getClient().getConnection().getInetAddress().getHostAddress());
+		ip.append("-");
+		// agregamos el trace
+		int[][] trace = activeChar.getClient().getTrace();
+		for (int i = 0; i < 5; i++)
+		{
+			ip.append(trace[i][0]);
+			ip.append(".");
+			ip.append(trace[i][1]);
+			ip.append(".");
+			ip.append(trace[i][2]);
+			ip.append(".");
+			ip.append(trace[i][3]);
+			ip.append("|");
+		}
+		
+		return ip.toString();
 	}
 	
 	// XXX EventEngineTask ------------------------------------------------------------------------------------
@@ -281,6 +404,12 @@ public class EventEngineManager
 		{
 			if (_state == EventEngineState.REGISTER || _state == EventEngineState.VOTING)
 			{
+				// Clean Address
+				if (ConfigData.DUAL_BOX_PROTECTION_ENABLED)
+				{
+					removeAddress(player);
+				}
+				
 				removeVote(player);
 				unRegisterPlayer(player);
 				return;
@@ -389,6 +518,12 @@ public class EventEngineManager
 	 */
 	public void removeVote(L2PcInstance player)
 	{
+		// Clean Address
+		if (ConfigData.DUAL_BOX_PROTECTION_ENABLED)
+		{
+			removeAddress(player);
+		}
+		
 		// Lo borra de la lista de jugadores que votaron
 		if (_playersAlreadyVoted.remove(player.getObjectId()))
 		{
@@ -546,7 +681,8 @@ public class EventEngineManager
 	
 	/**
 	 * Obtenemos si la cantidad de jugadores registrados es 0
-	 * @return <li>True - > no hay jugadores registrados.</li><br>
+	 * @return
+	 * 		<li>True - > no hay jugadores registrados.</li><br>
 	 *         <li>False - > hay al menos un jugador registrado.</li><br>
 	 */
 	public boolean isEmptyRegisteredPlayers()
@@ -556,7 +692,8 @@ public class EventEngineManager
 	
 	/**
 	 * Obtenemos si el jugador se encuentra registrado
-	 * @return <li>True - > Está registrado.</li><br>
+	 * @return
+	 * 		<li>True - > Está registrado.</li><br>
 	 *         <li>False - > No está registrado.</li><br>
 	 */
 	public boolean isRegistered(L2PcInstance player)
@@ -567,22 +704,30 @@ public class EventEngineManager
 	/**
 	 * Agregamos un player al registro
 	 * @param player
-	 * @return <li>True - > si el registro es exitoso.</li><br>
+	 * @return
+	 * 		<li>True - > si el registro es exitoso.</li><br>
 	 *         <li>False - > si el player ya estaba registrado.</li><br>
 	 */
-	public boolean registerPlayer(L2PcInstance player)
+	public void registerPlayer(L2PcInstance player)
 	{
-		return _eventRegisterdPlayers.add(player);
+		_eventRegisterdPlayers.add(player);
 	}
 	
 	/**
 	 * Eliminamos un player del registro
 	 * @param player
-	 * @return <li>True - > si el player estaba registrado.</li><br>
+	 * @return
+	 * 		<li>True - > si el player estaba registrado.</li><br>
 	 *         <li>False - > si el player no estaba registrado.</li><br>
 	 */
 	public boolean unRegisterPlayer(L2PcInstance player)
 	{
+		// Clean Address
+		if (ConfigData.DUAL_BOX_PROTECTION_ENABLED)
+		{
+			removeAddress(player);
+		}
+		
 		return _eventRegisterdPlayers.remove(player);
 	}
 	
@@ -620,6 +765,12 @@ public class EventEngineManager
 	 */
 	public void cleanUp()
 	{
+		// Clean Address
+		if (ConfigData.DUAL_BOX_PROTECTION_ENABLED)
+		{
+			clearAddressManager();
+		}
+		
 		setCurrentEvent(null);
 		clearVotes();
 		clearRegisteredPlayers();
