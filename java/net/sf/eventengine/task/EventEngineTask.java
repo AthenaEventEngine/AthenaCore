@@ -18,6 +18,8 @@
  */
 package net.sf.eventengine.task;
 
+import com.l2jserver.gameserver.network.clientpackets.Say2;
+
 import net.sf.eventengine.EventEngineManager;
 import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.EventData;
@@ -25,8 +27,6 @@ import net.sf.eventengine.enums.CollectionTarget;
 import net.sf.eventengine.enums.EventEngineState;
 import net.sf.eventengine.events.handler.AbstractEvent;
 import net.sf.eventengine.util.EventUtil;
-
-import com.l2jserver.gameserver.network.clientpackets.Say2;
 
 /**
  * It handles the different state's behavior of EventEngineManager
@@ -83,6 +83,12 @@ public class EventEngineTask implements Runnable
 					EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "event_register_started", "%event%", nextEvent.getSimpleName(), _type);
 					
 					EventEngineManager.getInstance().setEventEngineState(EventEngineState.REGISTER);
+					
+					// Dual Box Protection: Clear Address
+					if (ConfigData.DUAL_BOX_PROTECTION_ENABLED)
+					{
+						EventEngineManager.clearAddressManager();
+					}
 				}
 				break;
 			}

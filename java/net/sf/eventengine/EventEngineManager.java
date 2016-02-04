@@ -105,7 +105,7 @@ public class EventEngineManager
 	// XXX TraceManager ------------------------------------------------------------------------------
 	
 	// Control Count for IP/TRACE
-	private Map<String, Integer> _addressManager = new ConcurrentHashMap<>();
+	private static Map<String, Integer> _addressManager = new ConcurrentHashMap<>();
 	
 	/**
 	 * Verificamos la cantidad de cuentas por pc.<br>
@@ -182,9 +182,13 @@ public class EventEngineManager
 		if (_addressManager.containsKey(address))
 		{
 			int boxCount = _addressManager.get(address);
-			if (boxCount > 0)
+			if (boxCount > 1)
 			{
 				_addressManager.put(address, boxCount - 1);
+			}
+			else
+			{
+				_addressManager.remove(address);
 			}
 		}
 	}
@@ -192,7 +196,7 @@ public class EventEngineManager
 	/**
 	 * Limpiamos todos los IP/TRACE de los usuarios registrados.
 	 */
-	private void clearAddressManager()
+	public static void clearAddressManager()
 	{
 		_addressManager.clear();
 	}
@@ -395,7 +399,7 @@ public class EventEngineManager
 	}
 	
 	/**
-	 * Listener when the player logouts
+	 * Listener when the player logout
 	 * @param player
 	 */
 	public void listenerOnLogout(L2PcInstance player)
@@ -404,10 +408,14 @@ public class EventEngineManager
 		{
 			if (_state == EventEngineState.REGISTER || _state == EventEngineState.VOTING)
 			{
-				// Clean Address
+				// Dual Box Protection: Clear Address
 				if (ConfigData.DUAL_BOX_PROTECTION_ENABLED)
 				{
-					removeAddress(player);
+					String address = getAddress(player);
+					if (_addressManager.containsKey(address))
+					{
+						_addressManager.remove(address);
+					}
 				}
 				
 				removeVote(player);
@@ -518,7 +526,7 @@ public class EventEngineManager
 	 */
 	public void removeVote(L2PcInstance player)
 	{
-		// Clean Address
+		// Dual Box Protection: Clear Address
 		if (ConfigData.DUAL_BOX_PROTECTION_ENABLED)
 		{
 			removeAddress(player);
@@ -722,7 +730,7 @@ public class EventEngineManager
 	 */
 	public boolean unRegisterPlayer(L2PcInstance player)
 	{
-		// Clean Address
+		// Dual Box Protection: Clear Address
 		if (ConfigData.DUAL_BOX_PROTECTION_ENABLED)
 		{
 			removeAddress(player);
@@ -765,7 +773,7 @@ public class EventEngineManager
 	 */
 	public void cleanUp()
 	{
-		// Clean Address
+		// Dual Box Protection: Clear Address
 		if (ConfigData.DUAL_BOX_PROTECTION_ENABLED)
 		{
 			clearAddressManager();
