@@ -26,10 +26,13 @@ import java.util.logging.Logger;
 
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.instancemanager.InstanceManager;
+import com.l2jserver.gameserver.model.L2Party;
+import com.l2jserver.gameserver.model.L2Party.messageType;
 import com.l2jserver.gameserver.model.Location;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.L2Playable;
+import com.l2jserver.gameserver.model.actor.L2Summon;
 import com.l2jserver.gameserver.model.actor.instance.L2CubicInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
@@ -37,6 +40,7 @@ import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 import com.l2jserver.gameserver.model.items.L2Item;
 import com.l2jserver.gameserver.model.skills.Skill;
+import com.l2jserver.gameserver.network.serverpackets.SkillCoolTime;
 import com.l2jserver.gameserver.taskmanager.DecayTaskManager;
 import com.l2jserver.util.Rnd;
 
@@ -68,7 +72,11 @@ import net.sf.eventengine.util.EventUtil;
  */
 public abstract class AbstractEvent
 {
+	// Logger
 	private static final Logger LOGGER = Logger.getLogger(AbstractEvent.class.getName());
+	
+	// Max delay time for reuse skill
+	private static final int MAX_DELAY_TIME_SKILL = 900000;
 	
 	public AbstractEvent(String instanceFile)
 	{
@@ -720,19 +728,63 @@ public abstract class AbstractEvent
 	 */
 	public void cancelAllEffects(PlayerHolder ph)
 	{
+		// Stop all effects
 		ph.getPcInstance().stopAllEffects();
 		
-		if (ph.getPcInstance().getSummon() != null)
+		// Check Transform
+		if (ph.getPcInstance().isTransformed())
 		{
-			ph.getPcInstance().getSummon().stopAllEffects();
-			ph.getPcInstance().getSummon().unSummon(ph.getPcInstance());
+			ph.getPcInstance().untransform();
+		}
+		
+		// Check Summon's and pets
+		if (ph.getPcInstance().hasSummon())
+		{
+			final L2Summon summon = ph.getPcInstance().getSummon();
+			summon.stopAllEffectsExceptThoseThatLastThroughDeath();
+			summon.abortAttack();
+			summon.abortCast();
+			
+			// Remove
+			summon.unSummon(ph.getPcInstance());
 		}
 		
 		// Cancel all character cubics
 		for (L2CubicInstance cubic : ph.getPcInstance().getCubics().values())
 		{
+			cubic.stopAction();
 			cubic.cancelDisappear();
 		}
+		
+		// Stop any cubic that has been given by other player
+		ph.getPcInstance().stopCubicsByOthers();
+		
+		// Remove player from his party
+		final L2Party party = ph.getPcInstance().getParty();
+		if (party != null)
+		{
+			party.removePartyMember(ph.getPcInstance(), messageType.Expelled);
+		}
+		
+		// Remove Agathion
+		if (ph.getPcInstance().getAgathionId() > 0)
+		{
+			ph.getPcInstance().setAgathionId(0);
+			ph.getPcInstance().broadcastUserInfo();
+		}
+		
+		// Remove reuse delay skills
+		for (Skill skill : ph.getPcInstance().getAllSkills())
+		{
+			if (skill.getReuseDelay() <= MAX_DELAY_TIME_SKILL)
+			{
+				ph.getPcInstance().enableSkill(skill);
+			}
+		}
+		
+		// Check Skills
+		ph.getPcInstance().sendSkillList();
+		ph.getPcInstance().sendPacket(new SkillCoolTime(ph.getPcInstance()));
 	}
 	
 	/**
