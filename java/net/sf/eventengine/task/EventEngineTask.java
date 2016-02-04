@@ -26,6 +26,7 @@ import net.sf.eventengine.datatables.EventData;
 import net.sf.eventengine.enums.CollectionTarget;
 import net.sf.eventengine.enums.EventEngineState;
 import net.sf.eventengine.events.handler.AbstractEvent;
+import net.sf.eventengine.events.handler.managers.DualBoxManager;
 import net.sf.eventengine.util.EventUtil;
 
 /**
@@ -87,7 +88,7 @@ public class EventEngineTask implements Runnable
 					// Dual Box Protection: Clear Address
 					if (ConfigData.DUAL_BOX_PROTECTION_ENABLED)
 					{
-						EventEngineManager.clearAddressManager();
+						DualBoxManager.getInstance().clearAddressManager();
 					}
 				}
 				break;

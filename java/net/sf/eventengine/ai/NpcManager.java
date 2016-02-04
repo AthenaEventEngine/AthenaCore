@@ -36,6 +36,7 @@ import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.EventData;
 import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.events.handler.AbstractEvent;
+import net.sf.eventengine.events.handler.managers.DualBoxManager;
 
 /**
  * @author swarlog, Zephyr, fissban
@@ -444,7 +445,7 @@ public class NpcManager extends Quest
 			}
 		}
 		// Check Dual Box
-		else if (EventEngineManager.getInstance().checkMultiBox(player))
+		else if (DualBoxManager.getInstance().checkMultiBox(player))
 		{
 			player.sendMessage(MessageData.getInstance().getMsgByLang(player, "registering_maxPlayersPerPc", true));
 			return false;

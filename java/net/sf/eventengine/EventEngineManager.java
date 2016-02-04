@@ -47,6 +47,7 @@ import net.sf.eventengine.datatables.EventData;
 import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.EventEngineState;
 import net.sf.eventengine.events.handler.AbstractEvent;
+import net.sf.eventengine.events.handler.managers.DualBoxManager;
 import net.sf.eventengine.events.holders.PlayerHolder;
 import net.sf.eventengine.task.EventEngineTask;
 
@@ -102,134 +103,6 @@ public class EventEngineManager
 		}
 	}
 	
-	// XXX TraceManager ------------------------------------------------------------------------------
-	
-	// Control Count for IP/TRACE
-	private static Map<String, Integer> _addressManager = new ConcurrentHashMap<>();
-	
-	/**
-	 * Verificamos la cantidad de cuentas por pc.<br>
-	 * <b> Obs: </b><br>
-	 * Si en los configs (MAX_PARTICIPANT_PER_PC) se estipulo en 0 no se haran verificaciones de cuentas por pc<br>
-	 * En caso de no superar el maximo, agregamos/incrementamos a _addressManager en 1 dependiendo del IP/TRACE del jugador
-	 * @param activeChar
-	 * @return
-	 */
-	public boolean checkMultiBox(L2PcInstance activeChar)
-	{
-		if (ConfigData.DUAL_BOX_PROTECTION_ENABLED)
-		{
-			// Check Limits Participants
-			if (ConfigData.DUAL_BOX_CHECK_MAX_PARTICIPANTS_PER_PC == 0)
-			{
-				return false;
-			}
-			
-			// Check Participants Counts
-			String address = getAddress(activeChar);
-			if (getAddressCount(address) >= ConfigData.DUAL_BOX_CHECK_MAX_PARTICIPANTS_PER_PC)
-			{
-				return true;
-			}
-			else
-			{
-				addAddress(address);
-			}
-		}
-		
-		return false;
-	}
-	
-	/**
-	 * Obtenemos la cantidad de player registrados en un mismo IP/TRACE
-	 * @param address
-	 * @return
-	 */
-	private int getAddressCount(String address)
-	{
-		if (_addressManager.containsKey(address))
-		{
-			return _addressManager.get(address);
-		}
-		
-		return 0;
-	}
-	
-	/**
-	 * Incrementamos en 1 la cantidad de usuarios registrados en un mismo IP/TRACE
-	 * @param address
-	 */
-	private void addAddress(String address)
-	{
-		if (!_addressManager.containsKey(address))
-		{
-			_addressManager.put(address, 1);
-		}
-		else
-		{
-			int boxCount = _addressManager.get(address);
-			_addressManager.put(address, boxCount + 1);
-		}
-	}
-	
-	/**
-	 * Disminuimos en 1 la cantidad de usuarios registrados en un mismo IP/TRACE
-	 * @param L2PcInstance activeChar
-	 */
-	private void removeAddress(L2PcInstance activeChar)
-	{
-		String address = getAddress(activeChar);
-		if (_addressManager.containsKey(address))
-		{
-			int boxCount = _addressManager.get(address);
-			if (boxCount > 1)
-			{
-				_addressManager.put(address, boxCount - 1);
-			}
-			else
-			{
-				_addressManager.remove(address);
-			}
-		}
-	}
-	
-	/**
-	 * Limpiamos todos los IP/TRACE de los usuarios registrados.
-	 */
-	public static void clearAddressManager()
-	{
-		_addressManager.clear();
-	}
-	
-	/**
-	 * Obtenemos el trace de un personaje con un formato especifico
-	 * @param activeChar
-	 * @return
-	 */
-	private String getAddress(L2PcInstance activeChar)
-	{
-		StringBuilder ip = new StringBuilder();
-		// agregamos el ip
-		ip.append(activeChar.getClient().getConnection().getInetAddress().getHostAddress());
-		ip.append("-");
-		// agregamos el trace
-		int[][] trace = activeChar.getClient().getTrace();
-		for (int i = 0; i < 5; i++)
-		{
-			ip.append(trace[i][0]);
-			ip.append(".");
-			ip.append(trace[i][1]);
-			ip.append(".");
-			ip.append(trace[i][2]);
-			ip.append(".");
-			ip.append(trace[i][3]);
-			ip.append("|");
-		}
-		
-		return ip.toString();
-	}
-	
-	// XXX EventEngineTask ------------------------------------------------------------------------------------
 	private int _time;
 	
 	public int getTime()
@@ -411,10 +284,10 @@ public class EventEngineManager
 				// Dual Box Protection: Clear Address
 				if (ConfigData.DUAL_BOX_PROTECTION_ENABLED)
 				{
-					String address = getAddress(player);
-					if (_addressManager.containsKey(address))
+					String address = DualBoxManager.getInstance().getAddress(player);
+					if (DualBoxManager.getInstance()._addressManager.containsKey(address))
 					{
-						_addressManager.remove(address);
+						DualBoxManager.getInstance()._addressManager.remove(address);
 					}
 				}
 				
@@ -529,7 +402,7 @@ public class EventEngineManager
 		// Dual Box Protection: Clear Address
 		if (ConfigData.DUAL_BOX_PROTECTION_ENABLED)
 		{
-			removeAddress(player);
+			DualBoxManager.getInstance().removeAddress(player);
 		}
 		
 		// Lo borra de la lista de jugadores que votaron
@@ -733,7 +606,7 @@ public class EventEngineManager
 		// Dual Box Protection: Clear Address
 		if (ConfigData.DUAL_BOX_PROTECTION_ENABLED)
 		{
-			removeAddress(player);
+			DualBoxManager.getInstance().removeAddress(player);
 		}
 		
 		return _eventRegisterdPlayers.remove(player);
@@ -776,7 +649,7 @@ public class EventEngineManager
 		// Dual Box Protection: Clear Address
 		if (ConfigData.DUAL_BOX_PROTECTION_ENABLED)
 		{
-			clearAddressManager();
+			DualBoxManager.getInstance().clearAddressManager();
 		}
 		
 		setCurrentEvent(null);
