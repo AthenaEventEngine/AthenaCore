@@ -22,10 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import net.sf.eventengine.util.EventPropertiesParser;
-
 import com.l2jserver.gameserver.model.Location;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
+
+import net.sf.eventengine.util.EventPropertiesParser;
 
 /**
  * Load the config from "properties"
@@ -160,7 +160,7 @@ public class ConfigData
 		EVENT_TEXT_TIME_FOR_END = settings.getInt("EventTextTimeForEnd", 10);
 		EVENT_CHAOTIC_PLAYER_REGISTER = settings.getBoolean("EventChaoticPlayerRegister", false);
 		EVENT_KILLER_MESSAGE = settings.getBoolean("EventKillerMessage", true);
-		FRIENDLY_FIRE = settings.getBoolean("EventFriendlyFire", false);
+		FRIENDLY_FIRE = settings.getBoolean("EventFriendlyFire", true);
 		MIN_PLAYERS_IN_EVENT = settings.getInt("EventMinPlayers", 2);
 		MAX_PLAYERS_IN_EVENT = settings.getInt("EventMaxPlayers", 20);
 		MIN_LVL_IN_EVENT = settings.getInt("EventMinPlayerLevel", 40);
