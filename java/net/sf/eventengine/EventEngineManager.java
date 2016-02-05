@@ -27,18 +27,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
-import com.l2jserver.gameserver.ThreadPoolManager;
-import com.l2jserver.gameserver.model.Location;
-import com.l2jserver.gameserver.model.actor.L2Character;
-import com.l2jserver.gameserver.model.actor.L2Npc;
-import com.l2jserver.gameserver.model.actor.L2Playable;
-import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
-import com.l2jserver.gameserver.model.items.L2Item;
-import com.l2jserver.gameserver.model.skills.Skill;
-import com.l2jserver.gameserver.network.clientpackets.Say2;
-import com.l2jserver.gameserver.network.serverpackets.CreatureSay;
-import com.l2jserver.util.Rnd;
-
 import net.sf.eventengine.adapter.EventEngineAdapter;
 import net.sf.eventengine.ai.NpcManager;
 import net.sf.eventengine.datatables.BuffListData;
@@ -50,6 +38,18 @@ import net.sf.eventengine.events.handler.AbstractEvent;
 import net.sf.eventengine.events.handler.managers.DualBoxManager;
 import net.sf.eventengine.events.holders.PlayerHolder;
 import net.sf.eventengine.task.EventEngineTask;
+
+import com.l2jserver.gameserver.ThreadPoolManager;
+import com.l2jserver.gameserver.model.Location;
+import com.l2jserver.gameserver.model.actor.L2Character;
+import com.l2jserver.gameserver.model.actor.L2Npc;
+import com.l2jserver.gameserver.model.actor.L2Playable;
+import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.items.L2Item;
+import com.l2jserver.gameserver.model.skills.Skill;
+import com.l2jserver.gameserver.network.clientpackets.Say2;
+import com.l2jserver.gameserver.network.serverpackets.CreatureSay;
+import com.l2jserver.util.Rnd;
 
 /**
  * @author fissban
@@ -283,16 +283,7 @@ public class EventEngineManager
 		{
 			if (_state == EventEngineState.REGISTER || _state == EventEngineState.VOTING)
 			{
-				// Dual Box Protection: Clear Address
-				if (ConfigData.DUAL_BOX_PROTECTION_ENABLED)
-				{
-					String address = DualBoxManager.getInstance().getAddress(player);
-					if (DualBoxManager.getInstance()._addressManager.containsKey(address))
-					{
-						DualBoxManager.getInstance()._addressManager.remove(address);
-					}
-				}
-				
+				DualBoxManager.getInstance().removeAddress(player);
 				removeVote(player);
 				unRegisterPlayer(player);
 				return;
@@ -401,11 +392,7 @@ public class EventEngineManager
 	 */
 	public void removeVote(L2PcInstance player)
 	{
-		// Dual Box Protection: Clear Address
-		if (ConfigData.DUAL_BOX_PROTECTION_ENABLED)
-		{
-			DualBoxManager.getInstance().removeAddress(player);
-		}
+		DualBoxManager.getInstance().removeAddress(player);
 		
 		// Lo borra de la lista de jugadores que votaron
 		if (_playersAlreadyVoted.remove(player.getObjectId()))
@@ -564,8 +551,7 @@ public class EventEngineManager
 	
 	/**
 	 * Obtenemos si la cantidad de jugadores registrados es 0
-	 * @return
-	 * 		<li>True - > no hay jugadores registrados.</li><br>
+	 * @return <li>True - > no hay jugadores registrados.</li><br>
 	 *         <li>False - > hay al menos un jugador registrado.</li><br>
 	 */
 	public boolean isEmptyRegisteredPlayers()
@@ -575,8 +561,7 @@ public class EventEngineManager
 	
 	/**
 	 * Obtenemos si el jugador se encuentra registrado
-	 * @return
-	 * 		<li>True - > Está registrado.</li><br>
+	 * @return <li>True - > Está registrado.</li><br>
 	 *         <li>False - > No está registrado.</li><br>
 	 */
 	public boolean isRegistered(L2PcInstance player)
@@ -587,8 +572,7 @@ public class EventEngineManager
 	/**
 	 * Agregamos un player al registro
 	 * @param player
-	 * @return
-	 * 		<li>True - > si el registro es exitoso.</li><br>
+	 * @return <li>True - > si el registro es exitoso.</li><br>
 	 *         <li>False - > si el player ya estaba registrado.</li><br>
 	 */
 	public void registerPlayer(L2PcInstance player)
@@ -599,18 +583,12 @@ public class EventEngineManager
 	/**
 	 * Eliminamos un player del registro
 	 * @param player
-	 * @return
-	 * 		<li>True - > si el player estaba registrado.</li><br>
+	 * @return <li>True - > si el player estaba registrado.</li><br>
 	 *         <li>False - > si el player no estaba registrado.</li><br>
 	 */
 	public boolean unRegisterPlayer(L2PcInstance player)
 	{
-		// Dual Box Protection: Clear Address
-		if (ConfigData.DUAL_BOX_PROTECTION_ENABLED)
-		{
-			DualBoxManager.getInstance().removeAddress(player);
-		}
-		
+		DualBoxManager.getInstance().removeAddress(player);
 		return _eventRegisterdPlayers.remove(player);
 	}
 	
@@ -648,12 +626,7 @@ public class EventEngineManager
 	 */
 	public void cleanUp()
 	{
-		// Dual Box Protection: Clear Address
-		if (ConfigData.DUAL_BOX_PROTECTION_ENABLED)
-		{
-			DualBoxManager.getInstance().clearAddressManager();
-		}
-		
+		DualBoxManager.getInstance().clearAddressManager();
 		setCurrentEvent(null);
 		clearVotes();
 		clearRegisteredPlayers();

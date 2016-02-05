@@ -21,17 +21,17 @@ package net.sf.eventengine.events.handler.managers;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
-
 import net.sf.eventengine.datatables.ConfigData;
 
+import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+
 /**
- * @author swarlog, fissban
+ * @author Swarlog, Fissban
  */
 public class DualBoxManager
 {
 	// Map IP/TRACE Address Player
-	public Map<String, Integer> _addressManager = new ConcurrentHashMap<>();
+	private Map<String, Integer> _addressManager = new ConcurrentHashMap<>();
 	
 	/**
 	 * Check IP/TRACE Address
@@ -64,54 +64,25 @@ public class DualBoxManager
 	}
 	
 	/**
-	 * Get IP/TRACE Address Count
-	 * @param address
-	 * @return
-	 */
-	private int getAddressCount(String address)
-	{
-		if (_addressManager.containsKey(address))
-		{
-			return _addressManager.get(address);
-		}
-		
-		return 0;
-	}
-	
-	/**
-	 * Increasing repeated or add new IP/TRACE addresses
-	 * @param address
-	 */
-	private void addAddress(String address)
-	{
-		if (!_addressManager.containsKey(address))
-		{
-			_addressManager.put(address, 1);
-		}
-		else
-		{
-			int boxCount = _addressManager.get(address);
-			_addressManager.put(address, boxCount + 1);
-		}
-	}
-	
-	/**
 	 * Decreases repeated or delete IP/TRACE addresses
 	 * @param L2PcInstance activeChar
 	 */
 	public void removeAddress(L2PcInstance activeChar)
 	{
-		String address = getAddress(activeChar);
-		if (_addressManager.containsKey(address))
+		if (ConfigData.DUAL_BOX_PROTECTION_ENABLED)
 		{
-			int boxCount = _addressManager.get(address);
-			if (boxCount > 1)
+			String address = getAddress(activeChar);
+			if (_addressManager.containsKey(address))
 			{
-				_addressManager.put(address, boxCount - 1);
-			}
-			else
-			{
-				_addressManager.remove(address);
+				int boxCount = _addressManager.get(address);
+				if (boxCount > 1)
+				{
+					_addressManager.put(address, boxCount - 1);
+				}
+				else
+				{
+					_addressManager.remove(address);
+				}
 			}
 		}
 	}
@@ -152,6 +123,40 @@ public class DualBoxManager
 	public void clearAddressManager()
 	{
 		_addressManager.clear();
+	}
+	
+	// ------------
+	
+	/**
+	 * Get IP/TRACE Address Count
+	 * @param address
+	 * @return
+	 */
+	private int getAddressCount(String address)
+	{
+		if (_addressManager.containsKey(address))
+		{
+			return _addressManager.get(address);
+		}
+		
+		return 0;
+	}
+	
+	/**
+	 * Increasing repeated or add new IP/TRACE addresses
+	 * @param address
+	 */
+	private void addAddress(String address)
+	{
+		if (!_addressManager.containsKey(address))
+		{
+			_addressManager.put(address, 1);
+		}
+		else
+		{
+			int boxCount = _addressManager.get(address);
+			_addressManager.put(address, boxCount + 1);
+		}
 	}
 	
 	public static DualBoxManager getInstance()
