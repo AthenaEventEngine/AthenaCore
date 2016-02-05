@@ -575,9 +575,9 @@ public class EventEngineManager
 	 * @return <li>True - > si el registro es exitoso.</li><br>
 	 *         <li>False - > si el player ya estaba registrado.</li><br>
 	 */
-	public void registerPlayer(L2PcInstance player)
+	public boolean registerPlayer(L2PcInstance player)
 	{
-		_eventRegisterdPlayers.add(player);
+		return _eventRegisterdPlayers.add(player);
 	}
 	
 	/**
