@@ -41,7 +41,7 @@ public final class MessageData
 	private static final Logger LOGGER = Logger.getLogger(MessageData.class.getName());
 	
 	private static final String DIRECTORY = "config/EventEngine/Language";
-	private static final String DEFAULT_LANG = "en";
+	private static String DEFAULT_LANG = "en";
 	
 	// Mapa para identificar el lenguaje de cada personaje
 	private Map<L2PcInstance, String> _playerCurrentLang = new HashMap<>();
@@ -83,6 +83,49 @@ public final class MessageData
 		catch (Exception e)
 		{
 			LOGGER.warning(MessageData.class.getSimpleName() + ": -> Error while loading language files: " + e);
+			e.printStackTrace();
+		}
+	}
+	
+	public void reload(L2PcInstance player)
+	{
+		// Logger
+		LOGGER.info(MessageData.class.getSimpleName() + ": Cleaning and loading languages..");
+		
+		// Clear
+		_msgMap.clear();
+		_languages.clear();
+		
+		try
+		{
+			File dir = new File(DIRECTORY);
+			
+			for (File file : dir.listFiles(new FileFilter()
+			{
+				@Override
+				public boolean accept(File pathname)
+				{
+					if (pathname.getName().endsWith(".xml"))
+					{
+						return true;
+					}
+					return false;
+				}
+			}))
+			{
+				if (file.getName().startsWith("lang_"))
+				{
+					loadXml(file, file.getName().substring(5, file.getName().indexOf(".xml")));
+				}
+			}
+			
+			LOGGER.info(MessageData.class.getSimpleName() + ": Loaded " + _languages.size() + " languages.");
+			player.sendMessage("Successfully reloaded " + _languages.size() + " languages.");
+		}
+		catch (Exception e)
+		{
+			LOGGER.warning(MessageData.class.getSimpleName() + ": -> Error while loading language files: " + e);
+			player.sendMessage("Error while loading language files: " + e);
 			e.printStackTrace();
 		}
 	}
@@ -216,6 +259,20 @@ public final class MessageData
 			
 		}
 		return DEFAULT_LANG;
+	}
+	
+	/**
+	 * Set Default Language
+	 * @return
+	 */
+	public void setDefaultLanguage(String lang)
+	{
+		if (lang != DEFAULT_LANG)
+		{
+			DEFAULT_LANG = lang;
+		}
+		
+		return;
 	}
 	
 	/**

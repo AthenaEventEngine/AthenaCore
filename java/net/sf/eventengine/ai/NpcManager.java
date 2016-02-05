@@ -56,7 +56,15 @@ public class NpcManager extends Quest
 	@Override
 	public String onFirstTalk(L2Npc npc, L2PcInstance player)
 	{
-		sendHtmlIndex(player);
+		if (player.isGM())
+		{
+			sendHtmlAdmin(player);
+		}
+		else
+		{
+			sendHtmlIndex(player);
+		}
+		
 		return null;
 	}
 	
@@ -69,6 +77,46 @@ public class NpcManager extends Quest
 		{
 			case "index":
 				sendHtmlIndex(player);
+				break;
+				
+			case "admin":
+				if (player.isGM())
+				{
+					sendHtmlAdmin(player);
+				}
+				break;
+			case "adminLang":
+				if (player.isGM())
+				{
+					sendHtmlAdminLang(player);
+				}
+				break;
+			case "adminLangReload":
+				if (player.isGM())
+				{
+					MessageData.getInstance().reload(player);
+				}
+				break;
+			case "adminSetlang":
+				String _defaultLang = st.nextToken();
+				MessageData.getInstance().setDefaultLanguage(_defaultLang);
+				player.sendMessage(MessageData.getInstance().getMsgByLang(player, "lang_current_successfully", false) + " " + _defaultLang);
+				
+				// Check Main
+				if (player.isGM())
+				{
+					sendHtmlAdminLang(player);
+				}
+				else
+				{
+					sendHtmlIndex(player);
+				}
+				break;
+			case "adminConfig":
+				if (player.isGM())
+				{
+					sendHtmlAdminConfig(player);
+				}
 				break;
 				
 			case "engine":
@@ -152,9 +200,9 @@ public class NpcManager extends Quest
 				
 			// Multi-Language System set language
 			case "setlang":
-				String lang = st.nextToken();
-				MessageData.getInstance().setLanguage(player, lang);
-				player.sendMessage(MessageData.getInstance().getMsgByLang(player, "lang_current_successfully", false) + " " + lang);
+				String _lang = st.nextToken();
+				MessageData.getInstance().setLanguage(player, _lang);
+				player.sendMessage(MessageData.getInstance().getMsgByLang(player, "lang_current_successfully", false) + " " + _lang);
 				sendHtmlIndex(player);
 				break;
 				
@@ -379,6 +427,60 @@ public class NpcManager extends Quest
 			html.replace("%menuInfo%", MessageData.getInstance().getMsgByLang(player, "event_reloading", false));
 			html.replace("%button%", "");
 		}
+		// Send html
+		player.sendPacket(html);
+	}
+	
+	private static void sendHtmlAdmin(L2PcInstance player)
+	{
+		final NpcHtmlMessage html = new NpcHtmlMessage();
+		html.setFile(player.getHtmlPrefix(), "data/html/events/admin_menu.htm");
+		
+		// Info general
+		html.replace("%texTitle%", MessageData.getInstance().getMsgByLang(player, "admin_menu_title", false));
+		html.replace("%texDescription%", MessageData.getInstance().getMsgByLang(player, "admin_menu_description", false));
+		html.replace("%texInfo%", MessageData.getInstance().getMsgByLang(player, "admin_menu_info", false));
+		
+		// Button
+		html.replace("%buttonMain%", MessageData.getInstance().getMsgByLang(player, "button_main", false));
+		
+		// Send html
+		player.sendPacket(html);
+	}
+	
+	private static void sendHtmlAdminLang(L2PcInstance player)
+	{
+		final NpcHtmlMessage html = new NpcHtmlMessage();
+		html.setFile(player.getHtmlPrefix(), "data/html/events/admin_lang.htm");
+		
+		// Info menu
+		html.replace("%settingTitle%", MessageData.getInstance().getMsgByLang(player, "lang_menu_title", false));
+		html.replace("%languageTitle%", MessageData.getInstance().getMsgByLang(player, "lang_language_title", false));
+		html.replace("%languageDescription%", MessageData.getInstance().getMsgByLang(player, "lang_language_admin_description", false));
+		// Info lang
+		html.replace("%currentLanguage%", MessageData.getInstance().getMsgByLang(player, "lang_current_language", false));
+		html.replace("%getLanguage%", MessageData.getInstance().getLanguage(player));
+		// Buttons
+		final StringBuilder langList = new StringBuilder(500);
+		for (Map.Entry<String, String> e : MessageData.getInstance().getLanguages().entrySet())
+		{
+			StringUtil.append(langList, "<tr>");
+			StringUtil.append(langList, "<td align=center width=30% height=30><button value=\"" + e.getValue() + "\" action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " adminSetlang " + e.getKey() + "\" width=70 height=20 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\"></td>");
+			StringUtil.append(langList, "</tr>");
+		}
+		html.replace("%buttonLang%", langList.toString());
+		// Button
+		html.replace("%buttonMain%", MessageData.getInstance().getMsgByLang(player, "button_main", false));
+		
+		// Send html
+		player.sendPacket(html);
+	}
+	
+	private static void sendHtmlAdminConfig(L2PcInstance player)
+	{
+		final NpcHtmlMessage html = new NpcHtmlMessage();
+		html.setFile(player.getHtmlPrefix(), "data/html/events/admin_config.htm");
+		
 		// Send html
 		player.sendPacket(html);
 	}
