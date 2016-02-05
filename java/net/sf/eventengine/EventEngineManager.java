@@ -35,6 +35,7 @@ import net.sf.eventengine.datatables.EventData;
 import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.enums.EventEngineState;
 import net.sf.eventengine.events.handler.AbstractEvent;
+import net.sf.eventengine.events.handler.managers.DualBoxManager;
 import net.sf.eventengine.events.holders.PlayerHolder;
 import net.sf.eventengine.task.EventEngineTask;
 
@@ -103,6 +104,7 @@ public class EventEngineManager
 	}
 	
 	// XXX EventEngineTask ------------------------------------------------------------------------------------
+	
 	private int _time;
 	
 	public int getTime()
@@ -272,7 +274,7 @@ public class EventEngineManager
 	}
 	
 	/**
-	 * Listener when the player logouts
+	 * Listener when the player logout
 	 * @param player
 	 */
 	public void listenerOnLogout(L2PcInstance player)
@@ -281,6 +283,7 @@ public class EventEngineManager
 		{
 			if (_state == EventEngineState.REGISTER || _state == EventEngineState.VOTING)
 			{
+				DualBoxManager.getInstance().removeAddress(player);
 				removeVote(player);
 				unRegisterPlayer(player);
 				return;
@@ -389,6 +392,8 @@ public class EventEngineManager
 	 */
 	public void removeVote(L2PcInstance player)
 	{
+		DualBoxManager.getInstance().removeAddress(player);
+		
 		// Lo borra de la lista de jugadores que votaron
 		if (_playersAlreadyVoted.remove(player.getObjectId()))
 		{
@@ -583,6 +588,7 @@ public class EventEngineManager
 	 */
 	public boolean unRegisterPlayer(L2PcInstance player)
 	{
+		DualBoxManager.getInstance().removeAddress(player);
 		return _eventRegisterdPlayers.remove(player);
 	}
 	
@@ -620,6 +626,7 @@ public class EventEngineManager
 	 */
 	public void cleanUp()
 	{
+		DualBoxManager.getInstance().clearAddressManager();
 		setCurrentEvent(null);
 		clearVotes();
 		clearRegisteredPlayers();

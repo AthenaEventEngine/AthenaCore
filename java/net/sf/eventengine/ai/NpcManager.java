@@ -36,6 +36,7 @@ import net.sf.eventengine.datatables.ConfigData;
 import net.sf.eventengine.datatables.EventData;
 import net.sf.eventengine.datatables.MessageData;
 import net.sf.eventengine.events.handler.AbstractEvent;
+import net.sf.eventengine.events.handler.managers.DualBoxManager;
 
 /**
  * @author swarlog, Zephyr, fissban
@@ -442,6 +443,12 @@ public class NpcManager extends Quest
 				player.sendMessage(MessageData.getInstance().getMsgByLang(player, "chaoticPlayer", true));
 				return false;
 			}
+		}
+		// Check Dual Box
+		else if (DualBoxManager.getInstance().checkMultiBox(player))
+		{
+			player.sendMessage(MessageData.getInstance().getMsgByLang(player, "registering_maxPlayersPerPc", true));
+			return false;
 		}
 		
 		return true;
