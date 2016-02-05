@@ -21,9 +21,9 @@ package net.sf.eventengine.events.handler.managers;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import net.sf.eventengine.datatables.ConfigData;
-
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+
+import net.sf.eventengine.datatables.ConfigData;
 
 /**
  * @author Swarlog, Fissban
@@ -32,6 +32,9 @@ public class DualBoxManager
 {
 	// Map IP/TRACE Address Player
 	private Map<String, Integer> _addressManager = new ConcurrentHashMap<>();
+	
+	// Map IP/TRACE Address Player List
+	private Map<String, String> _addressPlayerList = new ConcurrentHashMap<>();
 	
 	/**
 	 * Check IP/TRACE Address
@@ -57,6 +60,7 @@ public class DualBoxManager
 			else
 			{
 				addAddress(address);
+				addAddressPlayer(activeChar, address);
 			}
 		}
 		
@@ -71,7 +75,7 @@ public class DualBoxManager
 	{
 		if (ConfigData.DUAL_BOX_PROTECTION_ENABLED)
 		{
-			String address = getAddress(activeChar);
+			String address = _addressPlayerList.get(activeChar.getName());
 			if (_addressManager.containsKey(address))
 			{
 				int boxCount = _addressManager.get(address);
@@ -84,6 +88,9 @@ public class DualBoxManager
 					_addressManager.remove(address);
 				}
 			}
+			
+			// Remove player
+			_addressPlayerList.remove(activeChar.getName());
 		}
 	}
 	
@@ -123,9 +130,8 @@ public class DualBoxManager
 	public void clearAddressManager()
 	{
 		_addressManager.clear();
+		_addressPlayerList.clear();
 	}
-	
-	// ------------
 	
 	/**
 	 * Get IP/TRACE Address Count
@@ -157,6 +163,16 @@ public class DualBoxManager
 			int boxCount = _addressManager.get(address);
 			_addressManager.put(address, boxCount + 1);
 		}
+	}
+	
+	/**
+	 * Add new IP/TRACE addresses for player
+	 * @param activeChar
+	 * @param address
+	 */
+	private void addAddressPlayer(L2PcInstance activeChar, String address)
+	{
+		_addressPlayerList.put(activeChar.getName(), address);
 	}
 	
 	public static DualBoxManager getInstance()
