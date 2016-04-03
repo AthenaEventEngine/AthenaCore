@@ -41,7 +41,7 @@
 	<buff id="1077" lvl="3" /> <!-- Focus -->
 	<buff id="1078" lvl="6" /> <!-- Concentration -->
 	<buff id="1085" lvl="3" /> <!-- Acumen -->
-	<buff id="1068" lvl="2" /> <!-- Haste -->
+	<buff id="1086" lvl="2" /> <!-- Haste -->
 	<buff id="1087" lvl="3" /> <!-- Agility -->
 	<buff id="1204" lvl="2" /> <!-- Wind Walk -->
 	<buff id="1240" lvl="3" /> <!-- Guidance -->
