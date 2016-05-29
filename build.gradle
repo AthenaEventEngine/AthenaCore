@@ -1,17 +1,18 @@
 apply plugin: 'java'
-apply plugin: 'eclipse'
-
-defaultTasks('zip')
 
 repositories {
-    mavenCentral()
+    jcenter()
 }
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
+    compile 'org.slf4j:slf4j-api:1.7.13'
+    compile 'com.google.code.gson:gson:2.2.4'
     compile project(':L2J_Server')
+
+    testCompile 'junit:junit:4.12'
 }
 
 jar {
@@ -29,7 +30,3 @@ task zip(type: Zip) {
 }
 
 build.finalizedBy(zip)
-
-task wrapper(type: Wrapper) {
-	gradleVersion = '2.9'
-}
