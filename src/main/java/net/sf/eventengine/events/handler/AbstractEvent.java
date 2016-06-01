@@ -105,12 +105,12 @@ public abstract class AbstractEvent
 				initTeleportAllPlayers();
 				onEventStart();
 				break;
-				
+			
 			case FIGHT:
 				prepareToFight();
 				onEventFight();
 				break;
-				
+			
 			case END:
 				onEventEnd();
 				prepareToEnd();
@@ -168,17 +168,17 @@ public abstract class AbstractEvent
 	 * <ul>
 	 * <b>Actions: </b>
 	 * </ul>
-	 * <li>-> step 1: Announce participants will be teleported</li><br>
-	 * <li>Wait 3 secs</li><br>
-	 * <li>-> step 2: Adjust the status of the event -> START</li><br>
-	 * <li>We hope 1 sec to actions within each event is executed..</li><br>
-	 * <li>-> step 3: Adjust the status of the event -> FIGHT</li><br>
-	 * <li>-> step 3: We sent a message that they are ready to fight.</li><br>
-	 * <li>We wait until the event ends</li><br>
-	 * <li>-> step 4: Adjust the status of the event -> END</li><br>
-	 * <li>-> step 4: We sent a message warning that term event</li><br>
-	 * <li>Wait for 1 seg</li><br>
-	 * <li>-> step 5: Alert the event has ended</li><br>
+	 * <li>-> step 1: Announce participants will be teleported</li>
+	 * <li>Wait 3 secs</li>
+	 * <li>-> step 2: Adjust the status of the event -> START</li>
+	 * <li>We hope 1 sec to actions within each event is executed..</li>
+	 * <li>-> step 3: Adjust the status of the event -> FIGHT</li>
+	 * <li>-> step 3: We sent a message that they are ready to fight.</li>
+	 * <li>We wait until the event ends</li>
+	 * <li>-> step 4: Adjust the status of the event -> END</li>
+	 * <li>-> step 4: We sent a message warning that term event</li>
+	 * <li>Wait for 1 seg</li>
+	 * <li>-> step 5: Alert the event has ended</li>
 	 */
 	private void initScheduledEvents()
 	{
@@ -547,15 +547,15 @@ public abstract class AbstractEvent
 	 * <ul>
 	 * <b>Actions: </b>
 	 * </ul>
-	 * <li>Cancel any player attack in progress</li><br>
-	 * <li>Cancel any player skill in progress</li><br>
-	 * <li>Paralyzed the player</li><br>
-	 * <li>Cancel all character effects</li><br>
-	 * <li>Cancel summon pet</li><br>
-	 * <li>Cancel all character cubics</li><br>
-	 * <li>Save the return player location</li><br>
-	 * <li>Create the teams</li><br>
-	 * <li>Create the instance world</li><br>
+	 * <li>Cancel any player attack in progress</li>
+	 * <li>Cancel any player skill in progress</li>
+	 * <li>Paralyzed the player</li>
+	 * <li>Cancel all character effects</li>
+	 * <li>Cancel summon pet</li>
+	 * <li>Cancel all character cubics</li>
+	 * <li>Save the return player location</li>
+	 * <li>Create the teams</li>
+	 * <li>Create the instance world</li>
 	 */
 	public void prepareToStart()
 	{
@@ -577,7 +577,7 @@ public abstract class AbstractEvent
 	 * <ul>
 	 * <b>Actions: </b>
 	 * </ul>
-	 * <li>We canceled the paralysis made in -> <u>prepareToTeleport()</u></li><br>
+	 * <li>We canceled the paralysis made in -> <u>prepareToTeleport()</u></li>
 	 * <li>We deliver buffs defined in configs</li>
 	 */
 	public void prepareToFight()
@@ -593,11 +593,11 @@ public abstract class AbstractEvent
 	 * <ul>
 	 * <b>Actions: </b>
 	 * </ul>
-	 * <li>Cancel any attack in progress</li><br>
-	 * <li>Cancel any skill in progress</li><br>
-	 * <li>Cancel all effects</li><br>
-	 * <li>Recover the title and color of the participants.</li><br>
-	 * <li>We canceled the Team</li><br>
+	 * <li>Cancel any attack in progress</li>
+	 * <li>Cancel any skill in progress</li>
+	 * <li>Cancel all effects</li>
+	 * <li>Recover the title and color of the participants.</li>
+	 * <li>We canceled the Team</li>
 	 * <li>It out of the world we created for the event</li>
 	 */
 	public void prepareToEnd()
@@ -606,11 +606,19 @@ public abstract class AbstractEvent
 		
 		for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
 		{
-			cancelAllPlayerActions(ph);
+			if (ph.getPcInstance().isDead())
+			{
+				revivePlayer(ph);
+			}
+			else
+			{
+				cancelAllPlayerActions(ph);
+			}
+			
 			cancelAllEffects(ph);
 			removePlayerFromEvent(ph, false);
-			revivePlayer(ph);
 		}
+		
 		getScheduledEventsManager().cancelTaskControlTime();
 		getInstanceWorldManager().destroyWorldInstances();
 	}
@@ -620,12 +628,12 @@ public abstract class AbstractEvent
 	 * <ul>
 	 * <b>Actions: </b>
 	 * </ul>
-	 * <li>Generate a pause before executing any action.</li><br>
-	 * <li>Revive the character.</li><br>
-	 * <li>We give you the buff depending on the event in which this.</li><br>
-	 * <li>Teleport the character depending on the event in this.</li><br>
-	 * <li>We do invulnerable for 5 seconds and not allow it to move.</li><br>
-	 * <li>We canceled the invul and let you move</li><br>
+	 * <li>Generate a pause before executing any action.</li>
+	 * <li>Revive the character.</li>
+	 * <li>We give you the buff depending on the event in which this.</li>
+	 * <li>Teleport the character depending on the event in this.</li>
+	 * <li>We do invulnerable for 5 seconds and not allow it to move.</li>
+	 * <li>We canceled the invul and let you move</li>
 	 * @param player
 	 * @param time
 	 * @param radiusTeleport
@@ -642,7 +650,7 @@ public abstract class AbstractEvent
 				giveBuffPlayer(player.getPcInstance());
 				teleportPlayer(player, radiusTeleport);
 				
-			} , time * 1000));
+			}, time * 1000));
 		}
 		catch (Exception e)
 		{
@@ -656,9 +664,9 @@ public abstract class AbstractEvent
 	 * <ul>
 	 * <b>Actions: </b>
 	 * </ul>
-	 * <li>Cancel the DecayTask.</li><br>
-	 * <li>Revive the character.</li><br>
-	 * <li>Set max cp, hp and mp.</li><br>
+	 * <li>Cancel the DecayTask.</li>
+	 * <li>Revive the character.</li>
+	 * <li>Set max cp, hp and mp.</li>
 	 * @param ph
 	 */
 	protected void revivePlayer(PlayerHolder ph)
@@ -675,7 +683,7 @@ public abstract class AbstractEvent
 	}
 	
 	/**
-	 * We give you the buff to a player seteados within configs
+	 * We give you the buff to a player setting within configs
 	 * @param player
 	 */
 	public void giveBuffPlayer(L2PcInstance player)

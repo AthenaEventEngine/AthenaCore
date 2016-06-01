@@ -18,11 +18,11 @@
  */
 package net.sf.eventengine.events.holders;
 
-import net.sf.eventengine.enums.TeamType;
-import net.sf.eventengine.interfaces.ParticipantHolder;
-
 import com.l2jserver.gameserver.model.Location;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+
+import net.sf.eventengine.enums.TeamType;
+import net.sf.eventengine.interfaces.ParticipantHolder;
 
 /**
  * It manages player's info that participates in an event
@@ -71,17 +71,21 @@ public class PlayerHolder implements ParticipantHolder
 	 * <ul>
 	 * <b>Actions:</b>
 	 * </ul>
-	 * <li>Set the event team.</li> <li>Change the player color by team</li>
+	 * <li>Set the event team.</li>
+	 * <li>Change the player color by team</li>
 	 * @param team
 	 */
 	public void setTeam(TeamType team)
 	{
 		// Almacenamos el color del titulo y el titulo original del personaje.
-		_oriColorTitle = _player.getAppearance().getTitleColor();
 		_oriTitle = _player.getTitle();
+		_oriColorTitle = _player.getAppearance().getTitleColor();
+		
 		// Team del personaje
 		_team = team;
-		// Nuevo color del titulo del personaje segun su team
+		// Se asigna un titulo que corresponde al nombre de su team
+		_player.setTitle(team.name());
+		// se asigna un color acorde al team.
 		_player.getAppearance().setTitleColor(team.getColor());
 	}
 	
