@@ -129,7 +129,7 @@ public class CaptureTheFlag extends AbstractEvent
 				// Equip the flag
 				equipFlag(ph, flagTeam);
 				// Announce the flag was taken
-				EventUtil.announceTo(Say2.BATTLEFIELD, "ctf_captured_the_flag", "%holder%", flagTeam.name(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
+				EventUtil.announceTo(Say2.BATTLEFIELD, "ctf_captured_the_flag", "%holder%", ph.getTeamType().name(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
 			}
 		}
 		else if (npcHolder.getNpcInstance().getId() == HOLDER)
@@ -149,7 +149,7 @@ public class CaptureTheFlag extends AbstractEvent
 					// Spawn the flag again
 					_flagSpawn.put(getSpawnManager().addEventNpc(FLAG, th.getSpawn().getX(), th.getSpawn().getY(), th.getSpawn().getZ(), 0, Team.NONE, th.getTeamType().name(), false, getInstanceWorldManager().getAllInstancesWorlds().get(0).getInstanceId()), th.getTeamType());
 					// Announce the flag was taken
-					EventUtil.announceTo(Say2.BATTLEFIELD, "ctf_conquered_the_flag", "%holder%", th.getTeamType().name(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
+					EventUtil.announceTo(Say2.BATTLEFIELD, "ctf_conquered_the_flag", "%holder%", ph.getTeamType().name(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
 					// Show team points
 					showPoint();
 				}
