@@ -15,3 +15,6 @@ Chat: https://gitter.im/u3games/L2J_EventEngine<br>
 L2J-Server: http://www.l2jserver.com/forum (English)<br>
 L2DevsAdmins: http://l2devsadmins.com (Spanish)<br>
 U3Games: http://l2.united-extreme.com (Spanish)<br>
+<br>
+**Current tasks**<br>
+Trello: https://trello.com/b/zUl9DMGI/l2j-event-engine<br>
