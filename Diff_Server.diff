@@ -6,7 +6,7 @@ index 14354b1..dbc234a 100644
  import java.util.logging.Level;
  import java.util.logging.Logger;
  
-+import net.sf.eventengine.EventEngineManager;
++import com.github.u3games.eventengine.EventEngineManager;
 +
  import com.l2jserver.Config;
  import com.l2jserver.gameserver.ai.CtrlIntention;
@@ -32,7 +32,7 @@ index 640e695..263f1d7 100644
  import java.util.concurrent.TimeUnit;
  import java.util.logging.Level;
  
-+import net.sf.eventengine.EventEngineManager;
++import com.github.u3games.eventengine.EventEngineManager;
 +
  import com.l2jserver.Config;
  import com.l2jserver.gameserver.ThreadPoolManager;
