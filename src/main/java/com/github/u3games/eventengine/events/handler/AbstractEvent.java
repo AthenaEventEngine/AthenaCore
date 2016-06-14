@@ -104,12 +104,12 @@ public abstract class AbstractEvent
 				initTeleportAllPlayers();
 				onEventStart();
 				break;
-				
+			
 			case FIGHT:
 				prepareToFight();
 				onEventFight();
 				break;
-				
+			
 			case END:
 				onEventEnd();
 				prepareToEnd();
@@ -605,10 +605,10 @@ public abstract class AbstractEvent
 		
 		for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
 		{
+			revivePlayer(ph);
 			cancelAllPlayerActions(ph);
 			cancelAllEffects(ph);
 			removePlayerFromEvent(ph, false);
-			revivePlayer(ph);
 		}
 		getScheduledEventsManager().cancelTaskControlTime();
 		getInstanceWorldManager().destroyWorldInstances();
