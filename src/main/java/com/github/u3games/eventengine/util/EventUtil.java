@@ -268,7 +268,6 @@ public class EventUtil
 				announce = announce.replace(key, map.get(key));
 			}
 		}
-		
 		return announce;
 	}
 	
@@ -296,8 +295,9 @@ public class EventUtil
 					players.add(ph.getPcInstance());
 				}
 				break;
+			default:
+				break;
 		}
-		
 		return players;
 	}
 	
@@ -334,8 +334,9 @@ public class EventUtil
 					players.put(npc, list);
 				}
 				break;
+			default:
+				break;
 		}
-		
 		return players;
 	}
 	
@@ -396,7 +397,6 @@ public class EventUtil
 				npcs.add(npc);
 			}
 		}
-		
 		return npcs;
 	}
 	
