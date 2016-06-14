@@ -18,7 +18,7 @@
  */
 package custom.events.EventEngine;
 
-import net.sf.eventengine.EventEngineManager;
+import com.github.u3games.eventengine.EventEngineManager;
 import ai.npc.AbstractNpcAI;
 
 /**
