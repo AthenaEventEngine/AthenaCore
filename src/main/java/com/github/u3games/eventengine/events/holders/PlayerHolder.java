@@ -70,17 +70,21 @@ public class PlayerHolder implements ParticipantHolder
 	 * <ul>
 	 * <b>Actions:</b>
 	 * </ul>
-	 * <li>Set the event team.</li> <li>Change the player color by team</li>
+	 * <li>Set the event team.</li>
+	 * <li>Change the player color by team</li>
 	 * @param team
 	 */
 	public void setTeam(TeamType team)
 	{
-		// Almacenamos el color del titulo y el titulo original del personaje.
-		_oriColorTitle = _player.getAppearance().getTitleColor();
+		// Set original title character
 		_oriTitle = _player.getTitle();
-		// Team del personaje
+		// Set original title color character
+		_oriColorTitle = _player.getAppearance().getTitleColor();
+		// Set team character
 		_team = team;
-		// Nuevo color del titulo del personaje segun su team
+		// Set team title character
+		_player.setTitle(team.name());
+		// Set team color character
 		_player.getAppearance().setTitleColor(team.getColor());
 	}
 	
