@@ -24,5 +24,5 @@ package com.github.u3games.eventengine.enums;
 public enum PlayerClassType
 {
 	MAGE,
-	WARRIOR,
+	WARRIOR
 }
