@@ -61,10 +61,8 @@ public class CaptureTheFlag extends AbstractEvent
 	private final int POINTS_KILL = ConfigData.getInstance().CTF_POINTS_KILL;
 	// Time for resurrection
 	private static final int TIME_RES_PLAYER = 10;
-	
 	// Radius spawn
 	protected int _radius = 100;
-	
 	private final Map<NpcHolder, TeamType> _flagSpawn = new ConcurrentHashMap<>();
 	private final Map<NpcHolder, TeamType> _holderSpawn = new ConcurrentHashMap<>();
 	private final Map<PlayerHolder, TeamType> _flagHasPlayer = new ConcurrentHashMap<>();
@@ -114,7 +112,6 @@ public class CaptureTheFlag extends AbstractEvent
 			}
 			
 			TeamType flagTeam = _flagSpawn.get(npcHolder);
-			
 			if (ph.getTeamType() != flagTeam)
 			{
 				// Animation
@@ -143,7 +140,6 @@ public class CaptureTheFlag extends AbstractEvent
 					getTeamsManager().getPlayerTeam(ph).increasePoints(POINTS_CONQUER_FLAG);
 					// Remove the flag from player
 					unequiFlag(ph);
-					
 					TeamHolder th = getTeamsManager().getTeam(_flagHasPlayer.remove(ph));
 					// Spawn the flag again
 					_flagSpawn.put(getSpawnManager().addEventNpc(FLAG, th.getSpawn().getX(), th.getSpawn().getY(), th.getSpawn().getZ(), 0, Team.NONE, th.getTeamType().name(), false, getInstanceWorldManager().getAllInstancesWorlds().get(0).getInstanceId()), th.getTeamType());
@@ -160,7 +156,6 @@ public class CaptureTheFlag extends AbstractEvent
 	public void onKill(PlayerHolder ph, L2Character target)
 	{
 		PlayerHolder targetEvent = getPlayerEventManager().getEventPlayer(target);
-		
 		if (hasFlag(targetEvent))
 		{
 			// Remove the flag character
@@ -168,7 +163,6 @@ public class CaptureTheFlag extends AbstractEvent
 			// Drop flag.
 			dropFlag(targetEvent);
 		}
-		
 		// We increased the team's points.
 		getTeamsManager().getPlayerTeam(ph).increasePoints(POINTS_KILL);
 		
@@ -177,27 +171,23 @@ public class CaptureTheFlag extends AbstractEvent
 		{
 			giveItems(ph, ConfigData.getInstance().CTF_REWARD_KILLER);
 		}
-		
-		// Reward pvp for kills
+		// Reward PvP for kills
 		if (ConfigData.getInstance().CTF_REWARD_PVP_KILLER_ENABLED)
 		{
 			ph.getPcInstance().setPvpKills(ph.getPcInstance().getPvpKills() + ConfigData.getInstance().CTF_REWARD_PVP_KILLER);
 			EventUtil.sendEventMessage(ph, MessageData.getInstance().getMsgByLang(ph.getPcInstance(), "reward_text_pvp", true).replace("%count%", ConfigData.getInstance().CTF_REWARD_PVP_KILLER + ""));
 		}
-		
 		// Reward fame for kills
 		if (ConfigData.getInstance().CTF_REWARD_FAME_KILLER_ENABLED)
 		{
 			ph.getPcInstance().setFame(ph.getPcInstance().getFame() + ConfigData.getInstance().CTF_REWARD_FAME_KILLER);
 			EventUtil.sendEventMessage(ph, MessageData.getInstance().getMsgByLang(ph.getPcInstance(), "reward_text_fame", true).replace("%count%", ConfigData.getInstance().CTF_REWARD_FAME_KILLER + ""));
 		}
-		
 		// Message Kill
 		if (ConfigData.getInstance().EVENT_KILLER_MESSAGE)
 		{
 			EventUtil.messageKill(ph, target);
 		}
-		
 		showPoint();
 	}
 	
@@ -214,12 +204,10 @@ public class CaptureTheFlag extends AbstractEvent
 		{
 			return true;
 		}
-		
 		if (hasFlag(ph) && item instanceof L2Weapon)
 		{
 			return true;
 		}
-		
 		return false;
 	}
 	
@@ -236,21 +224,18 @@ public class CaptureTheFlag extends AbstractEvent
 	}
 	
 	// VARIOUS METHODS -------------------------------------------------
-	
 	/**
 	 * Spawn flags and holders
 	 */
 	private void spawnFlagsAndHolders()
 	{
 		int instanceId = getInstanceWorldManager().getAllInstancesWorlds().get(0).getInstanceId();
-		
 		for (TeamHolder th : getTeamsManager().getAllTeams())
 		{
 			int x = th.getSpawn().getX();
 			int y = th.getSpawn().getY();
 			int z = th.getSpawn().getZ();
 			TeamType tt = th.getTeamType();
-			
 			_flagSpawn.put(getSpawnManager().addEventNpc(FLAG, x, y, z, 0, Team.NONE, th.getTeamType().name(), false, instanceId), tt);
 			_holderSpawn.put(getSpawnManager().addEventNpc(HOLDER, x - 100, y, z, 0, Team.NONE, th.getTeamType().name(), false, instanceId), tt);
 		}
@@ -267,7 +252,6 @@ public class CaptureTheFlag extends AbstractEvent
 		}
 		
 		List<TeamHolder> teamWinners = SortUtils.getOrdered(getTeamsManager().getAllTeams(), ScoreType.POINT).get(0);
-		
 		for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
 		{
 			TeamHolder phTeam = getTeamsManager().getPlayerTeam(ph);
@@ -278,7 +262,6 @@ public class CaptureTheFlag extends AbstractEvent
 				giveItems(ph, ConfigData.getInstance().CTF_REWARD_PLAYER_WIN);
 			}
 		}
-		
 		for (TeamHolder team : getTeamsManager().getAllTeams())
 		{
 			if (teamWinners.contains(team))
@@ -294,7 +277,6 @@ public class CaptureTheFlag extends AbstractEvent
 	private void showPoint()
 	{
 		StringBuilder sb = new StringBuilder();
-		
 		for (TeamHolder team : getTeamsManager().getAllTeams())
 		{
 			sb.append(" | ");
@@ -353,9 +335,7 @@ public class CaptureTheFlag extends AbstractEvent
 	{
 		TeamHolder th = getTeamsManager().getTeam(_flagHasPlayer.remove(ph));
 		_flagSpawn.put(getSpawnManager().addEventNpc(FLAG, ph.getPcInstance().getX(), ph.getPcInstance().getY(), ph.getPcInstance().getZ(), 0, Team.NONE, th.getTeamType().name(), false, ph.getDinamicInstanceId()), th.getTeamType());
-		
 		Map<String, String> map = new HashMap<>();
-		
 		// We announced that a flag was taken
 		map.put("%holder%", ph.getPcInstance().getName());
 		map.put("%flag%", th.getTeamType().name());

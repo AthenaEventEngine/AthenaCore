@@ -39,7 +39,6 @@ public class AllVsAll extends AbstractEvent
 {
 	// Time for resurrection
 	private static final int TIME_RES_PLAYER = 10;
-	
 	// Radius spawn
 	protected int _radius = 100;
 	
@@ -88,21 +87,18 @@ public class AllVsAll extends AbstractEvent
 		{
 			giveItems(ph, ConfigData.getInstance().AVA_REWARD_KILLER);
 		}
-		
-		// Reward pvp for kills
+		// Reward PvP for kills
 		if (ConfigData.getInstance().AVA_REWARD_PVP_KILLER_ENABLED)
 		{
 			ph.getPcInstance().setPvpKills(ph.getPcInstance().getPvpKills() + ConfigData.getInstance().AVA_REWARD_PVP_KILLER);
 			EventUtil.sendEventMessage(ph, MessageData.getInstance().getMsgByLang(ph.getPcInstance(), "reward_text_pvp", true).replace("%count%", ConfigData.getInstance().AVA_REWARD_PVP_KILLER + ""));
 		}
-		
 		// Reward fame for kills
 		if (ConfigData.getInstance().AVA_REWARD_FAME_KILLER_ENABLED)
 		{
 			ph.getPcInstance().setFame(ph.getPcInstance().getFame() + ConfigData.getInstance().AVA_REWARD_FAME_KILLER);
 			EventUtil.sendEventMessage(ph, MessageData.getInstance().getMsgByLang(ph.getPcInstance(), "reward_text_fame", true).replace("%count%", ConfigData.getInstance().AVA_REWARD_FAME_KILLER + ""));
 		}
-		
 		// Message Kill
 		if (ConfigData.getInstance().EVENT_KILLER_MESSAGE)
 		{
@@ -122,7 +118,6 @@ public class AllVsAll extends AbstractEvent
 	}
 	
 	// VARIOUS METHODS ------------------------------------------------------------------
-	
 	/**
 	 * Update the title of a character depending on the number of deaths or kills have
 	 * @param ph
@@ -147,16 +142,13 @@ public class AllVsAll extends AbstractEvent
 		}
 		
 		List<PlayerHolder> listOrdered = SortUtils.getOrdered(getPlayerEventManager().getAllEventPlayers(), ScoreType.KILL).get(0);
-		
 		String winners = "";
-		
 		// Get the players with more kills and less deaths
 		for (PlayerHolder ph : SortUtils.getOrdered(listOrdered, ScoreType.DEATH, SortUtils.Order.ASCENDENT).get(0))
 		{
 			winners += ph.getPcInstance().getName();
 			giveItems(ph, ConfigData.getInstance().AVA_REWARD_PLAYER_WIN);
 		}
-		
 		EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "ava_first_place", "%holder%", winners, CollectionTarget.ALL_PLAYERS_IN_EVENT);
 	}
 }

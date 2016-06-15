@@ -46,7 +46,6 @@ public class NpcManager extends Quest
 	public NpcManager()
 	{
 		super(-1, NpcManager.class.getSimpleName(), "EventEngine");
-		
 		addStartNpc(ConfigData.getInstance().NPC_MANAGER_ID);
 		addFirstTalkId(ConfigData.getInstance().NPC_MANAGER_ID);
 		addTalkId(ConfigData.getInstance().NPC_MANAGER_ID);
@@ -63,20 +62,17 @@ public class NpcManager extends Quest
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
 	{
 		StringTokenizer st = new StringTokenizer(event, " ");
-		
 		switch (st.nextToken())
 		{
 			case "index":
 				sendHtmlIndex(player);
 				break;
-				
 			case "engine":
 				final NpcHtmlMessage html = new NpcHtmlMessage();
 				html.setFile(player.getHtmlPrefix(), "data/html/events/event_engine.htm");
 				html.replace("%buttonMain%", MessageData.getInstance().getMsgByLang(player, "button_main", false));
 				player.sendPacket(html);
 				break;
-				
 			case "vote":
 				// Check for vote
 				if (checkPlayerCondition(player))
@@ -89,15 +85,12 @@ public class NpcManager extends Quest
 						player.sendMessage(MessageData.getInstance().getMsgByLang(player, "event_vote_done", true));
 					}
 				}
-				
 				sendHtmlIndex(player);
 				break;
-				
 			case "info":
 				String eventName = st.nextToken();
 				sendHtmlInfo(player, eventName);
 				break;
-				
 			case "register":
 				if (!EventEngineManager.getInstance().isRegistered(player))
 				{
@@ -120,10 +113,8 @@ public class NpcManager extends Quest
 				{
 					player.sendMessage(MessageData.getInstance().getMsgByLang(player, "registering_already_registered", true));
 				}
-				
 				sendHtmlIndex(player);
 				break;
-				
 			case "unregister":
 				if (EventEngineManager.getInstance().isOpenRegister())
 				{
@@ -140,15 +131,12 @@ public class NpcManager extends Quest
 				{
 					player.sendMessage(MessageData.getInstance().getMsgByLang(player, "event_registration_notUnRegState", true));
 				}
-				
 				sendHtmlIndex(player);
 				break;
-				
 			// Multi-Language System menu
 			case "menulang":
 				sendHtmlLang(player);
 				break;
-				
 			// Multi-Language System set language
 			case "setlang":
 				String lang = st.nextToken();
@@ -156,10 +144,8 @@ public class NpcManager extends Quest
 				player.sendMessage(MessageData.getInstance().getMsgByLang(player, "lang_current_successfully", false) + " " + lang);
 				sendHtmlIndex(player);
 				break;
-				
 			case "buffs":
 				int page = 1;
-				
 				if (st.hasMoreTokens())
 				{
 					page = Integer.parseInt(st.nextToken());
@@ -176,11 +162,9 @@ public class NpcManager extends Quest
 							break;
 					}
 				}
-				
 				sendHtmlBuffList(player, page);
 				break;
 		}
-		
 		return "";
 	}
 	
@@ -188,7 +172,6 @@ public class NpcManager extends Quest
 	{
 		final NpcHtmlMessage html = new NpcHtmlMessage();
 		html.setFile(player.getHtmlPrefix(), "data/html/events/event_info.htm");
-		
 		// Avoid a vulnerability
 		if (EventData.getInstance().getEvent(eventName) != null)
 		{
@@ -222,7 +205,6 @@ public class NpcManager extends Quest
 	{
 		final NpcHtmlMessage html = new NpcHtmlMessage();
 		html.setFile(player.getHtmlPrefix(), "data/html/events/event_lang.htm");
-		
 		// Info menu
 		html.replace("%settingTitle%", MessageData.getInstance().getMsgByLang(player, "lang_menu_title", false));
 		html.replace("%languageTitle%", MessageData.getInstance().getMsgByLang(player, "lang_language_title", false));
@@ -241,7 +223,6 @@ public class NpcManager extends Quest
 		html.replace("%buttonLang%", langList.toString());
 		// Button
 		html.replace("%buttonMain%", MessageData.getInstance().getMsgByLang(player, "button_main", false));
-		
 		// Send html
 		player.sendPacket(html);
 	}
@@ -250,7 +231,6 @@ public class NpcManager extends Quest
 	{
 		final NpcHtmlMessage html = new NpcHtmlMessage();
 		html.setFile(player.getHtmlPrefix(), "data/html/events/event_buffs.htm");
-		
 		html.replace("%buffTitle%", MessageData.getInstance().getMsgByLang(player, "buff_title", false));
 		html.replace("%buffDescription%", MessageData.getInstance().getMsgByLang(player, "buff_description", false));
 		html.replace("%buffTextCount%", MessageData.getInstance().getMsgByLang(player, "buff_text_count", false));
@@ -258,18 +238,14 @@ public class NpcManager extends Quest
 		html.replace("%buffCount%", " <font color=LEVEL>" + BuffListData.getInstance().getBuffsPlayer(player).size() + "</font>");
 		html.replace("%buffMax%", " <font color=LEVEL>" + ConfigData.MAX_BUFF_COUNT + "</font>");
 		html.replace("%buttonMain%", MessageData.getInstance().getMsgByLang(player, "button_main", false));
-		
 		StringBuilder sb = new StringBuilder();
-		
 		sb.append("<table>");
 		for (int cont = (page - 1) * MAX_BUFF_PAGE; cont < page * MAX_BUFF_PAGE; cont++)
 		{
 			SkillHolder sh = BuffListData.getInstance().getAllBuffs().get(cont);
-			
 			sb.append("<tr>");
 			sb.append("<td width=32 height=32><img src=" + sh.getSkill().getIcon() + " width=32 height=32></td>");
 			sb.append("<td width=130><font color=LEVEL>" + sh.getSkill().getName() + "</font><br></td>");
-			
 			if (!BuffListData.getInstance().getBuffPlayer(player, sh))
 			{
 				if (BuffListData.getInstance().getBuffsPlayer(player).size() >= ConfigData.MAX_BUFF_COUNT)
@@ -287,25 +263,20 @@ public class NpcManager extends Quest
 				sb.append("<td width=32 height=32></td>");
 				sb.append("<td width=32 height=32><button value=\"-\" action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " buffs " + page + " remove " + sh.getSkillId() + " " + sh.getSkillLvl() + "\" back=L2UI_CT1.Button_DF_Down fore=L2UI_CT1.Button_DF width=32 height=32/></td>");
 			}
-			
 			sb.append("</tr>");
 		}
-		
 		sb.append("</table>");
 		sb.append("<br>");
 		sb.append("<center><img src=\"l2ui.squaregray\" width=210 height=1></center>");
 		sb.append("<table>");
 		sb.append("<tr>");
-		
 		for (int cont = 0; cont < BuffListData.getInstance().getAllBuffs().size() / MAX_BUFF_PAGE; cont++)
 		{
 			sb.append("<td width=32 height=32><button value=" + (cont + 1) + " action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " buffs " + (cont + 1) + "\" back=L2UI_CT1.Button_DF_Down fore=L2UI_CT1.Button_DF width=32 height=32/></td>");
 		}
-		
 		sb.append("</tr>");
 		sb.append("</table>");
 		sb.append("<center><img src=\"l2ui.squaregray\" width=210 height=1></center>");
-		
 		html.replace("%buffList%", sb.toString());
 		// Send html
 		player.sendPacket(html);
@@ -320,10 +291,8 @@ public class NpcManager extends Quest
 	{
 		final NpcHtmlMessage html = new NpcHtmlMessage();
 		html.setFile(player.getHtmlPrefix(), "data/html/events/event_main.htm");
-		
 		// Info
 		html.replace("%namePlayer%", player.getName());
-		
 		if (EventEngineManager.getInstance().isWaiting())
 		{
 			html.replace("%menuInfo%", MessageData.getInstance().getMsgByLang(player, "event_waiting", false));
@@ -340,7 +309,6 @@ public class NpcManager extends Quest
 				StringUtil.append(eventList, "<td width=30%><font color=7898AF><a action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " info " + event.getSimpleName() + "\">" + MessageData.getInstance().getMsgByLang(player, "button_info", false) + "</a></font></td>");
 				StringUtil.append(eventList, "</tr>");
 			}
-			
 			html.replace("%menuInfo%", MessageData.getInstance().getMsgByLang(player, "event_vote_info", false));
 			html.replace("%button%", "%eventTextVotes% " + "%eventCountVotes%");
 			html.replace("%eventTextVotes%", MessageData.getInstance().getMsgByLang(player, "event_text_votes", false));
@@ -353,7 +321,6 @@ public class NpcManager extends Quest
 			html.replace("%button%", "%eventTextRecords% " + "%eventCountRecords%" + "<button value=\"%buttonActionName%\" action=\"%buttonAction%\" width=150 height=27 back=\"L2UI_CT1.Button_DF_Down\" fore=\"L2UI_CT1.Button_DF\"/>");
 			html.replace("%eventTextRecords%", MessageData.getInstance().getMsgByLang(player, "event_text_records", false));
 			html.replace("%eventCountRecords%", " <font color=LEVEL>" + EventEngineManager.getInstance().getAllRegisteredPlayers().size() + "</font><br1>");
-			
 			if (EventEngineManager.getInstance().isRegistered(player))
 			{
 				html.replace("%buttonActionName%", MessageData.getInstance().getMsgByLang(player, "button_unregister", false));
@@ -442,7 +409,6 @@ public class NpcManager extends Quest
 				return false;
 			}
 		}
-		
 		return true;
 	}
 }
