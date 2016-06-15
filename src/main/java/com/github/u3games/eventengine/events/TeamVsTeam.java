@@ -40,7 +40,6 @@ public class TeamVsTeam extends AbstractEvent
 {
 	// Time for resurrection
 	private static final int TIME_RES_PLAYER = 10;
-	
 	// Radius spawn
 	protected int _radius = 100;
 	
@@ -86,7 +85,7 @@ public class TeamVsTeam extends AbstractEvent
 		{
 			giveItems(ph, ConfigData.getInstance().TVT_REWARD_KILLER);
 		}
-		// Reward pvp for kills
+		// Reward PvP for kills
 		if (ConfigData.getInstance().TVT_REWARD_PVP_KILLER_ENABLED)
 		{
 			ph.getPcInstance().setPvpKills(ph.getPcInstance().getPvpKills() + ConfigData.getInstance().TVT_REWARD_PVP_KILLER);
@@ -103,7 +102,6 @@ public class TeamVsTeam extends AbstractEvent
 		{
 			EventUtil.messageKill(ph, target);
 		}
-		
 		showPoint();
 	}
 	
@@ -116,7 +114,6 @@ public class TeamVsTeam extends AbstractEvent
 	}
 	
 	// VARIOUS METHODS -------------------------------------------------
-	
 	/**
 	 * Give the rewards
 	 */
@@ -126,9 +123,9 @@ public class TeamVsTeam extends AbstractEvent
 		{
 			return;
 		}
+		
 		// Get the teams winner by total points
 		List<TeamHolder> teamWinners = SortUtils.getOrdered(getTeamsManager().getAllTeams(), ScoreType.POINT).get(0);
-		
 		for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
 		{
 			TeamHolder phTeam = getTeamsManager().getPlayerTeam(ph);
@@ -139,7 +136,6 @@ public class TeamVsTeam extends AbstractEvent
 				giveItems(ph, ConfigData.getInstance().TVT_REWARD_PLAYER_WIN);
 			}
 		}
-		
 		for (TeamHolder team : getTeamsManager().getAllTeams())
 		{
 			if (teamWinners.contains(team))
@@ -155,7 +151,6 @@ public class TeamVsTeam extends AbstractEvent
 	private void showPoint()
 	{
 		StringBuilder sb = new StringBuilder();
-		
 		for (TeamHolder team : getTeamsManager().getAllTeams())
 		{
 			sb.append(" | ");
