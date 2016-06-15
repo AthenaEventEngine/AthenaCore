@@ -43,7 +43,6 @@ import com.l2jserver.util.data.xml.IXmlReader;
 public class BuffListData implements IXmlReader
 {
 	private static final Logger LOGGER = Logger.getLogger(BuffListData.class.getName());
-	
 	// BuffList
 	private final List<SkillHolder> _buffList = new ArrayList<>();
 	// Lista de buffs de los personajes
@@ -96,7 +95,6 @@ public class BuffListData implements IXmlReader
 		{
 			return _buffsPlayers.get(player.getObjectId());
 		}
-		
 		return Collections.emptySet();
 	}
 	
@@ -117,7 +115,6 @@ public class BuffListData implements IXmlReader
 				}
 			}
 		}
-		
 		return false;
 	}
 	

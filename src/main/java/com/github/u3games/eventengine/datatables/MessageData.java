@@ -39,10 +39,8 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 public final class MessageData
 {
 	private static final Logger LOGGER = Logger.getLogger(MessageData.class.getName());
-	
 	private static final String DIRECTORY = "config/EventEngine/Language";
 	private static final String DEFAULT_LANG = "en";
-	
 	// Mapa para identificar el lenguaje de cada personaje
 	private Map<L2PcInstance, String> _playerCurrentLang = new HashMap<>();
 	private Map<String, String> _msgMap = new HashMap<>();
@@ -58,7 +56,6 @@ public final class MessageData
 		try
 		{
 			File dir = new File(DIRECTORY);
-			
 			for (File file : dir.listFiles(new FileFilter()
 			{
 				@Override
@@ -77,7 +74,6 @@ public final class MessageData
 					loadXml(file, file.getName().substring(5, file.getName().indexOf(".xml")));
 				}
 			}
-			
 			LOGGER.info(MessageData.class.getSimpleName() + ": Loaded " + _languages.size() + " languages.");
 		}
 		catch (Exception e)
@@ -91,7 +87,6 @@ public final class MessageData
 	{
 		int count = 0;
 		String langName = "";
-		
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setValidating(false);
 		factory.setIgnoringComments(true);
@@ -114,12 +109,10 @@ public final class MessageData
 			{
 				langName = docAttr.getNamedItem("lang").getNodeValue();
 			}
-			
 			if (!_languages.containsKey(lang))
 			{
 				_languages.put(lang, langName);
 			}
-			
 			for (Node d = n.getFirstChild(); d != null; d = d.getNextSibling())
 			{
 				if (d.getNodeName().equals("message"))
@@ -127,13 +120,11 @@ public final class MessageData
 					NamedNodeMap attrs = d.getAttributes();
 					String id = attrs.getNamedItem("id").getNodeValue();
 					String text = attrs.getNamedItem("text").getNodeValue();
-					
 					_msgMap.put(lang + "_" + id, text);
 					count++;
 				}
 			}
 		}
-		
 		LOGGER.info("Loaded language file for language " + lang + " " + count + " messages.");
 	}
 	
@@ -148,7 +139,6 @@ public final class MessageData
 	{
 		// Obtenemos el lenguaje por el que opto el usuario.
 		String lang = getLanguage(player);
-		
 		String tag = "";
 		// generamos el TAG propio de nuestro evento
 		if (addTag)
@@ -165,14 +155,12 @@ public final class MessageData
 		}
 		
 		StringBuilder msg = new StringBuilder(50);
-		
 		StringTokenizer st = new StringTokenizer(text, " ");
 		// generamos la traduccion de las diferentes partes del mensaje
 		while (st.hasMoreTokens())
 		{
 			// texto a ser traducido
 			String textLang = st.nextToken();
-			
 			if (_msgMap.containsKey(lang + "_" + textLang))
 			{
 				// buscamos la traduccion del texto en el lenguaje seleccionado por el personaje
@@ -189,7 +177,6 @@ public final class MessageData
 				msg.append(textLang);
 			}
 		}
-		
 		return tag + msg.toString();
 	}
 	
