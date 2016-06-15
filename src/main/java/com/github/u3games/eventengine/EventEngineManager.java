@@ -455,7 +455,6 @@ public class EventEngineManager
 		{
 			return topEvents.get(Rnd.get(0, topEventsSize - 1));
 		}
-		
 		return topEvents.get(0);
 	}
 	
@@ -635,7 +634,6 @@ public class EventEngineManager
 		{
 			return false;
 		}
-		
 		return _currentEvent.getPlayerEventManager().isPlayableInEvent(player);
 	}
 	
@@ -650,7 +648,6 @@ public class EventEngineManager
 		{
 			return false;
 		}
-		
 		return _currentEvent.getPlayerEventManager().isPlayableInEvent(playable);
 	}
 	
