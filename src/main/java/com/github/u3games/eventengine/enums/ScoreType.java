@@ -22,5 +22,5 @@ public enum ScoreType
 {
 	KILL,
 	POINT,
-	DEATH;
+	DEATH
 }

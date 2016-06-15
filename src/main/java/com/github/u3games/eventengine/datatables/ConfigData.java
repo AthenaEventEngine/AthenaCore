@@ -33,7 +33,6 @@ import com.l2jserver.gameserver.model.holders.ItemHolder;
 public class ConfigData
 {
 	private static final Logger LOGGER = Logger.getLogger(ConfigData.class.getName());
-	
 	private static final String EVENT_CONFIG = "./config/EventEngine/EventEngine.properties";
 	private static final String TVT_CONFIG = "./config/EventEngine/TeamVsTeam.properties";
 	private static final String AVA_CONFIG = "./config/EventEngine/AllVsAll.properties";
@@ -92,7 +91,6 @@ public class ConfigData
 	public int AVA_REWARD_PVP_KILLER;
 	public boolean AVA_REWARD_FAME_KILLER_ENABLED;
 	public int AVA_REWARD_FAME_KILLER;
-	
 	public List<Location> AVA_COORDINATES_TEAM;
 	
 	// -------------------------------------------------------------------------------
@@ -236,7 +234,6 @@ public class ConfigData
 		TVT_REWARD_PVP_KILLER = settings.getInt("EventRewardPvPKill", 1);
 		TVT_REWARD_FAME_KILLER_ENABLED = settings.getBoolean("EventRewardFameKillEnabled", false);
 		TVT_REWARD_FAME_KILLER = settings.getInt("EventRewardFameKill", 10);
-		
 		TVT_COUNT_TEAM = settings.getInt("EventCountTeam", 2);
 		TVT_COORDINATES_TEAM = settings.getLocationList("EventTeamCoordinates");
 		checkCountTeamAndSpawn("TeamVsTeam", TVT_COORDINATES_TEAM, TVT_COUNT_TEAM);

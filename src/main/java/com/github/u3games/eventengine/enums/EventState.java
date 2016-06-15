@@ -25,8 +25,10 @@ public enum EventState
 {
 	/** Se preparan acciones generales y especificas de cada evento */
 	START,
+	
 	/** Se habilita el evento para q los usuarios comiencen a pelear */
 	FIGHT,
+	
 	/** Se preparan acciones generales y especificas de cada evento */
-	END,
+	END
 }

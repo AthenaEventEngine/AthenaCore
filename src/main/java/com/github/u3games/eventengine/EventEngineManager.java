@@ -120,7 +120,6 @@ public class EventEngineManager
 	}
 	
 	// XXX NEXT EVENT ---------------------------------------------------------------------------------
-	
 	private Class<? extends AbstractEvent> _nextEvent;
 	
 	/**
@@ -142,7 +141,6 @@ public class EventEngineManager
 	}
 	
 	// XXX CURRENT EVENT ---------------------------------------------------------------------------------
-	
 	// Evento que esta corriendo.
 	private AbstractEvent _currentEvent;
 	
@@ -332,7 +330,6 @@ public class EventEngineManager
 	}
 	
 	// XXX EVENT VOTE ------------------------------------------------------------------------------------
-	
 	// Lista de id's de personajes que votaron
 	private final Set<Integer> _playersAlreadyVoted = ConcurrentHashMap.newKeySet();
 	// Mapa de con los id's de los personajes que los votaron
@@ -420,7 +417,6 @@ public class EventEngineManager
 		{
 			count += set.size();
 		}
-		
 		return count;
 	}
 	
@@ -434,7 +430,6 @@ public class EventEngineManager
 	{
 		int maxVotes = 0;
 		List<Class<? extends AbstractEvent>> topEvents = new ArrayList<>();
-		
 		for (Class<? extends AbstractEvent> event : _currentEventVotes.keySet())
 		{
 			int eventVotes = _currentEventVotes.get(event).size();
@@ -455,12 +450,10 @@ public class EventEngineManager
 		{
 			return topEvents.get(Rnd.get(0, topEventsSize - 1));
 		}
-		
 		return topEvents.get(0);
 	}
 	
 	// XXX EVENT STATE -----------------------------------------------------------------------------------
-	
 	// variable encargada de controlar en que momento se podran registrar los usuarios a los eventos.
 	private EventEngineState _state = EventEngineState.WAITING;
 	
@@ -521,7 +514,6 @@ public class EventEngineManager
 	}
 	
 	// XXX PLAYERS REGISTER -----------------------------------------------------------------------------
-	
 	// Lista de players en el evento.
 	private final Set<L2PcInstance> _eventRegisterdPlayers = ConcurrentHashMap.newKeySet();
 	
@@ -635,7 +627,6 @@ public class EventEngineManager
 		{
 			return false;
 		}
-		
 		return _currentEvent.getPlayerEventManager().isPlayableInEvent(player);
 	}
 	
@@ -650,7 +641,6 @@ public class EventEngineManager
 		{
 			return false;
 		}
-		
 		return _currentEvent.getPlayerEventManager().isPlayableInEvent(playable);
 	}
 	

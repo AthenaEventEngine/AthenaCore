@@ -97,7 +97,6 @@ public class EventEngineAdapter extends Quest
 				return new TerminateReturn(true, true, true);
 			}
 		}
-		
 		return null;
 	}
 	
@@ -116,7 +115,6 @@ public class EventEngineAdapter extends Quest
 		{
 			EventEngineManager.getInstance().listenerOnDeath((L2PcInstance) event.getTarget());
 		}
-		
 		return null;
 	}
 	

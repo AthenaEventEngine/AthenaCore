@@ -20,5 +20,5 @@ package com.github.u3games.eventengine.enums;
 
 public enum DistributionType
 {
-	DEFAULT;
+	DEFAULT
 }

@@ -32,7 +32,6 @@ import com.l2jserver.gameserver.model.Location;
 public class TeamsBuilder
 {
 	private static final Logger LOGGER = Logger.getLogger(TeamsBuilder.class.getName());
-	
 	private int _teamsAmount;
 	private List<List<Location>> _locations = new ArrayList<>();
 	private DistributionType _distribution = DistributionType.DEFAULT;
@@ -65,19 +64,16 @@ public class TeamsBuilder
 	public List<TeamHolder> build()
 	{
 		List<TeamHolder> teams = createTeams();
-		
 		if (teams == null)
 		{
 			return null;
 		}
-		
 		return distributePlayers(teams);
 	}
 	
 	private List<TeamHolder> createTeams()
 	{
 		List<TeamHolder> teams = new ArrayList<>();
-		
 		if (_teamsAmount != _locations.size())
 		{
 			LOGGER.warning(TeamsBuilder.class.getSimpleName() + ": The count of teams and locations doesn't match. Event cancelled!");
@@ -85,7 +81,6 @@ public class TeamsBuilder
 			LOGGER.warning(TeamsBuilder.class.getSimpleName() + ": Count of locations: " + _locations.size());
 			return null;
 		}
-		
 		if (_teamsAmount == 1)
 		{
 			TeamType type = TeamType.WHITE;
@@ -99,7 +94,6 @@ public class TeamsBuilder
 				teams.add(newTeam(type, _locations.get(i - 1).get(0))); // TODO: change when we have multiple locations
 			}
 		}
-		
 		return teams;
 	}
 	
