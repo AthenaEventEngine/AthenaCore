@@ -48,7 +48,6 @@ public class Survive extends AbstractEvent
 	private int _auxKillMonsters = 0;
 	// Radius spawn
 	protected int _radius = 200;
-	
 	// Monsters ids
 	private final List<Integer> MONSTERS_ID = ConfigData.getInstance().SURVIVE_MONSTERS_ID;
 	
@@ -132,14 +131,13 @@ public class Survive extends AbstractEvent
 		{
 			return;
 		}
+		
 		// Get the teams winner by total points
 		List<TeamHolder> teamWinners = SortUtils.getOrdered(getTeamsManager().getAllTeams(), ScoreType.POINT).get(0);
-		
 		for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
 		{
 			// FIXME agregar al sistema de lang
 			EventUtil.sendEventScreenMessage(ph, "Congratulations survivor!");
-			
 			TeamHolder phTeam = getTeamsManager().getPlayerTeam(ph);
 			// We deliver rewards
 			if (teamWinners.contains(phTeam))
@@ -164,7 +162,6 @@ public class Survive extends AbstractEvent
 	private void spawnsMobs()
 	{
 		EventUtil.announceTo(Say2.BATTLEFIELD, "survive_spawns_mobs", CollectionTarget.ALL_PLAYERS_IN_EVENT);
-		
 		// After 5 secs spawn run.
 		ThreadPoolManager.getInstance().scheduleGeneral(() ->
 		{
@@ -172,7 +169,6 @@ public class Survive extends AbstractEvent
 			{
 				getSpawnManager().addEventNpc(MONSTERS_ID.get(Rnd.get(MONSTERS_ID.size() - 1)), ConfigData.getInstance().SURVIVE_COORDINATES_MOBS, Team.RED, true, getInstanceWorldManager().getAllInstancesWorlds().get(0).getInstanceId());
 			}
-			
 			// We notify the characters in the event that stage they are currently.
 			for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
 			{
@@ -180,7 +176,6 @@ public class Survive extends AbstractEvent
 				EventUtil.sendEventScreenMessage(ph, "Stage " + _stage, 5000);
 			}
 		}, 5000L);
-		
 	}
 	
 	/**
