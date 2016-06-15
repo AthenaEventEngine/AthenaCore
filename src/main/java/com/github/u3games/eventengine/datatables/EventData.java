@@ -30,15 +30,12 @@ import com.github.u3games.eventengine.events.TeamVsTeam;
 import com.github.u3games.eventengine.events.handler.AbstractEvent;
 import com.l2jserver.util.Rnd;
 
-import net.sf.eventengine.datatables.ConfigData;
-
 /**
  * @author Zephyr
  */
 public class EventData
 {
 	private static final Logger LOGGER = Logger.getLogger(EventData.class.getName());
-	
 	private final ArrayList<Class<? extends AbstractEvent>> _eventList = new ArrayList<>();
 	private final Map<String, Class<? extends AbstractEvent>> _eventMap = new HashMap<>();
 	
@@ -54,19 +51,16 @@ public class EventData
 			_eventList.add(AllVsAll.class);
 			_eventMap.put(AllVsAll.class.getSimpleName(), AllVsAll.class);
 		}
-		
 		if (ConfigData.getInstance().SURVIVE_EVENT_ENABLED)
 		{
 			_eventList.add(Survive.class);
 			_eventMap.put(Survive.class.getSimpleName(), Survive.class);
 		}
-		
 		if (ConfigData.getInstance().TVT_EVENT_ENABLED)
 		{
 			_eventList.add(TeamVsTeam.class);
 			_eventMap.put(TeamVsTeam.class.getSimpleName(), TeamVsTeam.class);
 		}
-		
 		if (ConfigData.getInstance().CTF_EVENT_ENABLED)
 		{
 			_eventList.add(CaptureTheFlag.class);
