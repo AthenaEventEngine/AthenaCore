@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../xsd/buff_list.xsd">
 	<!-- author fissban -->
-	
 	<!-- SONGS -->
 	<buff id="264" lvl="1" /> <!-- Song of Earth -->
 	<buff id="265" lvl="1" /> <!-- Song of Life -->
@@ -50,7 +49,6 @@
 	<buff id="1257" lvl="3" /> <!-- Decrease Weight -->
 	<buff id="1259" lvl="4" /> <!-- Resist Shock -->
 	<buff id="1268" lvl="4" /> <!-- Vampiric Rage -->
-	
 	<buff id="1499" lvl="1" /> <!-- Improved Combat -->
 	<buff id="1500" lvl="1" /> <!-- Improved Magic -->
 	<buff id="1501" lvl="1" /> <!-- Improved Condition -->
@@ -64,5 +62,4 @@
 	<buff id="1357" lvl="1" /> <!-- Prophecy of Wind -->
 	<buff id="1363" lvl="1" /> <!-- Chant of Victory -->
 	<buff id="1413" lvl="1" /> <!-- Magnus' Chant -->
-
 </list>
