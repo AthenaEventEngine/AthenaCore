@@ -245,7 +245,6 @@ public class EventUtil
 	private static String getAnnounce(L2PcInstance player, String textId, Map<String, String> map, int time)
 	{
 		String announce = MessageData.getInstance().getMsgByLang(player, textId, true);
-		
 		if (time > -1)
 		{
 			String timeLeft;
@@ -257,10 +256,8 @@ public class EventUtil
 			{
 				timeLeft = time + " " + MessageData.getInstance().getMsgByLang(player, "time_seconds", false);
 			}
-			
 			announce = announce.replace("%time%", timeLeft);
 		}
-		
 		if (map != null)
 		{
 			for (String key : map.keySet())
@@ -279,7 +276,6 @@ public class EventUtil
 	private static Collection<L2PcInstance> getPlayersCollection(CollectionTarget type)
 	{
 		Collection<L2PcInstance> players = Collections.emptyList();
-		
 		switch (type)
 		{
 			case ALL_PLAYERS:
@@ -310,7 +306,6 @@ public class EventUtil
 	private static Map<L2Npc, Collection<L2PcInstance>> getNpcPlayerCollection(CollectionTarget type, Set<L2Npc> npcs)
 	{
 		Map<L2Npc, Collection<L2PcInstance>> players = new HashMap<>();
-		
 		switch (type)
 		{
 			case ALL_NEAR_PLAYERS:

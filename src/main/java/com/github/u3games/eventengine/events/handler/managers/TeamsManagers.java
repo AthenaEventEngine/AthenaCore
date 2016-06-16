@@ -40,7 +40,6 @@ public class TeamsManagers
 	{
 		// TODO: do something if the teams object is null
 		List<TeamHolder> teams = builder.build();
-		
 		for (TeamHolder team : teams)
 		{
 			_teams.put(team.getTeamType(), team);

@@ -100,15 +100,12 @@ public class SpawnManager
 				spawn.setZ(z + 20);
 				spawn.setAmount(1);
 				spawn.setInstanceId(instanceId);
-				
 				npc = spawn.doSpawn();// isSummonSpawn.
 				npc.setTeam(team);
-				
 				if (title != null)
 				{
 					npc.setTitle(title);
 				}
-				
 				SpawnTable.getInstance().addNewSpawn(spawn, false);
 				spawn.init();
 				// animation.
@@ -120,12 +117,9 @@ public class SpawnManager
 			e.printStackTrace();
 			return null;
 		}
-		
 		NpcHolder npcHolder = new NpcHolder(npc);
-		
 		// Add our npc to the list.
 		_eventNpc.put(npc.getObjectId(), npcHolder);
-		
 		return npcHolder;
 	}
 	
@@ -149,7 +143,6 @@ public class SpawnManager
 			{
 				continue;
 			}
-			
 			// Instance Npc
 			L2Npc npc = npcHolder.getNpcInstance();
 			// Stop the Respawn
@@ -157,7 +150,6 @@ public class SpawnManager
 			// Delete the npc.
 			npc.deleteMe();
 		}
-		
 		_eventNpc.clear();
 	}
 	
@@ -184,7 +176,6 @@ public class SpawnManager
 		npc.getSpawn().stopRespawn();
 		// Delete the npc.
 		npc.deleteMe();
-		
 		_eventNpc.remove(npc.getObjectId());
 	}
 }
