@@ -62,5 +62,4 @@ public class EventEngineListener implements IEventListener
 	{
 		return _player;
 	}
-	
 }
