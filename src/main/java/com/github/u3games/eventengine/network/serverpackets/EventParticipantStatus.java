@@ -30,6 +30,12 @@ import com.l2jserver.gameserver.network.serverpackets.L2GameServerPacket;
  */
 public class EventParticipantStatus extends L2GameServerPacket
 {
+	private EventState _eventState = null;
+	private int _pointsBlue = 0;
+	private int _pointsRed = 0;
+	private List<PlayerHolder> _teamBlue = new ArrayList<>();
+	private List<PlayerHolder> _teamRed = new ArrayList<>();
+	
 	// TODO por el momento solo esta habilitado el estado "PVP_KILL"
 	public enum EventState
 	{
@@ -37,15 +43,8 @@ public class EventParticipantStatus extends L2GameServerPacket
 		TOWER_DESTROY,
 		CATEGORY_UPDATE,
 		RESULT,
-		PVP_KILL,
+		PVP_KILL
 	}
-	
-	private EventState _eventState = null;
-	private int _pointsBlue = 0;
-	private int _pointsRed = 0;
-	
-	private List<PlayerHolder> _teamBlue = new ArrayList<>();
-	private List<PlayerHolder> _teamRed = new ArrayList<>();
 	
 	/**
 	 * Aqui mostramos cuantos puntos lleva cada team y el tiempo q falta para finalizar el evento
@@ -85,8 +84,8 @@ public class EventParticipantStatus extends L2GameServerPacket
 	{
 		writeC(0xfe);
 		writeH(0x95);
-		
 		writeD(_eventState.ordinal());
+		
 		switch (_eventState)
 		{
 			case TOTAL:
@@ -116,16 +115,12 @@ public class EventParticipantStatus extends L2GameServerPacket
 					writeD(0x00);// special kills
 				}
 				break;
-			
 			case TOWER_DESTROY:
 				break;
-			
 			case CATEGORY_UPDATE:
 				break;
-			
 			case RESULT:
 				break;
-			
 			case PVP_KILL:
 				writeD(EventEngineManager.getInstance().getTime());
 				writeD(_pointsBlue);

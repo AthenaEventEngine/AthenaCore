@@ -49,7 +49,6 @@ public class EventEngineTask implements Runnable
 					if (ConfigData.getInstance().EVENT_VOTING_ENABLED)
 					{
 						EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "event_voting_started", _type);
-						
 						EventEngineManager.getInstance().setTime(ConfigData.getInstance().EVENT_VOTING_TIME * 60);
 						EventEngineManager.getInstance().setEventEngineState(EventEngineState.VOTING);
 					}
@@ -57,10 +56,8 @@ public class EventEngineTask implements Runnable
 					{
 						EventEngineManager.getInstance().setNextEvent(EventData.getInstance().getRandomEventType());
 						EventEngineManager.getInstance().setTime(ConfigData.getInstance().EVENT_REGISTER_TIME * 60);
-						
 						String eventName = EventEngineManager.getInstance().getNextEvent().getSimpleName();
 						EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "event_register_started", "%event%", eventName, _type);
-						
 						EventEngineManager.getInstance().setEventEngineState(EventEngineState.REGISTER);
 					}
 				}
@@ -77,10 +74,8 @@ public class EventEngineTask implements Runnable
 					Class<? extends AbstractEvent> nextEvent = EventEngineManager.getInstance().getEventMoreVotes();
 					EventEngineManager.getInstance().setNextEvent(nextEvent);
 					EventEngineManager.getInstance().setTime(ConfigData.getInstance().EVENT_REGISTER_TIME * 60);
-					
 					EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "event_voting_ended", _type);
 					EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "event_register_started", "%event%", nextEvent.getSimpleName(), _type);
-					
 					EventEngineManager.getInstance().setEventEngineState(EventEngineState.REGISTER);
 				}
 				break;
@@ -123,7 +118,6 @@ public class EventEngineTask implements Runnable
 					EventEngineManager.getInstance().setEventEngineState(EventEngineState.WAITING);
 					return;
 				}
-				
 				EventEngineManager.getInstance().setCurrentEvent(event);
 				EventEngineManager.getInstance().setEventEngineState(EventEngineState.RUNNING_EVENT);
 				EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "event_started", _type);

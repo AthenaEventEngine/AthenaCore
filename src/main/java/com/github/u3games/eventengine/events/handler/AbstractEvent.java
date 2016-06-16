@@ -73,7 +73,6 @@ public abstract class AbstractEvent
 {
 	// Logger
 	private static final Logger LOGGER = Logger.getLogger(AbstractEvent.class.getName());
-	
 	// Max delay time for reuse skill
 	private static final int MAX_DELAY_TIME_SKILL = 900000;
 	
@@ -81,16 +80,13 @@ public abstract class AbstractEvent
 	{
 		// Add every player registered for the event.
 		getPlayerEventManager().createEventPlayers();
-		
 		if (ConfigData.getInstance().ANTI_AFK_ENABLED)
 		{
 			_antiAfkManager = new AntiAfkManager();
 		}
-		
 		initScheduledEvents();
 		// Starts the clock to control the sequence of internal events of the event.
 		getScheduledEventsManager().startTaskControlTime();
-		
 		getInstanceWorldManager().setInstanceFile(instanceFile);
 	}
 	
@@ -104,12 +100,10 @@ public abstract class AbstractEvent
 				initTeleportAllPlayers();
 				onEventStart();
 				break;
-			
 			case FIGHT:
 				prepareToFight();
 				onEventFight();
 				break;
-			
 			case END:
 				onEventEnd();
 				prepareToEnd();
@@ -150,7 +144,6 @@ public abstract class AbstractEvent
 	}
 	
 	// XXX SCHEDULED AND UNSCHEDULED EVENTS --------------------------------------------------------------
-	
 	private ScheduledEventsManager _scheduledEventsManager = new ScheduledEventsManager();
 	
 	public ScheduledEventsManager getScheduledEventsManager()
@@ -159,7 +152,6 @@ public abstract class AbstractEvent
 	}
 	
 	// XXX TELEPORT --------------------------------------------------------------
-	
 	protected int _radius = 50;
 	
 	/**
@@ -189,7 +181,6 @@ public abstract class AbstractEvent
 		getScheduledEventsManager().addScheduledEvent(new ChangeToFightEvent(time));
 		time += ConfigData.getInstance().EVENT_DURATION * 60 * 1000;
 		getScheduledEventsManager().addScheduledEvent(new ChangeToEndEvent(time));
-		
 		// Announce near end event
 		int timeLeftAnnounce = ConfigData.getInstance().EVENT_TEXT_TIME_FOR_END * 1000;
 		getScheduledEventsManager().addScheduledEvent(new AnnounceNearEndEvent(time - timeLeftAnnounce, ConfigData.getInstance().EVENT_TEXT_TIME_FOR_END));
@@ -206,7 +197,6 @@ public abstract class AbstractEvent
 		{
 			iterator.next().cancel(true);
 		}
-		
 		_revivePending.clear();
 	}
 	
@@ -227,7 +217,6 @@ public abstract class AbstractEvent
 	}
 	
 	// LISTENERS ------------------------------------------------------------------------------------ //
-	
 	/**
 	 * @param player
 	 * @param target
@@ -238,16 +227,13 @@ public abstract class AbstractEvent
 		{
 			return;
 		}
-		
 		// Get the player involved in our event.
 		PlayerHolder activePlayer = getPlayerEventManager().getEventPlayer(player);
-		
 		// Exclude the player from the next Anti Afk control
 		if (getAntiAfkManager() != null)
 		{
 			getAntiAfkManager().excludePlayer(activePlayer);
 		}
-		
 		onInteract(activePlayer, getSpawnManager().getEventNpc(target));
 	}
 	
@@ -270,23 +256,19 @@ public abstract class AbstractEvent
 		{
 			return;
 		}
-		
 		// ignoramos siempre si matan algun summon.
 		// XXX se podria usar en algun evento...analizar!
 		if (target.isSummon())
 		{
 			return;
 		}
-		
 		// Get the player involved in our event.
 		PlayerHolder activePlayer = getPlayerEventManager().getEventPlayer(playable);
-		
 		// Exclude the player from the next Anti Afk control
 		if (getAntiAfkManager() != null)
 		{
 			getAntiAfkManager().excludePlayer(activePlayer);
 		}
-		
 		onKill(activePlayer, target);
 	}
 	
@@ -308,7 +290,6 @@ public abstract class AbstractEvent
 		{
 			return;
 		}
-		
 		onDeath(getPlayerEventManager().getEventPlayer(player));
 	}
 	
@@ -326,16 +307,13 @@ public abstract class AbstractEvent
 		{
 			return false;
 		}
-		
 		// We get the player involved in our event.
 		PlayerHolder activePlayer = getPlayerEventManager().getEventPlayer(playable);
-		
 		// Exclude the player from the next Anti Afk control
 		if (getAntiAfkManager() != null)
 		{
 			getAntiAfkManager().excludePlayer(activePlayer);
 		}
-		
 		// Check Friendly Fire
 		if (!ConfigData.getInstance().FRIENDLY_FIRE)
 		{
@@ -352,7 +330,6 @@ public abstract class AbstractEvent
 				}
 			}
 		}
-		
 		return onAttack(activePlayer, target);
 	}
 	
@@ -377,29 +354,24 @@ public abstract class AbstractEvent
 		{
 			return false;
 		}
-		
 		// If the character has no target to finish the listener.
 		// XXX quizas en algun evento pueda ser requerido el uso de habilidades sin necesidad de target....revisar.
 		if (target == null)
 		{
 			return false;
 		}
-		
 		// If the character is using a skill on itself end the listener.
 		if (playable.equals(target))
 		{
 			return false;
 		}
-		
 		// We get the player involved in our event.
 		PlayerHolder activePlayer = getPlayerEventManager().getEventPlayer(playable);
-		
 		// Exclude the player from the next Anti Afk control
 		if (getAntiAfkManager() != null)
 		{
 			getAntiAfkManager().excludePlayer(activePlayer);
 		}
-		
 		// Check Friendly Fire
 		if (!ConfigData.getInstance().FRIENDLY_FIRE)
 		{
@@ -416,7 +388,6 @@ public abstract class AbstractEvent
 				}
 			}
 		}
-		
 		return onUseSkill(activePlayer, target, skill);
 	}
 	
@@ -442,22 +413,18 @@ public abstract class AbstractEvent
 		{
 			return false;
 		}
-		
 		// We will not allow the use of pots or scroll.
 		// XXX se podria setear como un config el tema de las pots
 		if (item.isScroll() || item.isPotion())
 		{
 			return true;
 		}
-		
 		PlayerHolder activePlayer = getPlayerEventManager().getEventPlayer(player);
-		
 		// Exclude the player from the next Anti Afk control
 		if (getAntiAfkManager() != null)
 		{
 			getAntiAfkManager().excludePlayer(activePlayer);
 		}
-		
 		return onUseItem(activePlayer, item);
 	}
 	
@@ -497,11 +464,9 @@ public abstract class AbstractEvent
 	}
 	
 	// VARIOUS METHODS. -------------------------------------------------------------------------------- //
-	
 	protected void initTeleportAllPlayers()
 	{
 		InstanceWorld world = getInstanceWorldManager().getAllInstancesWorlds().get(0);
-		
 		for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
 		{
 			// Adjust the instance that owns the character
@@ -532,11 +497,9 @@ public abstract class AbstractEvent
 	{
 		// Get the spawn defined at the start of each event
 		Location loc = getTeamsManager().getTeamSpawn(ph.getTeamType());
-		
 		loc.setInstanceId(ph.getDinamicInstanceId());
 		loc.setX(loc.getX() + Rnd.get(-radius, radius));
 		loc.setY(loc.getY() + Rnd.get(-radius, radius));
-		
 		// teleport to character
 		ph.getPcInstance().teleToLocation(loc, false);
 	}
@@ -562,11 +525,9 @@ public abstract class AbstractEvent
 		{
 			cancelAllPlayerActions(ph);
 			cancelAllEffects(ph);
-			
 			Location returnLoc = ph.getPcInstance().getLocation();
 			ph.setReturnLoc(new Location(returnLoc.getX(), returnLoc.getY(), returnLoc.getZ()));
 		}
-		
 		_teamsManagers.createTeams(onCreateTeams());
 		_instanceWorldManager.createNewInstanceWorld();
 	}
@@ -602,7 +563,6 @@ public abstract class AbstractEvent
 	public void prepareToEnd()
 	{
 		stopAllPendingRevive();
-		
 		for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
 		{
 			revivePlayer(ph);
@@ -634,13 +594,11 @@ public abstract class AbstractEvent
 		try
 		{
 			EventUtil.sendEventMessage(player, MessageData.getInstance().getMsgByLang(player.getPcInstance(), "revive_in", true).replace("%time%", time + ""));
-			
 			_revivePending.add(ThreadPoolManager.getInstance().scheduleGeneral(() ->
 			{
 				revivePlayer(player);
 				giveBuffPlayer(player.getPcInstance());
 				teleportPlayer(player, radiusTeleport);
-				
 			} , time * 1000));
 		}
 		catch (Exception e)
@@ -729,13 +687,11 @@ public abstract class AbstractEvent
 	{
 		// Stop all effects
 		ph.getPcInstance().stopAllEffects();
-		
 		// Check Transform
 		if (ph.getPcInstance().isTransformed())
 		{
 			ph.getPcInstance().untransform();
 		}
-		
 		// Check Summon's and pets
 		if (ph.getPcInstance().hasSummon())
 		{
@@ -743,7 +699,6 @@ public abstract class AbstractEvent
 			summon.stopAllEffectsExceptThoseThatLastThroughDeath();
 			summon.abortAttack();
 			summon.abortCast();
-			
 			// Remove
 			summon.unSummon(ph.getPcInstance());
 		}
@@ -754,7 +709,6 @@ public abstract class AbstractEvent
 			cubic.stopAction();
 			cubic.cancelDisappear();
 		}
-		
 		// Stop any cubic that has been given by other player
 		ph.getPcInstance().stopCubicsByOthers();
 		
@@ -780,7 +734,6 @@ public abstract class AbstractEvent
 				ph.getPcInstance().enableSkill(skill);
 			}
 		}
-		
 		// Check Skills
 		ph.getPcInstance().sendSkillList();
 		ph.getPcInstance().sendPacket(new SkillCoolTime(ph.getPcInstance()));
@@ -802,19 +755,15 @@ public abstract class AbstractEvent
 		// Recovers player's title and color
 		ph.recoverOriginalColorTitle();
 		ph.recoverOriginalTitle();
-		
 		// Remove the player from world instance
 		InstanceManager.getInstance().getPlayerWorld(ph.getPcInstance()).removeAllowed(ph.getPcInstance().getObjectId());
 		ph.getPcInstance().setInstanceId(0);
-		
-		// Remove the player from event listener (it's used to deny the manual ress)
+		// Remove the player from event listener (it's used to deny the manual res)
 		ph.getPcInstance().removeEventListener(EventEngineListener.class);
-		
 		if (forceRemove)
 		{
 			getPlayerEventManager().getAllEventPlayers().remove(ph);
 		}
-		
 		ph.getPcInstance().teleToLocation(ph.getReturnLoc());
 	}
 }

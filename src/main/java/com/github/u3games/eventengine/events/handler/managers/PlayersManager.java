@@ -74,11 +74,9 @@ public class PlayersManager
 				player.sendMessage("You can not attend the event being in the Observer mode.");
 				continue;
 			}
-			
 			_eventPlayers.put(player.getObjectId(), new PlayerHolder(player));
 			player.addEventListener(new EventEngineListener(player));
 		}
-		
 		// We clean the list, no longer we need it.
 		EventEngineManager.getInstance().clearRegisteredPlayers();
 	}
@@ -100,7 +98,6 @@ public class PlayersManager
 		{
 			return _eventPlayers.containsKey(((L2Summon) playable).getOwner().getObjectId());
 		}
-		
 		return false;
 	}
 	
@@ -117,12 +114,10 @@ public class PlayersManager
 		{
 			return _eventPlayers.get(((L2Summon) character).getOwner().getObjectId());
 		}
-		
 		if (character.isPlayer())
 		{
 			return _eventPlayers.get(character.getObjectId());
 		}
-		
 		return null;
 	}
 }

@@ -30,7 +30,6 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 public class PlayerHolder implements ParticipantHolder
 {
 	private final L2PcInstance _player;
-	
 	// Player kills in current event
 	private int _kills = 0;
 	// Player deaths in current event
@@ -43,7 +42,6 @@ public class PlayerHolder implements ParticipantHolder
 	private TeamType _team;
 	// Previous location before participating in the event
 	private Location _returnLocation;
-	
 	private int _dinamicInstanceId = 0;
 	
 	/**
@@ -56,7 +54,6 @@ public class PlayerHolder implements ParticipantHolder
 	}
 	
 	// METODOS VARIOS -----------------------------------------------------------
-	
 	/**
 	 * Get L2PcInstance
 	 * @return
