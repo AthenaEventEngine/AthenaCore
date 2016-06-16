@@ -48,9 +48,7 @@ public class ChangeToFightEvent implements EventScheduled
 	public void run()
 	{
 		AbstractEvent currentEvent = EventEngineManager.getInstance().getCurrentEvent();
-		
 		currentEvent.runEventState(EventState.FIGHT);
-		
 		// Send a special message to the participants
 		for (PlayerHolder player : currentEvent.getPlayerEventManager().getAllEventPlayers())
 		{

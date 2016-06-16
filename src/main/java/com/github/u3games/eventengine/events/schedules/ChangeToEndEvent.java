@@ -49,12 +49,9 @@ public class ChangeToEndEvent implements EventScheduled
 	public void run()
 	{
 		AbstractEvent currentEvent = EventEngineManager.getInstance().getCurrentEvent();
-		
 		currentEvent.runEventState(EventState.END);
-		
 		// Clear all the npcs spawned
 		currentEvent.getSpawnManager().removeAllEventNpc();
-		
 		// Finish antiAfkTask
 		if (currentEvent.getAntiAfkManager() != null)
 		{
@@ -66,7 +63,6 @@ public class ChangeToEndEvent implements EventScheduled
 		{
 			EventUtil.sendEventSpecialMessage(player, 1, "status_finished");
 		}
-		
 		EventEngineManager.getInstance().setEventEngineState(EventEngineState.EVENT_ENDED);
 	}
 }

@@ -25,5 +25,4 @@ public interface ParticipantHolder
 	public int getPoints();
 	
 	public int getDeaths();
-	
 }

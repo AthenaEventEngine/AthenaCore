@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <localization lang="English">
 	<!-- author swarlog  -->
-	
 	<!-- Event Engine Tag -->
 	<message id="event_engine_tag" text="[EventEngine]"/>
 	
@@ -17,7 +16,6 @@
 	<!-- login -->
 	<message id="event_login_participate" text="Come on! And participate!" />
 	<message id="event_login_vote" text="Vote for the next event!" />
-	
 	<message id="event_vote_done" text="Thank, event successfully voted!" />
 	<message id="event_vote_info" text="Vote for the desired event. The event with the most votes, will start!" />
 	<message id="event_started" text="The event has started!" />
@@ -107,7 +105,7 @@
 	<message id="time_hours" text="hour(s)."/>
 	<message id="time_minutes" text="minute(s)."/>
 	<message id="time_seconds" text="second(s)."/>
-
+	
 	<!-- Buff -->
 	<message id="buff_title" text="Buff List"/>
 	<message id="buff_description" text="Select from the list 5 buff skills to start with them at the next event."/>
@@ -121,10 +119,10 @@
 	
 	<!-- All vs All -->
 	<message id="ava_first_place" text="First place: %holder%"/>
-
+	
 	<!-- Survive -->
 	<message id="survive_spawns_mobs" text="Here come, get ready!"/>
-
+	
 	<!-- Custom events scheduled - Example -->
 	<message id="event_end_soon" text="The event will endup in %time% seconds." />
 	
@@ -138,5 +136,4 @@
 	<!-- Anti Afk -->
 	<message id="antiafk_player_kicked" text="You've been kicked by staying inactive"/>
 	<message id="antiafk_player_kicked_announce" text="The player %player% was kicked by staying inactive"/>
-	
 </localization>

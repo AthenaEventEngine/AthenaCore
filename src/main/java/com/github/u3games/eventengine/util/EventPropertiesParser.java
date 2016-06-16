@@ -39,7 +39,6 @@ import com.l2jserver.gameserver.model.holders.ItemHolder;
 public final class EventPropertiesParser
 {
 	private static final Logger LOGGER = Logger.getLogger(EventPropertiesParser.class.getName());
-	
 	private final Properties _properties = new Properties();
 	private final File _file;
 	
@@ -83,7 +82,6 @@ public final class EventPropertiesParser
 			LOGGER.warning("[" + _file.getName() + "] missing property for key: " + key + " using default value: " + defaultValue);
 			return defaultValue;
 		}
-		
 		if (value.equalsIgnoreCase("true"))
 		{
 			return true;
@@ -107,7 +105,6 @@ public final class EventPropertiesParser
 			LOGGER.warning("[" + _file.getName() + "] missing property for key: " + key + " using default value: " + defaultValue);
 			return defaultValue;
 		}
-		
 		try
 		{
 			return Byte.parseByte(value);
@@ -127,7 +124,6 @@ public final class EventPropertiesParser
 			LOGGER.warning("[" + _file.getName() + "] missing property for key: " + key + " using default value: " + defaultValue);
 			return defaultValue;
 		}
-		
 		try
 		{
 			return Short.parseShort(value);
@@ -147,7 +143,6 @@ public final class EventPropertiesParser
 			LOGGER.warning("[" + _file.getName() + "] missing property for key: " + key + " using default value: " + defaultValue);
 			return defaultValue;
 		}
-		
 		try
 		{
 			return Integer.parseInt(value);
@@ -167,7 +162,6 @@ public final class EventPropertiesParser
 			LOGGER.warning("[" + _file.getName() + "] missing property for key: " + key + " using default value: " + defaultValue);
 			return defaultValue;
 		}
-		
 		try
 		{
 			return Long.parseLong(value);
@@ -187,7 +181,6 @@ public final class EventPropertiesParser
 			LOGGER.warning("[" + _file.getName() + "] missing property for key: " + key + " using default value: " + defaultValue);
 			return defaultValue;
 		}
-		
 		try
 		{
 			return Float.parseFloat(value);
@@ -207,7 +200,6 @@ public final class EventPropertiesParser
 			LOGGER.warning("[" + _file.getName() + "] missing property for key: " + key + " using default value: " + defaultValue);
 			return defaultValue;
 		}
-		
 		try
 		{
 			return Double.parseDouble(value);
@@ -238,7 +230,6 @@ public final class EventPropertiesParser
 			LOGGER.warning("[" + _file.getName() + "] missing property for key: " + key + " using default value: " + defaultValue);
 			return defaultValue;
 		}
-		
 		try
 		{
 			return Enum.valueOf(clazz, value);
@@ -272,7 +263,6 @@ public final class EventPropertiesParser
 		{
 			LOGGER.warning(getClass().getSimpleName() + ": fail to read config -> " + key);
 		}
-		
 		return itemList;
 	}
 	
@@ -293,7 +283,6 @@ public final class EventPropertiesParser
 		{
 			LOGGER.warning(getClass().getSimpleName() + ": fail to read config -> " + key);
 		}
-		
 		return new Location(167616, 20315, -3332);
 	}
 	
@@ -308,21 +297,18 @@ public final class EventPropertiesParser
 		try
 		{
 			List<Location> locList = new ArrayList<>();
-			
 			StringTokenizer st = new StringTokenizer(getValue(key), ";");
 			while (st.hasMoreTokens())
 			{
 				StringTokenizer stLoc = new StringTokenizer(st.nextToken(), ",");
 				locList.add(new Location(Integer.parseInt(stLoc.nextToken()), Integer.parseInt(stLoc.nextToken()), Integer.parseInt(stLoc.nextToken())));
 			}
-			
 			return locList;
 		}
 		catch (Exception e)
 		{
 			LOGGER.warning(getClass().getSimpleName() + ": fail to read config -> " + key);
 		}
-		
 		return Collections.emptyList();
 	}
 	
@@ -347,7 +333,6 @@ public final class EventPropertiesParser
 		{
 			LOGGER.warning(getClass().getSimpleName() + ": fail to read config -> " + key);
 		}
-		
 		return integerList;
 	}
 }

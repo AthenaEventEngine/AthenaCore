@@ -49,7 +49,6 @@ public class NpcHolder
 		{
 			return _customTitle;
 		}
-		
 		return _npc.getTitle();
 	}
 	

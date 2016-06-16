@@ -34,7 +34,6 @@ import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 public class InstanceWorldManager
 {
 	private static final Logger LOGGER = Logger.getLogger(InstanceWorldManager.class.getName());
-	
 	private String _instanceFile = "";
 	private final List<InstanceWorld> _instanceWorlds = new ArrayList<>();
 	
@@ -66,26 +65,24 @@ public class InstanceWorldManager
 			InstanceManager.getInstance().getInstance(instanceId).setPvPInstance(true);
 			InstanceManager.getInstance().getInstance(instanceId).setEjectTime(10 * 60 * 1000); // prevent eject death players.
 			InstanceManager.getInstance().getInstance(instanceId).setEmptyDestroyTime(1000 + 60000L);
+			
 			// We closed the doors of the instance if there
 			for (L2DoorInstance door : InstanceManager.getInstance().getInstance(instanceId).getDoors())
 			{
 				door.closeMe();
 			}
-			
 			world = new EventEngineWorld();
 			world.setInstanceId(instanceId);
 			world.setTemplateId(100); // TODO hardcode
 			world.setStatus(0);
 			InstanceManager.getInstance().addWorld(world);
 			_instanceWorlds.add(world);
-			
 		}
 		catch (Exception e)
 		{
 			LOGGER.warning(EventEngineManager.class.getSimpleName() + ": -> createDynamicInstances() " + e);
 			e.printStackTrace();
 		}
-		
 		return world;
 	}
 	

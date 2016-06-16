@@ -69,11 +69,9 @@ public class AntiAfkManager
 			for (PlayerHolder ph : currentEvent.getPlayerEventManager().getAllEventPlayers())
 			{
 				Location currentLoc = ph.getPcInstance().getLocation();
-				
 				if (_playersAfkCheck.containsKey(ph))
 				{
 					Location previousLoc = _playersAfkCheck.get(ph);
-					
 					if (previousLoc.equals(currentLoc))
 					{
 						currentEvent.cancelAllPlayerActions(ph);
@@ -84,16 +82,13 @@ public class AntiAfkManager
 						continue;
 					}
 				}
-				
 				// It's not correct use the currentLoc object
 				newMap.put(ph, new Location(currentLoc.getX(), currentLoc.getY(), currentLoc.getZ(), currentLoc.getHeading(), currentLoc.getInstanceId()));
 			}
-			
 			// Clear list
 			_playersAfkCheck.clear();
 			_playersAfkCheck.putAll(newMap);
 			newMap.clear();
-			
 		}, ConfigData.getInstance().AFK_CHECK_TIME * 1000, ConfigData.getInstance().AFK_CHECK_TIME * 1000);
 	}
 	

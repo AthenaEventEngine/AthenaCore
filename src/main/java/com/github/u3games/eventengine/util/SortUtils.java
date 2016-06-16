@@ -71,11 +71,9 @@ public class SortUtils
 	private static <T extends ParticipantHolder> ArrayList<Holder> adaptList(Collection<T> list, ScoreType type, Order order)
 	{
 		ArrayList<Holder> listAdapted = new ArrayList<>();
-		
 		for (ParticipantHolder participant : list)
 		{
 			int value = 0;
-			
 			if (type == ScoreType.KILL)
 			{
 				value = participant.getKills();
@@ -88,10 +86,8 @@ public class SortUtils
 			{
 				value = participant.getDeaths();
 			}
-			
 			listAdapted.add(new Holder(participant, value, order));
 		}
-		
 		return listAdapted;
 	}
 	
@@ -104,10 +100,8 @@ public class SortUtils
 	private static <T extends ParticipantHolder> ArrayList<List<T>> unadaptList(ArrayList<Holder> holderList)
 	{
 		ArrayList<List<T>> finalList = new ArrayList<>();
-		
 		int index = -1;
 		int lastValue = -1000;
-		
 		for (Holder holder : holderList)
 		{
 			if (holder.getValue() != lastValue)
@@ -148,8 +142,7 @@ public class SortUtils
 		public int compareTo(Holder anotherHolder)
 		{
 			int compareValue = anotherHolder.getValue();
-			int result = compareValue - _value;;
-			
+			int result = compareValue - _value;
 			return _order == Order.ASCENDENT ? (result * -1) : result;
 		}
 	}
