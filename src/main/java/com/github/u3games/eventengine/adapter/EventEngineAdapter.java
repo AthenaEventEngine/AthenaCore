@@ -65,7 +65,7 @@ public class EventEngineAdapter extends Quest
 	@Priority(Integer.MAX_VALUE)
 	public void onPlayerLogout(OnPlayerLogout event)
 	{
-		EventEngineManager.getInstance().listenerOnLogout(event.getActiveChar());
+		EventEngineManager.getInstance().listenerOnLogout(event.getActiveChar(), null);
 	}
 	
 	// When a playable uses a skill

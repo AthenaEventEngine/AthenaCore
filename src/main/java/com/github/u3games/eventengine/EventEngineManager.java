@@ -36,6 +36,7 @@ import com.github.u3games.eventengine.datatables.MessageData;
 import com.github.u3games.eventengine.enums.EventEngineState;
 import com.github.u3games.eventengine.events.handler.AbstractEvent;
 import com.github.u3games.eventengine.events.holders.PlayerHolder;
+import com.github.u3games.eventengine.security.DualBoxProtection;
 import com.github.u3games.eventengine.task.EventEngineTask;
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.model.Location;
@@ -45,6 +46,7 @@ import com.l2jserver.gameserver.model.actor.L2Playable;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.items.L2Item;
 import com.l2jserver.gameserver.model.skills.Skill;
+import com.l2jserver.gameserver.network.L2GameClient;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
 import com.l2jserver.gameserver.network.serverpackets.CreatureSay;
 import com.l2jserver.util.Rnd;
@@ -269,17 +271,19 @@ public class EventEngineManager
 	}
 	
 	/**
-	 * Listener when the player logouts
+	 * Listener when the player logout
 	 * @param player
+	 * @param client 
 	 */
-	public void listenerOnLogout(L2PcInstance player)
+	public void listenerOnLogout(L2PcInstance player, L2GameClient client)
 	{
 		if (_currentEvent == null)
 		{
 			if (_state == EventEngineState.REGISTER || _state == EventEngineState.VOTING)
 			{
-				removeVote(player);
-				unRegisterPlayer(player);
+				DualBoxProtection.getInstance().removeConnection(client);
+				removeVote(player, client);
+				unRegisterPlayer(player, client);
 				return;
 			}
 		}
@@ -381,10 +385,12 @@ public class EventEngineManager
 	/**
 	 * Disminuímos la cantidad de votos
 	 * @param player -> personaje q esta votando
+	 * @param client 
 	 * @return
 	 */
-	public void removeVote(L2PcInstance player)
+	public void removeVote(L2PcInstance player, L2GameClient client)
 	{
+		DualBoxProtection.getInstance().removeConnection(client);
 		// Lo borra de la lista de jugadores que votaron
 		if (_playersAlreadyVoted.remove(player.getObjectId()))
 		{
@@ -569,11 +575,13 @@ public class EventEngineManager
 	/**
 	 * Eliminamos un player del registro
 	 * @param player
+	 * @param client 
 	 * @return <li>True - > si el player estaba registrado.</li><br>
 	 *         <li>False - > si el player no estaba registrado.</li><br>
 	 */
-	public boolean unRegisterPlayer(L2PcInstance player)
+	public boolean unRegisterPlayer(L2PcInstance player, L2GameClient client)
 	{
+		DualBoxProtection.getInstance().removeConnection(client);
 		return _eventRegisterdPlayers.remove(player);
 	}
 	
@@ -611,6 +619,7 @@ public class EventEngineManager
 	 */
 	public void cleanUp()
 	{
+		DualBoxProtection.getInstance().clearAllConnections();
 		setCurrentEvent(null);
 		clearVotes();
 		clearRegisteredPlayers();

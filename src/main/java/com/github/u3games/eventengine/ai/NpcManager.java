@@ -118,7 +118,7 @@ public class NpcManager extends Quest
 			case "unregister":
 				if (EventEngineManager.getInstance().isOpenRegister())
 				{
-					if (EventEngineManager.getInstance().unRegisterPlayer(player))
+					if (EventEngineManager.getInstance().unRegisterPlayer(player, null))
 					{
 						player.sendMessage(MessageData.getInstance().getMsgByLang(player, "unregistering_unregistered", true));
 					}
