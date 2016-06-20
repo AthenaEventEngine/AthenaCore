@@ -27,12 +27,14 @@ import com.github.u3games.eventengine.datatables.ConfigData;
 import com.github.u3games.eventengine.datatables.EventData;
 import com.github.u3games.eventengine.datatables.MessageData;
 import com.github.u3games.eventengine.events.handler.AbstractEvent;
+import com.github.u3games.eventengine.security.DualBoxProtection;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.entity.L2Event;
 import com.l2jserver.gameserver.model.entity.TvTEvent;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.quest.Quest;
+import com.l2jserver.gameserver.network.L2GameClient;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
 import com.l2jserver.util.StringUtil;
 
@@ -97,6 +99,9 @@ public class NpcManager extends Quest
 					// Check for register
 					if (checkPlayerCondition(player))
 					{
+						L2GameClient client = player.getClient();
+						DualBoxProtection.getInstance().registerConnection(client);
+						
 						// Check player size
 						if (EventEngineManager.getInstance().getAllRegisteredPlayers().size() >= ConfigData.getInstance().MAX_PLAYERS_IN_EVENT)
 						{
@@ -118,7 +123,10 @@ public class NpcManager extends Quest
 			case "unregister":
 				if (EventEngineManager.getInstance().isOpenRegister())
 				{
-					if (EventEngineManager.getInstance().unRegisterPlayer(player, null))
+					L2GameClient client = player.getClient();
+					DualBoxProtection.getInstance().removeConnection(client);
+					
+					if (EventEngineManager.getInstance().unRegisterPlayer(player))
 					{
 						player.sendMessage(MessageData.getInstance().getMsgByLang(player, "unregistering_unregistered", true));
 					}
