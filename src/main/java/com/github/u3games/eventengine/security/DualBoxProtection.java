@@ -87,7 +87,7 @@ public final class DualBoxProtection
 		return 0;
 	}
 	
-	public void clearAllConnections()
+	public synchronized void clearAllConnections()
 	{
 		_address.clear();
 	}
