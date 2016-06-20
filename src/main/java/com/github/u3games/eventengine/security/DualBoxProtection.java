@@ -43,22 +43,14 @@ public final class DualBoxProtection
 		if (ConfigData.DUALBOX_PROTECTION_ENABLED)
 		{
 			IpPack pack = new IpPack(client.getConnection().getInetAddress().getHostAddress(), client.getTrace());
-			Integer count = _address.get(pack);
-			if (count == null)
-			{
-				_address.put(pack, count = 1);
-			}
+			Integer count = _address.get(pack) == null ? 0 : _address.get(pack);
 			if (count < ConfigData.DUALBOX_MAX_ALLOWED)
 			{
 				_address.put(pack, count =+ 1);
-			}
-			else
-			{
-				_address.put(pack, count =+ 0);
-				return false;
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 	
 	public synchronized void removeConnection(L2GameClient client)
