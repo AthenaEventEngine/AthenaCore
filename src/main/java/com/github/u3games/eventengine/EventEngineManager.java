@@ -46,7 +46,6 @@ import com.l2jserver.gameserver.model.actor.L2Playable;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.items.L2Item;
 import com.l2jserver.gameserver.model.skills.Skill;
-import com.l2jserver.gameserver.network.L2GameClient;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
 import com.l2jserver.gameserver.network.serverpackets.CreatureSay;
 import com.l2jserver.util.Rnd;
@@ -280,8 +279,7 @@ public class EventEngineManager
 		{
 			if (_state == EventEngineState.REGISTER || _state == EventEngineState.VOTING)
 			{
-				L2GameClient client = player.getClient();
-				DualBoxProtection.getInstance().removeConnection(client);
+				DualBoxProtection.getInstance().removeConnection(player.getClient());
 				removeVote(player);
 				unRegisterPlayer(player);
 				return;

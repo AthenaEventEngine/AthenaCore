@@ -34,7 +34,6 @@ import com.l2jserver.gameserver.model.entity.L2Event;
 import com.l2jserver.gameserver.model.entity.TvTEvent;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.quest.Quest;
-import com.l2jserver.gameserver.network.L2GameClient;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
 import com.l2jserver.util.StringUtil;
 
@@ -99,8 +98,7 @@ public class NpcManager extends Quest
 					// Check for register
 					if (checkPlayerCondition(player))
 					{
-						L2GameClient client = player.getClient();
-						DualBoxProtection.getInstance().registerConnection(client);
+						DualBoxProtection.getInstance().registerConnection(player.getClient());
 						
 						// Check player size
 						if (EventEngineManager.getInstance().getAllRegisteredPlayers().size() >= ConfigData.getInstance().MAX_PLAYERS_IN_EVENT)
@@ -123,8 +121,7 @@ public class NpcManager extends Quest
 			case "unregister":
 				if (EventEngineManager.getInstance().isOpenRegister())
 				{
-					L2GameClient client = player.getClient();
-					DualBoxProtection.getInstance().removeConnection(client);
+					DualBoxProtection.getInstance().removeConnection(player.getClient());
 					
 					if (EventEngineManager.getInstance().unRegisterPlayer(player))
 					{
