@@ -42,12 +42,19 @@ public final class DualBoxProtection
 	{
 		if (ConfigData.DUALBOX_PROTECTION_ENABLED)
 		{
-			IpPack pack = new IpPack(client.getConnection().getInetAddress().getHostAddress(), client.getTrace());
-			Integer count = _address.get(pack) == null ? 0 : _address.get(pack);
-			if (count < ConfigData.DUALBOX_MAX_ALLOWED)
+			try
 			{
-				_address.put(pack, count =+ 1);
-				return true;
+				IpPack pack = new IpPack(client.getConnection().getInetAddress().getHostAddress(), client.getTrace());
+				Integer count = _address.get(pack) == null ? 0 : _address.get(pack);
+				if (count < ConfigData.DUALBOX_MAX_ALLOWED)
+				{
+					_address.put(pack, count =+ 1);
+					return true;
+				}
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
 			}
 		}
 		return false;
@@ -57,15 +64,22 @@ public final class DualBoxProtection
 	{
 		if (ConfigData.DUALBOX_PROTECTION_ENABLED)
 		{
-			IpPack pack = new IpPack(client.getConnection().getInetAddress().getHostAddress(), client.getTrace());
-			Integer count = _address.get(pack);
-			if ((count != null) && (count >= 1))
+			try
 			{
-				_address.put(pack, count =- 1);
+				IpPack pack = new IpPack(client.getConnection().getInetAddress().getHostAddress(), client.getTrace());
+				Integer count = _address.get(pack) != null ? _address.get(pack) : 0;
+				if (count > 0)
+				{
+					_address.put(pack, count =- 1);
+				}
+				else
+				{
+					_address.remove(pack);
+				}
 			}
-			else
+			catch (Exception e)
 			{
-				_address.remove(pack);
+				e.printStackTrace();
 			}
 		}
 	}
