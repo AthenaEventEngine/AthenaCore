@@ -31,6 +31,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
+import com.github.u3games.eventengine.events.holders.PlayerHolder;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 
 /**
@@ -129,10 +130,10 @@ public final class MessageData
 	}
 	
 	/**
-	 * Obtenemos un texto segun el lang q este usando el personaje.<br>
+	 * Returns the text based on player's language selected<br>
 	 * @param player
 	 * @param text
-	 * @param addTag -> usado principalmente en los mensaje q salen por pantalla o el chat
+	 * @param addTag -> used for screen or chat messages
 	 * @return String
 	 */
 	public String getMsgByLang(L2PcInstance player, String text, boolean addTag)
@@ -178,6 +179,11 @@ public final class MessageData
 			}
 		}
 		return tag + msg.toString();
+	}
+	
+	public String getMsgByLang(PlayerHolder player, String text, boolean addTag)
+	{
+		return getMsgByLang(player.getPcInstance(), text, addTag);
 	}
 	
 	/**
