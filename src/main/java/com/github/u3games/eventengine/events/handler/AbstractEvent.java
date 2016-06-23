@@ -309,17 +309,32 @@ public abstract class AbstractEvent
 		}
 		// We get the player involved in our event.
 		PlayerHolder activePlayer = getPlayerEventManager().getEventPlayer(playable);
+		
+		// Remove the spawn protection time
+		if (activePlayer.getProtectionTimeEnd() > 0)
+		{
+			activePlayer.setProtectionTimeEnd(0);
+			activePlayer.sendMessage(MessageData.getInstance().getMsgByLang(activePlayer, "spawnprotection_ended", false));
+		}
+		
 		// Exclude the player from the next Anti Afk control
 		if (getAntiAfkManager() != null)
 		{
 			getAntiAfkManager().excludePlayer(activePlayer);
 		}
-		// Check Friendly Fire
-		if (!ConfigData.getInstance().FRIENDLY_FIRE)
+		
+		// If our target is L2Playable type and we do this in the event control.
+		PlayerHolder activeTarget = getPlayerEventManager().getEventPlayer(target);
+		
+		if (activeTarget != null) 
 		{
-			// If our target is L2Playable type and we do this in the event control.
-			PlayerHolder activeTarget = getPlayerEventManager().getEventPlayer(target);
-			if (activeTarget != null)
+			if (activeTarget.isProtected())
+			{
+				activePlayer.sendMessage(MessageData.getInstance().getMsgByLang(activePlayer, "spawnprotection_protected", false));
+				return true;
+			}
+			// Check Friendly Fire
+			if (!ConfigData.getInstance().FRIENDLY_FIRE)
 			{
 				if (activePlayer.getTeamType() == activeTarget.getTeamType())
 				{
@@ -372,14 +387,27 @@ public abstract class AbstractEvent
 		{
 			getAntiAfkManager().excludePlayer(activePlayer);
 		}
-		// Check Friendly Fire
-		if (!ConfigData.getInstance().FRIENDLY_FIRE)
+		// If our target is L2Playable type and we do this in the event control.
+		PlayerHolder activeTarget = getPlayerEventManager().getEventPlayer(target);
+		if (activeTarget != null)
 		{
-			// If our target is L2Playable type and we do this in the event control.
-			PlayerHolder activeTarget = getPlayerEventManager().getEventPlayer(target);
-			if ((activeTarget != null) && (skill.isDamage() || skill.isDebuff()))
+			if (activeTarget.isProtected())
 			{
-				if (activePlayer.getTeamType() == activeTarget.getTeamType())
+				activePlayer.sendMessage(MessageData.getInstance().getMsgByLang(activePlayer, "spawnprotection_protected", false));
+				return true;
+			}
+			
+			if ((skill.isDamage() || skill.isDebuff()))
+			{
+				// Remove the spawn protection time
+				if (activePlayer.getProtectionTimeEnd() > 0)
+				{
+					activePlayer.setProtectionTimeEnd(0);
+					activePlayer.sendMessage(MessageData.getInstance().getMsgByLang(activePlayer, "spawnprotection_ended", false));
+				}
+
+				// Check Friendly Fire
+				if (!ConfigData.getInstance().FRIENDLY_FIRE && activePlayer.getTeamType() == activeTarget.getTeamType())
 				{
 					if ((activePlayer.getTeamType() != TeamType.WHITE) || (activeTarget.getTeamType() != TeamType.WHITE))
 					{
@@ -474,6 +502,7 @@ public abstract class AbstractEvent
 			// We add the character to the world and then be teleported
 			world.addAllowed(ph.getPcInstance().getObjectId());
 			teleportPlayer(ph, _radius);
+			ph.setProtectionTimeEnd(System.currentTimeMillis() + ConfigData.getInstance().SPAWN_PROTECTION_TIME * 1000); //Milliseconds
 		}
 	}
 	
@@ -628,6 +657,7 @@ public abstract class AbstractEvent
 			ph.getPcInstance().setCurrentCp(ph.getPcInstance().getMaxCp());
 			ph.getPcInstance().setCurrentHp(ph.getPcInstance().getMaxHp());
 			ph.getPcInstance().setCurrentMp(ph.getPcInstance().getMaxMp());
+			ph.setProtectionTimeEnd(System.currentTimeMillis() + ConfigData.getInstance().SPAWN_PROTECTION_TIME * 1000); //Milliseconds
 		}
 	}
 	
