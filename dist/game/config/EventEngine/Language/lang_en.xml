@@ -136,4 +136,8 @@
 	<!-- Anti Afk -->
 	<message id="antiafk_player_kicked" text="You've been kicked by staying inactive"/>
 	<message id="antiafk_player_kicked_announce" text="The player %player% was kicked by staying inactive"/>
+	
+	<!-- Spawn protection -->
+	<message id="spawnprotection_protected" text="The target has spawn protection"/>
+	<message id="spawnprotection_ended" text="The protection has ended"/>
 </localization>
