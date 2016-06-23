@@ -77,9 +77,9 @@ public class EventEngineManager
 			LOGGER.info(EventEngineManager.class.getSimpleName() + ": Adapter loaded.");
 			// Load event configs
 			ConfigData.getInstance();
-			LOGGER.info(EventEngineManager.class.getSimpleName() + ": Configs loaded");
+			LOGGER.info(EventEngineManager.class.getSimpleName() + ": Configs loaded.");
 			EventData.getInstance();
-			LOGGER.info(EventEngineManager.class.getSimpleName() + ": Events loaded");
+			LOGGER.info(EventEngineManager.class.getSimpleName() + ": Events loaded.");
 			initVotes();
 			// Load buff list
 			BuffListData.getInstance();
