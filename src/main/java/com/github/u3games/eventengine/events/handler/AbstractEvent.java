@@ -405,7 +405,7 @@ public abstract class AbstractEvent
 					activePlayer.setProtectionTimeEnd(0);
 					activePlayer.sendMessage(MessageData.getInstance().getMsgByLang(activePlayer, "spawnprotection_ended", false));
 				}
-
+				
 				// Check Friendly Fire
 				if (!ConfigData.getInstance().FRIENDLY_FIRE && activePlayer.getTeamType() == activeTarget.getTeamType())
 				{
