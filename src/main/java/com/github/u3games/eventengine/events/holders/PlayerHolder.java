@@ -44,6 +44,9 @@ public class PlayerHolder implements ParticipantHolder
 	private Location _returnLocation;
 	private int _dinamicInstanceId = 0;
 	
+	// Variable used to know the protection time inside events
+	private long _protectionTimeEnd = 0;
+	
 	/**
 	 * Constructor
 	 * @param player
@@ -194,5 +197,25 @@ public class PlayerHolder implements ParticipantHolder
 	public void setReturnLoc(Location loc)
 	{
 		_returnLocation = loc;
+	}
+	
+	public long getProtectionTimeEnd()
+	{
+		return _protectionTimeEnd;
+	}
+	
+	public boolean isProtected()
+	{
+		return _protectionTimeEnd > System.currentTimeMillis();
+	}
+	
+	public void setProtectionTimeEnd(long time) 
+	{
+		_protectionTimeEnd = time;
+	}
+	
+	public void sendMessage(String message)
+	{
+		_player.sendMessage(message);
 	}
 }

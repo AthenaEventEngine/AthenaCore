@@ -61,6 +61,7 @@ public class ConfigData
 	public int AFK_CHECK_TIME;
 	public static boolean DUALBOX_PROTECTION_ENABLED;
 	public static int DUALBOX_MAX_ALLOWED;
+	public int SPAWN_PROTECTION_TIME;
 	
 	// -------------------------------------------------------------------------------
 	// Configs Capture The Flag
@@ -169,6 +170,7 @@ public class ConfigData
 		AFK_CHECK_TIME = settings.getInt("EventAntiAfkCheckTime", 30);
 		DUALBOX_PROTECTION_ENABLED = settings.getBoolean("DualBoxProtectionEnabled", false);
 		DUALBOX_MAX_ALLOWED = settings.getInt("DualBoxMaxAllowed", 1);
+		SPAWN_PROTECTION_TIME = settings.getInt("EventSpawnProtectionTime", 5);
 		
 		// ------------------------------------------------------------------------------------- //
 		// CaptureTheFlag.properties
