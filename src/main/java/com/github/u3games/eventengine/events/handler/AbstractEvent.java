@@ -326,7 +326,7 @@ public abstract class AbstractEvent
 		// If our target is L2Playable type and we do this in the event control.
 		PlayerHolder activeTarget = getPlayerEventManager().getEventPlayer(target);
 		
-		if (activeTarget != null)
+		if (activeTarget != null) 
 		{
 			if (activeTarget.isProtected())
 			{
