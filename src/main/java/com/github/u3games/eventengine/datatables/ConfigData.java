@@ -59,6 +59,8 @@ public class ConfigData
 	public static int MAX_BUFF_COUNT;
 	public boolean ANTI_AFK_ENABLED;
 	public int AFK_CHECK_TIME;
+	public static boolean DUALBOX_PROTECTION_ENABLED;
+	public static int DUALBOX_MAX_ALLOWED;
 	
 	// -------------------------------------------------------------------------------
 	// Configs Capture The Flag
@@ -165,6 +167,8 @@ public class ConfigData
 		MAX_BUFF_COUNT = settings.getInt("EventMaxBuffCount", 5);
 		ANTI_AFK_ENABLED = settings.getBoolean("EventAntiAfkEnabled", false);
 		AFK_CHECK_TIME = settings.getInt("EventAntiAfkCheckTime", 30);
+		DUALBOX_PROTECTION_ENABLED = settings.getBoolean("DualBoxProtectionEnabled", false);
+		DUALBOX_MAX_ALLOWED = settings.getInt("DualBoxMaxAllowed", 1);
 		
 		// ------------------------------------------------------------------------------------- //
 		// CaptureTheFlag.properties

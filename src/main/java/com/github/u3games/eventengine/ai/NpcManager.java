@@ -27,6 +27,7 @@ import com.github.u3games.eventengine.datatables.ConfigData;
 import com.github.u3games.eventengine.datatables.EventData;
 import com.github.u3games.eventengine.datatables.MessageData;
 import com.github.u3games.eventengine.events.handler.AbstractEvent;
+import com.github.u3games.eventengine.security.DualBoxProtection;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.entity.L2Event;
@@ -97,6 +98,8 @@ public class NpcManager extends Quest
 					// Check for register
 					if (checkPlayerCondition(player))
 					{
+						DualBoxProtection.getInstance().registerConnection(player.getClient());
+						
 						// Check player size
 						if (EventEngineManager.getInstance().getAllRegisteredPlayers().size() >= ConfigData.getInstance().MAX_PLAYERS_IN_EVENT)
 						{
@@ -118,6 +121,8 @@ public class NpcManager extends Quest
 			case "unregister":
 				if (EventEngineManager.getInstance().isOpenRegister())
 				{
+					DualBoxProtection.getInstance().removeConnection(player.getClient());
+					
 					if (EventEngineManager.getInstance().unRegisterPlayer(player))
 					{
 						player.sendMessage(MessageData.getInstance().getMsgByLang(player, "unregistering_unregistered", true));
