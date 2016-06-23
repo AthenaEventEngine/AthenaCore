@@ -36,6 +36,7 @@ import com.github.u3games.eventengine.datatables.MessageData;
 import com.github.u3games.eventengine.enums.EventEngineState;
 import com.github.u3games.eventengine.events.handler.AbstractEvent;
 import com.github.u3games.eventengine.events.holders.PlayerHolder;
+import com.github.u3games.eventengine.security.DualBoxProtection;
 import com.github.u3games.eventengine.task.EventEngineTask;
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.model.Location;
@@ -269,7 +270,7 @@ public class EventEngineManager
 	}
 	
 	/**
-	 * Listener when the player logouts
+	 * Listener when the player logout
 	 * @param player
 	 */
 	public void listenerOnLogout(L2PcInstance player)
@@ -278,6 +279,7 @@ public class EventEngineManager
 		{
 			if (_state == EventEngineState.REGISTER || _state == EventEngineState.VOTING)
 			{
+				DualBoxProtection.getInstance().removeConnection(player.getClient());
 				removeVote(player);
 				unRegisterPlayer(player);
 				return;
@@ -611,6 +613,7 @@ public class EventEngineManager
 	 */
 	public void cleanUp()
 	{
+		DualBoxProtection.getInstance().clearAllConnections();
 		setCurrentEvent(null);
 		clearVotes();
 		clearRegisteredPlayers();
