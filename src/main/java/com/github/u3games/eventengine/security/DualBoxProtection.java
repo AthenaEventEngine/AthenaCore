@@ -48,7 +48,7 @@ public final class DualBoxProtection
 				Integer count = _address.get(pack) == null ? 0 : _address.get(pack);
 				if (count < ConfigData.DUALBOX_MAX_ALLOWED)
 				{
-					_address.put(pack, count = +1);
+					_address.put(pack, count += 1);
 					return true;
 				}
 			}
@@ -70,7 +70,7 @@ public final class DualBoxProtection
 				Integer count = _address.get(pack) != null ? _address.get(pack) : 0;
 				if (count > 0)
 				{
-					_address.put(pack, count = -1);
+					_address.put(pack, count -= 1);
 				}
 				else
 				{
