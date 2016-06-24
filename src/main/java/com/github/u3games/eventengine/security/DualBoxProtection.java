@@ -31,7 +31,7 @@ import com.l2jserver.gameserver.network.L2GameClient;
  */
 public final class DualBoxProtection
 {
-	private Map<IpPack, Integer> _address = new HashMap<DualBoxProtection.IpPack, Integer>();
+	private final Map<IpPack, Integer> _address = new HashMap<>();
 	
 	public DualBoxProtection()
 	{
@@ -48,7 +48,7 @@ public final class DualBoxProtection
 				Integer count = _address.get(pack) == null ? 0 : _address.get(pack);
 				if (count < ConfigData.DUALBOX_MAX_ALLOWED)
 				{
-					_address.put(pack, count =+ 1);
+					_address.put(pack, count += 1);
 					return true;
 				}
 			}
@@ -70,7 +70,7 @@ public final class DualBoxProtection
 				Integer count = _address.get(pack) != null ? _address.get(pack) : 0;
 				if (count > 0)
 				{
-					_address.put(pack, count =- 1);
+					_address.put(pack, count -= 1);
 				}
 				else
 				{
@@ -112,6 +112,7 @@ public final class DualBoxProtection
 	{
 		String ip;
 		int[][] tracert;
+		
 		public IpPack(String ip, int[][] tracert)
 		{
 			this.ip = ip;
