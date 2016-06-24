@@ -40,7 +40,7 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 public final class MessageData
 {
 	private static final Logger LOGGER = Logger.getLogger(MessageData.class.getName());
-	private static final String DIRECTORY = "config/EventEngine/Language";
+	private static final String DIRECTORY = "config/EventEngine/language";
 	private static final String DEFAULT_LANG = "en";
 	// Mapa para identificar el lenguaje de cada personaje
 	private Map<L2PcInstance, String> _playerCurrentLang = new HashMap<>();
