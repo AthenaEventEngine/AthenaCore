@@ -1,7 +1,7 @@
 # L2J-Event Engine Project Gitter: [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/u3games/L2J_EventEngine?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 L2J-EventEngine is a professional Lineage II Java Event Engine, fully written in Java.<br>
-Authors: Fissban, Zephyr and u3games.
+Authors: Zephyr, Sacrifice78, Fissban and U3Games.
 
 ## Links:
 
@@ -13,7 +13,6 @@ Chat: https://gitter.im/u3games/L2J_EventEngine<br>
 <br>
 **Support Forums**<br>
 L2J-Server: http://www.l2jserver.com/forum (English)<br>
-L2DevsAdmins: http://l2devsadmins.com (Spanish)<br>
 U3Games: http://l2.united-extreme.com (Spanish)<br>
 <br>
 **Current tasks**<br>
