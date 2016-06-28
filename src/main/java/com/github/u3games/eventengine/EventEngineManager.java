@@ -60,13 +60,13 @@ public class EventEngineManager
 	/**
 	 * Constructor
 	 */
-	EventEngineManager()
+	private EventEngineManager()
 	{
 		load();
 	}
 	
 	/**
-	 * It loads all the dependencies needed by EventEngine.
+	 * It loads all the dependencies needed by EventEngine
 	 */
 	private void load()
 	{
@@ -77,9 +77,9 @@ public class EventEngineManager
 			LOGGER.info(EventEngineManager.class.getSimpleName() + ": Adapter loaded.");
 			// Load event configs
 			ConfigData.getInstance();
-			LOGGER.info(EventEngineManager.class.getSimpleName() + ": Configs loaded.");
+			LOGGER.info(EventEngineManager.class.getSimpleName() + ": Configs loaded");
 			EventData.getInstance();
-			LOGGER.info(EventEngineManager.class.getSimpleName() + ": Events loaded.");
+			LOGGER.info(EventEngineManager.class.getSimpleName() + ": Events loaded");
 			initVotes();
 			// Load buff list
 			BuffListData.getInstance();
@@ -124,7 +124,7 @@ public class EventEngineManager
 	private Class<? extends AbstractEvent> _nextEvent;
 	
 	/**
-	 * Get the next event type.
+	 * Get the next event type
 	 * @return
 	 */
 	public Class<? extends AbstractEvent> getNextEvent()
@@ -133,7 +133,7 @@ public class EventEngineManager
 	}
 	
 	/**
-	 * Set the next event type.
+	 * Set the next event type
 	 * @param event
 	 */
 	public void setNextEvent(Class<? extends AbstractEvent> event)
@@ -146,7 +146,7 @@ public class EventEngineManager
 	private AbstractEvent _currentEvent;
 	
 	/**
-	 * Get the event currently running.
+	 * Obtenemos el evento q esta corriendo actualmente.
 	 * @return
 	 */
 	public AbstractEvent getCurrentEvent()
@@ -155,7 +155,7 @@ public class EventEngineManager
 	}
 	
 	/**
-	 * Define the event that shall begin to run.
+	 * Definimos el evento q comenzara a correr.
 	 * @param event
 	 */
 	public void setCurrentEvent(AbstractEvent event)
@@ -165,9 +165,9 @@ public class EventEngineManager
 	
 	// XXX LISTENERS -------------------------------------------------------------------------------------
 	/**
-	 * @param playable -> Character or Summon.
-	 * @param target -> Can't be null.
-	 * @return true -> Just in case we do not want an attack continue their normal progress.
+	 * @param playable -> personaje o summon
+	 * @param target -> NO puede ser null
+	 * @return true -> solo en el caso de que no queremos q un ataque continue su progeso normal.
 	 */
 	public boolean listenerOnAttack(L2Playable playable, L2Character target)
 	{
@@ -187,14 +187,13 @@ public class EventEngineManager
 	}
 	
 	/**
-	 * @param playable -> Character or Summon.
-	 * @param target -> Can be null.
-	 * @param skill ->
-	 * @return true -> Just in case we do not want a skill not continue its normal progress.
+	 * @param player -> personaje o summon
+	 * @param target -> puede ser null
+	 * @return true -> solo en el caso de que no queremos de una habilidad no continue su progreso normal.
 	 */
 	public boolean listenerOnUseSkill(L2Playable playable, L2Character target, Skill skill)
 	{
-		// If it is not running, not continue the listener.
+		// Si no se esta corriendo no continuar el listener.
 		if (_currentEvent != null)
 		{
 			try
@@ -211,8 +210,8 @@ public class EventEngineManager
 	}
 	
 	/**
-	 * @param playable -> Character or summon.
-	 * @param target -> Can't be null.
+	 * @param playable -> personaje o summon
+	 * @param target -> No puede ser null
 	 */
 	public void listenerOnKill(L2Playable playable, L2Character target)
 	{
@@ -255,7 +254,7 @@ public class EventEngineManager
 	 */
 	public void listenerOnDeath(L2PcInstance player)
 	{
-		// If it is not running, not continue the listener.
+		// Si no se esta corriendo no continuar el listener.
 		if (_currentEvent != null)
 		{
 			try
@@ -271,14 +270,14 @@ public class EventEngineManager
 	}
 	
 	/**
-	 * Listener when the player logout.
+	 * Listener when the player logout
 	 * @param player
 	 */
 	public void listenerOnLogout(L2PcInstance player)
 	{
 		if (_currentEvent == null)
 		{
-			if ((_state == EventEngineState.REGISTER) || (_state == EventEngineState.VOTING))
+			if (_state == EventEngineState.REGISTER || _state == EventEngineState.VOTING)
 			{
 				DualBoxProtection.getInstance().removeConnection(player.getClient());
 				removeVote(player);
@@ -312,12 +311,11 @@ public class EventEngineManager
 	
 	/**
 	 * @param player
-	 * @param item
-	 * @return boolean -> true only if we do not want that you can not use an item.
+	 * @return boolean -> true solo en el caso de que no queremos que no se pueda usar un item
 	 */
 	public boolean listenerOnUseItem(L2PcInstance player, L2Item item)
 	{
-		// If it is not running, not continue the listener.
+		// Si no se esta corriendo no continuar el listener.
 		if (_currentEvent != null)
 		{
 			try
@@ -334,9 +332,9 @@ public class EventEngineManager
 	}
 	
 	// XXX EVENT VOTE ------------------------------------------------------------------------------------
-	// Id's list of characters who voted.
+	// Lista de id's de personajes que votaron
 	private final Set<Integer> _playersAlreadyVoted = ConcurrentHashMap.newKeySet();
-	// Map of the Id's of the characters who voted.
+	// Mapa de con los id's de los personajes que los votaron
 	private final Map<Class<? extends AbstractEvent>, Set<Integer>> _currentEventVotes = new HashMap<>();
 	
 	/**
@@ -351,29 +349,31 @@ public class EventEngineManager
 	}
 	
 	/**
-	 * Method responsible of initializing the votes of each event.
+	 * Clase encargada de inicializar los votos de cada evento.
+	 * @return Map<EventType, Integer>
 	 */
 	public void clearVotes()
 	{
-		// The map is restarted.
+		// Se reinicia el mapa
 		for (Class<? extends AbstractEvent> event : _currentEventVotes.keySet())
 		{
 			_currentEventVotes.get(event).clear();
 		}
-		// The list of players who voted cleaned.
+		// Se limpia la lista de jugadores que votaron
 		_playersAlreadyVoted.clear();
 	}
 	
 	/**
-	 * Increase by 1, the number of votes.
-	 * @param player -> The character who is voting.
-	 * @param event -> Event voting.
+	 * Incrementamos en uno la cantidad de votos
+	 * @param player -> personaje q esta votando
+	 * @param event -> evento al q se vota
+	 * @return boolean
 	 */
 	public void increaseVote(L2PcInstance player, Class<? extends AbstractEvent> event)
 	{
-		// Add character at the list of those who voted.
-		// If it was, continue.
-		// If it wasn't, adds a vote to the event.
+		// Agrega al personaje a la lista de los que votaron
+		// Si ya estaba, sigue de largo
+		// Sino, agrega un voto al evento
 		if (_playersAlreadyVoted.add(player.getObjectId()))
 		{
 			_currentEventVotes.get(event).add(player.getObjectId());
@@ -381,15 +381,16 @@ public class EventEngineManager
 	}
 	
 	/**
-	 * Decrease the number of votes.
-	 * @param player -> Character that are voting.
+	 * Disminuímos la cantidad de votos
+	 * @param player -> personaje q esta votando
+	 * @return
 	 */
 	public void removeVote(L2PcInstance player)
 	{
-		// Deletes it from the list of players who voted.
+		// Lo borra de la lista de jugadores que votaron
 		if (_playersAlreadyVoted.remove(player.getObjectId()))
 		{
-			// If he was on the list, start looking for which event voted.
+			// Si estaba en la lista, empieza a buscar para qué evento votó
 			for (Class<? extends AbstractEvent> event : _currentEventVotes.keySet())
 			{
 				_currentEventVotes.get(event).remove(player.getObjectId());
@@ -398,7 +399,7 @@ public class EventEngineManager
 	}
 	
 	/**
-	 * Get the number of votes it has a certain event.
+	 * Obtenemos la cantidad de votos q tiene un determinado evento.
 	 * @param event -> AVA, TVT, CFT.
 	 * @return int
 	 */
@@ -408,7 +409,7 @@ public class EventEngineManager
 	}
 	
 	/**
-	 * Get the amount of total votes.
+	 * Obtenemos la cantidad de votos totales.
 	 * @return
 	 */
 	public int getAllCurrentVotesInEvents()
@@ -422,9 +423,9 @@ public class EventEngineManager
 	}
 	
 	/**
-	 * Get the event with more votes<br>
-	 * In case all have the same amount of votes, it will make a random<br>
-	 * among those most votes have.<br>
+	 * Obtenemos el evento con mayor votos<br>
+	 * En caso de tener todos la misma cant de votos se hace un random<br>
+	 * entre los que más votos tienen<br>
 	 * @return
 	 */
 	public Class<? extends AbstractEvent> getEventMoreVotes()
@@ -455,11 +456,11 @@ public class EventEngineManager
 	}
 	
 	// XXX EVENT STATE -----------------------------------------------------------------------------------
-	// Variable charge of controlling at what moment will be able to register users to events.
+	// variable encargada de controlar en que momento se podran registrar los usuarios a los eventos.
 	private EventEngineState _state = EventEngineState.WAITING;
 	
 	/**
-	 * Check what is the state that have the engine.
+	 * Revisamos en q estado se encuentra el engine
 	 * @return EventState
 	 */
 	public EventEngineState getEventEngineState()
@@ -468,9 +469,9 @@ public class EventEngineManager
 	}
 	
 	/**
-	 * Define the state in which the event is<br>
-	 * <u>Observations:</u><br>
-	 * <li>REGISTER -> Indicate that it is</li><br>
+	 * Definimos el estado en q se encuentra el evento<br>
+	 * <u>Observaciones:</u><br>
+	 * <li>REGISTER -> Indicamos q se esta</li><br>
 	 * @param state
 	 */
 	public void setEventEngineState(EventEngineState state)
@@ -497,7 +498,7 @@ public class EventEngineManager
 	}
 	
 	/**
-	 * Check whether you can continue registering more users to events.
+	 * Verificamos si se pueden seguir registrando mas usuarios a los eventos.
 	 * @return boolean
 	 */
 	public boolean isOpenRegister()
@@ -506,7 +507,7 @@ public class EventEngineManager
 	}
 	
 	/**
-	 * Check whether you can continue registering more users to events.
+	 * Verificamos si se pueden seguir registrando mas usuarios a los eventos.
 	 * @return boolean
 	 */
 	public boolean isOpenVote()
@@ -515,11 +516,11 @@ public class EventEngineManager
 	}
 	
 	// XXX PLAYERS REGISTER -----------------------------------------------------------------------------
-	// List of players at the event.
+	// Lista de players en el evento.
 	private final Set<L2PcInstance> _eventRegisterdPlayers = ConcurrentHashMap.newKeySet();
 	
 	/**
-	 * Get the collection of registered players.
+	 * Obtenemos la colección de jugadores registrados
 	 * @return Collection<L2PcInstance>
 	 */
 	public Collection<L2PcInstance> getAllRegisteredPlayers()
@@ -528,7 +529,8 @@ public class EventEngineManager
 	}
 	
 	/**
-	 * Clean collection of players.
+	 * Limpia la colección de jugadores
+	 * @return
 	 */
 	public void clearRegisteredPlayers()
 	{
@@ -536,10 +538,9 @@ public class EventEngineManager
 	}
 	
 	/**
-	 * Get if the number of registered players is 0.
-	 * @return
-	 *         <li>True - > no registered players.</li><br>
-	 *         <li>False - > there is at least one registered player.</li><br>
+	 * Obtenemos si la cantidad de jugadores registrados es 0
+	 * @return <li>True - > no hay jugadores registrados.</li><br>
+	 *         <li>False - > hay al menos un jugador registrado.</li><br>
 	 */
 	public boolean isEmptyRegisteredPlayers()
 	{
@@ -547,11 +548,9 @@ public class EventEngineManager
 	}
 	
 	/**
-	 * We get if the player is registered.
-	 * @param player
-	 * @return
-	 *         <li>True - > It is registered.</li><br>
-	 *         <li>False - > It's not registered.</li><br>
+	 * Obtenemos si el jugador se encuentra registrado
+	 * @return <li>True - > Está registrado.</li><br>
+	 *         <li>False - > No está registrado.</li><br>
 	 */
 	public boolean isRegistered(L2PcInstance player)
 	{
@@ -559,11 +558,10 @@ public class EventEngineManager
 	}
 	
 	/**
-	 * Add a player to register.
+	 * Agregamos un player al registro
 	 * @param player
-	 * @return
-	 *         <li>True - > if the registration is successful.</li><br>
-	 *         <li>False - > if the player already registered.</li><br>
+	 * @return <li>True - > si el registro es exitoso.</li><br>
+	 *         <li>False - > si el player ya estaba registrado.</li><br>
 	 */
 	public boolean registerPlayer(L2PcInstance player)
 	{
@@ -571,11 +569,10 @@ public class EventEngineManager
 	}
 	
 	/**
-	 * Remove one player from register.
+	 * Eliminamos un player del registro
 	 * @param player
-	 * @return
-	 *         <li>True - > if the player was registered.</li><br>
-	 *         <li>False - > if the player was not registered.</li><br>
+	 * @return <li>True - > si el player estaba registrado.</li><br>
+	 *         <li>False - > si el player no estaba registrado.</li><br>
 	 */
 	public boolean unRegisterPlayer(L2PcInstance player)
 	{
@@ -584,11 +581,11 @@ public class EventEngineManager
 	
 	// XXX MISC ---------------------------------------------------------------------------------------
 	
-	private final Map<Integer, Location> _playersDisconnected = new ConcurrentHashMap<>();
+	private Map<Integer, Location> _playersDisconnected = new ConcurrentHashMap<>();
 	
 	/**
-	 * When the player is disconnected inside event.<br>
-	 * It adds him to a list saving the original location.<br>
+	 * When the player is disconnected inside event<br>
+	 * It adds him to a list saving the original location<br>
 	 * @param ph
 	 */
 	public void addPlayerDisconnected(PlayerHolder ph)
@@ -598,8 +595,8 @@ public class EventEngineManager
 	}
 	
 	/**
-	 * When the player relogs.<br>
-	 * It teleports him to the original location if he disconnected inside event.<br>
+	 * When the player relogs<br>
+	 * It teleports him to the original location if he disconnected inside event<br>
 	 * @param player
 	 */
 	public void returnPlayerDisconnected(L2PcInstance player)
@@ -612,7 +609,7 @@ public class EventEngineManager
 	}
 	
 	/**
-	 * Cleanup variables to the next event.
+	 * Cleanup variables to the next event
 	 */
 	public void cleanUp()
 	{
@@ -623,7 +620,7 @@ public class EventEngineManager
 	}
 	
 	/**
-	 * Check if a player participates in some event.
+	 * Verificamos si un player participa de algun evento
 	 * @param player
 	 * @return
 	 */
@@ -637,7 +634,7 @@ public class EventEngineManager
 	}
 	
 	/**
-	 * Check if a playable participates in some event.
+	 * Verificamos si un playable participa de algun evento
 	 * @param playable
 	 * @return
 	 */
