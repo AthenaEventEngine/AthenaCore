@@ -48,7 +48,7 @@ public class AntiAfkManager
 	private ScheduledFuture<?> _taskAntiAfk;
 	
 	/**
-	 * Add a character to the list of "excluded" from the next control system
+	 * Add a character to the list of "excluded" from the next control system.
 	 * @param ph
 	 */
 	public void excludePlayer(PlayerHolder ph)
@@ -93,7 +93,7 @@ public class AntiAfkManager
 	}
 	
 	/**
-	 * Cancel the thread that checks player actions and clear the map
+	 * Cancel the thread that checks player actions and clear the map.
 	 */
 	public void finish()
 	{

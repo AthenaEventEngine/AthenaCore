@@ -78,19 +78,22 @@ public abstract class AbstractEvent
 	
 	public AbstractEvent(String instanceFile)
 	{
-		// Add every player registered for the event.
+		// Add every player registered for the event
 		getPlayerEventManager().createEventPlayers();
 		if (ConfigData.getInstance().ANTI_AFK_ENABLED)
 		{
 			_antiAfkManager = new AntiAfkManager();
 		}
 		initScheduledEvents();
-		// Starts the clock to control the sequence of internal events of the event.
+		// Starts the clock to control the sequence of internal events of the event
 		getScheduledEventsManager().startTaskControlTime();
 		getInstanceWorldManager().setInstanceFile(instanceFile);
 	}
 	
-	/** Necessary to handle the event states. */
+	/**
+	 * Necessary to handle the event states.<br>
+	 * @param state
+	 */
 	public final void runEventState(EventState state)
 	{
 		switch (state)
@@ -128,7 +131,7 @@ public abstract class AbstractEvent
 	}
 	
 	// XXX TEAMS -----------------------------------------------------------------------------------------
-	private TeamsManagers _teamsManagers = new TeamsManagers();
+	private final TeamsManagers _teamsManagers = new TeamsManagers();
 	
 	public TeamsManagers getTeamsManager()
 	{
@@ -136,7 +139,7 @@ public abstract class AbstractEvent
 	}
 	
 	// XXX DINAMIC INSTANCE ------------------------------------------------------------------------------
-	private InstanceWorldManager _instanceWorldManager = new InstanceWorldManager();
+	private final InstanceWorldManager _instanceWorldManager = new InstanceWorldManager();
 	
 	public InstanceWorldManager getInstanceWorldManager()
 	{
@@ -144,7 +147,7 @@ public abstract class AbstractEvent
 	}
 	
 	// XXX SCHEDULED AND UNSCHEDULED EVENTS --------------------------------------------------------------
-	private ScheduledEventsManager _scheduledEventsManager = new ScheduledEventsManager();
+	private final ScheduledEventsManager _scheduledEventsManager = new ScheduledEventsManager();
 	
 	public ScheduledEventsManager getScheduledEventsManager()
 	{
@@ -155,21 +158,21 @@ public abstract class AbstractEvent
 	protected int _radius = 50;
 	
 	/**
-	 * Init the scheduled events<br>
+	 * Init the scheduled events.<br>
 	 * <ul>
-	 * <b>Actions: </b>
+	 * <b>Actions:</b>
 	 * </ul>
-	 * <li>-> step 1: Announce participants will be teleported</li><br>
-	 * <li>Wait 3 secs</li><br>
-	 * <li>-> step 2: Adjust the status of the event -> START</li><br>
-	 * <li>We hope 1 sec to actions within each event is executed..</li><br>
-	 * <li>-> step 3: Adjust the status of the event -> FIGHT</li><br>
-	 * <li>-> step 3: We sent a message that they are ready to fight.</li><br>
-	 * <li>We wait until the event ends</li><br>
-	 * <li>-> step 4: Adjust the status of the event -> END</li><br>
-	 * <li>-> step 4: We sent a message warning that term event</li><br>
-	 * <li>Wait for 1 seg</li><br>
-	 * <li>-> step 5: Alert the event has ended</li><br>
+	 * <li>->Step 1: Announce participants will be teleported.</li><br>
+	 * <li>Wait 3 secs.</li><br>
+	 * <li>->Step 2: Adjust the status of the event -> START.</li><br>
+	 * <li>We hope 1 sec to actions within each event is executed.</li><br>
+	 * <li>->Step 3: Adjust the status of the event -> FIGHT.</li><br>
+	 * <li>->Step 4: We sent a message that they are ready to fight.</li><br>
+	 * <li>We wait until the event ends.</li><br>
+	 * <li>->Step 5: Adjust the status of the event -> END.</li><br>
+	 * <li>->Step 6: We sent a message warning that term event.</li><br>
+	 * <li>Wait for 1 sec.</li><br>
+	 * <li>->Step 7: Alert the event has ended.</li><br>
 	 */
 	private void initScheduledEvents()
 	{
@@ -201,7 +204,7 @@ public abstract class AbstractEvent
 	}
 	
 	// NPC IN EVENT --------------------------------------------------------------------------------- //
-	private SpawnManager _spawnManager = new SpawnManager();
+	private final SpawnManager _spawnManager = new SpawnManager();
 	
 	public SpawnManager getSpawnManager()
 	{
@@ -209,7 +212,7 @@ public abstract class AbstractEvent
 	}
 	
 	// PLAYERS IN EVENT ----------------------------------------------------------------------------- //
-	private PlayersManager _playerEventManager = new PlayersManager();
+	private final PlayersManager _playerEventManager = new PlayersManager();
 	
 	public PlayersManager getPlayerEventManager()
 	{
@@ -227,7 +230,7 @@ public abstract class AbstractEvent
 		{
 			return;
 		}
-		// Get the player involved in our event.
+		// Get the player involved in our event
 		PlayerHolder activePlayer = getPlayerEventManager().getEventPlayer(player);
 		// Exclude the player from the next Anti Afk control
 		if (getAntiAfkManager() != null)
@@ -256,13 +259,13 @@ public abstract class AbstractEvent
 		{
 			return;
 		}
-		// ignoramos siempre si matan algun summon.
-		// XXX se podria usar en algun evento...analizar!
+		// We ignore if they kill any summon
+		// XXX It could be used in some event...analyze!
 		if (target.isSummon())
 		{
 			return;
 		}
-		// Get the player involved in our event.
+		// Get the player involved in our event
 		PlayerHolder activePlayer = getPlayerEventManager().getEventPlayer(playable);
 		// Exclude the player from the next Anti Afk control
 		if (getAntiAfkManager() != null)
@@ -307,7 +310,7 @@ public abstract class AbstractEvent
 		{
 			return false;
 		}
-		// We get the player involved in our event.
+		// We get the player involved in our event
 		PlayerHolder activePlayer = getPlayerEventManager().getEventPlayer(playable);
 		
 		// Remove the spawn protection time
@@ -323,7 +326,7 @@ public abstract class AbstractEvent
 			getAntiAfkManager().excludePlayer(activePlayer);
 		}
 		
-		// If our target is L2Playable type and we do this in the event control.
+		// If our target is L2Playable type and we do this in the event control
 		PlayerHolder activeTarget = getPlayerEventManager().getEventPlayer(target);
 		
 		if (activeTarget != null)
@@ -351,7 +354,7 @@ public abstract class AbstractEvent
 	/**
 	 * @param ph
 	 * @param target
-	 * @return true -> only in the event that an attack not want q continue its normal progress.
+	 * @return true -> Only in the event that an attack not want that continue its normal progress.
 	 */
 	public boolean onAttack(PlayerHolder ph, L2Character target)
 	{
@@ -361,7 +364,8 @@ public abstract class AbstractEvent
 	/**
 	 * @param playable
 	 * @param target
-	 * @return true -> only in the event that an skill not want that continue its normal progress.
+	 * @param skill
+	 * @return true -> Only in the event that an skill not want that continue its normal progress.
 	 */
 	public boolean listenerOnUseSkill(L2Playable playable, L2Character target, Skill skill)
 	{
@@ -370,24 +374,24 @@ public abstract class AbstractEvent
 			return false;
 		}
 		// If the character has no target to finish the listener.
-		// XXX quizas en algun evento pueda ser requerido el uso de habilidades sin necesidad de target....revisar.
+		// XXX Perhaps in any event it is required to use skills without target... check!
 		if (target == null)
 		{
 			return false;
 		}
-		// If the character is using a skill on itself end the listener.
+		// If the character is using a skill on itself end the listener
 		if (playable.equals(target))
 		{
 			return false;
 		}
-		// We get the player involved in our event.
+		// We get the player involved in our event
 		PlayerHolder activePlayer = getPlayerEventManager().getEventPlayer(playable);
 		// Exclude the player from the next Anti Afk control
 		if (getAntiAfkManager() != null)
 		{
 			getAntiAfkManager().excludePlayer(activePlayer);
 		}
-		// If our target is L2Playable type and we do this in the event control.
+		// If our target is L2Playable type and we do this in the event control
 		PlayerHolder activeTarget = getPlayerEventManager().getEventPlayer(target);
 		if (activeTarget != null)
 		{
@@ -405,9 +409,9 @@ public abstract class AbstractEvent
 					activePlayer.setProtectionTimeEnd(0);
 					activePlayer.sendMessage(MessageData.getInstance().getMsgByLang(activePlayer, "spawnprotection_ended", false));
 				}
-
+				
 				// Check Friendly Fire
-				if (!ConfigData.getInstance().FRIENDLY_FIRE && activePlayer.getTeamType() == activeTarget.getTeamType())
+				if (!ConfigData.getInstance().FRIENDLY_FIRE && (activePlayer.getTeamType() == activeTarget.getTeamType()))
 				{
 					if ((activePlayer.getTeamType() != TeamType.WHITE) || (activeTarget.getTeamType() != TeamType.WHITE))
 					{
@@ -423,7 +427,7 @@ public abstract class AbstractEvent
 	 * @param ph
 	 * @param target
 	 * @param skill
-	 * @return true -> only in the event that an item not want that continue its normal progress.
+	 * @return true -> Only in the event that an item not want that continue its normal progress.
 	 */
 	public boolean onUseSkill(PlayerHolder ph, L2Character target, Skill skill)
 	{
@@ -433,7 +437,7 @@ public abstract class AbstractEvent
 	/**
 	 * @param player
 	 * @param item
-	 * @return -> only in the event that an skill not want q continue its normal progress.
+	 * @return -> Only in the event that an skill not want that continue its normal progress.
 	 */
 	public boolean listenerOnUseItem(L2PcInstance player, L2Item item)
 	{
@@ -441,8 +445,8 @@ public abstract class AbstractEvent
 		{
 			return false;
 		}
-		// We will not allow the use of pots or scroll.
-		// XXX se podria setear como un config el tema de las pots
+		// We will not allow the use of pots or scroll
+		// XXX It could be set as a theme config pots
 		if (item.isScroll() || item.isPotion())
 		{
 			return true;
@@ -459,7 +463,7 @@ public abstract class AbstractEvent
 	/**
 	 * @param player
 	 * @param item
-	 * @return true -> only in the event that an skill not want q continue its normal progress.
+	 * @return true -> Only in the event that an skill not want that continue its normal progress.
 	 */
 	public boolean onUseItem(PlayerHolder player, L2Item item)
 	{
@@ -502,12 +506,13 @@ public abstract class AbstractEvent
 			// We add the character to the world and then be teleported
 			world.addAllowed(ph.getPcInstance().getObjectId());
 			teleportPlayer(ph, _radius);
-			ph.setProtectionTimeEnd(System.currentTimeMillis() + ConfigData.getInstance().SPAWN_PROTECTION_TIME * 1000); //Milliseconds
+			ph.setProtectionTimeEnd(System.currentTimeMillis() + (ConfigData.getInstance().SPAWN_PROTECTION_TIME * 1000)); // Milliseconds
 		}
 	}
 	
 	/**
-	 * Teleport to players of each team to their respective starting points<br>
+	 * Teleport to players of each team to their respective starting points.<br>
+	 * @param radius
 	 */
 	protected void teleportAllPlayers(int radius)
 	{
@@ -519,8 +524,9 @@ public abstract class AbstractEvent
 	}
 	
 	/**
-	 * Teleport to a specific player to its original location within the event.
+	 * Teleport to a specific player to its original location within the event.<br>
 	 * @param ph
+	 * @param radius
 	 */
 	protected void teleportPlayer(PlayerHolder ph, int radius)
 	{
@@ -534,19 +540,19 @@ public abstract class AbstractEvent
 	}
 	
 	/**
-	 * Prepare players, teams and the instance to start<br>
+	 * Prepare players, teams and the instance to start.<br>
 	 * <ul>
-	 * <b>Actions: </b>
+	 * <b>Actions:</b>
 	 * </ul>
-	 * <li>Cancel any player attack in progress</li><br>
-	 * <li>Cancel any player skill in progress</li><br>
-	 * <li>Paralyzed the player</li><br>
-	 * <li>Cancel all character effects</li><br>
-	 * <li>Cancel summon pet</li><br>
-	 * <li>Cancel all character cubics</li><br>
-	 * <li>Save the return player location</li><br>
-	 * <li>Create the teams</li><br>
-	 * <li>Create the instance world</li><br>
+	 * <li>Cancel any player attack in progress.</li>
+	 * <li>Cancel any player skill in progress.</li>
+	 * <li>Paralyzed the player.</li>
+	 * <li>Cancel all character effects.</li>
+	 * <li>Cancel summon pet.</li>
+	 * <li>Cancel all character cubics.</li>
+	 * <li>Save the return player location.</li>
+	 * <li>Create the teams.</li>
+	 * <li>Create the instance world.</li>
 	 */
 	public void prepareToStart()
 	{
@@ -564,10 +570,10 @@ public abstract class AbstractEvent
 	/**
 	 * We prepare the player for the fight.<br>
 	 * <ul>
-	 * <b>Actions: </b>
+	 * <b>Actions:</b>
 	 * </ul>
-	 * <li>We canceled the paralysis made in -> <u>prepareToTeleport()</u></li><br>
-	 * <li>We deliver buffs defined in configs</li>
+	 * <li>We canceled the paralysis made in -> <u>prepareToTeleport().</u></li>
+	 * <li>We deliver buffs defined in configs.</li>
 	 */
 	public void prepareToFight()
 	{
@@ -578,16 +584,16 @@ public abstract class AbstractEvent
 	}
 	
 	/**
-	 * We prepare the player for the end of the event<br>
+	 * We prepare the player for the end of the event.<br>
 	 * <ul>
-	 * <b>Actions: </b>
+	 * <b>Actions:</b>
 	 * </ul>
-	 * <li>Cancel any attack in progress</li><br>
-	 * <li>Cancel any skill in progress</li><br>
-	 * <li>Cancel all effects</li><br>
-	 * <li>Recover the title and color of the participants.</li><br>
-	 * <li>We canceled the Team</li><br>
-	 * <li>It out of the world we created for the event</li>
+	 * <li>Cancel any attack in progress.</li>
+	 * <li>Cancel any skill in progress.</li>
+	 * <li>Cancel all effects.</li>
+	 * <li>Recover the title and color of the participants.</li>
+	 * <li>We canceled the Team.</li>
+	 * <li>It out of the world we created for the event.</li>
 	 */
 	public void prepareToEnd()
 	{
@@ -606,14 +612,14 @@ public abstract class AbstractEvent
 	/**
 	 * We generated a task to revive a character.<br>
 	 * <ul>
-	 * <b>Actions: </b>
+	 * <b>Actions:</b>
 	 * </ul>
-	 * <li>Generate a pause before executing any action.</li><br>
-	 * <li>Revive the character.</li><br>
-	 * <li>We give you the buff depending on the event in which this.</li><br>
-	 * <li>Teleport the character depending on the event in this.</li><br>
-	 * <li>We do invulnerable for 5 seconds and not allow it to move.</li><br>
-	 * <li>We canceled the invul and let you move</li><br>
+	 * <li>Generate a pause before executing any action.</li>
+	 * <li>Revive the character.</li>
+	 * <li>We give you the buff depending on the event in which this.</li>
+	 * <li>Teleport the character depending on the event in this.</li>
+	 * <li>We do invulnerable for 5 seconds and not allow it to move.</li>
+	 * <li>We canceled the invul and let you move.</li><br>
 	 * @param player
 	 * @param time
 	 * @param radiusTeleport
@@ -628,7 +634,7 @@ public abstract class AbstractEvent
 				revivePlayer(player);
 				giveBuffPlayer(player.getPcInstance());
 				teleportPlayer(player, radiusTeleport);
-			} , time * 1000));
+			}, time * 1000));
 		}
 		catch (Exception e)
 		{
@@ -640,10 +646,10 @@ public abstract class AbstractEvent
 	/**
 	 * Revive the player.<br>
 	 * <ul>
-	 * <b>Actions: </b>
+	 * <b>Actions:</b>
 	 * </ul>
-	 * <li>Cancel the DecayTask.</li><br>
-	 * <li>Revive the character.</li><br>
+	 * <li>Cancel the DecayTask.</li>
+	 * <li>Revive the character.</li>
 	 * <li>Set max cp, hp and mp.</li><br>
 	 * @param ph
 	 */
@@ -657,12 +663,12 @@ public abstract class AbstractEvent
 			ph.getPcInstance().setCurrentCp(ph.getPcInstance().getMaxCp());
 			ph.getPcInstance().setCurrentHp(ph.getPcInstance().getMaxHp());
 			ph.getPcInstance().setCurrentMp(ph.getPcInstance().getMaxMp());
-			ph.setProtectionTimeEnd(System.currentTimeMillis() + ConfigData.getInstance().SPAWN_PROTECTION_TIME * 1000); //Milliseconds
+			ph.setProtectionTimeEnd(System.currentTimeMillis() + (ConfigData.getInstance().SPAWN_PROTECTION_TIME * 1000)); // Milliseconds
 		}
 	}
 	
 	/**
-	 * We give you the buff to a player seteados within configs
+	 * We give you the buff to a player set within configs.<br>
 	 * @param player
 	 */
 	public void giveBuffPlayer(L2PcInstance player)
@@ -675,7 +681,7 @@ public abstract class AbstractEvent
 	
 	/**
 	 * We deliver the items in a list defined as<br>
-	 * Created in order to deliver rewards in the events
+	 * Created in order to deliver rewards in the events.<br>
 	 * @param ph
 	 * @param items
 	 */
@@ -689,11 +695,11 @@ public abstract class AbstractEvent
 	
 	/**
 	 * <ul>
-	 * <b>Actions: </b>
+	 * <b>Actions:</b>
 	 * </ul>
-	 * <li>Cancel target</li>
-	 * <li>Cancel cast</li>
-	 * <li>Cancel attack</li>
+	 * <li>Cancel target.</li>
+	 * <li>Cancel cast.</li>
+	 * <li>Cancel attack.</li><br>
 	 * @param ph
 	 */
 	public void cancelAllPlayerActions(PlayerHolder ph)
@@ -708,9 +714,9 @@ public abstract class AbstractEvent
 	
 	/**
 	 * <ul>
-	 * <b>Actions: </b>
+	 * <b>Actions:</b>
 	 * </ul>
-	 * <li>Stop all effects from player and summon</li>
+	 * <li>Stop all effects from player and summon.</li><br>
 	 * @param ph
 	 */
 	public void cancelAllEffects(PlayerHolder ph)
@@ -771,14 +777,13 @@ public abstract class AbstractEvent
 	
 	/**
 	 * <ul>
-	 * <b>Actions: </b>
+	 * <b>Actions:</b>
 	 * </ul>
-	 * <li>Recover original title</li>
-	 * <li>Recover original color title</li>
-	 * <li>Remove from instance and back 0</li>
+	 * <li>Recover original title.</li>
+	 * <li>Recover original color title.</li>
+	 * <li>Remove from instance and back 0</li><br>
 	 * @param ph
 	 * @param forceRemove
-	 * @param logout
 	 */
 	public void removePlayerFromEvent(PlayerHolder ph, boolean forceRemove)
 	{

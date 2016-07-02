@@ -39,7 +39,7 @@ public class EventData
 	private final ArrayList<Class<? extends AbstractEvent>> _eventList = new ArrayList<>();
 	private final Map<String, Class<? extends AbstractEvent>> _eventMap = new HashMap<>();
 	
-	private EventData()
+	public EventData()
 	{
 		load();
 	}

@@ -245,7 +245,7 @@ public class NpcManager extends Quest
 		html.replace("%buttonMain%", MessageData.getInstance().getMsgByLang(player, "button_main", false));
 		StringBuilder sb = new StringBuilder();
 		sb.append("<table>");
-		for (int cont = (page - 1) * MAX_BUFF_PAGE; cont < page * MAX_BUFF_PAGE; cont++)
+		for (int cont = (page - 1) * MAX_BUFF_PAGE; cont < (page * MAX_BUFF_PAGE); cont++)
 		{
 			SkillHolder sh = BuffListData.getInstance().getAllBuffs().get(cont);
 			sb.append("<tr>");
@@ -275,7 +275,7 @@ public class NpcManager extends Quest
 		sb.append("<center><img src=\"l2ui.squaregray\" width=210 height=1></center>");
 		sb.append("<table>");
 		sb.append("<tr>");
-		for (int cont = 0; cont < BuffListData.getInstance().getAllBuffs().size() / MAX_BUFF_PAGE; cont++)
+		for (int cont = 0; cont < (BuffListData.getInstance().getAllBuffs().size() / MAX_BUFF_PAGE); cont++)
 		{
 			sb.append("<td width=32 height=32><button value=" + (cont + 1) + " action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " buffs " + (cont + 1) + "\" back=L2UI_CT1.Button_DF_Down fore=L2UI_CT1.Button_DF width=32 height=32/></td>");
 		}
@@ -288,9 +288,8 @@ public class NpcManager extends Quest
 	}
 	
 	/**
-	 * Generamos el html index del npc<br>
+	 * Generamos el html index del npc.<br>
 	 * @param player
-	 * @return
 	 */
 	private static void sendHtmlIndex(L2PcInstance player)
 	{
@@ -309,7 +308,8 @@ public class NpcManager extends Quest
 			for (Class<? extends AbstractEvent> event : EventData.getInstance().getEnabledEvents())
 			{
 				StringUtil.append(eventList, "<tr>");
-				StringUtil.append(eventList, "<td align=center width=30% height=30><button value=\"" + MessageData.getInstance().getMsgByLang(player, "event_" + event.getSimpleName().toLowerCase() + "_name", false) + "\" action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " vote " + event.getSimpleName() + "\" width=110 height=21 back=L2UI_CT1.Button_DF_Down fore=L2UI_CT1.Button_DF></td>");
+				StringUtil.append(eventList, "<td align=center width=30% height=30><button value=\"" + MessageData.getInstance().getMsgByLang(player, "event_" + event.getSimpleName().toLowerCase() + "_name", false) + "\" action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " vote "
+					+ event.getSimpleName() + "\" width=110 height=21 back=L2UI_CT1.Button_DF_Down fore=L2UI_CT1.Button_DF></td>");
 				StringUtil.append(eventList, "<td width=40%><font color=LEVEL>" + MessageData.getInstance().getMsgByLang(player, "button_votes", false) + ": </font>" + EventEngineManager.getInstance().getCurrentVotesInEvent(event) + "</td>");
 				StringUtil.append(eventList, "<td width=30%><font color=7898AF><a action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " info " + event.getSimpleName() + "\">" + MessageData.getInstance().getMsgByLang(player, "button_info", false) + "</a></font></td>");
 				StringUtil.append(eventList, "</tr>");

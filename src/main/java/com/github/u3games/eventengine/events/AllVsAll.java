@@ -78,7 +78,7 @@ public class AllVsAll extends AbstractEvent
 	@Override
 	public void onKill(PlayerHolder ph, L2Character target)
 	{
-		// Increase the amount of one character kills.
+		// Increase the amount of one character kills
 		ph.increaseKills();
 		updateTitle(ph);
 		
@@ -119,7 +119,7 @@ public class AllVsAll extends AbstractEvent
 	
 	// VARIOUS METHODS ------------------------------------------------------------------
 	/**
-	 * Update the title of a character depending on the number of deaths or kills have
+	 * Update the title of a character depending on the number of deaths or kills have.
 	 * @param ph
 	 */
 	
