@@ -24,30 +24,32 @@ package com.github.u3games.eventengine.enums;
 public enum EventEngineState
 {
 	/**
-	 * Esperando que comience la votación ó el registro al próximo evento
+	 * Waiting to start voting or registration to the next event.
 	 */
 	WAITING,
 	
 	/**
-	 * No se encuentra ningun evento corriendo Esta habilitado el registro de usuarios
+	 * Is not found any events running. It is enabled user registration.
 	 */
 	VOTING,
 	
 	/**
-	 * No se encuentra ningun evento corriendo Esta habilitado el registro de usuarios
+	 * Is not found any events running. It is enabled user registration.
 	 */
 	REGISTER,
 	
-	/** Ejecutamos el evento mas votado o uno al azar */
+	/**
+	 * Run the most voted event or one randomly.
+	 */
 	RUN_EVENT,
 	
 	/**
-	 * Tenemos un evento corriendo NO Esta habilitado el registro de usuarios NO Esta habilitado el voto a los eventos
+	 * Have a running event. Is not enabled user registration. The vote is not able to events.
 	 */
 	RUNNING_EVENT,
 	
 	/**
-	 * Finalizo el evento
+	 * Event finishes.
 	 */
 	EVENT_ENDED
 }

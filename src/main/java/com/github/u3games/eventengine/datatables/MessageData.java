@@ -42,12 +42,12 @@ public final class MessageData
 	private static final Logger LOGGER = Logger.getLogger(MessageData.class.getName());
 	private static final String DIRECTORY = "config/EventEngine/language";
 	private static final String DEFAULT_LANG = "en";
-	// Mapa para identificar el lenguaje de cada personaje
-	private Map<L2PcInstance, String> _playerCurrentLang = new HashMap<>();
-	private Map<String, String> _msgMap = new HashMap<>();
-	private Map<String, String> _languages = new HashMap<>();
+	// Map to identify the language of each character
+	private final Map<L2PcInstance, String> _playerCurrentLang = new HashMap<>();
+	private final Map<String, String> _msgMap = new HashMap<>();
+	private final Map<String, String> _languages = new HashMap<>();
 	
-	private MessageData()
+	public MessageData()
 	{
 		load();
 	}
@@ -57,17 +57,13 @@ public final class MessageData
 		try
 		{
 			File dir = new File(DIRECTORY);
-			for (File file : dir.listFiles(new FileFilter()
+			for (File file : dir.listFiles((FileFilter) pathname ->
 			{
-				@Override
-				public boolean accept(File pathname)
+				if (pathname.getName().endsWith(".xml"))
 				{
-					if (pathname.getName().endsWith(".xml"))
-					{
-						return true;
-					}
-					return false;
+					return true;
 				}
+				return false;
 			}))
 			{
 				if (file.getName().startsWith("lang_"))
@@ -130,23 +126,23 @@ public final class MessageData
 	}
 	
 	/**
-	 * Returns the text based on player's language selected<br>
+	 * Returns the text based on player's language selected.<br>
 	 * @param player
 	 * @param text
-	 * @param addTag -> used for screen or chat messages
+	 * @param addTag -> used for screen or chat messages.
 	 * @return String
 	 */
 	public String getMsgByLang(L2PcInstance player, String text, boolean addTag)
 	{
-		// Obtenemos el lenguaje por el que opto el usuario.
+		// Get the language by which the user chooses
 		String lang = getLanguage(player);
 		String tag = "";
-		// generamos el TAG propio de nuestro evento
+		// Generate our own TAG event
 		if (addTag)
 		{
 			if (_msgMap.containsKey(lang + "_" + "event_engine_tag"))
 			{
-				// buscamos la traduccion del texto en el lenguaje seleccionado por el personaje
+				// Seek the translation of the text in the selected language for the character
 				tag = _msgMap.get(lang + "_" + "event_engine_tag") + " ";
 			}
 			else
@@ -157,24 +153,24 @@ public final class MessageData
 		
 		StringBuilder msg = new StringBuilder(50);
 		StringTokenizer st = new StringTokenizer(text, " ");
-		// generamos la traduccion de las diferentes partes del mensaje
+		// Generate the translation of the different parts of the message
 		while (st.hasMoreTokens())
 		{
-			// texto a ser traducido
+			// Text to be translated
 			String textLang = st.nextToken();
 			if (_msgMap.containsKey(lang + "_" + textLang))
 			{
-				// buscamos la traduccion del texto en el lenguaje seleccionado por el personaje
+				// Seek the translation of the text in the selected language for the character
 				msg.append(_msgMap.get(lang + "_" + textLang));
 			}
 			else if (_msgMap.containsKey(lang + "_" + textLang))
 			{
-				// buscamos la traduccion del texto en el lenguaje default -> "en"
+				// Seek the translation of the text in the default language -> "en"
 				msg.append(_msgMap.get("en_" + textLang));
 			}
 			else
 			{
-				// agregamos el texto sin traduccion
+				// Add the text without translation
 				msg.append(textLang);
 			}
 		}
@@ -187,7 +183,7 @@ public final class MessageData
 	}
 	
 	/**
-	 * Definimos el idioma que quiere un personaje
+	 * Define the language a character wants.
 	 * @param player
 	 * @param lang
 	 */
@@ -197,7 +193,7 @@ public final class MessageData
 	}
 	
 	/**
-	 * Obtenemos el idioma de un personaje, en caso de no haberlo definido devolvemos "DEFAULT_LANG".
+	 * Get the language of a character, should not have defined, return "DEFAULT_LANG".
 	 * @param player
 	 * @return String
 	 */
@@ -212,7 +208,7 @@ public final class MessageData
 	}
 	
 	/**
-	 * Obtenemos un mapa con todos los lenguajes que fueron cargados.
+	 * Get a map with all languages were created.
 	 * @return
 	 */
 	public Map<String, String> getLanguages()

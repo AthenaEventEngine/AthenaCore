@@ -77,7 +77,7 @@ public class TeamVsTeam extends AbstractEvent
 	@Override
 	public void onKill(PlayerHolder ph, L2Character target)
 	{
-		// We increased the team's points.
+		// We increased the team's points
 		getTeamsManager().getPlayerTeam(ph).increasePoints(1);
 		
 		// Reward for kills
@@ -115,7 +115,7 @@ public class TeamVsTeam extends AbstractEvent
 	
 	// VARIOUS METHODS -------------------------------------------------
 	/**
-	 * Give the rewards
+	 * Give the rewards.
 	 */
 	private void giveRewardsTeams()
 	{
@@ -146,7 +146,7 @@ public class TeamVsTeam extends AbstractEvent
 	}
 	
 	/**
-	 * Show on screen the number of points that each team
+	 * Show on screen the number of points that each team.
 	 */
 	private void showPoint()
 	{

@@ -42,7 +42,7 @@ public class InstanceWorldManager
 	 */
 	public InstanceWorldManager()
 	{
-		//
+		
 	}
 	
 	public void setInstanceFile(String instanceFile)
@@ -51,8 +51,7 @@ public class InstanceWorldManager
 	}
 	
 	/**
-	 * Create dynamic instances and a world for her
-	 * @param count
+	 * Create dynamic instances and a world for her.
 	 * @return InstanceWorld
 	 */
 	public InstanceWorld createNewInstanceWorld()
@@ -63,7 +62,7 @@ public class InstanceWorldManager
 			int instanceId = InstanceManager.getInstance().createDynamicInstance(_instanceFile);
 			InstanceManager.getInstance().getInstance(instanceId).setAllowSummon(false);
 			InstanceManager.getInstance().getInstance(instanceId).setPvPInstance(true);
-			InstanceManager.getInstance().getInstance(instanceId).setEjectTime(10 * 60 * 1000); // prevent eject death players.
+			InstanceManager.getInstance().getInstance(instanceId).setEjectTime(10 * 60 * 1000); // Prevent eject death players
 			InstanceManager.getInstance().getInstance(instanceId).setEmptyDestroyTime(1000 + 60000L);
 			
 			// We closed the doors of the instance if there
