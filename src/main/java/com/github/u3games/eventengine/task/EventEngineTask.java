@@ -28,13 +28,13 @@ import com.github.u3games.eventengine.util.EventUtil;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
 
 /**
- * It handles the different state's behavior of EventEngineManager
+ * It handles the different state's behavior of EventEngineManager.
  * @author fissban, Zephyr
  */
 public class EventEngineTask implements Runnable
 {
 	// Type Message System
-	private CollectionTarget _type = ConfigData.getInstance().EVENT_MESSAGE_GLOBAL ? CollectionTarget.ALL_PLAYERS : CollectionTarget.ALL_NEAR_PLAYERS;
+	private final CollectionTarget _type = ConfigData.getInstance().EVENT_MESSAGE_GLOBAL ? CollectionTarget.ALL_PLAYERS : CollectionTarget.ALL_NEAR_PLAYERS;
 	
 	@Override
 	public void run()
@@ -138,7 +138,6 @@ public class EventEngineTask implements Runnable
 				break;
 			}
 		}
-		
 		if (state != EventEngineState.RUNNING_EVENT)
 		{
 			EventEngineManager.getInstance().decreaseTime();

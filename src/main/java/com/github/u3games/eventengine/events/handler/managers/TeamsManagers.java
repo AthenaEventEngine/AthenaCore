@@ -48,7 +48,7 @@ public class TeamsManagers
 	}
 	
 	/**
-	 * Get the collection of created teams
+	 * Get the collection of created teams.
 	 * @return
 	 */
 	public Collection<TeamHolder> getAllTeams()
@@ -57,7 +57,7 @@ public class TeamsManagers
 	}
 	
 	/**
-	 * Get a team by type
+	 * Get a team by type.
 	 * @param type
 	 * @return
 	 */
@@ -67,7 +67,8 @@ public class TeamsManagers
 	}
 	
 	/**
-	 * Get the team of player
+	 * Get the team of player.
+	 * @param player
 	 * @return
 	 */
 	public TeamHolder getPlayerTeam(PlayerHolder player)
@@ -76,7 +77,7 @@ public class TeamsManagers
 	}
 	
 	/**
-	 * Set the team spawn
+	 * Set the team spawn.
 	 * @param team
 	 * @param loc
 	 */
@@ -86,7 +87,7 @@ public class TeamsManagers
 	}
 	
 	/**
-	 * Get the team spawn
+	 * Get the team spawn.
 	 * @param team
 	 * @return Location
 	 */

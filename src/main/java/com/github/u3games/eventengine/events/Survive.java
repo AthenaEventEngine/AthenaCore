@@ -36,7 +36,7 @@ import com.l2jserver.gameserver.network.clientpackets.Say2;
 import com.l2jserver.util.Rnd;
 
 /**
- * Event survival<br>
+ * Event survival.<br>
  * One team will be created and will have to survive several waves of mobs.<br>
  * @author fissban
  */
@@ -44,11 +44,11 @@ public class Survive extends AbstractEvent
 {
 	// Variable that controls the level of the stage
 	private int _stage = 1;
-	// Variable that helps us keep track of the number of dead mobs.
+	// Variable that helps us keep track of the number of dead mobs
 	private int _auxKillMonsters = 0;
 	// Radius spawn
 	protected int _radius = 200;
-	// Monsters ids
+	// Monsters Id's
 	private final List<Integer> MONSTERS_ID = ConfigData.getInstance().SURVIVE_MONSTERS_ID;
 	
 	public Survive()
@@ -86,18 +86,18 @@ public class Survive extends AbstractEvent
 	@Override
 	public void onKill(PlayerHolder ph, L2Character target)
 	{
-		// Incrementamos en uno la cantidad de puntos del equipo
+		// Incremented by one the amount of points of the team
 		getTeamsManager().getPlayerTeam(ph).increasePoints(1);
 		// Update title character
 		updateTitle(ph);
 		// One increasing the amount of dead mobs
 		_auxKillMonsters++;
-		// Verify the number of dead mobs, if any killed all increase by one the stage.
+		// Verify the number of dead mobs, if any killed all increase by one the stage
 		if (_auxKillMonsters >= (_stage * ConfigData.getInstance().SURVIVE_MONSTER_SPAWN_FOR_STAGE))
 		{
-			// Increase by one the stage.
+			// Increase by one the stage
 			_stage++;
-			// We restart our assistant.
+			// We restart our assistant
 			_auxKillMonsters = 0;
 			// Spawns Mobs
 			spawnsMobs();
@@ -123,7 +123,7 @@ public class Survive extends AbstractEvent
 	
 	// MISC ---------------------------------------------------------------------------------------
 	/**
-	 * Solo entregamos premio al equipo que mas monstruos mato
+	 * Only we deliver reward the team that killed more monsters.
 	 */
 	private void giveRewardsTeams()
 	{
@@ -136,7 +136,7 @@ public class Survive extends AbstractEvent
 		List<TeamHolder> teamWinners = SortUtils.getOrdered(getTeamsManager().getAllTeams(), ScoreType.POINT).get(0);
 		for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
 		{
-			// FIXME agregar al sistema de lang
+			// FIXME add to language system
 			EventUtil.sendEventScreenMessage(ph, "Congratulations survivor!");
 			TeamHolder phTeam = getTeamsManager().getPlayerTeam(ph);
 			// We deliver rewards
@@ -162,32 +162,32 @@ public class Survive extends AbstractEvent
 	private void spawnsMobs()
 	{
 		EventUtil.announceTo(Say2.BATTLEFIELD, "survive_spawns_mobs", CollectionTarget.ALL_PLAYERS_IN_EVENT);
-		// After 5 secs spawn run.
+		// After 5 secs spawn run
 		ThreadPoolManager.getInstance().scheduleGeneral(() ->
 		{
 			for (int i = 0; i < (_stage * ConfigData.getInstance().SURVIVE_MONSTER_SPAWN_FOR_STAGE); i++)
 			{
 				getSpawnManager().addEventNpc(MONSTERS_ID.get(Rnd.get(MONSTERS_ID.size() - 1)), ConfigData.getInstance().SURVIVE_COORDINATES_MOBS, Team.RED, true, getInstanceWorldManager().getAllInstancesWorlds().get(0).getInstanceId());
 			}
-			// We notify the characters in the event that stage they are currently.
+			// We notify the characters in the event that stage they are currently
 			for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
 			{
-				// FIXME agregar al sistema de lang
+				// FIXME add to language system
 				EventUtil.sendEventScreenMessage(ph, "Stage " + _stage, 5000);
 			}
 		}, 5000L);
 	}
 	
 	/**
-	 * We update the title of a character depending on the number of murders that have
+	 * We update the title of a character depending on the number of murders that have.<br>
 	 * @param player
 	 */
 	private void updateTitle(PlayerHolder player)
 	{
-		// FIXME agregar al sistema de lang
-		// Adjust the title character.
+		// FIXME add to language system
+		// Adjust the title character
 		player.setNewTitle("Monster Death " + player.getKills());
-		// Adjust the status character.
+		// Adjust the status character
 		player.getPcInstance().updateAndBroadcastStatus(2);
 	}
 }

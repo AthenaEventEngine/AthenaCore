@@ -59,7 +59,7 @@ public final class EventPropertiesParser
 		}
 		catch (Exception e)
 		{
-			LOGGER.warning("[" + _file.getName() + "] There was an error loading config reason: " + e.getMessage());
+			LOGGER.warning("[" + _file.getName() + "] there was an error loading config reason: " + e.getMessage());
 		}
 	}
 	
@@ -92,7 +92,7 @@ public final class EventPropertiesParser
 		}
 		else
 		{
-			LOGGER.warning("[" + _file.getName() + "] Invalid value specified for key: " + key + " specified value: " + value + " should be \"boolean\" using default value: " + defaultValue);
+			LOGGER.warning("[" + _file.getName() + "] invalid value specified for key: " + key + " specified value: " + value + " should be \"boolean\" using default value: " + defaultValue);
 			return defaultValue;
 		}
 	}
@@ -111,7 +111,7 @@ public final class EventPropertiesParser
 		}
 		catch (NumberFormatException e)
 		{
-			LOGGER.warning("[" + _file.getName() + "] Invalid value specified for key: " + key + " specified value: " + value + " should be \"byte\" using default value: " + defaultValue);
+			LOGGER.warning("[" + _file.getName() + "] invalid value specified for key: " + key + " specified value: " + value + " should be \"byte\" using default value: " + defaultValue);
 			return defaultValue;
 		}
 	}
@@ -130,7 +130,7 @@ public final class EventPropertiesParser
 		}
 		catch (NumberFormatException e)
 		{
-			LOGGER.warning("[" + _file.getName() + "] Invalid value specified for key: " + key + " specified value: " + value + " should be \"short\" using default value: " + defaultValue);
+			LOGGER.warning("[" + _file.getName() + "] invalid value specified for key: " + key + " specified value: " + value + " should be \"short\" using default value: " + defaultValue);
 			return defaultValue;
 		}
 	}
@@ -149,7 +149,7 @@ public final class EventPropertiesParser
 		}
 		catch (NumberFormatException e)
 		{
-			LOGGER.warning("[" + _file.getName() + "] Invalid value specified for key: " + key + " specified value: " + value + " should be \"int\" using default value: " + defaultValue);
+			LOGGER.warning("[" + _file.getName() + "] invalid value specified for key: " + key + " specified value: " + value + " should be \"int\" using default value: " + defaultValue);
 			return defaultValue;
 		}
 	}
@@ -168,7 +168,7 @@ public final class EventPropertiesParser
 		}
 		catch (NumberFormatException e)
 		{
-			LOGGER.warning("[" + _file.getName() + "] Invalid value specified for key: " + key + " specified value: " + value + " should be \"long\" using default value: " + defaultValue);
+			LOGGER.warning("[" + _file.getName() + "] invalid value specified for key: " + key + " specified value: " + value + " should be \"long\" using default value: " + defaultValue);
 			return defaultValue;
 		}
 	}
@@ -187,7 +187,7 @@ public final class EventPropertiesParser
 		}
 		catch (NumberFormatException e)
 		{
-			LOGGER.warning("[" + _file.getName() + "] Invalid value specified for key: " + key + " specified value: " + value + " should be \"float\" using default value: " + defaultValue);
+			LOGGER.warning("[" + _file.getName() + "] invalid value specified for key: " + key + " specified value: " + value + " should be \"float\" using default value: " + defaultValue);
 			return defaultValue;
 		}
 	}
@@ -206,7 +206,7 @@ public final class EventPropertiesParser
 		}
 		catch (NumberFormatException e)
 		{
-			LOGGER.warning("[" + _file.getName() + "] Invalid value specified for key: " + key + " specified value: " + value + " should be \"double\" using default value: " + defaultValue);
+			LOGGER.warning("[" + _file.getName() + "] invalid value specified for key: " + key + " specified value: " + value + " should be \"double\" using default value: " + defaultValue);
 			return defaultValue;
 		}
 	}
@@ -236,14 +236,13 @@ public final class EventPropertiesParser
 		}
 		catch (IllegalArgumentException e)
 		{
-			LOGGER.warning("[" + _file.getName() + "] Invalid value specified for key: " + key + " specified value: " + value + " should be enum value of \"" + clazz.getSimpleName() + "\" using default value: " + defaultValue);
+			LOGGER.warning("[" + _file.getName() + "] invalid value specified for key: " + key + " specified value: " + value + " should be enum value of \"" + clazz.getSimpleName() + "\" using default value: " + defaultValue);
 			return defaultValue;
 		}
 	}
 	
 	/**
-	 * Parseamos un config usando "," para diferenciar entre cada cordenada<br>
-	 * Ejemplo -> "xx,xx,xx;xx,xx,xx ..."
+	 * Parse a config using "," to differentiate between each coordinate. Example: "xx, xx, xx, xx, xx, xx ...".
 	 * @param key
 	 * @return List<ItemHolder>
 	 */
@@ -261,14 +260,13 @@ public final class EventPropertiesParser
 		}
 		catch (Exception e)
 		{
-			LOGGER.warning(getClass().getSimpleName() + ": fail to read config -> " + key);
+			LOGGER.warning(getClass().getSimpleName() + ": fail to read config " + key);
 		}
 		return itemList;
 	}
 	
 	/**
-	 * Parseamos un config usando "," para diferenciar entre cada coordenada<br>
-	 * Ejemplo -> "xx,xx,xx"
+	 * Parse a config using "," to differentiate between each coordinate. Example: "xx, xx, xx".
 	 * @param key
 	 * @return Location
 	 */
@@ -281,14 +279,13 @@ public final class EventPropertiesParser
 		}
 		catch (Exception e)
 		{
-			LOGGER.warning(getClass().getSimpleName() + ": fail to read config -> " + key);
+			LOGGER.warning(getClass().getSimpleName() + ": fail to read config " + key);
 		}
 		return new Location(167616, 20315, -3332);
 	}
 	
 	/**
-	 * Parseamos un config usando "," para diferenciar entre cada coordenada y un ";" entre cada team. <br>
-	 * Ejemplo -> "xx,xx,xx"
+	 * Parse a config using "," to differentiate between each coordinate and ";" between each team. Example: "xx, xx, xx"
 	 * @param key
 	 * @return List<Location>
 	 */
@@ -307,14 +304,13 @@ public final class EventPropertiesParser
 		}
 		catch (Exception e)
 		{
-			LOGGER.warning(getClass().getSimpleName() + ": fail to read config -> " + key);
+			LOGGER.warning(getClass().getSimpleName() + ": fail to read config " + key);
 		}
 		return Collections.emptyList();
 	}
 	
 	/**
-	 * Parseamos un config usando "," para diferenciar entre un valor y otro.<br>
-	 * Ejemplo -> xx,xx,xx,xx ....
+	 * Parse a config using "," to differentiate between a value and another one value. Example: "xx, xx, xx, xx ...".
 	 * @param key
 	 * @return List<Integer>
 	 */
@@ -331,7 +327,7 @@ public final class EventPropertiesParser
 		}
 		catch (Exception e)
 		{
-			LOGGER.warning(getClass().getSimpleName() + ": fail to read config -> " + key);
+			LOGGER.warning(getClass().getSimpleName() + ": fail to read config " + key);
 		}
 		return integerList;
 	}

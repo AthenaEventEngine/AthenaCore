@@ -36,10 +36,8 @@ import com.l2jserver.gameserver.network.clientpackets.Say2;
 /**
  * System that runs for every x time if the players are afk.<br>
  * It does two actions:<br>
- * a) In each iteration, checks if the players in the _playersAfkCheck have the same location.<br>
- * If so, the inactive players are kicked from event.<br>
- * Then, it adds all the active players to _playersAfkCheck for the next iteration, saving their current location<br>
- * b) If the player do any action, will be removed from _playersAfkCheck<br>
+ * a) In each iteration, checks if the players in the _playersAfkCheck have the same location. If so, the inactive players are kicked from event. Then, it adds all the active players to _playersAfkCheck for the next iteration, saving their current location<br>
+ * b) If the player do any action, will be removed from _playersAfkCheck
  * @author fissban, Zephyr
  */
 public class AntiAfkManager
@@ -48,7 +46,7 @@ public class AntiAfkManager
 	private ScheduledFuture<?> _taskAntiAfk;
 	
 	/**
-	 * Add a character to the list of "excluded" from the next control system
+	 * Add a character to the list of "excluded" from the next control system.
 	 * @param ph
 	 */
 	public void excludePlayer(PlayerHolder ph)
@@ -93,7 +91,7 @@ public class AntiAfkManager
 	}
 	
 	/**
-	 * Cancel the thread that checks player actions and clear the map
+	 * Cancel the thread that checks player actions and clear the map.
 	 */
 	public void finish()
 	{

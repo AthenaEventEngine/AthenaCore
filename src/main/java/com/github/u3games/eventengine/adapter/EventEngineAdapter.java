@@ -77,25 +77,22 @@ public class EventEngineAdapter extends Quest
 	public TerminateReturn onPlayableUseSkill(OnCreatureSkillUse event)
 	{
 		if (event.getCaster().isPlayable())
-		{			
+		{
 			if (EventEngineManager.getInstance().listenerOnUseSkill((L2Playable) event.getCaster(), event.getTarget(), event.getSkill()))
 			{
 				return new TerminateReturn(true, true, true);
-			} 
-			else
+			}
+			// Note: The skill is canceled if there is at least one target with spawn protection in area skills
+			// That is not ok, but for now it's the only way
+			for (L2Object target : event.getTargets())
 			{
-				// Note: The skill is canceled if there is at least one target with spawn protection in area skills
-				// That is not ok, but for now it's the only way
-				for (L2Object target : event.getTargets())
+				if (target instanceof L2Character)
 				{
-					if (target instanceof L2Character)
+					L2Character character = (L2Character) target;
+					
+					if (EventEngineManager.getInstance().listenerOnUseSkill((L2Playable) event.getCaster(), character, event.getSkill()))
 					{
-						L2Character character = (L2Character) target;
-						
-						if (EventEngineManager.getInstance().listenerOnUseSkill((L2Playable) event.getCaster(), character, event.getSkill()))
-						{
-							return new TerminateReturn(true, true, true);
-						}
+						return new TerminateReturn(true, true, true);
 					}
 				}
 			}

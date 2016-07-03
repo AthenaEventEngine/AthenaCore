@@ -23,12 +23,12 @@ package com.github.u3games.eventengine.enums;
  */
 public enum EventState
 {
-	/** Se preparan acciones generales y especificas de cada evento */
+	/** General and specific actions of each event are prepared. */
 	START,
 	
-	/** Se habilita el evento para q los usuarios comiencen a pelear */
+	/** The event is enabled for users to start fighting. */
 	FIGHT,
 	
-	/** Se preparan acciones generales y especificas de cada evento */
+	/** General and specific actions of each event are prepared. */
 	END
 }
