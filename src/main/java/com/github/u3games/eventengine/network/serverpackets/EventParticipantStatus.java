@@ -36,10 +36,10 @@ public class EventParticipantStatus extends L2GameServerPacket
 	private List<PlayerHolder> _teamBlue = new ArrayList<>();
 	private List<PlayerHolder> _teamRed = new ArrayList<>();
 	
-	// TODO por el momento solo esta habilitado el estado "PVP_KILL"
+	// TODO for the moment only it enabled the state "PVP KILL"
 	public enum EventState
 	{
-		TOTAL, //
+		TOTAL,
 		TOWER_DESTROY,
 		CATEGORY_UPDATE,
 		RESULT,
@@ -47,10 +47,9 @@ public class EventParticipantStatus extends L2GameServerPacket
 	}
 	
 	/**
-	 * Aqui mostramos cuantos puntos lleva cada team y el tiempo q falta para finalizar el evento
+	 * Here we show how many points each team takes and the time remaining to finish the event.
 	 * @param pointsRed
 	 * @param pointsBlue
-	 * @param eventState
 	 */
 	public EventParticipantStatus(int pointsRed, int pointsBlue)
 	{
@@ -60,10 +59,11 @@ public class EventParticipantStatus extends L2GameServerPacket
 	}
 	
 	/**
-	 * Aqui mostramos el resultado final del evento en una nueva ventana
+	 * Here we report the final result of the event in a new window.
 	 * @param pointsRed
+	 * @param teamBlue
 	 * @param pointsBlue
-	 * @param eventState
+	 * @param teamRed
 	 */
 	public EventParticipantStatus(int pointsRed, List<PlayerHolder> teamBlue, int pointsBlue, List<PlayerHolder> teamRed)
 	{
@@ -85,7 +85,6 @@ public class EventParticipantStatus extends L2GameServerPacket
 		writeC(0xfe);
 		writeH(0x95);
 		writeD(_eventState.ordinal());
-		
 		switch (_eventState)
 		{
 			case TOTAL:

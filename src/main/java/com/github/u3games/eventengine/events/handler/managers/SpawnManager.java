@@ -137,7 +137,10 @@ public class SpawnManager
 		}
 		NpcHolder npcHolder = new NpcHolder(npc);
 		// Add our npc to the list
-		_eventNpc.put(npc.getObjectId(), npcHolder);
+		if (npc != null)
+		{
+			_eventNpc.put(npc.getObjectId(), npcHolder);
+		}
 		return npcHolder;
 	}
 	
