@@ -36,8 +36,7 @@ import com.l2jserver.util.data.xml.IXmlReader;
 
 /**
  * This class is responsible for:<br>
- * Load the list of buffs that can be used in events.<br>
- * Manage the list of buffs that were selected by the characters.
+ * Load the list of buffs that can be used in events. Manage the list of buffs that were selected by the characters.
  * @author fissban
  */
 public class BuffListData implements IXmlReader

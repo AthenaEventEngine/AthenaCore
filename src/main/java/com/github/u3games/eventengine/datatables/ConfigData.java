@@ -264,7 +264,7 @@ public class ConfigData
 	{
 		if (locs.size() != teams)
 		{
-			LOGGER.warning(ConfigData.class.getSimpleName() + ": " + eventName + "-> The amount of equipment does not match the amount of spawns");
+			LOGGER.warning(ConfigData.class.getSimpleName() + ": " + eventName + " The amount of equipment does not match the amount of spawns");
 			LOGGER.info("locs count: " + locs.size());
 			LOGGER.info("teams: " + teams);
 		}
@@ -274,7 +274,7 @@ public class ConfigData
 	{
 		if (teams > minPlayers)
 		{
-			LOGGER.warning(ConfigData.class.getSimpleName() + ": " + eventName + "-> You must have at least one player for each team.");
+			LOGGER.warning(ConfigData.class.getSimpleName() + ": " + eventName + " You must have at least one player for each team.");
 			LOGGER.info("minPlayers: " + minPlayers);
 			LOGGER.info("teams: " + teams);
 		}

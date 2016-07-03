@@ -132,7 +132,7 @@ public class AllVsAll extends AbstractEvent
 	}
 	
 	/**
-	 * Give rewards.<br>
+	 * Give rewards.
 	 */
 	public void giveRewardsTeams()
 	{

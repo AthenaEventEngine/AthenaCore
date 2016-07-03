@@ -75,7 +75,7 @@ public final class MessageData
 		}
 		catch (Exception e)
 		{
-			LOGGER.warning(MessageData.class.getSimpleName() + ": -> Error while loading language files: " + e);
+			LOGGER.warning(MessageData.class.getSimpleName() + ": Error while loading language files: " + e);
 			e.printStackTrace();
 		}
 	}
@@ -96,29 +96,32 @@ public final class MessageData
 			}
 			catch (Exception e)
 			{
-				LOGGER.warning(MessageData.class.getSimpleName() + ": -> Could not load language (" + lang + ") file for event engine: " + e);
+				LOGGER.warning(MessageData.class.getSimpleName() + ": Could not load language (" + lang + ") file for event engine: " + e);
 				e.printStackTrace();
 			}
 			
-			Node n = doc.getFirstChild();
-			NamedNodeMap docAttr = n.getAttributes();
-			if (docAttr.getNamedItem("lang") != null)
+			if (doc != null)
 			{
-				langName = docAttr.getNamedItem("lang").getNodeValue();
-			}
-			if (!_languages.containsKey(lang))
-			{
-				_languages.put(lang, langName);
-			}
-			for (Node d = n.getFirstChild(); d != null; d = d.getNextSibling())
-			{
-				if (d.getNodeName().equals("message"))
+				Node n = doc.getFirstChild();
+				NamedNodeMap docAttr = n.getAttributes();
+				if (docAttr.getNamedItem("lang") != null)
 				{
-					NamedNodeMap attrs = d.getAttributes();
-					String id = attrs.getNamedItem("id").getNodeValue();
-					String text = attrs.getNamedItem("text").getNodeValue();
-					_msgMap.put(lang + "_" + id, text);
-					count++;
+					langName = docAttr.getNamedItem("lang").getNodeValue();
+				}
+				if (!_languages.containsKey(lang))
+				{
+					_languages.put(lang, langName);
+				}
+				for (Node d = n.getFirstChild(); d != null; d = d.getNextSibling())
+				{
+					if (d.getNodeName().equals("message"))
+					{
+						NamedNodeMap attrs = d.getAttributes();
+						String id = attrs.getNamedItem("id").getNodeValue();
+						String text = attrs.getNamedItem("text").getNodeValue();
+						_msgMap.put(lang + "_" + id, text);
+						count++;
+					}
 				}
 			}
 		}
@@ -126,10 +129,10 @@ public final class MessageData
 	}
 	
 	/**
-	 * Returns the text based on player's language selected.<br>
+	 * Returns the text based on player's language selected.
 	 * @param player
 	 * @param text
-	 * @param addTag -> used for screen or chat messages.
+	 * @param addTag Used for screen or chat messages.
 	 * @return String
 	 */
 	public String getMsgByLang(L2PcInstance player, String text, boolean addTag)
@@ -165,7 +168,7 @@ public final class MessageData
 			}
 			else if (_msgMap.containsKey(lang + "_" + textLang))
 			{
-				// Seek the translation of the text in the default language -> "en"
+				// Seek the translation of the text in the default language "en"
 				msg.append(_msgMap.get("en_" + textLang));
 			}
 			else

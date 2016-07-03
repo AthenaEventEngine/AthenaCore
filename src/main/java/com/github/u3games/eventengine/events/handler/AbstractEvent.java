@@ -91,7 +91,7 @@ public abstract class AbstractEvent
 	}
 	
 	/**
-	 * Necessary to handle the event states.<br>
+	 * Necessary to handle the event states.
 	 * @param state
 	 */
 	public final void runEventState(EventState state)
@@ -158,21 +158,21 @@ public abstract class AbstractEvent
 	protected int _radius = 50;
 	
 	/**
-	 * Init the scheduled events.<br>
+	 * Init the scheduled events.
 	 * <ul>
 	 * <b>Actions:</b>
 	 * </ul>
-	 * <li>->Step 1: Announce participants will be teleported.</li><br>
-	 * <li>Wait 3 secs.</li><br>
-	 * <li>->Step 2: Adjust the status of the event -> START.</li><br>
-	 * <li>We hope 1 sec to actions within each event is executed.</li><br>
-	 * <li>->Step 3: Adjust the status of the event -> FIGHT.</li><br>
-	 * <li>->Step 4: We sent a message that they are ready to fight.</li><br>
-	 * <li>We wait until the event ends.</li><br>
-	 * <li>->Step 5: Adjust the status of the event -> END.</li><br>
-	 * <li>->Step 6: We sent a message warning that term event.</li><br>
-	 * <li>Wait for 1 sec.</li><br>
-	 * <li>->Step 7: Alert the event has ended.</li><br>
+	 * <li>Step 1: Announce participants will be teleported.</li>
+	 * <li>Wait 3 secs.</li>
+	 * <li>Step 2: Adjust the status of the event -> START.</li>
+	 * <li>We hope 1 sec to actions within each event is executed.</li>
+	 * <li>Step 3: Adjust the status of the event -> FIGHT.</li>
+	 * <li>Step 4: We sent a message that they are ready to fight.</li>
+	 * <li>We wait until the event ends.</li>
+	 * <li>Step 5: Adjust the status of the event -> END.</li>
+	 * <li>Step 6: We sent a message warning that term event.</li>
+	 * <li>Wait for 1 sec.</li>
+	 * <li>Step 7: Alert the event has ended.</li>
 	 */
 	private void initScheduledEvents()
 	{
@@ -354,7 +354,7 @@ public abstract class AbstractEvent
 	/**
 	 * @param ph
 	 * @param target
-	 * @return true -> Only in the event that an attack not want that continue its normal progress.
+	 * @return true only in the event that an attack not want that continue its normal progress.
 	 */
 	public boolean onAttack(PlayerHolder ph, L2Character target)
 	{
@@ -365,7 +365,7 @@ public abstract class AbstractEvent
 	 * @param playable
 	 * @param target
 	 * @param skill
-	 * @return true -> Only in the event that an skill not want that continue its normal progress.
+	 * @return true only in the event that an skill not want that continue its normal progress.
 	 */
 	public boolean listenerOnUseSkill(L2Playable playable, L2Character target, Skill skill)
 	{
@@ -427,7 +427,7 @@ public abstract class AbstractEvent
 	 * @param ph
 	 * @param target
 	 * @param skill
-	 * @return true -> Only in the event that an item not want that continue its normal progress.
+	 * @return true only in the event that an item not want that continue its normal progress.
 	 */
 	public boolean onUseSkill(PlayerHolder ph, L2Character target, Skill skill)
 	{
@@ -437,7 +437,7 @@ public abstract class AbstractEvent
 	/**
 	 * @param player
 	 * @param item
-	 * @return -> Only in the event that an skill not want that continue its normal progress.
+	 * @return Only in the event that an skill not want that continue its normal progress.
 	 */
 	public boolean listenerOnUseItem(L2PcInstance player, L2Item item)
 	{
@@ -463,7 +463,7 @@ public abstract class AbstractEvent
 	/**
 	 * @param player
 	 * @param item
-	 * @return true -> Only in the event that an skill not want that continue its normal progress.
+	 * @return true only in the event that an skill not want that continue its normal progress.
 	 */
 	public boolean onUseItem(PlayerHolder player, L2Item item)
 	{
@@ -484,7 +484,7 @@ public abstract class AbstractEvent
 			}
 			catch (Exception e)
 			{
-				LOGGER.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnLogout() " + e);
+				LOGGER.warning(EventEngineManager.class.getSimpleName() + ": listenerOnLogout() " + e);
 				e.printStackTrace();
 			}
 		}
@@ -511,7 +511,7 @@ public abstract class AbstractEvent
 	}
 	
 	/**
-	 * Teleport to players of each team to their respective starting points.<br>
+	 * Teleport to players of each team to their respective starting points.
 	 * @param radius
 	 */
 	protected void teleportAllPlayers(int radius)
@@ -524,7 +524,7 @@ public abstract class AbstractEvent
 	}
 	
 	/**
-	 * Teleport to a specific player to its original location within the event.<br>
+	 * Teleport to a specific player to its original location within the event.
 	 * @param ph
 	 * @param radius
 	 */
@@ -540,7 +540,7 @@ public abstract class AbstractEvent
 	}
 	
 	/**
-	 * Prepare players, teams and the instance to start.<br>
+	 * Prepare players, teams and the instance to start.
 	 * <ul>
 	 * <b>Actions:</b>
 	 * </ul>
@@ -568,11 +568,11 @@ public abstract class AbstractEvent
 	}
 	
 	/**
-	 * We prepare the player for the fight.<br>
+	 * We prepare the player for the fight.
 	 * <ul>
 	 * <b>Actions:</b>
 	 * </ul>
-	 * <li>We canceled the paralysis made in -> <u>prepareToTeleport().</u></li>
+	 * <li>We canceled the paralysis made in <u>prepareToTeleport().</u></li>
 	 * <li>We deliver buffs defined in configs.</li>
 	 */
 	public void prepareToFight()
@@ -584,7 +584,7 @@ public abstract class AbstractEvent
 	}
 	
 	/**
-	 * We prepare the player for the end of the event.<br>
+	 * We prepare the player for the end of the event.
 	 * <ul>
 	 * <b>Actions:</b>
 	 * </ul>
@@ -610,7 +610,7 @@ public abstract class AbstractEvent
 	}
 	
 	/**
-	 * We generated a task to revive a character.<br>
+	 * We generated a task to revive a character.
 	 * <ul>
 	 * <b>Actions:</b>
 	 * </ul>
@@ -619,7 +619,7 @@ public abstract class AbstractEvent
 	 * <li>We give you the buff depending on the event in which this.</li>
 	 * <li>Teleport the character depending on the event in this.</li>
 	 * <li>We do invulnerable for 5 seconds and not allow it to move.</li>
-	 * <li>We canceled the invul and let you move.</li><br>
+	 * <li>We canceled the invul and let you move.</li>
 	 * @param player
 	 * @param time
 	 * @param radiusTeleport
@@ -644,13 +644,13 @@ public abstract class AbstractEvent
 	}
 	
 	/**
-	 * Revive the player.<br>
+	 * Revive the player.
 	 * <ul>
 	 * <b>Actions:</b>
 	 * </ul>
 	 * <li>Cancel the DecayTask.</li>
 	 * <li>Revive the character.</li>
-	 * <li>Set max cp, hp and mp.</li><br>
+	 * <li>Set max cp, hp and mp.</li>
 	 * @param ph
 	 */
 	protected void revivePlayer(PlayerHolder ph)
@@ -668,7 +668,7 @@ public abstract class AbstractEvent
 	}
 	
 	/**
-	 * We give you the buff to a player set within configs.<br>
+	 * We give you the buff to a player set within configs.
 	 * @param player
 	 */
 	public void giveBuffPlayer(L2PcInstance player)
@@ -680,8 +680,7 @@ public abstract class AbstractEvent
 	}
 	
 	/**
-	 * We deliver the items in a list defined as<br>
-	 * Created in order to deliver rewards in the events.<br>
+	 * We deliver the items in a list defined as. Created in order to deliver rewards in the events.
 	 * @param ph
 	 * @param items
 	 */
@@ -699,7 +698,7 @@ public abstract class AbstractEvent
 	 * </ul>
 	 * <li>Cancel target.</li>
 	 * <li>Cancel cast.</li>
-	 * <li>Cancel attack.</li><br>
+	 * <li>Cancel attack.</li>
 	 * @param ph
 	 */
 	public void cancelAllPlayerActions(PlayerHolder ph)
@@ -716,7 +715,7 @@ public abstract class AbstractEvent
 	 * <ul>
 	 * <b>Actions:</b>
 	 * </ul>
-	 * <li>Stop all effects from player and summon.</li><br>
+	 * <li>Stop all effects from player and summon.</li>
 	 * @param ph
 	 */
 	public void cancelAllEffects(PlayerHolder ph)
@@ -781,7 +780,7 @@ public abstract class AbstractEvent
 	 * </ul>
 	 * <li>Recover original title.</li>
 	 * <li>Recover original color title.</li>
-	 * <li>Remove from instance and back 0</li><br>
+	 * <li>Remove from instance and back 0</li>
 	 * @param ph
 	 * @param forceRemove
 	 */

@@ -134,7 +134,7 @@ public class CaptureTheFlag extends AbstractEvent
 			{
 				if (hasFlag(ph))
 				{
-					// Animation -> Large FireWork
+					// Animation Large FireWork
 					ph.getPcInstance().broadcastPacket(new MagicSkillUse(ph.getPcInstance(), ph.getPcInstance(), 2025, 1, 1, 1));
 					// Increase the points
 					getTeamsManager().getPlayerTeam(ph).increasePoints(POINTS_CONQUER_FLAG);
@@ -293,7 +293,7 @@ public class CaptureTheFlag extends AbstractEvent
 	}
 	
 	/**
-	 * Check if a character has a flag.<br>
+	 * Check if a character has a flag.
 	 * @param ph
 	 * @return
 	 */
@@ -303,7 +303,7 @@ public class CaptureTheFlag extends AbstractEvent
 	}
 	
 	/**
-	 * We equip a character with a flag.<br>
+	 * We equip a character with a flag.
 	 * @param ph
 	 * @param flagTeam
 	 */
@@ -319,7 +319,7 @@ public class CaptureTheFlag extends AbstractEvent
 	}
 	
 	/**
-	 * We remove the flag of a character.<br>
+	 * We remove the flag of a character.
 	 * @param ph
 	 */
 	private void unequiFlag(PlayerHolder ph)

@@ -97,7 +97,7 @@ public class EventEngineManager
 		}
 		catch (Exception e)
 		{
-			LOGGER.warning(EventEngineManager.class.getSimpleName() + ": -> load() " + e);
+			LOGGER.warning(EventEngineManager.class.getSimpleName() + ": load() " + e);
 			e.printStackTrace();
 		}
 	}
@@ -142,7 +142,7 @@ public class EventEngineManager
 	}
 	
 	// XXX CURRENT EVENT ---------------------------------------------------------------------------------
-	// Evento que esta corriendo
+	// Event that is running
 	private AbstractEvent _currentEvent;
 	
 	/**
@@ -165,9 +165,9 @@ public class EventEngineManager
 	
 	// XXX LISTENERS -------------------------------------------------------------------------------------
 	/**
-	 * @param playable -> Character or Summon.
-	 * @param target -> Can't be null.
-	 * @return true -> Just in case we do not want an attack continue their normal progress.
+	 * @param playable Character or Summon.
+	 * @param target Can't be null.
+	 * @return true Just in case we do not want an attack continue their normal progress.
 	 */
 	public boolean listenerOnAttack(L2Playable playable, L2Character target)
 	{
@@ -179,7 +179,7 @@ public class EventEngineManager
 			}
 			catch (Exception e)
 			{
-				LOGGER.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnAttack() " + e);
+				LOGGER.warning(EventEngineManager.class.getSimpleName() + ": listenerOnAttack() " + e);
 				e.printStackTrace();
 			}
 		}
@@ -187,10 +187,10 @@ public class EventEngineManager
 	}
 	
 	/**
-	 * @param playable -> Character or Summon.
-	 * @param target -> Can be null.
-	 * @param skill ->
-	 * @return true -> Just in case we do not want a skill not continue its normal progress.
+	 * @param playable Character or Summon.
+	 * @param target Can be null.
+	 * @param skill
+	 * @return true Just in case we do not want a skill not continue its normal progress.
 	 */
 	public boolean listenerOnUseSkill(L2Playable playable, L2Character target, Skill skill)
 	{
@@ -203,7 +203,7 @@ public class EventEngineManager
 			}
 			catch (Exception e)
 			{
-				LOGGER.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnUseSkill() " + e);
+				LOGGER.warning(EventEngineManager.class.getSimpleName() + ": listenerOnUseSkill() " + e);
 				e.printStackTrace();
 			}
 		}
@@ -211,8 +211,8 @@ public class EventEngineManager
 	}
 	
 	/**
-	 * @param playable -> Character or summon.
-	 * @param target -> Can't be null.
+	 * @param playable Character or summon.
+	 * @param target Can't be null.
 	 */
 	public void listenerOnKill(L2Playable playable, L2Character target)
 	{
@@ -224,7 +224,7 @@ public class EventEngineManager
 			}
 			catch (Exception e)
 			{
-				LOGGER.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnKill() " + e);
+				LOGGER.warning(EventEngineManager.class.getSimpleName() + ": listenerOnKill() " + e);
 				e.printStackTrace();
 			}
 		}
@@ -244,7 +244,7 @@ public class EventEngineManager
 			}
 			catch (Exception e)
 			{
-				LOGGER.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnInteract() " + e);
+				LOGGER.warning(EventEngineManager.class.getSimpleName() + ": listenerOnInteract() " + e);
 				e.printStackTrace();
 			}
 		}
@@ -264,7 +264,7 @@ public class EventEngineManager
 			}
 			catch (Exception e)
 			{
-				LOGGER.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnDeath() " + e);
+				LOGGER.warning(EventEngineManager.class.getSimpleName() + ": listenerOnDeath() " + e);
 				e.printStackTrace();
 			}
 		}
@@ -294,7 +294,7 @@ public class EventEngineManager
 			}
 			catch (Exception e)
 			{
-				LOGGER.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnLogout() " + e);
+				LOGGER.warning(EventEngineManager.class.getSimpleName() + ": listenerOnLogout() " + e);
 				e.printStackTrace();
 			}
 		}
@@ -313,7 +313,7 @@ public class EventEngineManager
 	/**
 	 * @param player
 	 * @param item
-	 * @return boolean -> true only if we do not want that you can not use an item.
+	 * @return boolean True only if we do not want that you can not use an item.
 	 */
 	public boolean listenerOnUseItem(L2PcInstance player, L2Item item)
 	{
@@ -326,7 +326,7 @@ public class EventEngineManager
 			}
 			catch (Exception e)
 			{
-				LOGGER.warning(EventEngineManager.class.getSimpleName() + ": -> listenerOnUseItem() " + e);
+				LOGGER.warning(EventEngineManager.class.getSimpleName() + ": listenerOnUseItem() " + e);
 				e.printStackTrace();
 			}
 		}
@@ -366,8 +366,8 @@ public class EventEngineManager
 	
 	/**
 	 * Increase by 1, the number of votes.
-	 * @param player -> The character who is voting.
-	 * @param event -> Event voting.
+	 * @param player The character who is voting.
+	 * @param event Event voting.
 	 */
 	public void increaseVote(L2PcInstance player, Class<? extends AbstractEvent> event)
 	{
@@ -382,7 +382,7 @@ public class EventEngineManager
 	
 	/**
 	 * Decrease the number of votes.
-	 * @param player -> Character that are voting.
+	 * @param player Character that are voting.
 	 */
 	public void removeVote(L2PcInstance player)
 	{
@@ -399,7 +399,7 @@ public class EventEngineManager
 	
 	/**
 	 * Get the number of votes it has a certain event.
-	 * @param event -> AVA, TVT, CFT.
+	 * @param event AVA, TVT, CFT.
 	 * @return int
 	 */
 	public int getCurrentVotesInEvent(Class<? extends AbstractEvent> event)
@@ -422,9 +422,7 @@ public class EventEngineManager
 	}
 	
 	/**
-	 * Get the event with more votes<br>
-	 * In case all have the same amount of votes, it will make a random<br>
-	 * among those most votes have.<br>
+	 * Get the event with more votes. In case all have the same amount of votes, it will make a random among those most votes have.
 	 * @return
 	 */
 	public Class<? extends AbstractEvent> getEventMoreVotes()
@@ -468,9 +466,9 @@ public class EventEngineManager
 	}
 	
 	/**
-	 * Define the state in which the event is<br>
-	 * <u>Observations:</u><br>
-	 * <li>REGISTER -> Indicate that it is</li><br>
+	 * Define the state in which the event is.<br>
+	 * <u>Observations:</u>
+	 * <li>REGISTER Indicate that it is.</li><br>
 	 * @param state
 	 */
 	public void setEventEngineState(EventEngineState state)
@@ -529,7 +527,6 @@ public class EventEngineManager
 	
 	/**
 	 * Clean collection of players.
-	 * @return
 	 */
 	public void clearRegisteredPlayers()
 	{
@@ -539,8 +536,8 @@ public class EventEngineManager
 	/**
 	 * Get if the number of registered players is 0.
 	 * @return
-	 *         <li>True - > no registered players.</li><br>
-	 *         <li>False - > there is at least one registered player.</li><br>
+	 *         <li>True No registered players.</li>
+	 *         <li>False There is at least one registered player.</li>
 	 */
 	public boolean isEmptyRegisteredPlayers()
 	{
@@ -551,8 +548,8 @@ public class EventEngineManager
 	 * We get if the player is registered.
 	 * @param player
 	 * @return
-	 *         <li>True - > It is registered.</li><br>
-	 *         <li>False - > It's not registered.</li><br>
+	 *         <li>True It is registered.</li>
+	 *         <li>False It's not registered.</li>
 	 */
 	public boolean isRegistered(L2PcInstance player)
 	{
@@ -563,8 +560,8 @@ public class EventEngineManager
 	 * Add a player to register.
 	 * @param player
 	 * @return
-	 *         <li>True - > if the registration is successful.</li><br>
-	 *         <li>False - > if the player already registered.</li><br>
+	 *         <li>True If the registration is successful.</li>
+	 *         <li>False If the player already registered.</li>
 	 */
 	public boolean registerPlayer(L2PcInstance player)
 	{
@@ -575,8 +572,8 @@ public class EventEngineManager
 	 * Remove one player from register.
 	 * @param player
 	 * @return
-	 *         <li>True - > if the player was registered.</li><br>
-	 *         <li>False - > if the player was not registered.</li><br>
+	 *         <li>True If the player was registered.</li>
+	 *         <li>False If the player was not registered.</li>
 	 */
 	public boolean unRegisterPlayer(L2PcInstance player)
 	{
@@ -588,8 +585,7 @@ public class EventEngineManager
 	private final Map<Integer, Location> _playersDisconnected = new ConcurrentHashMap<>();
 	
 	/**
-	 * When the player is disconnected inside event.<br>
-	 * It adds him to a list saving the original location.<br>
+	 * When the player is disconnected inside event. It adds him to a list saving the original location.
 	 * @param ph
 	 */
 	public void addPlayerDisconnected(PlayerHolder ph)
@@ -599,8 +595,7 @@ public class EventEngineManager
 	}
 	
 	/**
-	 * When the player relogs.<br>
-	 * It teleports him to the original location if he disconnected inside event.<br>
+	 * When the player relogs. It teleports him to the original location if he disconnected inside event.
 	 * @param player
 	 */
 	public void returnPlayerDisconnected(L2PcInstance player)
