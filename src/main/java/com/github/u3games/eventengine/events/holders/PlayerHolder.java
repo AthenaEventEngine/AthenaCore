@@ -24,7 +24,7 @@ import com.l2jserver.gameserver.model.Location;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 
 /**
- * It manages player's info that participates in an event
+ * It manages player's info that participates in an event.
  * @author fissban
  */
 public class PlayerHolder implements ParticipantHolder
@@ -48,7 +48,7 @@ public class PlayerHolder implements ParticipantHolder
 	private long _protectionTimeEnd = 0;
 	
 	/**
-	 * Constructor
+	 * Constructor.
 	 * @param player
 	 */
 	public PlayerHolder(L2PcInstance player)
@@ -58,7 +58,7 @@ public class PlayerHolder implements ParticipantHolder
 	
 	// METODOS VARIOS -----------------------------------------------------------
 	/**
-	 * Get L2PcInstance
+	 * Get L2PcInstance.
 	 * @return
 	 */
 	public L2PcInstance getPcInstance()
@@ -67,11 +67,11 @@ public class PlayerHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * <ul>
 	 * <b>Actions:</b>
-	 * </ul>
+	 * <ul>
 	 * <li>Set the event team.</li>
-	 * <li>Change the player color by team</li>
+	 * <li>Change the player color by team.</li>
+	 * </ul>
 	 * @param team
 	 */
 	public void setTeam(TeamType team)
@@ -89,7 +89,7 @@ public class PlayerHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Get the player's team
+	 * Get the player's team.
 	 * @return
 	 */
 	public TeamType getTeamType()
@@ -98,7 +98,7 @@ public class PlayerHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Get the event instance id
+	 * Get the event instance id.
 	 * @return
 	 */
 	public int getDinamicInstanceId()
@@ -107,7 +107,7 @@ public class PlayerHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Set the event instance id
+	 * Set the event instance id.
 	 * @param dinamicInstanceId
 	 */
 	public void setDinamicInstanceId(int dinamicInstanceId)
@@ -116,7 +116,7 @@ public class PlayerHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Increase the kills by one
+	 * Increase the kills by one.
 	 */
 	public void increaseKills()
 	{
@@ -124,16 +124,17 @@ public class PlayerHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Get the kills count
+	 * Get the kills count.
 	 * @return
 	 */
+	@Override
 	public int getKills()
 	{
 		return _kills;
 	}
 	
 	/**
-	 * Increase the deaths by one
+	 * Increase the deaths by one.
 	 */
 	public void increaseDeaths()
 	{
@@ -141,25 +142,27 @@ public class PlayerHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Get the deaths count
+	 * Get the deaths count.
 	 * @return
 	 */
+	@Override
 	public int getDeaths()
 	{
 		return _deaths;
 	}
 	
 	/**
-	 * Get the player's points<br>
+	 * Get the player's points.
 	 * @return
 	 */
+	@Override
 	public int getPoints()
 	{
 		return _kills - _deaths;
 	}
 	
 	/**
-	 * Set a player's title
+	 * Set a player's title.
 	 * @param title
 	 */
 	public void setNewTitle(String title)
@@ -168,7 +171,7 @@ public class PlayerHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Recover the original player title
+	 * Recover the original player title.
 	 */
 	public void recoverOriginalTitle()
 	{
@@ -176,7 +179,7 @@ public class PlayerHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Recover the original color player title
+	 * Recover the original color player title.
 	 */
 	public void recoverOriginalColorTitle()
 	{
@@ -184,7 +187,8 @@ public class PlayerHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Get the original location before teleporting to the event
+	 * Get the original location before teleporting to the event.
+	 * @return
 	 */
 	public Location getReturnLoc()
 	{
@@ -192,7 +196,8 @@ public class PlayerHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Set the original location before teleporting to the event
+	 * Set the original location before teleporting to the event.
+	 * @param loc
 	 */
 	public void setReturnLoc(Location loc)
 	{
@@ -209,7 +214,7 @@ public class PlayerHolder implements ParticipantHolder
 		return _protectionTimeEnd > System.currentTimeMillis();
 	}
 	
-	public void setProtectionTimeEnd(long time) 
+	public void setProtectionTimeEnd(long time)
 	{
 		_protectionTimeEnd = time;
 	}

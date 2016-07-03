@@ -69,7 +69,7 @@ public class EventUtil
 	}
 	
 	/**
-	 * Announce a message replacing the %time% holder by time and another holder
+	 * Announce a message replacing the %time% holder by time and another holder.
 	 * @param time
 	 * @param textId
 	 * @param say2
@@ -81,7 +81,7 @@ public class EventUtil
 	}
 	
 	/**
-	 * Announce a message replacing the %time% holder by time and another holder
+	 * Announce a message replacing the %time% holder by time and another holder.
 	 * @param time
 	 * @param textId
 	 * @param say2
@@ -97,11 +97,11 @@ public class EventUtil
 	}
 	
 	/**
-	 * Announce a message replacing the %time% holder by time and another holders inside the map
+	 * Announce a message replacing the %time% holder by time and another holders inside the map.
 	 * @param time
 	 * @param textId
 	 * @param say2
-	 * @param map
+	 * @param mapToReplace
 	 * @param type
 	 */
 	public static void announceTime(int time, String textId, int say2, Map<String, String> mapToReplace, CollectionTarget type)
@@ -110,9 +110,9 @@ public class EventUtil
 	}
 	
 	/**
-	 * Announce a message
+	 * Announce a message.
 	 * @param say2
-	 * @param textId
+	 * @param text
 	 * @param type
 	 */
 	public static void announceTo(int say2, String text, CollectionTarget type)
@@ -121,10 +121,11 @@ public class EventUtil
 	}
 	
 	/**
-	 * Announce a message replacing just a text holder
+	 * Announce a message replacing just a text holder.
 	 * @param say2
-	 * @param textId
-	 * @param target
+	 * @param text
+	 * @param replace
+	 * @param textReplace
 	 * @parm replace
 	 * @param type
 	 */
@@ -136,9 +137,9 @@ public class EventUtil
 	}
 	
 	/**
-	 * Announce a message replacing the text holders
+	 * Announce a message replacing the text holders.
 	 * @param say2
-	 * @param textId
+	 * @param text
 	 * @param map
 	 * @param type
 	 */
@@ -148,9 +149,9 @@ public class EventUtil
 	}
 	
 	/**
-	 * Announce a message by npc
+	 * Announce a message by npc.
 	 * @param say2
-	 * @param textId
+	 * @param text
 	 * @param type
 	 * @param npcId
 	 */
@@ -160,11 +161,11 @@ public class EventUtil
 	}
 	
 	/**
-	 * Announce a message by npc replacing just a holder
+	 * Announce a message by npc replacing just a holder.
 	 * @param say2
-	 * @param textId
-	 * @param target
+	 * @param text
 	 * @param replace
+	 * @param textReplace
 	 * @param type
 	 * @param npcId
 	 */
@@ -176,9 +177,9 @@ public class EventUtil
 	}
 	
 	/**
-	 * Announce a message by npc replacing a map of holders
+	 * Announce a message by npc replacing a map of holders.
 	 * @param say2
-	 * @param textId
+	 * @param text
 	 * @param map
 	 * @param type
 	 * @param npcId
@@ -189,21 +190,20 @@ public class EventUtil
 	}
 	
 	/**
-	 * Announce the proper message for each player
+	 * Announce the proper message for each player.
 	 * @param say2
 	 * @param textId
-	 * @param map
+	 * @param mapToReplace
 	 * @param type
 	 * @param npcs
 	 * @param time
 	 */
 	private static void announce(int say2, String textId, Map<String, String> mapToReplace, CollectionTarget type, Set<L2Npc> npcs, int time)
 	{
-		if (time > -1 && !TIME_LEFT_TO_ANNOUNCE.contains(time))
+		if ((time > -1) && !TIME_LEFT_TO_ANNOUNCE.contains(time))
 		{
 			return;
 		}
-		
 		switch (type)
 		{
 			case ALL_PLAYERS:
@@ -235,7 +235,7 @@ public class EventUtil
 	}
 	
 	/**
-	 * Get the proper announce string to a player
+	 * Get the proper announce string to a player.
 	 * @param player
 	 * @param textId
 	 * @param map
@@ -269,7 +269,7 @@ public class EventUtil
 	}
 	
 	/**
-	 * Get a collection with all players that matchs with the type condition
+	 * Get a collection with all players that match with the type condition.
 	 * @param type
 	 * @return collection
 	 */
@@ -298,7 +298,7 @@ public class EventUtil
 	}
 	
 	/**
-	 * Get a map with all known players by each npc from collection
+	 * Get a map with all known players by each npc from collection.
 	 * @param type
 	 * @param npcs
 	 * @return map
@@ -336,7 +336,7 @@ public class EventUtil
 	}
 	
 	/**
-	 * Send a message to a player inside the event
+	 * Send a message to a player inside the event.
 	 * @param player
 	 * @param text
 	 */
@@ -346,9 +346,10 @@ public class EventUtil
 	}
 	
 	/**
-	 * Create an event match message. type
-	 * @param type -> 0 - gm, 1 - finish, 2 - start, 3 - game over, 4 - 1, 5 - 2, 6 - 3, 7 - 4, 8 - 5
-	 * @param msg ->
+	 * Create an event match message type.
+	 * @param player
+	 * @param type 0 - gm, 1 - finish, 2 - start, 3 - game over, 4 - 1, 5 - 2, 6 - 3, 7 - 4, 8 - 5
+	 * @param msg
 	 */
 	public static void sendEventSpecialMessage(PlayerHolder player, int type, String msg)
 	{
@@ -356,7 +357,7 @@ public class EventUtil
 	}
 	
 	/**
-	 * Send a screen message to player inside the event
+	 * Send a screen message to player inside the event.
 	 * @param player
 	 * @param text
 	 */
@@ -366,7 +367,7 @@ public class EventUtil
 	}
 	
 	/**
-	 * Send a screen message to all players in the event
+	 * Send a screen message to all players in the event.
 	 * @param player
 	 * @param text
 	 * @param time
@@ -377,7 +378,7 @@ public class EventUtil
 	}
 	
 	/**
-	 * Get all the instances of npc
+	 * Get all the instances of npc.
 	 * @param npcId
 	 * @return npcs
 	 */
@@ -396,7 +397,7 @@ public class EventUtil
 	}
 	
 	/**
-	 * Send killer message to all players in the event
+	 * Send killer message to all players in the event.
 	 * @param player
 	 * @param target
 	 */
@@ -409,8 +410,8 @@ public class EventUtil
 	}
 	
 	/**
-	 * Send a message to player
-	 * @param player
+	 * Send a message to player.
+	 * @param ph
 	 * @param textId
 	 */
 	public static void sendMessageToPlayer(PlayerHolder ph, String textId)

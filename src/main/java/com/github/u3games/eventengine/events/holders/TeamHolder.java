@@ -29,15 +29,15 @@ import com.l2jserver.gameserver.model.Location;
  */
 public class TeamHolder implements ParticipantHolder
 {
-	// Tipo de team
-	private TeamType _teamType;
-	// Cantidad de puntos
-	private AtomicInteger _points = new AtomicInteger(0);
-	// Spawn del team
+	// Type of team
+	private final TeamType _teamType;
+	// Amount of points
+	private final AtomicInteger _points = new AtomicInteger(0);
+	// Team Spawn
 	private Location _teamSpawn = new Location(0, 0, 0);
 	
 	/**
-	 * Constructor
+	 * Constructor.
 	 * @param teamColor
 	 */
 	public TeamHolder(TeamType teamColor)
@@ -46,7 +46,7 @@ public class TeamHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Obtenemos el color del team
+	 * Get Team color.
 	 * @return
 	 */
 	public TeamType getTeamType()
@@ -55,7 +55,7 @@ public class TeamHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Definimos el spawn de un team.
+	 * Define the spawn of a team.
 	 * @param loc
 	 */
 	public void setSpawn(Location loc)
@@ -64,7 +64,7 @@ public class TeamHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Obtenemos el spawn de un team.
+	 * Get the spawn of a team.
 	 * @return
 	 */
 	public Location getSpawn()
@@ -73,34 +73,38 @@ public class TeamHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Puntos del team
+	 * Points of team.
 	 * @return
 	 */
+	@Override
 	public int getPoints()
 	{
 		return _points.intValue();
 	}
 	
 	/**
-	 * Team kills
+	 * Team kills.
 	 * @return
 	 */
+	@Override
 	public int getKills()
 	{
 		return 0; // TODO: Do it
 	}
 	
 	/**
-	 * Team deaths
+	 * Team deaths.
 	 * @return
 	 */
+	@Override
 	public int getDeaths()
 	{
 		return 0; // TODO: Do it
 	}
 	
 	/**
-	 * Incrementamos la cantidad de puntos
+	 * Increase the number of points.
+	 * @param points
 	 */
 	public void increasePoints(int points)
 	{
@@ -108,13 +112,14 @@ public class TeamHolder implements ParticipantHolder
 	}
 	
 	/**
-	 * Disminiumos la cantidad de puntos
+	 * Decreasing the amount of points.
+	 * @param points
 	 */
 	public void decreasePoints(int points)
 	{
 		_points.getAndAdd(-points);
-		// prevenimos q el equipo tenga puntos negativos
-		// FIXME revisar por si algun evento requiera que sean negativos.
+		// Prevent that the team has negative points
+		// FIXME Check if any event requires to be negative.
 		if (_points.intValue() < 0)
 		{
 			_points.set(0);

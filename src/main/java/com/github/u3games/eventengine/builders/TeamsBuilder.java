@@ -33,9 +33,9 @@ public class TeamsBuilder
 {
 	private static final Logger LOGGER = Logger.getLogger(TeamsBuilder.class.getName());
 	private int _teamsAmount;
-	private List<List<Location>> _locations = new ArrayList<>();
+	private final List<List<Location>> _locations = new ArrayList<>();
 	private DistributionType _distribution = DistributionType.DEFAULT;
-	private Collection<PlayerHolder> _players = new ArrayList<>();
+	private final Collection<PlayerHolder> _players = new ArrayList<>();
 	
 	public TeamsBuilder addTeams(int amount, List<Location> locations)
 	{
@@ -115,7 +115,7 @@ public class TeamsBuilder
 				{
 					player.setTeam(teams.get(i).getTeamType());
 					
-					if (teams.size() <= i + 1)
+					if (teams.size() <= (i + 1))
 					{
 						i = 0;
 					}

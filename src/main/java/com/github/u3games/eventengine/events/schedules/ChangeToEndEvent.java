@@ -58,7 +58,7 @@ public class ChangeToEndEvent implements EventScheduled
 			currentEvent.getAntiAfkManager().finish();
 		}
 		
-		// Enviamos un mensaje especial para los participantes
+		// Send a special message to the participants
 		for (PlayerHolder player : currentEvent.getPlayerEventManager().getAllEventPlayers())
 		{
 			EventUtil.sendEventSpecialMessage(player, 1, "status_finished");

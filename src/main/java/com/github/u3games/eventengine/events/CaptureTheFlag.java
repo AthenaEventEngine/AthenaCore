@@ -134,7 +134,7 @@ public class CaptureTheFlag extends AbstractEvent
 			{
 				if (hasFlag(ph))
 				{
-					// Animation -> Large FireWork
+					// Animation Large FireWork
 					ph.getPcInstance().broadcastPacket(new MagicSkillUse(ph.getPcInstance(), ph.getPcInstance(), 2025, 1, 1, 1));
 					// Increase the points
 					getTeamsManager().getPlayerTeam(ph).increasePoints(POINTS_CONQUER_FLAG);
@@ -160,10 +160,10 @@ public class CaptureTheFlag extends AbstractEvent
 		{
 			// Remove the flag character
 			unequiFlag(targetEvent);
-			// Drop flag.
+			// Drop flag
 			dropFlag(targetEvent);
 		}
-		// We increased the team's points.
+		// We increased the team's points
 		getTeamsManager().getPlayerTeam(ph).increasePoints(POINTS_KILL);
 		
 		// Reward for kills
@@ -204,7 +204,7 @@ public class CaptureTheFlag extends AbstractEvent
 		{
 			return true;
 		}
-		if (hasFlag(ph) && item instanceof L2Weapon)
+		if (hasFlag(ph) && (item instanceof L2Weapon))
 		{
 			return true;
 		}
@@ -218,14 +218,14 @@ public class CaptureTheFlag extends AbstractEvent
 		{
 			// Remove the flag character
 			unequiFlag(ph);
-			// Drop flag.
+			// Drop flag
 			dropFlag(ph);
 		}
 	}
 	
 	// VARIOUS METHODS -------------------------------------------------
 	/**
-	 * Spawn flags and holders
+	 * Spawn flags and holders.
 	 */
 	private void spawnFlagsAndHolders()
 	{
@@ -242,7 +242,7 @@ public class CaptureTheFlag extends AbstractEvent
 	}
 	
 	/**
-	 * Give rewards.<br>
+	 * Give rewards.
 	 */
 	private void giveRewardsTeams()
 	{
@@ -272,7 +272,7 @@ public class CaptureTheFlag extends AbstractEvent
 	}
 	
 	/**
-	 * Show on screen the number of points that each team
+	 * Show on screen the number of points that each team.
 	 */
 	private void showPoint()
 	{
@@ -293,7 +293,7 @@ public class CaptureTheFlag extends AbstractEvent
 	}
 	
 	/**
-	 * Check if a character has a flag
+	 * Check if a character has a flag.
 	 * @param ph
 	 * @return
 	 */
@@ -303,7 +303,7 @@ public class CaptureTheFlag extends AbstractEvent
 	}
 	
 	/**
-	 * We equip a character with a flag
+	 * We equip a character with a flag.
 	 * @param ph
 	 * @param flagTeam
 	 */
@@ -319,7 +319,7 @@ public class CaptureTheFlag extends AbstractEvent
 	}
 	
 	/**
-	 * We remove the flag of a character
+	 * We remove the flag of a character.
 	 * @param ph
 	 */
 	private void unequiFlag(PlayerHolder ph)
@@ -343,7 +343,7 @@ public class CaptureTheFlag extends AbstractEvent
 	}
 	
 	/**
-	 * Remove all the flags equipped
+	 * Remove all the flags equipped.
 	 */
 	private void clearFlags()
 	{

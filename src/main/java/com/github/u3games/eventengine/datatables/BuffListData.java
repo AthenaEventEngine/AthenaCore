@@ -35,17 +35,16 @@ import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.util.data.xml.IXmlReader;
 
 /**
- * Esta clase se encarga de:<br>
- * Cargar la lista de buffs que se podran usar en los eventos.<br>
- * Administrar la lista de buffs que fueron seleccionados por los personakes
+ * This class is responsible for:<br>
+ * Load the list of buffs that can be used in events. Manage the list of buffs that were selected by the characters.
  * @author fissban
  */
 public class BuffListData implements IXmlReader
 {
 	private static final Logger LOGGER = Logger.getLogger(BuffListData.class.getName());
-	// BuffList
+	// Buff List
 	private final List<SkillHolder> _buffList = new ArrayList<>();
-	// Lista de buffs de los personajes
+	// Characters Buff List
 	private final Map<Integer, Set<SkillHolder>> _buffsPlayers = new ConcurrentHashMap<>();
 	
 	public BuffListData()
@@ -76,7 +75,7 @@ public class BuffListData implements IXmlReader
 	}
 	
 	/**
-	 * List all possible buffs for events
+	 * List all possible buffs for events.
 	 * @return List<SkillHolder>
 	 */
 	public List<SkillHolder> getAllBuffs()
@@ -85,7 +84,7 @@ public class BuffListData implements IXmlReader
 	}
 	
 	/**
-	 * Obtenemos el listado de buffs seleccionado por un personaje
+	 * Get buffs lists selected by a character.
 	 * @param player
 	 * @return List<SkillHolder>
 	 */
@@ -99,8 +98,9 @@ public class BuffListData implements IXmlReader
 	}
 	
 	/**
-	 * Verificamos si un personaje tiene un determinado skill
+	 * Check if a character has a particular skill.
 	 * @param player
+	 * @param sh
 	 * @return List<SkillHolder>
 	 */
 	public boolean getBuffPlayer(L2PcInstance player, SkillHolder sh)
@@ -119,7 +119,7 @@ public class BuffListData implements IXmlReader
 	}
 	
 	/**
-	 * Eliminamos un buff del listado de un player
+	 * Remove a buff from the listing of a player.
 	 * @param player
 	 * @param sh
 	 */
@@ -136,7 +136,7 @@ public class BuffListData implements IXmlReader
 	}
 	
 	/**
-	 * Agregamos un buff al listado de un player
+	 * Add a buff to the listing of a player.
 	 * @param player
 	 * @param sh
 	 */
@@ -156,7 +156,7 @@ public class BuffListData implements IXmlReader
 	}
 	
 	/**
-	 * Limpiamos la lista de buff de un personaje sin eliminar al personaje del listado.
+	 * Clean buff list of a character without deleting the character from the list.
 	 * @param player
 	 */
 	public void clearBuffsPlayer(L2PcInstance player)

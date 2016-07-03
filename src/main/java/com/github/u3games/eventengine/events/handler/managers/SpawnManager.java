@@ -43,6 +43,11 @@ public class SpawnManager
 	
 	/**
 	 * We generate a new spawn in our event and added to the list.
+	 * @param npcId
+	 * @param loc
+	 * @param team
+	 * @param instanceId
+	 * @return
 	 */
 	public NpcHolder addEventNpc(int npcId, Location loc, Team team, int instanceId)
 	{
@@ -51,6 +56,12 @@ public class SpawnManager
 	
 	/**
 	 * We generate a new spawn in our event and added to the list.
+	 * @param npcId
+	 * @param loc
+	 * @param team
+	 * @param randomOffset
+	 * @param instanceId
+	 * @return
 	 */
 	public NpcHolder addEventNpc(int npcId, Location loc, Team team, boolean randomOffset, int instanceId)
 	{
@@ -59,6 +70,13 @@ public class SpawnManager
 	
 	/**
 	 * We generate a new spawn in our event and added to the list.
+	 * @param npcId
+	 * @param loc
+	 * @param team
+	 * @param title
+	 * @param randomOffset
+	 * @param instanceId
+	 * @return
 	 */
 	public NpcHolder addEventNpc(int npcId, Location loc, Team team, String title, boolean randomOffset, int instanceId)
 	{
@@ -100,7 +118,7 @@ public class SpawnManager
 				spawn.setZ(z + 20);
 				spawn.setAmount(1);
 				spawn.setInstanceId(instanceId);
-				npc = spawn.doSpawn();// isSummonSpawn.
+				npc = spawn.doSpawn();// isSummonSpawn
 				npc.setTeam(team);
 				if (title != null)
 				{
@@ -108,7 +126,7 @@ public class SpawnManager
 				}
 				SpawnTable.getInstance().addNewSpawn(spawn, false);
 				spawn.init();
-				// animation.
+				// animation
 				spawn.getLastSpawn().broadcastPacket(new MagicSkillUse(spawn.getLastSpawn(), spawn.getLastSpawn(), 1034, 1, 1, 1));
 			}
 		}
@@ -118,13 +136,16 @@ public class SpawnManager
 			return null;
 		}
 		NpcHolder npcHolder = new NpcHolder(npc);
-		// Add our npc to the list.
-		_eventNpc.put(npc.getObjectId(), npcHolder);
+		// Add our npc to the list
+		if (npc != null)
+		{
+			_eventNpc.put(npc.getObjectId(), npcHolder);
+		}
 		return npcHolder;
 	}
 	
 	/**
-	 * We get the complete list of all the NPC during the event.<br>
+	 * We get the complete list of all the NPC during the event.
 	 * @return Collection<PlayerHolder>
 	 */
 	public Collection<NpcHolder> getAllEventNpc()
@@ -155,7 +176,7 @@ public class SpawnManager
 	
 	/**
 	 * Check if a NPC belongs to our event.
-	 * @param npcId
+	 * @param npc
 	 * @return
 	 */
 	public boolean isNpcInEvent(L2Npc npc)
@@ -174,7 +195,7 @@ public class SpawnManager
 		L2Npc npc = npcHolder.getNpcInstance();
 		// Stop the Respawn
 		npc.getSpawn().stopRespawn();
-		// Delete the npc.
+		// Delete the npc
 		npc.deleteMe();
 		_eventNpc.remove(npc.getObjectId());
 	}
