@@ -38,7 +38,8 @@ public class SortUtils
 	}
 	
 	/**
-	 * Get a list of ParticipantHolder sorted by ScoreType (Kills, Points, etc). By default, it uses descendent order
+	 * Get a list of ParticipantHolder sorted by ScoreType (kills, Points, etc). By default, it uses descendent order.
+	 * @param <T>
 	 * @param list
 	 * @param type
 	 * @return
@@ -49,7 +50,8 @@ public class SortUtils
 	}
 	
 	/**
-	 * Get a list of ParticipantHolder sorted by ScoreType (Kills, Points, etc)
+	 * Get a list of ParticipantHolder sorted by ScoreType (Kills, Points, etc).
+	 * @param <T>
 	 * @param list
 	 * @param type
 	 * @param order
@@ -63,9 +65,11 @@ public class SortUtils
 	}
 	
 	/**
-	 * Adapt the list to use Comparator
+	 * Adapt the list to use Comparator.
+	 * @param <T>
 	 * @param list
 	 * @param type
+	 * @param order
 	 * @return
 	 */
 	private static <T extends ParticipantHolder> ArrayList<Holder> adaptList(Collection<T> list, ScoreType type, Order order)
@@ -92,7 +96,8 @@ public class SortUtils
 	}
 	
 	/**
-	 * Transform the adapted list to the original format to be returned Also, it groups the objects with equals value into the same list
+	 * Transform the adapted list to the original format to be returned Also, it groups the objects with equals value into the same list.
+	 * @param <T>
 	 * @param holderList
 	 * @return
 	 */
@@ -117,9 +122,9 @@ public class SortUtils
 	
 	public static class Holder implements Comparable<Holder>
 	{
-		private Object _object;
-		private int _value;
-		private Order _order;
+		private final Object _object;
+		private final int _value;
+		private final Order _order;
 		
 		public Holder(Object object, int value, Order order)
 		{
