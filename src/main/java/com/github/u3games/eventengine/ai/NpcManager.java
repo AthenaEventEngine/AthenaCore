@@ -288,7 +288,7 @@ public class NpcManager extends Quest
 	}
 	
 	/**
-	 * Generamos el html index del npc.<br>
+	 * Generamos el html index del npc.
 	 * @param player
 	 */
 	private static void sendHtmlIndex(L2PcInstance player)

@@ -38,7 +38,7 @@ public class PlayersManager
 	private final Map<Integer, PlayerHolder> _eventPlayers = new ConcurrentHashMap<>();
 	
 	/**
-	 * We obtain the full list of all players within an event.<br>
+	 * We obtain the full list of all players within an event.
 	 * @return Collection<PlayerHolder>
 	 */
 	public Collection<PlayerHolder> getAllEventPlayers()
@@ -50,7 +50,7 @@ public class PlayersManager
 	 * We add all the characters registered to our list of characters in the event.<br>
 	 * Check if player in olympiad.<br>
 	 * Check if player in duel.<br>
-	 * Check if player in observer mode.<br>
+	 * Check if player in observer mode.
 	 */
 	public void createEventPlayers()
 	{
@@ -82,8 +82,7 @@ public class PlayersManager
 	}
 	
 	/**
-	 * Check if the playable is participating in any event. In the case of a summon, verify that the owner participates.<br>
-	 * For not participate in an event is returned <u> false.</u>
+	 * Check if the playable is participating in any event. In the case of a summon, verify that the owner participates. For not participate in an event is returned <u>false.</u>
 	 * @param playable
 	 * @return boolean
 	 */
@@ -102,9 +101,7 @@ public class PlayersManager
 	}
 	
 	/**
-	 * Check if a player is participating in any event.<br>
-	 * In the case of dealing with a summon you verify the owner.<br>
-	 * For an event not perticipar returns <u> null.</u>
+	 * Check if a player is participating in any event. In the case of dealing with a summon, verify the owner. For an event not participated returns <u>null.</u>
 	 * @param character
 	 * @return PlayerHolder
 	 */

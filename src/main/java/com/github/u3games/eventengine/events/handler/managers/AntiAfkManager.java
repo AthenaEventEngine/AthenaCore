@@ -36,10 +36,8 @@ import com.l2jserver.gameserver.network.clientpackets.Say2;
 /**
  * System that runs for every x time if the players are afk.<br>
  * It does two actions:<br>
- * a) In each iteration, checks if the players in the _playersAfkCheck have the same location.<br>
- * If so, the inactive players are kicked from event.<br>
- * Then, it adds all the active players to _playersAfkCheck for the next iteration, saving their current location<br>
- * b) If the player do any action, will be removed from _playersAfkCheck<br>
+ * a) In each iteration, checks if the players in the _playersAfkCheck have the same location. If so, the inactive players are kicked from event. Then, it adds all the active players to _playersAfkCheck for the next iteration, saving their current location<br>
+ * b) If the player do any action, will be removed from _playersAfkCheck
  * @author fissban, Zephyr
  */
 public class AntiAfkManager

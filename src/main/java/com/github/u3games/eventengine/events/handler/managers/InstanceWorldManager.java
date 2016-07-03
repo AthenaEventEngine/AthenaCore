@@ -79,7 +79,7 @@ public class InstanceWorldManager
 		}
 		catch (Exception e)
 		{
-			LOGGER.warning(EventEngineManager.class.getSimpleName() + ": -> createDynamicInstances() " + e);
+			LOGGER.warning(EventEngineManager.class.getSimpleName() + ": createNewInstanceWorld() " + e);
 			e.printStackTrace();
 		}
 		return world;
