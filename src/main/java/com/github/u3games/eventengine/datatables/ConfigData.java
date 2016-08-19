@@ -33,7 +33,6 @@ import com.l2jserver.gameserver.model.holders.ItemHolder;
 public class ConfigData
 {
 	private static final Logger LOGGER = Logger.getLogger(ConfigData.class.getName());
-	private static final String EVENT_CONFIG = "./config/EventEngine/EventEngine.properties";
 	private static final String TVT_CONFIG = "./config/EventEngine/TeamVsTeam.properties";
 	private static final String AVA_CONFIG = "./config/EventEngine/AllVsAll.properties";
 	private static final String CTF_CONFIG = "./config/EventEngine/CaptureTheFlag.properties";
@@ -41,27 +40,6 @@ public class ConfigData
 	private static final String SURVIVE_CONFIG = "./config/EventEngine/Survive.properties";
 	
 	// General configs
-	public int NPC_MANAGER_ID;
-	public boolean EVENT_MESSAGE_GLOBAL;
-	public int EVENT_TASK;
-	public boolean EVENT_VOTING_ENABLED;
-	public int EVENT_VOTING_TIME;
-	public int EVENT_REGISTER_TIME;
-	public int EVENT_DURATION;
-	public int EVENT_TEXT_TIME_FOR_END;
-	public boolean EVENT_CHAOTIC_PLAYER_REGISTER;
-	public boolean EVENT_KILLER_MESSAGE;
-	public boolean FRIENDLY_FIRE;
-	public int MIN_PLAYERS_IN_EVENT;
-	public int MAX_PLAYERS_IN_EVENT;
-	public int MIN_LVL_IN_EVENT;
-	public int MAX_LVL_IN_EVENT;
-	public static int MAX_BUFF_COUNT;
-	public boolean ANTI_AFK_ENABLED;
-	public int AFK_CHECK_TIME;
-	public static boolean DUALBOX_PROTECTION_ENABLED;
-	public static int DUALBOX_MAX_ALLOWED;
-	public int SPAWN_PROTECTION_TIME;
 	
 	// -------------------------------------------------------------------------------
 	// Configs Capture The Flag
@@ -146,32 +124,7 @@ public class ConfigData
 	public void load()
 	{
 		EventPropertiesParser settings;
-		// ------------------------------------------------------------------------------------- //
-		// EventEngine.properties
-		// ------------------------------------------------------------------------------------- //
-		settings = new EventPropertiesParser(EVENT_CONFIG);
-		NPC_MANAGER_ID = settings.getInt("EventParticipationNpcId", 36600);
-		EVENT_MESSAGE_GLOBAL = settings.getBoolean("EventGlobalMessage", true);
-		EVENT_TASK = settings.getInt("EventInterval", 10);
-		EVENT_VOTING_ENABLED = settings.getBoolean("EventVotingEnabled", true);
-		EVENT_VOTING_TIME = settings.getInt("EventVotingTime", 10);
-		EVENT_REGISTER_TIME = settings.getInt("EventRegisterTime", 10);
-		EVENT_DURATION = settings.getInt("EventRunningTime", 10);
-		EVENT_TEXT_TIME_FOR_END = settings.getInt("EventTextTimeForEnd", 10);
-		EVENT_CHAOTIC_PLAYER_REGISTER = settings.getBoolean("EventChaoticPlayerRegister", false);
-		EVENT_KILLER_MESSAGE = settings.getBoolean("EventKillerMessage", true);
-		FRIENDLY_FIRE = settings.getBoolean("EventFriendlyFire", true);
-		MIN_PLAYERS_IN_EVENT = settings.getInt("EventMinPlayers", 2);
-		MAX_PLAYERS_IN_EVENT = settings.getInt("EventMaxPlayers", 20);
-		MIN_LVL_IN_EVENT = settings.getInt("EventMinPlayerLevel", 40);
-		MAX_LVL_IN_EVENT = settings.getInt("EventMaxPlayerLevel", 78);
-		MAX_BUFF_COUNT = settings.getInt("EventMaxBuffCount", 5);
-		ANTI_AFK_ENABLED = settings.getBoolean("EventAntiAfkEnabled", false);
-		AFK_CHECK_TIME = settings.getInt("EventAntiAfkCheckTime", 30);
-		DUALBOX_PROTECTION_ENABLED = settings.getBoolean("DualBoxProtectionEnabled", false);
-		DUALBOX_MAX_ALLOWED = settings.getInt("DualBoxMaxAllowed", 1);
-		SPAWN_PROTECTION_TIME = settings.getInt("EventSpawnProtectionTime", 5);
-		
+
 		// ------------------------------------------------------------------------------------- //
 		// CaptureTheFlag.properties
 		// ------------------------------------------------------------------------------------- //
@@ -192,7 +145,7 @@ public class ConfigData
 		CTF_COORDINATES_TEAM = settings.getLocationList("EventTeamCoordinates");
 		CTF_COUNT_TEAM = settings.getInt("EventCountTeam", 2);
 		checkCountTeamAndSpawn("CaptureTheFlag", CTF_COORDINATES_TEAM, CTF_COUNT_TEAM);
-		checkCountTeamdAndMinPlayers("CaptureTheFlag", MIN_PLAYERS_IN_EVENT, CTF_COUNT_TEAM);
+		checkCountTeamdAndMinPlayers("CaptureTheFlag", 2, CTF_COUNT_TEAM);
 		
 		// ------------------------------------------------------------------------------------- //
 		// AllVsAll.properties
@@ -225,7 +178,7 @@ public class ConfigData
 		OVO_COUNT_TEAM = settings.getInt("EventCountTeam", 2);
 		OVO_COORDINATES_TEAM = settings.getLocationList("EventTeamCoordinates");
 		checkCountTeamAndSpawn("OneVsOne", OVO_COORDINATES_TEAM, OVO_COUNT_TEAM);
-		checkCountTeamdAndMinPlayers("OneVsOne", MIN_PLAYERS_IN_EVENT, OVO_COUNT_TEAM);
+		checkCountTeamdAndMinPlayers("OneVsOne", 2, OVO_COUNT_TEAM);
 		
 		// ------------------------------------------------------------------------------------- //
 		// TeamVsTeam.properties
@@ -243,7 +196,7 @@ public class ConfigData
 		TVT_COUNT_TEAM = settings.getInt("EventCountTeam", 2);
 		TVT_COORDINATES_TEAM = settings.getLocationList("EventTeamCoordinates");
 		checkCountTeamAndSpawn("TeamVsTeam", TVT_COORDINATES_TEAM, TVT_COUNT_TEAM);
-		checkCountTeamdAndMinPlayers("TeamVsTeam", MIN_PLAYERS_IN_EVENT, TVT_COUNT_TEAM);
+		checkCountTeamdAndMinPlayers("TeamVsTeam", 2, TVT_COUNT_TEAM);
 		
 		// ------------------------------------------------------------------------------------- //
 		// Survive.properties
@@ -257,7 +210,7 @@ public class ConfigData
 		SURVIVE_MONSTER_SPAWN_FOR_STAGE = settings.getInt("EventMobsSpawnForStage", 5);
 		SURVIVE_COUNT_TEAM = settings.getInt("EventCountTeam", 2);
 		SURVIVE_COORDINATES_TEAM = settings.getLocationList("EventTeamCoordinates");
-		checkCountTeamdAndMinPlayers("Survive", MIN_PLAYERS_IN_EVENT, SURVIVE_COUNT_TEAM);
+		checkCountTeamdAndMinPlayers("Survive", 2, SURVIVE_COUNT_TEAM);
 	}
 	
 	private void checkCountTeamAndSpawn(String eventName, List<Location> locs, int teams)

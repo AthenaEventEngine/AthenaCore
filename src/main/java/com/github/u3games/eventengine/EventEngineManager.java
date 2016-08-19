@@ -29,6 +29,7 @@ import java.util.logging.Logger;
 
 import com.github.u3games.eventengine.adapter.EventEngineAdapter;
 import com.github.u3games.eventengine.ai.NpcManager;
+import com.github.u3games.eventengine.config.BaseConfigLoader;
 import com.github.u3games.eventengine.datatables.BuffListData;
 import com.github.u3games.eventengine.datatables.ConfigData;
 import com.github.u3games.eventengine.datatables.EventData;
@@ -78,6 +79,8 @@ public class EventEngineManager
 			// Load event configs
 			ConfigData.getInstance();
 			LOGGER.info(EventEngineManager.class.getSimpleName() + ": Configs loaded.");
+			BaseConfigLoader.getInstance();
+			LOGGER.info(EventEngineManager.class.getSimpleName() + ": New Configs loaded.");
 			EventData.getInstance();
 			LOGGER.info(EventEngineManager.class.getSimpleName() + ": Events loaded.");
 			initVotes();

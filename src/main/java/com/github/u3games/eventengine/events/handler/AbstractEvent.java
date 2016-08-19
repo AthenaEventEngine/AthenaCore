@@ -26,8 +26,9 @@ import java.util.logging.Logger;
 
 import com.github.u3games.eventengine.EventEngineManager;
 import com.github.u3games.eventengine.builders.TeamsBuilder;
+import com.github.u3games.eventengine.config.BaseConfigLoader;
+import com.github.u3games.eventengine.config.model.MainEventConfig;
 import com.github.u3games.eventengine.datatables.BuffListData;
-import com.github.u3games.eventengine.datatables.ConfigData;
 import com.github.u3games.eventengine.datatables.MessageData;
 import com.github.u3games.eventengine.enums.EventState;
 import com.github.u3games.eventengine.enums.TeamType;
@@ -80,7 +81,7 @@ public abstract class AbstractEvent
 	{
 		// Add every player registered for the event
 		getPlayerEventManager().createEventPlayers();
-		if (ConfigData.getInstance().ANTI_AFK_ENABLED)
+		if (getConfig().isAntiAfkEnabled())
 		{
 			_antiAfkManager = new AntiAfkManager();
 		}
@@ -88,6 +89,10 @@ public abstract class AbstractEvent
 		// Starts the clock to control the sequence of internal events of the event
 		getScheduledEventsManager().startTaskControlTime();
 		getInstanceWorldManager().setInstanceFile(instanceFile);
+	}
+
+	private static MainEventConfig getConfig() {
+		return BaseConfigLoader.getInstance().getMainConfig();
 	}
 	
 	/**
@@ -182,12 +187,12 @@ public abstract class AbstractEvent
 		getScheduledEventsManager().addScheduledEvent(new ChangeToStartEvent(time));
 		time += 1000;
 		getScheduledEventsManager().addScheduledEvent(new ChangeToFightEvent(time));
-		time += ConfigData.getInstance().EVENT_DURATION * 60 * 1000;
+		time += getConfig().getRunningTime() * 60 * 1000;
 		getScheduledEventsManager().addScheduledEvent(new ChangeToEndEvent(time));
 		// Announce near end event
-		int timeLeftAnnounce = ConfigData.getInstance().EVENT_TEXT_TIME_FOR_END * 1000;
-		getScheduledEventsManager().addScheduledEvent(new AnnounceNearEndEvent(time - timeLeftAnnounce, ConfigData.getInstance().EVENT_TEXT_TIME_FOR_END));
-		getScheduledEventsManager().addScheduledEvent(new AnnounceNearEndEvent(time - (timeLeftAnnounce / 2), ConfigData.getInstance().EVENT_TEXT_TIME_FOR_END / 2));
+		int timeLeftAnnounce = getConfig().getTextTimeForEnd() * 1000;
+		getScheduledEventsManager().addScheduledEvent(new AnnounceNearEndEvent(time - timeLeftAnnounce, getConfig().getTextTimeForEnd()));
+		getScheduledEventsManager().addScheduledEvent(new AnnounceNearEndEvent(time - (timeLeftAnnounce / 2), getConfig().getTextTimeForEnd() / 2));
 	}
 	
 	// REVIVE --------------------------------------------------------------------------------------- //
@@ -337,7 +342,7 @@ public abstract class AbstractEvent
 				return true;
 			}
 			// Check Friendly Fire
-			if (!ConfigData.getInstance().FRIENDLY_FIRE)
+			if (!getConfig().isFriendlyFireEnabled())
 			{
 				if (activePlayer.getTeamType() == activeTarget.getTeamType())
 				{
@@ -411,7 +416,7 @@ public abstract class AbstractEvent
 				}
 				
 				// Check Friendly Fire
-				if (!ConfigData.getInstance().FRIENDLY_FIRE && (activePlayer.getTeamType() == activeTarget.getTeamType()))
+				if (!getConfig().isFriendlyFireEnabled() && (activePlayer.getTeamType() == activeTarget.getTeamType()))
 				{
 					if ((activePlayer.getTeamType() != TeamType.WHITE) || (activeTarget.getTeamType() != TeamType.WHITE))
 					{
@@ -506,7 +511,7 @@ public abstract class AbstractEvent
 			// We add the character to the world and then be teleported
 			world.addAllowed(ph.getPcInstance().getObjectId());
 			teleportPlayer(ph, _radius);
-			ph.setProtectionTimeEnd(System.currentTimeMillis() + (ConfigData.getInstance().SPAWN_PROTECTION_TIME * 1000)); // Milliseconds
+			ph.setProtectionTimeEnd(System.currentTimeMillis() + (getConfig().getSpawnProtectionTime() * 1000)); // Milliseconds
 		}
 	}
 	
@@ -663,7 +668,7 @@ public abstract class AbstractEvent
 			ph.getPcInstance().setCurrentCp(ph.getPcInstance().getMaxCp());
 			ph.getPcInstance().setCurrentHp(ph.getPcInstance().getMaxHp());
 			ph.getPcInstance().setCurrentMp(ph.getPcInstance().getMaxMp());
-			ph.setProtectionTimeEnd(System.currentTimeMillis() + (ConfigData.getInstance().SPAWN_PROTECTION_TIME * 1000)); // Milliseconds
+			ph.setProtectionTimeEnd(System.currentTimeMillis() + (getConfig().getSpawnProtectionTime() * 1000)); // Milliseconds
 		}
 	}
 	

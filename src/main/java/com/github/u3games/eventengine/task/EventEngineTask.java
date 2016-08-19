@@ -19,7 +19,8 @@
 package com.github.u3games.eventengine.task;
 
 import com.github.u3games.eventengine.EventEngineManager;
-import com.github.u3games.eventengine.datatables.ConfigData;
+import com.github.u3games.eventengine.config.BaseConfigLoader;
+import com.github.u3games.eventengine.config.model.MainEventConfig;
 import com.github.u3games.eventengine.datatables.EventData;
 import com.github.u3games.eventengine.enums.CollectionTarget;
 import com.github.u3games.eventengine.enums.EventEngineState;
@@ -34,8 +35,12 @@ import com.l2jserver.gameserver.network.clientpackets.Say2;
 public class EventEngineTask implements Runnable
 {
 	// Type Message System
-	private final CollectionTarget _type = ConfigData.getInstance().EVENT_MESSAGE_GLOBAL ? CollectionTarget.ALL_PLAYERS : CollectionTarget.ALL_NEAR_PLAYERS;
-	
+	private final CollectionTarget _type = getConfig().getGlobalMessage() ? CollectionTarget.ALL_PLAYERS : CollectionTarget.ALL_NEAR_PLAYERS;
+
+	private static MainEventConfig getConfig() {
+		return BaseConfigLoader.getInstance().getMainConfig();
+	}
+
 	@Override
 	public void run()
 	{
@@ -46,16 +51,16 @@ public class EventEngineTask implements Runnable
 			{
 				if (EventEngineManager.getInstance().getTime() <= 0)
 				{
-					if (ConfigData.getInstance().EVENT_VOTING_ENABLED)
+					if (getConfig().isVotingEnabled())
 					{
 						EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "event_voting_started", _type);
-						EventEngineManager.getInstance().setTime(ConfigData.getInstance().EVENT_VOTING_TIME * 60);
+						EventEngineManager.getInstance().setTime(getConfig().getVotingTime() * 60);
 						EventEngineManager.getInstance().setEventEngineState(EventEngineState.VOTING);
 					}
 					else
 					{
 						EventEngineManager.getInstance().setNextEvent(EventData.getInstance().getRandomEventType());
-						EventEngineManager.getInstance().setTime(ConfigData.getInstance().EVENT_REGISTER_TIME * 60);
+						EventEngineManager.getInstance().setTime(getConfig().getRegisterTime() * 60);
 						String eventName = EventEngineManager.getInstance().getNextEvent().getSimpleName();
 						EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "event_register_started", "%event%", eventName, _type);
 						EventEngineManager.getInstance().setEventEngineState(EventEngineState.REGISTER);
@@ -73,7 +78,7 @@ public class EventEngineTask implements Runnable
 				{
 					Class<? extends AbstractEvent> nextEvent = EventEngineManager.getInstance().getEventMoreVotes();
 					EventEngineManager.getInstance().setNextEvent(nextEvent);
-					EventEngineManager.getInstance().setTime(ConfigData.getInstance().EVENT_REGISTER_TIME * 60);
+					EventEngineManager.getInstance().setTime(getConfig().getRegisterTime() * 60);
 					EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "event_voting_ended", _type);
 					EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "event_register_started", "%event%", nextEvent.getSimpleName(), _type);
 					EventEngineManager.getInstance().setEventEngineState(EventEngineState.REGISTER);
@@ -90,10 +95,10 @@ public class EventEngineTask implements Runnable
 				}
 				else
 				{
-					if (EventEngineManager.getInstance().getAllRegisteredPlayers().size() < ConfigData.getInstance().MIN_PLAYERS_IN_EVENT)
+					if (EventEngineManager.getInstance().getAllRegisteredPlayers().size() < getConfig().getMinPlayers())
 					{
 						EventEngineManager.getInstance().cleanUp();
-						EventEngineManager.getInstance().setTime(ConfigData.getInstance().EVENT_TASK * 60);
+						EventEngineManager.getInstance().setTime(getConfig().getInterval() * 60);
 						EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "event_aborted", _type);
 						EventUtil.announceTime(EventEngineManager.getInstance().getTime(), "event_next", Say2.CRITICAL_ANNOUNCE, _type);
 						EventEngineManager.getInstance().setEventEngineState(EventEngineState.WAITING);
@@ -131,7 +136,7 @@ public class EventEngineTask implements Runnable
 			case EVENT_ENDED:
 			{
 				EventEngineManager.getInstance().cleanUp();
-				EventEngineManager.getInstance().setTime(ConfigData.getInstance().EVENT_TASK * 60);
+				EventEngineManager.getInstance().setTime(getConfig().getInterval() * 60);
 				EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "event_end", _type);
 				EventUtil.announceTime(EventEngineManager.getInstance().getTime(), "event_next", Say2.CRITICAL_ANNOUNCE, _type);
 				EventEngineManager.getInstance().setEventEngineState(EventEngineState.WAITING);
