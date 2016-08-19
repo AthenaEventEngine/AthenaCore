@@ -1,14 +1,22 @@
+group 'com.github.u3games.eventengine'
+version '0.1-SNAPSHOT'
+
 apply plugin: 'java'
 
 repositories {
-    jcenter()
 	mavenCentral()
+	maven { url "https://jitpack.io" }
 }
 
 sourceCompatibility = 1.8
 
 jar {
-    manifest {
+	from {
+		configurations.compile.collect {
+			it.isDirectory() ? it : zipTree(it)
+		}
+	}
+	manifest {
         attributes 'Implementation-Version': '0.1.0',
                 'Built-By': System.getProperty('user.name'),
                 'Built-Date': new Date(),
@@ -21,6 +29,7 @@ jar {
 dependencies {
     compile 'org.slf4j:slf4j-api:1.7.13'
     compile 'com.google.code.gson:gson:2.2.4'
+	compile 'com.github.typesafehub:config:v1.3.0'
 	compile fileTree(dir: './libs', include: '*.jar')
 
     testCompile 'junit:junit:4.12'

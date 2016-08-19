@@ -26,7 +26,7 @@ import java.util.logging.Logger;
 import com.github.u3games.eventengine.events.AllVsAll;
 import com.github.u3games.eventengine.events.CaptureTheFlag;
 import com.github.u3games.eventengine.events.Survive;
-import com.github.u3games.eventengine.events.TeamVsTeam;
+import com.github.u3games.eventengine.events.teamvsteam.TeamVsTeam;
 import com.github.u3games.eventengine.events.handler.AbstractEvent;
 import com.l2jserver.util.Rnd;
 

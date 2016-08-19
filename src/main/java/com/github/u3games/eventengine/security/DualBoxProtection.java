@@ -22,7 +22,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.github.u3games.eventengine.datatables.ConfigData;
+import com.github.u3games.eventengine.config.BaseConfigLoader;
+import com.github.u3games.eventengine.config.model.DualboxEventConfig;
 import com.l2jserver.gameserver.network.L2GameClient;
 
 /**
@@ -33,20 +34,21 @@ public final class DualBoxProtection
 {
 	private final Map<IpPack, Integer> _address = new HashMap<>();
 	
-	public DualBoxProtection()
-	{
-		
+	private DualBoxProtection() {}
+
+	private static DualboxEventConfig getConfig() {
+		return BaseConfigLoader.getInstance().getMainConfig().getDualbox();
 	}
 	
 	public synchronized boolean registerConnection(L2GameClient client)
 	{
-		if (ConfigData.DUALBOX_PROTECTION_ENABLED)
+		if (getConfig().isEnabled())
 		{
 			try
 			{
 				IpPack pack = new IpPack(client.getConnection().getInetAddress().getHostAddress(), client.getTrace());
 				Integer count = _address.get(pack) == null ? 0 : _address.get(pack);
-				if (count < ConfigData.DUALBOX_MAX_ALLOWED)
+				if (count < getConfig().getMaxAllowed())
 				{
 					_address.put(pack, count += 1);
 					return true;
@@ -62,7 +64,7 @@ public final class DualBoxProtection
 	
 	public synchronized void removeConnection(L2GameClient client)
 	{
-		if (ConfigData.DUALBOX_PROTECTION_ENABLED)
+		if (getConfig().isEnabled())
 		{
 			try
 			{
@@ -108,12 +110,12 @@ public final class DualBoxProtection
 		protected static final DualBoxProtection _instance = new DualBoxProtection();
 	}
 	
-	public final static class IpPack
+	private final static class IpPack
 	{
 		String ip;
 		int[][] tracert;
 		
-		public IpPack(String ip, int[][] tracert)
+		private IpPack(String ip, int[][] tracert)
 		{
 			this.ip = ip;
 			this.tracert = tracert;

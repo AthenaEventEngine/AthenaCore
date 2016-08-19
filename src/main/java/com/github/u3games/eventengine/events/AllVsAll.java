@@ -21,6 +21,7 @@ package com.github.u3games.eventengine.events;
 import java.util.List;
 
 import com.github.u3games.eventengine.builders.TeamsBuilder;
+import com.github.u3games.eventengine.config.BaseConfigLoader;
 import com.github.u3games.eventengine.datatables.ConfigData;
 import com.github.u3games.eventengine.datatables.MessageData;
 import com.github.u3games.eventengine.enums.CollectionTarget;
@@ -100,7 +101,7 @@ public class AllVsAll extends AbstractEvent
 			EventUtil.sendEventMessage(ph, MessageData.getInstance().getMsgByLang(ph.getPcInstance(), "reward_text_fame", true).replace("%count%", ConfigData.getInstance().AVA_REWARD_FAME_KILLER + ""));
 		}
 		// Message Kill
-		if (ConfigData.getInstance().EVENT_KILLER_MESSAGE)
+		if (BaseConfigLoader.getInstance().getMainConfig().isKillerMessageEnabled())
 		{
 			EventUtil.messageKill(ph, target);
 		}
