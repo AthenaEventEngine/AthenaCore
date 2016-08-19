@@ -22,7 +22,6 @@ import java.util.List;
 
 import com.github.u3games.eventengine.builders.TeamsBuilder;
 import com.github.u3games.eventengine.config.BaseConfigLoader;
-import com.github.u3games.eventengine.datatables.ConfigData;
 import com.github.u3games.eventengine.datatables.MessageData;
 import com.github.u3games.eventengine.enums.CollectionTarget;
 import com.github.u3games.eventengine.enums.ScoreType;
@@ -46,13 +45,19 @@ public class TeamVsTeam extends AbstractEvent
 	
 	public TeamVsTeam()
 	{
-		super(ConfigData.getInstance().TVT_INSTANCE_FILE);
+		super(getConfig().getInstanceFile());
+	}
+
+	private static TvTEventConfig getConfig() {
+		return BaseConfigLoader.getInstance().getTvTConfig();
 	}
 	
 	@Override
 	protected TeamsBuilder onCreateTeams()
 	{
-		return new TeamsBuilder().addTeams(ConfigData.getInstance().TVT_COUNT_TEAM, ConfigData.getInstance().TVT_COORDINATES_TEAM).setPlayers(getPlayerEventManager().getAllEventPlayers());
+		return new TeamsBuilder().addTeam(getConfig().getTeamBlue())
+				.addTeam(getConfig().getTeamRed())
+				.setPlayers(getPlayerEventManager().getAllEventPlayers());
 	}
 	
 	@Override
@@ -82,21 +87,21 @@ public class TeamVsTeam extends AbstractEvent
 		getTeamsManager().getPlayerTeam(ph).increasePoints(1);
 		
 		// Reward for kills
-		if (ConfigData.getInstance().TVT_REWARD_KILLER_ENABLED)
+		if (getConfig().isRewardKillEnabled())
 		{
-			giveItems(ph, ConfigData.getInstance().TVT_REWARD_KILLER);
+			giveItems(ph, getConfig().getRewardKill());
 		}
 		// Reward PvP for kills
-		if (ConfigData.getInstance().TVT_REWARD_PVP_KILLER_ENABLED)
+		if (getConfig().isRewardPvPKillEnabled())
 		{
-			ph.getPcInstance().setPvpKills(ph.getPcInstance().getPvpKills() + ConfigData.getInstance().TVT_REWARD_PVP_KILLER);
-			EventUtil.sendEventMessage(ph, MessageData.getInstance().getMsgByLang(ph.getPcInstance(), "reward_text_pvp", true).replace("%count%", ConfigData.getInstance().TVT_REWARD_PVP_KILLER + ""));
+			ph.getPcInstance().setPvpKills(ph.getPcInstance().getPvpKills() + getConfig().getRewardPvPKill());
+			EventUtil.sendEventMessage(ph, MessageData.getInstance().getMsgByLang(ph.getPcInstance(), "reward_text_pvp", true).replace("%count%", getConfig().getRewardPvPKill() + ""));
 		}
 		// Reward fame for kills
-		if (ConfigData.getInstance().TVT_REWARD_FAME_KILLER_ENABLED)
+		if (getConfig().isRewardFameKillEnabled())
 		{
-			ph.getPcInstance().setFame(ph.getPcInstance().getFame() + ConfigData.getInstance().TVT_REWARD_FAME_KILLER);
-			EventUtil.sendEventMessage(ph, MessageData.getInstance().getMsgByLang(ph.getPcInstance(), "reward_text_fame", true).replace("%count%", ConfigData.getInstance().TVT_REWARD_FAME_KILLER + ""));
+			ph.getPcInstance().setFame(ph.getPcInstance().getFame() + getConfig().getRewardFameKill());
+			EventUtil.sendEventMessage(ph, MessageData.getInstance().getMsgByLang(ph.getPcInstance(), "reward_text_fame", true).replace("%count%", getConfig().getRewardFameKill() + ""));
 		}
 		// Message Kill
 		if (BaseConfigLoader.getInstance().getMainConfig().isKillerMessageEnabled())
@@ -134,7 +139,7 @@ public class TeamVsTeam extends AbstractEvent
 			if (teamWinners.contains(phTeam))
 			{
 				// We deliver rewards
-				giveItems(ph, ConfigData.getInstance().TVT_REWARD_PLAYER_WIN);
+				giveItems(ph, getConfig().getReward());
 			}
 		}
 		for (TeamHolder team : getTeamsManager().getAllTeams())
