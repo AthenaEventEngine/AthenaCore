@@ -32,97 +32,79 @@ import com.l2jserver.gameserver.model.Location;
 public class TeamsBuilder
 {
 	private static final Logger LOGGER = Logger.getLogger(TeamsBuilder.class.getName());
-	private int _teamsAmount;
-	private final List<List<Location>> _locations = new ArrayList<>();
-	private DistributionType _distribution = DistributionType.DEFAULT;
-	private final Collection<PlayerHolder> _players = new ArrayList<>();
+	private int mTeamsAmount;
+	private final List<List<Location>> mLocations = new ArrayList<>();
+	private DistributionType mDistribution = DistributionType.DEFAULT;
+	private final Collection<PlayerHolder> mPlayers = new ArrayList<>();
+
+	public TeamsBuilder addTeam(List<Location> locations) {
+		mTeamsAmount++;
+		mLocations.add(locations);
+		return this;
+	}
 	
-	public TeamsBuilder addTeams(int amount, List<Location> locations)
-	{
-		_teamsAmount = amount;
-		for (Location loc : locations)
-		{
+	public TeamsBuilder addTeams(int amount, List<Location> locations) {
+		mTeamsAmount = amount;
+		for (Location loc : locations) {
 			List<Location> list = new ArrayList<>();
 			list.add(loc);
-			_locations.add(list);
+			mLocations.add(list);
 		}
 		return this;
 	}
 	
-	public TeamsBuilder setPlayers(Collection<PlayerHolder> list)
-	{
-		_players.addAll(list);
+	public TeamsBuilder setPlayers(Collection<PlayerHolder> list) {
+		mPlayers.addAll(list);
 		return this;
 	}
 	
-	public TeamsBuilder setDistribution(DistributionType type)
-	{
-		_distribution = type;
+	public TeamsBuilder setDistribution(DistributionType type) {
+		mDistribution = type;
 		return this;
 	}
 	
-	public List<TeamHolder> build()
-	{
+	public List<TeamHolder> build() {
 		List<TeamHolder> teams = createTeams();
-		if (teams == null)
-		{
-			return null;
-		}
-		return distributePlayers(teams);
+		return teams == null ? null : distributePlayers(teams);
 	}
 	
-	private List<TeamHolder> createTeams()
-	{
+	private List<TeamHolder> createTeams() {
 		List<TeamHolder> teams = new ArrayList<>();
-		if (_teamsAmount != _locations.size())
-		{
+		if (mTeamsAmount != mLocations.size()) {
 			LOGGER.warning(TeamsBuilder.class.getSimpleName() + ": The count of teams and locations doesn't match. Event cancelled!");
 			LOGGER.warning(TeamsBuilder.class.getSimpleName() + ": Count of teams: " + teams.size());
-			LOGGER.warning(TeamsBuilder.class.getSimpleName() + ": Count of locations: " + _locations.size());
+			LOGGER.warning(TeamsBuilder.class.getSimpleName() + ": Count of locations: " + mLocations.size());
 			return null;
 		}
-		if (_teamsAmount == 1)
-		{
+
+		if (mTeamsAmount == 1) {
 			TeamType type = TeamType.WHITE;
-			teams.add(newTeam(type, _locations.get(0).get(0))); // TODO: change when we have multiple locations
-		}
-		else
-		{
-			for (int i = 1; i <= _teamsAmount; i++)
-			{
+			teams.add(newTeam(type, mLocations.get(0).get(0))); // TODO: change when we have multiple locations
+		} else {
+			for (int i = 1; i <= mTeamsAmount; i++) {
 				TeamType type = TeamType.values()[i];
-				teams.add(newTeam(type, _locations.get(i - 1).get(0))); // TODO: change when we have multiple locations
+				teams.add(newTeam(type, mLocations.get(i - 1).get(0))); // TODO: change when we have multiple locations
 			}
 		}
 		return teams;
 	}
 	
-	private TeamHolder newTeam(TeamType type, Location loc)
-	{
+	private TeamHolder newTeam(TeamType type, Location loc) {
 		TeamHolder team = new TeamHolder(type);
 		team.setSpawn(loc);
 		return team;
 	}
 	
-	private List<TeamHolder> distributePlayers(List<TeamHolder> teams)
-	{
-		switch (_distribution)
-		{
+	private List<TeamHolder> distributePlayers(List<TeamHolder> teams) {
+		switch (mDistribution) {
 			case DEFAULT:
 			default:
 				int i = 0;
-				for (PlayerHolder player : _players)
-				{
+				for (PlayerHolder player : mPlayers) {
 					player.setTeam(teams.get(i).getTeamType());
-					
-					if (teams.size() <= (i + 1))
-					{
-						i = 0;
-					}
-					else
-					{
-						i++;
-					}
+
+					if (teams.size() <= (i + 1)) i = 0;
+					else i++;
 				}
 				break;
 		}

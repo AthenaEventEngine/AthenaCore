@@ -1,8 +1,11 @@
 package com.github.u3games.eventengine.events.teamvsteam;
 
 import com.github.u3games.eventengine.config.interfaces.EventConfig;
-import com.github.u3games.eventengine.model.ItemHolder;
-import com.github.u3games.eventengine.model.Location;
+import com.github.u3games.eventengine.model.EItemHolder;
+import com.github.u3games.eventengine.model.ELocation;
+import com.github.u3games.eventengine.util.ConvertUtils;
+import com.l2jserver.gameserver.model.Location;
+import com.l2jserver.gameserver.model.holders.ItemHolder;
 
 import java.util.List;
 
@@ -10,16 +13,16 @@ public class TvTEventConfig implements EventConfig {
 
     private boolean enabled;
     private String instanceFile;
-    private List<ItemHolder> reward;
+    private List<EItemHolder> reward;
     private boolean rewardKillEnabled;
-    private List<ItemHolder> rewardKill;
+    private List<EItemHolder> rewardKill;
     private boolean rewardPvPKillEnabled;
     private int rewardPvPKill;
     private boolean rewardFameKillEnabled;
     private int rewardFameKill;
     private int countTeam;
-    private List<Location> teamRed;
-    private List<Location> teamBlue;
+    private List<ELocation> teamRed;
+    private List<ELocation> teamBlue;
 
     public boolean isEnabled() {
         return enabled;
@@ -34,7 +37,7 @@ public class TvTEventConfig implements EventConfig {
     }
 
     public List<ItemHolder> getRewardKill() {
-        return rewardKill;
+        return ConvertUtils.convertToListItemsHolders(rewardKill);
     }
 
     public boolean isRewardPvPKillEnabled() {
@@ -58,14 +61,14 @@ public class TvTEventConfig implements EventConfig {
     }
 
     public List<ItemHolder> getReward() {
-        return reward;
+        return ConvertUtils.convertToListItemsHolders(reward);
     }
 
     public List<Location> getTeamRed() {
-        return teamRed;
+        return ConvertUtils.convertToListLocations(teamRed);
     }
 
     public List<Location> getTeamBlue() {
-        return teamBlue;
+        return ConvertUtils.convertToListLocations(teamBlue);
     }
 }

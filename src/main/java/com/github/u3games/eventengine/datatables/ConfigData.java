@@ -90,21 +90,6 @@ public class ConfigData
 	public List<Location> OVO_COORDINATES_TEAM;
 	
 	// -------------------------------------------------------------------------------
-	// Configs Team Vs Team
-	// -------------------------------------------------------------------------------
-	public String TVT_INSTANCE_FILE;
-	public boolean TVT_EVENT_ENABLED;
-	public List<ItemHolder> TVT_REWARD_PLAYER_WIN = new ArrayList<>();
-	public boolean TVT_REWARD_KILLER_ENABLED;
-	public List<ItemHolder> TVT_REWARD_KILLER = new ArrayList<>();
-	public boolean TVT_REWARD_PVP_KILLER_ENABLED;
-	public int TVT_REWARD_PVP_KILLER;
-	public boolean TVT_REWARD_FAME_KILLER_ENABLED;
-	public int TVT_REWARD_FAME_KILLER;
-	public int TVT_COUNT_TEAM;
-	public List<Location> TVT_COORDINATES_TEAM;
-	
-	// -------------------------------------------------------------------------------
 	// Configs Survive
 	// -------------------------------------------------------------------------------
 	public boolean SURVIVE_EVENT_ENABLED;
@@ -183,7 +168,7 @@ public class ConfigData
 		// ------------------------------------------------------------------------------------- //
 		// TeamVsTeam.properties
 		// ------------------------------------------------------------------------------------- //
-		settings = new EventPropertiesParser(TVT_CONFIG);
+		/*settings = new EventPropertiesParser(TVT_CONFIG);
 		TVT_INSTANCE_FILE = settings.getString("EventInstanceFile", "EventEngine.xml");
 		TVT_EVENT_ENABLED = settings.getBoolean("EventEnabled", false);
 		TVT_REWARD_PLAYER_WIN = settings.getItemHolderList("EventReward");
@@ -196,7 +181,7 @@ public class ConfigData
 		TVT_COUNT_TEAM = settings.getInt("EventCountTeam", 2);
 		TVT_COORDINATES_TEAM = settings.getLocationList("EventTeamCoordinates");
 		checkCountTeamAndSpawn("TeamVsTeam", TVT_COORDINATES_TEAM, TVT_COUNT_TEAM);
-		checkCountTeamdAndMinPlayers("TeamVsTeam", 2, TVT_COUNT_TEAM);
+		checkCountTeamdAndMinPlayers("TeamVsTeam", 2, TVT_COUNT_TEAM);*/
 		
 		// ------------------------------------------------------------------------------------- //
 		// Survive.properties

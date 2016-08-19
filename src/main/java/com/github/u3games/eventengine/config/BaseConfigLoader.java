@@ -30,6 +30,7 @@ public class BaseConfigLoader {
         System.out.println("Reward kill enabled " + mTvTConfig.isRewardKillEnabled());
         System.out.println("Team Red " + mTvTConfig.getTeamRed().get(0).toString());
         System.out.println("Team Blue " + mTvTConfig.getTeamBlue().get(0).toString());
+        System.out.println("Protection time " + mMainConfig.getSpawnProtectionTime());
     }
 
     private EventConfig loadConfig(String path, Class c) {

@@ -244,7 +244,7 @@ public final class EventPropertiesParser
 	/**
 	 * Parse a config using "," to differentiate between each coordinate. Example: "xx, xx, xx, xx, xx, xx ...".
 	 * @param key
-	 * @return List<ItemHolder>
+	 * @return List<EItemHolder>
 	 */
 	public List<ItemHolder> getItemHolderList(String key)
 	{
@@ -268,7 +268,7 @@ public final class EventPropertiesParser
 	/**
 	 * Parse a config using "," to differentiate between each coordinate. Example: "xx, xx, xx".
 	 * @param key
-	 * @return Location
+	 * @return ELocation
 	 */
 	public Location getLocation(String key)
 	{
@@ -287,7 +287,7 @@ public final class EventPropertiesParser
 	/**
 	 * Parse a config using "," to differentiate between each coordinate and ";" between each team. Example: "xx, xx, xx"
 	 * @param key
-	 * @return List<Location>
+	 * @return List<ELocation>
 	 */
 	public List<Location> getLocationList(String key)
 	{
