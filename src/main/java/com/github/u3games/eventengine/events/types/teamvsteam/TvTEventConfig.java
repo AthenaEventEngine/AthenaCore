@@ -1,4 +1,4 @@
-package com.github.u3games.eventengine.events.teamvsteam;
+package com.github.u3games.eventengine.events.types.teamvsteam;
 
 import com.github.u3games.eventengine.config.interfaces.EventConfig;
 import com.github.u3games.eventengine.model.EItemHolder;

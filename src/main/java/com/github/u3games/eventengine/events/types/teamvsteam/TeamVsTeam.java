@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.u3games.eventengine.events.teamvsteam;
+package com.github.u3games.eventengine.events.types.teamvsteam;
 
 import java.util.List;
 
