@@ -28,7 +28,6 @@ import java.util.Set;
 
 import com.github.u3games.eventengine.EventEngineManager;
 import com.github.u3games.eventengine.config.BaseConfigLoader;
-import com.github.u3games.eventengine.datatables.ConfigData;
 import com.github.u3games.eventengine.datatables.MessageData;
 import com.github.u3games.eventengine.enums.CollectionTarget;
 import com.github.u3games.eventengine.events.holders.PlayerHolder;
