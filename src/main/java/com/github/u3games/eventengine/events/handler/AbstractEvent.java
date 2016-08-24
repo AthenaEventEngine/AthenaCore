@@ -543,6 +543,11 @@ public abstract class AbstractEvent
 		// teleport to character
 		ph.getPcInstance().teleToLocation(loc, false);
 	}
+
+	protected void teleportPlayer(PlayerHolder ph)
+	{
+		teleportPlayer(ph, 0);
+	}
 	
 	/**
 	 * Prepare players, teams and the instance to start.
@@ -638,7 +643,7 @@ public abstract class AbstractEvent
 			{
 				revivePlayer(player);
 				giveBuffPlayer(player.getPcInstance());
-				teleportPlayer(player, radiusTeleport);
+				teleportPlayer(player);
 			}, time * 1000));
 		}
 		catch (Exception e)
@@ -646,6 +651,11 @@ public abstract class AbstractEvent
 			LOGGER.warning(AbstractEvent.class.getSimpleName() + ": " + e);
 			e.printStackTrace();
 		}
+	}
+
+	public void giveResurrectPlayer(final PlayerHolder player, int time)
+	{
+		giveResurrectPlayer(player, time, 0);
 	}
 	
 	/**

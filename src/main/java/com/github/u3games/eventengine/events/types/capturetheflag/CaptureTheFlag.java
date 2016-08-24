@@ -37,6 +37,7 @@ import com.github.u3games.eventengine.util.EventUtil;
 import com.github.u3games.eventengine.util.SortUtils;
 import com.l2jserver.gameserver.datatables.ItemTable;
 import com.l2jserver.gameserver.enums.Team;
+import com.l2jserver.gameserver.model.Location;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.itemcontainer.Inventory;
 import com.l2jserver.gameserver.model.items.L2Item;
@@ -62,7 +63,6 @@ public class CaptureTheFlag extends AbstractEvent
 	// Time for resurrection
 	private static final int TIME_RES_PLAYER = 10;
 	// Radius spawn
-	protected int _radius = 100;
 	private final Map<NpcHolder, TeamType> _flagSpawn = new ConcurrentHashMap<>();
 	private final Map<NpcHolder, TeamType> _holderSpawn = new ConcurrentHashMap<>();
 	private final Map<PlayerHolder, TeamType> _flagHasPlayer = new ConcurrentHashMap<>();
@@ -81,8 +81,7 @@ public class CaptureTheFlag extends AbstractEvent
 	protected TeamsBuilder onCreateTeams()
 	{
 		return new TeamsBuilder()
-				.addTeam(getConfig().getTeamRed())
-				.addTeam(getConfig().getTeamBlue())
+				.addTeams(getConfig().getTeams())
 				.setPlayers(getPlayerEventManager().getAllEventPlayers());
 	}
 	
@@ -202,7 +201,7 @@ public class CaptureTheFlag extends AbstractEvent
 	@Override
 	public void onDeath(PlayerHolder ph)
 	{
-		giveResurrectPlayer(ph, TIME_RES_PLAYER, _radius);
+		giveResurrectPlayer(ph, TIME_RES_PLAYER);
 	}
 	
 	@Override
@@ -238,14 +237,33 @@ public class CaptureTheFlag extends AbstractEvent
 	private void spawnFlagsAndHolders()
 	{
 		int instanceId = getInstanceWorldManager().getAllInstancesWorlds().get(0).getInstanceId();
+
+		Map<String, Location> mapFlags = new HashMap<>();
+		Map<String, Location> mapHolders = new HashMap<>();
+
+		for (CTFTeamConfig config : getConfig().getTeams())
+		{
+			mapFlags.put(config.getName(), config.getFlagLoc());
+			mapHolders.put(config.getName(), config.getHolderLoc());
+		}
+
 		for (TeamHolder th : getTeamsManager().getAllTeams())
 		{
-			int x = th.getSpawn().getX();
-			int y = th.getSpawn().getY();
-			int z = th.getSpawn().getZ();
-			TeamType tt = th.getTeamType();
-			_flagSpawn.put(getSpawnManager().addEventNpc(FLAG, x, y, z, 0, Team.NONE, th.getTeamType().name(), false, instanceId), tt);
-			_holderSpawn.put(getSpawnManager().addEventNpc(HOLDER, x - 100, y, z, 0, Team.NONE, th.getTeamType().name(), false, instanceId), tt);
+			if (mapFlags.containsKey(th.getName()))
+			{
+				Location flagLocation = mapFlags.get(th.getName());
+				int flagX = flagLocation.getX();
+				int flagY = flagLocation.getY();
+				int flagZ = flagLocation.getZ();
+
+				Location holderLocation = mapHolders.get(th.getName());
+				int holderX = holderLocation.getX();
+				int holderY = holderLocation.getY();
+				int holderZ = holderLocation.getZ();
+
+				_flagSpawn.put(getSpawnManager().addEventNpc(FLAG, flagX, flagY, flagZ, 0, Team.NONE, th.getTeamType().name(), false, instanceId), th.getTeamType());
+				_holderSpawn.put(getSpawnManager().addEventNpc(HOLDER, holderX, holderY, holderZ, 0, Team.NONE, th.getTeamType().name(), false, instanceId), th.getTeamType());
+			}
 		}
 	}
 	

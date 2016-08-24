@@ -1,12 +1,12 @@
 package com.github.u3games.eventengine.events.types.capturetheflag;
 
 import com.github.u3games.eventengine.config.interfaces.EventConfig;
+import com.github.u3games.eventengine.config.model.TeamConfig;
 import com.github.u3games.eventengine.model.EItemHolder;
-import com.github.u3games.eventengine.model.ELocation;
 import com.github.u3games.eventengine.util.ConvertUtils;
-import com.l2jserver.gameserver.model.Location;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CTFEventConfig implements EventConfig {
@@ -25,8 +25,7 @@ public class CTFEventConfig implements EventConfig {
     private int pointsConquerFlag;
     private int pointsKill;
     private int countTeam;
-    private List<ELocation> teamRed;
-    private List<ELocation> teamBlue;
+    private List<CTFTeamConfig> teams;
 
     public boolean isEnabled() {
         return enabled;
@@ -84,11 +83,8 @@ public class CTFEventConfig implements EventConfig {
         return countTeam;
     }
 
-    public List<Location> getTeamRed() {
-        return ConvertUtils.convertToListLocations(teamRed);
-    }
-
-    public List<Location> getTeamBlue() {
-        return ConvertUtils.convertToListLocations(teamBlue);
+    public List<CTFTeamConfig> getTeams()
+    {
+        return teams;
     }
 }
