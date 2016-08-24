@@ -132,7 +132,7 @@ public class CaptureTheFlag extends AbstractEvent
 				// Equip the flag
 				equipFlag(ph, flagTeam);
 				// Announce the flag was taken
-				EventUtil.announceTo(Say2.BATTLEFIELD, "ctf_captured_the_flag", "%holder%", ph.getTeamType().name(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
+				EventUtil.announceTo(Say2.BATTLEFIELD, "ctf_captured_the_flag", "%holder%", ph.getTeam().getName(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
 			}
 		}
 		else if (npcHolder.getNpcInstance().getId() == HOLDER)
@@ -149,9 +149,9 @@ public class CaptureTheFlag extends AbstractEvent
 					unequiFlag(ph);
 					TeamHolder th = getTeamsManager().getTeam(_flagHasPlayer.remove(ph));
 					// Spawn the flag again
-					_flagSpawn.put(getSpawnManager().addEventNpc(FLAG, th.getSpawn().getX(), th.getSpawn().getY(), th.getSpawn().getZ(), 0, Team.NONE, th.getTeamType().name(), false, getInstanceWorldManager().getAllInstancesWorlds().get(0).getInstanceId()), th.getTeamType());
+					_flagSpawn.put(getSpawnManager().addEventNpc(FLAG, th.getSpawn().getX(), th.getSpawn().getY(), th.getSpawn().getZ(), 0, Team.NONE, th.getName(), false, getInstanceWorldManager().getAllInstancesWorlds().get(0).getInstanceId()), th.getTeamType());
 					// Announce the flag was taken
-					EventUtil.announceTo(Say2.BATTLEFIELD, "ctf_conquered_the_flag", "%holder%", ph.getTeamType().name(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
+					EventUtil.announceTo(Say2.BATTLEFIELD, "ctf_conquered_the_flag", "%holder%", ph.getTeam().getName(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
 					// Show team points
 					showPoint();
 				}
@@ -261,8 +261,8 @@ public class CaptureTheFlag extends AbstractEvent
 				int holderY = holderLocation.getY();
 				int holderZ = holderLocation.getZ();
 
-				_flagSpawn.put(getSpawnManager().addEventNpc(FLAG, flagX, flagY, flagZ, 0, Team.NONE, th.getTeamType().name(), false, instanceId), th.getTeamType());
-				_holderSpawn.put(getSpawnManager().addEventNpc(HOLDER, holderX, holderY, holderZ, 0, Team.NONE, th.getTeamType().name(), false, instanceId), th.getTeamType());
+				_flagSpawn.put(getSpawnManager().addEventNpc(FLAG, flagX, flagY, flagZ, 0, Team.NONE, th.getName(), false, instanceId), th.getTeamType());
+				_holderSpawn.put(getSpawnManager().addEventNpc(HOLDER, holderX, holderY, holderZ, 0, Team.NONE, th.getName(), false, instanceId), th.getTeamType());
 			}
 		}
 	}
@@ -292,7 +292,7 @@ public class CaptureTheFlag extends AbstractEvent
 		{
 			if (teamWinners.contains(team))
 			{
-				EventUtil.announceTo(Say2.BATTLEFIELD, "team_winner", "%holder%", team.getTeamType().name(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
+				EventUtil.announceTo(Say2.BATTLEFIELD, "team_winner", "%holder%", team.getName(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
 			}
 		}
 	}
@@ -306,7 +306,7 @@ public class CaptureTheFlag extends AbstractEvent
 		for (TeamHolder team : getTeamsManager().getAllTeams())
 		{
 			sb.append(" | ");
-			sb.append(team.getTeamType().name());
+			sb.append(team.getName());
 			sb.append(" ");
 			sb.append(team.getPoints());
 		}
@@ -360,11 +360,11 @@ public class CaptureTheFlag extends AbstractEvent
 	private void dropFlag(PlayerHolder ph)
 	{
 		TeamHolder th = getTeamsManager().getTeam(_flagHasPlayer.remove(ph));
-		_flagSpawn.put(getSpawnManager().addEventNpc(FLAG, ph.getPcInstance().getX(), ph.getPcInstance().getY(), ph.getPcInstance().getZ(), 0, Team.NONE, th.getTeamType().name(), false, ph.getDinamicInstanceId()), th.getTeamType());
+		_flagSpawn.put(getSpawnManager().addEventNpc(FLAG, ph.getPcInstance().getX(), ph.getPcInstance().getY(), ph.getPcInstance().getZ(), 0, Team.NONE, th.getName(), false, ph.getDinamicInstanceId()), th.getTeamType());
 		Map<String, String> map = new HashMap<>();
 		// We announced that a flag was taken
 		map.put("%holder%", ph.getPcInstance().getName());
-		map.put("%flag%", th.getTeamType().name());
+		map.put("%flag%", th.getName());
 		EventUtil.announceTo(Say2.BATTLEFIELD, "player_dropped_flag", map, CollectionTarget.ALL_PLAYERS_IN_EVENT);
 	}
 	
@@ -382,6 +382,6 @@ public class CaptureTheFlag extends AbstractEvent
 	
 	private void updateTitle(PlayerHolder ph)
 	{
-		ph.setNewTitle("[ " + getTeamsManager().getPlayerTeam(ph).getTeamType().name() + " ]");
+		ph.setNewTitle("[ " + getTeamsManager().getPlayerTeam(ph).getName() + " ]");
 	}
 }

@@ -39,7 +39,7 @@ public class PlayerHolder implements ParticipantHolder
 	// Original title before teleporting to the event
 	private String _oriTitle;
 	// Player's team in the event
-	private TeamType _team;
+	private TeamHolder _team;
 	// Previous location before participating in the event
 	private Location _returnLocation;
 	private int _dinamicInstanceId = 0;
@@ -65,6 +65,11 @@ public class PlayerHolder implements ParticipantHolder
 	{
 		return _player;
 	}
+
+	public TeamHolder getTeam()
+	{
+		return _team;
+	}
 	
 	/**
 	 * <b>Actions:</b>
@@ -74,7 +79,7 @@ public class PlayerHolder implements ParticipantHolder
 	 * </ul>
 	 * @param team
 	 */
-	public void setTeam(TeamType team)
+	public void setTeam(TeamHolder team)
 	{
 		// Set original title character
 		_oriTitle = _player.getTitle();
@@ -83,9 +88,9 @@ public class PlayerHolder implements ParticipantHolder
 		// Set team character
 		_team = team;
 		// Set team title character
-		_player.setTitle(team.name());
+		_player.setTitle(team.getName());
 		// Set team color character
-		_player.getAppearance().setTitleColor(team.getColor());
+		_player.getAppearance().setTitleColor(team.getTeamType().getColor());
 	}
 	
 	/**
@@ -94,7 +99,7 @@ public class PlayerHolder implements ParticipantHolder
 	 */
 	public TeamType getTeamType()
 	{
-		return _team;
+		return _team.getTeamType();
 	}
 	
 	/**
