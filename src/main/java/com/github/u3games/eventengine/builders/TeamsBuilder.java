@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 
+import com.github.u3games.eventengine.config.model.TeamConfig;
 import com.github.u3games.eventengine.enums.DistributionType;
 import com.github.u3games.eventengine.enums.TeamType;
 import com.github.u3games.eventengine.events.holders.PlayerHolder;
@@ -32,19 +33,26 @@ import com.l2jserver.gameserver.model.Location;
 public class TeamsBuilder
 {
 	private static final Logger LOGGER = Logger.getLogger(TeamsBuilder.class.getName());
-	private int mTeamsAmount;
 	private final List<List<Location>> mLocations = new ArrayList<>();
 	private DistributionType mDistribution = DistributionType.DEFAULT;
 	private final Collection<PlayerHolder> mPlayers = new ArrayList<>();
 
+	private final List<TeamHolder> mTeams = new ArrayList<>();
+
+	public TeamsBuilder addTeams(Collection<? extends TeamConfig> teamsConfig) {
+		for (TeamConfig config : teamsConfig) {
+			mTeams.add(new TeamHolder(config.getName(), config.getColor(), config.getLocations()));
+		}
+
+		return this;
+	}
+
 	public TeamsBuilder addTeam(List<Location> locations) {
-		mTeamsAmount++;
 		mLocations.add(locations);
 		return this;
 	}
 	
 	public TeamsBuilder addTeams(int amount, List<Location> locations) {
-		mTeamsAmount = amount;
 		for (Location loc : locations) {
 			List<Location> list = new ArrayList<>();
 			list.add(loc);
@@ -64,24 +72,23 @@ public class TeamsBuilder
 	}
 	
 	public List<TeamHolder> build() {
-		List<TeamHolder> teams = createTeams();
-		return teams == null ? null : distributePlayers(teams);
+		return mTeams.size() <= 0 ? null : distributePlayers(mTeams);
 	}
 	
 	private List<TeamHolder> createTeams() {
 		List<TeamHolder> teams = new ArrayList<>();
-		if (mTeamsAmount != mLocations.size()) {
+		if (mTeams.size() != mLocations.size()) {
 			LOGGER.warning(TeamsBuilder.class.getSimpleName() + ": The count of teams and locations doesn't match. Event cancelled!");
 			LOGGER.warning(TeamsBuilder.class.getSimpleName() + ": Count of teams: " + teams.size());
 			LOGGER.warning(TeamsBuilder.class.getSimpleName() + ": Count of locations: " + mLocations.size());
 			return null;
 		}
 
-		if (mTeamsAmount == 1) {
+		if (mTeams.size() == 1) {
 			TeamType type = TeamType.WHITE;
 			teams.add(newTeam(type, mLocations.get(0).get(0))); // TODO: change when we have multiple locations
 		} else {
-			for (int i = 1; i <= mTeamsAmount; i++) {
+			for (int i = 1; i <= mTeams.size(); i++) {
 				TeamType type = TeamType.values()[i];
 				teams.add(newTeam(type, mLocations.get(i - 1).get(0))); // TODO: change when we have multiple locations
 			}

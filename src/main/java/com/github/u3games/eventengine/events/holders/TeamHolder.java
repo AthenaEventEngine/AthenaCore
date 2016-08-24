@@ -18,31 +18,47 @@
  */
 package com.github.u3games.eventengine.events.holders;
 
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.github.u3games.eventengine.enums.TeamType;
 import com.github.u3games.eventengine.interfaces.ParticipantHolder;
 import com.l2jserver.gameserver.model.Location;
+import com.l2jserver.util.Rnd;
 
 /**
  * @author fissban
  */
 public class TeamHolder implements ParticipantHolder
 {
+	private String _teamName;
 	// Type of team
 	private final TeamType _teamType;
 	// Amount of points
 	private final AtomicInteger _points = new AtomicInteger(0);
 	// Team Spawn
 	private Location _teamSpawn = new Location(0, 0, 0);
+	private final List<Location> _teamSpawns = new ArrayList<>();
 	
 	/**
 	 * Constructor.
 	 * @param teamColor
 	 */
+	public TeamHolder(String teamName, TeamType teamColor, Collection<Location> spawns)
+	{
+		_teamName = teamName;
+		_teamType = teamColor;
+		setSpawns(spawns);
+	}
+
 	public TeamHolder(TeamType teamColor)
 	{
 		_teamType = teamColor;
+	}
+
+	public String getName()
+	{
+		return _teamName;
 	}
 	
 	/**
@@ -62,6 +78,11 @@ public class TeamHolder implements ParticipantHolder
 	{
 		_teamSpawn = loc;
 	}
+
+	public void setSpawns(Collection<Location> locs)
+	{
+		_teamSpawns.addAll(locs);
+	}
 	
 	/**
 	 * Get the spawn of a team.
@@ -69,7 +90,15 @@ public class TeamHolder implements ParticipantHolder
 	 */
 	public Location getSpawn()
 	{
-		return _teamSpawn;
+		// TODO Remove this
+		if (_teamSpawns.size() <= 0)
+		{
+			return _teamSpawn;
+		}
+
+		System.out.println("Las locs son " + _teamSpawns.size());
+
+		return _teamSpawns.get(Rnd.get(_teamSpawns.size() - 1));
 	}
 	
 	/**

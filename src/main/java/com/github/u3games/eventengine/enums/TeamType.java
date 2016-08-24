@@ -49,4 +49,17 @@ public enum TeamType
 	{
 		return _color;
 	}
+
+	public static TeamType getType(String name)
+	{
+		for (TeamType type : TeamType.values())
+		{
+			if (type.toString().equalsIgnoreCase(name))
+			{
+				return type;
+			}
+		}
+
+		return null;
+	}
 }
