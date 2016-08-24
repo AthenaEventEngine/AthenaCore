@@ -96,8 +96,6 @@ public class TeamHolder implements ParticipantHolder
 			return _teamSpawn;
 		}
 
-		System.out.println("Las locs son " + _teamSpawns.size());
-
 		return _teamSpawns.get(Rnd.get(_teamSpawns.size() - 1));
 	}
 	

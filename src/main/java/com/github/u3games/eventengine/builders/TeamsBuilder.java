@@ -108,7 +108,7 @@ public class TeamsBuilder
 			default:
 				int i = 0;
 				for (PlayerHolder player : mPlayers) {
-					player.setTeam(teams.get(i).getTeamType());
+					player.setTeam(teams.get(i));
 
 					if (teams.size() <= (i + 1)) i = 0;
 					else i++;
