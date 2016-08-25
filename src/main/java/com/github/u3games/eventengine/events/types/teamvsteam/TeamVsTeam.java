@@ -40,8 +40,6 @@ public class TeamVsTeam extends AbstractEvent
 {
 	// Time for resurrection
 	private static final int TIME_RES_PLAYER = 10;
-	// Radius spawn
-	protected int _radius = 100;
 	
 	public TeamVsTeam()
 	{
@@ -55,8 +53,8 @@ public class TeamVsTeam extends AbstractEvent
 	@Override
 	protected TeamsBuilder onCreateTeams()
 	{
-		return new TeamsBuilder().addTeam(getConfig().getTeamBlue())
-				.addTeam(getConfig().getTeamRed())
+		return new TeamsBuilder()
+				.addTeams(getConfig().getTeams())
 				.setPlayers(getPlayerEventManager().getAllEventPlayers());
 	}
 	
@@ -114,7 +112,7 @@ public class TeamVsTeam extends AbstractEvent
 	@Override
 	public void onDeath(PlayerHolder ph)
 	{
-		giveResurrectPlayer(ph, TIME_RES_PLAYER, _radius);
+		giveResurrectPlayer(ph, TIME_RES_PLAYER);
 		// Incremented by one the number of deaths Character
 		ph.increaseDeaths();
 	}

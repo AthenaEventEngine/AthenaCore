@@ -17,7 +17,6 @@ public class SurviveEventConfig implements EventConfig {
     private List<ELocation> coordinatesMobs;
     private List<Integer> mobsID;
     private int mobsSpawnForStage;
-    private int countTeam;
     private List<ELocation> coordinates;
 
     public boolean isEnabled() {
@@ -42,10 +41,6 @@ public class SurviveEventConfig implements EventConfig {
 
     public int getMobsSpawnForStage() {
         return mobsSpawnForStage;
-    }
-
-    public int getCountTeam() {
-        return countTeam;
     }
 
     public List<Location> getCoordinates() {

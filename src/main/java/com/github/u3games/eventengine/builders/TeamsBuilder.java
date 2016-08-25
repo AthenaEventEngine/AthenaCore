@@ -33,31 +33,22 @@ import com.l2jserver.gameserver.model.Location;
 public class TeamsBuilder
 {
 	private static final Logger LOGGER = Logger.getLogger(TeamsBuilder.class.getName());
-	private final List<List<Location>> mLocations = new ArrayList<>();
+
 	private DistributionType mDistribution = DistributionType.DEFAULT;
 	private final Collection<PlayerHolder> mPlayers = new ArrayList<>();
 
 	private final List<TeamHolder> mTeams = new ArrayList<>();
+
+	public TeamsBuilder addTeam(List<Location> locations) {
+		mTeams.add(new TeamHolder("", TeamType.WHITE, locations));
+		return this;
+	}
 
 	public TeamsBuilder addTeams(Collection<? extends TeamConfig> teamsConfig) {
 		for (TeamConfig config : teamsConfig) {
 			mTeams.add(new TeamHolder(config.getName(), config.getColor(), config.getLocations()));
 		}
 
-		return this;
-	}
-
-	public TeamsBuilder addTeam(List<Location> locations) {
-		mLocations.add(locations);
-		return this;
-	}
-	
-	public TeamsBuilder addTeams(int amount, List<Location> locations) {
-		for (Location loc : locations) {
-			List<Location> list = new ArrayList<>();
-			list.add(loc);
-			mLocations.add(list);
-		}
 		return this;
 	}
 	
@@ -69,37 +60,6 @@ public class TeamsBuilder
 	public TeamsBuilder setDistribution(DistributionType type) {
 		mDistribution = type;
 		return this;
-	}
-	
-	public List<TeamHolder> build() {
-		return mTeams.size() <= 0 ? null : distributePlayers(mTeams);
-	}
-	
-	private List<TeamHolder> createTeams() {
-		List<TeamHolder> teams = new ArrayList<>();
-		if (mTeams.size() != mLocations.size()) {
-			LOGGER.warning(TeamsBuilder.class.getSimpleName() + ": The count of teams and locations doesn't match. Event cancelled!");
-			LOGGER.warning(TeamsBuilder.class.getSimpleName() + ": Count of teams: " + teams.size());
-			LOGGER.warning(TeamsBuilder.class.getSimpleName() + ": Count of locations: " + mLocations.size());
-			return null;
-		}
-
-		if (mTeams.size() == 1) {
-			TeamType type = TeamType.WHITE;
-			teams.add(newTeam(type, mLocations.get(0).get(0))); // TODO: change when we have multiple locations
-		} else {
-			for (int i = 1; i <= mTeams.size(); i++) {
-				TeamType type = TeamType.values()[i];
-				teams.add(newTeam(type, mLocations.get(i - 1).get(0))); // TODO: change when we have multiple locations
-			}
-		}
-		return teams;
-	}
-	
-	private TeamHolder newTeam(TeamType type, Location loc) {
-		TeamHolder team = new TeamHolder(type);
-		team.setSpawn(loc);
-		return team;
 	}
 	
 	private List<TeamHolder> distributePlayers(List<TeamHolder> teams) {
@@ -116,5 +76,15 @@ public class TeamsBuilder
 				break;
 		}
 		return teams;
+	}
+
+	public List<TeamHolder> build() {
+		if (mTeams.size() <= 0)
+		{
+			LOGGER.warning(TeamsBuilder.class.getSimpleName() + ": The count of teams can't be zero!");
+			return null;
+		}
+
+		return distributePlayers(mTeams);
 	}
 }

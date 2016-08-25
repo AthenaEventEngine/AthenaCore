@@ -39,8 +39,6 @@ public class AllVsAll extends AbstractEvent
 {
 	// Time for resurrection
 	private static final int TIME_RES_PLAYER = 10;
-	// Radius spawn
-	protected int _radius = 100;
 	
 	public AllVsAll()
 	{
@@ -55,7 +53,9 @@ public class AllVsAll extends AbstractEvent
 	@Override
 	protected TeamsBuilder onCreateTeams()
 	{
-		return new TeamsBuilder().addTeam(getConfig().getCoordinates()).setPlayers(getPlayerEventManager().getAllEventPlayers());
+		return new TeamsBuilder()
+				.addTeam(getConfig().getCoordinates())
+				.setPlayers(getPlayerEventManager().getAllEventPlayers());
 	}
 	
 	@Override
