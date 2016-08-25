@@ -19,7 +19,6 @@
 package com.github.u3games.eventengine.events.types.survive;
 
 import java.util.List;
-import java.util.Random;
 
 import com.github.u3games.eventengine.builders.TeamsBuilder;
 import com.github.u3games.eventengine.config.BaseConfigLoader;
@@ -48,8 +47,6 @@ public class Survive extends AbstractEvent
 	private int _stage = 1;
 	// Variable that helps us keep track of the number of dead mobs
 	private int _auxKillMonsters = 0;
-	// Radius spawn
-	protected int _radius = 200;
 	// Monsters Id's
 	private final List<Integer> MONSTERS_ID = getConfig().getMobsID();
 	
@@ -66,7 +63,8 @@ public class Survive extends AbstractEvent
 	@Override
 	protected TeamsBuilder onCreateTeams()
 	{
-		return new TeamsBuilder().addTeam(getConfig().getCoordinates())
+		return new TeamsBuilder()
+				.addTeam(getConfig().getCoordinates())
 				.setPlayers(getPlayerEventManager().getAllEventPlayers());
 	}
 	
@@ -175,8 +173,7 @@ public class Survive extends AbstractEvent
 		{
 			for (int i = 0; i < (_stage * getConfig().getMobsSpawnForStage()); i++)
 			{
-				Random rnd = new Random(getConfig().getCoordinatesMobs().size() - 1);
-				Location rndLoc = getConfig().getCoordinatesMobs().get(rnd.nextInt());
+				Location rndLoc = getConfig().getCoordinatesMobs().get(Rnd.get(getConfig().getCoordinatesMobs().size() - 1));
 				getSpawnManager().addEventNpc(MONSTERS_ID.get(Rnd.get(MONSTERS_ID.size() - 1)), rndLoc, Team.RED, true, getInstanceWorldManager().getAllInstancesWorlds().get(0).getInstanceId());
 			}
 			// We notify the characters in the event that stage they are currently
