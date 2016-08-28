@@ -23,7 +23,10 @@ import java.util.List;
 import com.github.u3games.eventengine.builders.TeamsBuilder;
 import com.github.u3games.eventengine.config.BaseConfigLoader;
 import com.github.u3games.eventengine.datatables.MessageData;
+import com.github.u3games.eventengine.dispatcher.events.OnDeathEvent;
+import com.github.u3games.eventengine.dispatcher.events.OnKillEvent;
 import com.github.u3games.eventengine.enums.CollectionTarget;
+import com.github.u3games.eventengine.enums.ListenerType;
 import com.github.u3games.eventengine.enums.ScoreType;
 import com.github.u3games.eventengine.events.handler.AbstractEvent;
 import com.github.u3games.eventengine.events.holders.PlayerHolder;
@@ -61,6 +64,9 @@ public class AllVsAll extends AbstractEvent
 	@Override
 	protected void onEventStart()
 	{
+		addSuscription(ListenerType.ON_KILL);
+		addSuscription(ListenerType.ON_DEATH);
+
 		for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
 		{
 			updateTitle(ph);
@@ -81,8 +87,11 @@ public class AllVsAll extends AbstractEvent
 	
 	// LISTENERS -----------------------------------------------------------------------
 	@Override
-	public void onKill(PlayerHolder ph, L2Character target)
+	public void onKill(OnKillEvent event)
 	{
+		PlayerHolder ph = getPlayerEventManager().getEventPlayer(event.getAttacker());
+		L2Character target = event.getTarget();
+
 		// Increase the amount of one character kills
 		ph.increaseKills();
 		updateTitle(ph);
@@ -112,8 +121,10 @@ public class AllVsAll extends AbstractEvent
 	}
 	
 	@Override
-	public void onDeath(PlayerHolder ph)
+	public void onDeath(OnDeathEvent event)
 	{
+		PlayerHolder ph = getPlayerEventManager().getEventPlayer(event.getTarget());
+
 		// We generated a task to revive the player
 		giveResurrectPlayer(ph, TIME_RES_PLAYER, _radius);
 		// Increase the amount of one character deaths.

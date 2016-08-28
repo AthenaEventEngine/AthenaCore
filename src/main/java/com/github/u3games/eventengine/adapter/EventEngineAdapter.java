@@ -19,8 +19,9 @@
 
 package com.github.u3games.eventengine.adapter;
 
-import com.github.u3games.eventengine.EventEngineManager;
 import com.github.u3games.eventengine.ai.NpcManager;
+import com.github.u3games.eventengine.dispatcher.ListenerDispatcher;
+import com.github.u3games.eventengine.dispatcher.events.*;
 import com.l2jserver.gameserver.model.L2Object;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Playable;
@@ -58,7 +59,7 @@ public class EventEngineAdapter extends Quest
 	@Priority(Integer.MAX_VALUE)
 	public void onPlayerLogin(OnPlayerLogin event)
 	{
-		EventEngineManager.getInstance().listenerOnLogin(event.getActiveChar());
+		ListenerDispatcher.getInstance().notifyEvent(new OnLogInEvent(event.getActiveChar()));
 	}
 	
 	// When the player exits
@@ -67,7 +68,7 @@ public class EventEngineAdapter extends Quest
 	@Priority(Integer.MAX_VALUE)
 	public void onPlayerLogout(OnPlayerLogout event)
 	{
-		EventEngineManager.getInstance().listenerOnLogout(event.getActiveChar());
+		ListenerDispatcher.getInstance().notifyEvent(new OnLogOutEvent(event.getActiveChar()));
 	}
 	
 	// When a playable uses a skill
@@ -78,19 +79,27 @@ public class EventEngineAdapter extends Quest
 	{
 		if (event.getCaster().isPlayable())
 		{
-			if (EventEngineManager.getInstance().listenerOnUseSkill((L2Playable) event.getCaster(), event.getTarget(), event.getSkill()))
+			OnUseSkillEvent mainTargetEvent = new OnUseSkillEvent((L2Playable) event.getCaster(),
+					event.getSkill(), event.getTarget());
+
+			ListenerDispatcher.getInstance().notifyEvent(mainTargetEvent);
+
+			if (mainTargetEvent.isCanceled())
 			{
 				return new TerminateReturn(true, true, true);
 			}
 			// Note: The skill is canceled if there is at least one target with spawn protection in area skills
-			// That is not ok, but for now it's the only way
+			// This is not ok, but for now it's the only way
 			for (L2Object target : event.getTargets())
 			{
 				if (target instanceof L2Character)
 				{
-					L2Character character = (L2Character) target;
-					
-					if (EventEngineManager.getInstance().listenerOnUseSkill((L2Playable) event.getCaster(), character, event.getSkill()))
+					OnUseSkillEvent otherTargetEvent = new OnUseSkillEvent((L2Playable) event.getCaster(),
+							event.getSkill(), (L2Character) target);
+
+					ListenerDispatcher.getInstance().notifyEvent(otherTargetEvent);
+
+					if (otherTargetEvent.isCanceled())
 					{
 						return new TerminateReturn(true, true, true);
 					}
@@ -108,7 +117,10 @@ public class EventEngineAdapter extends Quest
 	{
 		if ((event.getAttacker() != null) && event.getAttacker().isPlayable())
 		{
-			if (EventEngineManager.getInstance().listenerOnAttack((L2Playable) event.getAttacker(), event.getTarget()))
+			OnAttackEvent newEvent = new OnAttackEvent((L2Playable) event.getAttacker(), event.getTarget());
+			ListenerDispatcher.getInstance().notifyEvent(newEvent);
+
+			if (newEvent.isCanceled())
 			{
 				return new TerminateReturn(true, true, true);
 			}
@@ -124,12 +136,12 @@ public class EventEngineAdapter extends Quest
 	{
 		if ((event.getAttacker() != null) && event.getAttacker().isPlayable())
 		{
-			EventEngineManager.getInstance().listenerOnKill((L2Playable) event.getAttacker(), event.getTarget());
+			ListenerDispatcher.getInstance().notifyEvent(new OnKillEvent((L2Playable) event.getAttacker(), event.getTarget()));
 		}
 		
 		if (event.getTarget().isPlayer())
 		{
-			EventEngineManager.getInstance().listenerOnDeath((L2PcInstance) event.getTarget());
+			ListenerDispatcher.getInstance().notifyEvent(new OnDeathEvent((L2PcInstance) event.getTarget()));
 		}
 		return null;
 	}
@@ -141,7 +153,7 @@ public class EventEngineAdapter extends Quest
 	@Priority(Integer.MAX_VALUE)
 	public void onUseItem(OnPlayerEquipItem event)
 	{
-		EventEngineManager.getInstance().listenerOnUseItem(event.getActiveChar(), event.getItem().getItem());
+		ListenerDispatcher.getInstance().notifyEvent(new OnUseItemEvent(event.getActiveChar(), event.getItem().getItem()));
 	}
 	
 	// When a player talks with npc
@@ -152,6 +164,6 @@ public class EventEngineAdapter extends Quest
 	@Priority(Integer.MAX_VALUE)
 	public void onNpcInteract(OnNpcFirstTalk event)
 	{
-		EventEngineManager.getInstance().listenerOnInteract(event.getActiveChar(), event.getNpc());
+		ListenerDispatcher.getInstance().notifyEvent(new OnInteractEvent(event.getActiveChar(), event.getNpc()));
 	}
 }

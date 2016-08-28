@@ -22,7 +22,10 @@ import java.util.List;
 
 import com.github.u3games.eventengine.builders.TeamsBuilder;
 import com.github.u3games.eventengine.config.BaseConfigLoader;
+import com.github.u3games.eventengine.dispatcher.events.OnAttackEvent;
+import com.github.u3games.eventengine.dispatcher.events.OnKillEvent;
 import com.github.u3games.eventengine.enums.CollectionTarget;
+import com.github.u3games.eventengine.enums.ListenerType;
 import com.github.u3games.eventengine.enums.ScoreType;
 import com.github.u3games.eventengine.events.handler.AbstractEvent;
 import com.github.u3games.eventengine.events.holders.PlayerHolder;
@@ -71,6 +74,9 @@ public class Survive extends AbstractEvent
 	@Override
 	protected void onEventStart()
 	{
+		addSuscription(ListenerType.ON_KILL);
+		addSuscription(ListenerType.ON_ATTACK);
+
 		for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
 		{
 			updateTitle(ph);
@@ -90,8 +96,11 @@ public class Survive extends AbstractEvent
 	}
 	
 	@Override
-	public void onKill(PlayerHolder ph, L2Character target)
+	public void onKill(OnKillEvent event)
 	{
+		PlayerHolder ph = getPlayerEventManager().getEventPlayer(event.getAttacker());
+		L2Character target = event.getTarget();
+
 		// Incremented by one the amount of points of the team
 		getTeamsManager().getPlayerTeam(ph).increasePoints(1);
 		// Update title character
@@ -118,13 +127,9 @@ public class Survive extends AbstractEvent
 	}
 	
 	@Override
-	public boolean onAttack(PlayerHolder ph, L2Character target)
+	public void onAttack(OnAttackEvent event)
 	{
-		if (target.isPlayable())
-		{
-			return true;
-		}
-		return false;
+		event.setCancel(event.getTarget().isPlayable());
 	}
 	
 	// MISC ---------------------------------------------------------------------------------------
