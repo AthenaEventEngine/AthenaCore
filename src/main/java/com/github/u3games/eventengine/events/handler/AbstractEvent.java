@@ -30,7 +30,10 @@ import com.github.u3games.eventengine.config.BaseConfigLoader;
 import com.github.u3games.eventengine.config.model.MainEventConfig;
 import com.github.u3games.eventengine.datatables.BuffListData;
 import com.github.u3games.eventengine.datatables.MessageData;
+import com.github.u3games.eventengine.dispatcher.ListenerDispatcher;
+import com.github.u3games.eventengine.dispatcher.events.*;
 import com.github.u3games.eventengine.enums.EventState;
+import com.github.u3games.eventengine.enums.ListenerType;
 import com.github.u3games.eventengine.enums.TeamType;
 import com.github.u3games.eventengine.events.handler.managers.AntiAfkManager;
 import com.github.u3games.eventengine.events.handler.managers.InstanceWorldManager;
@@ -46,6 +49,7 @@ import com.github.u3games.eventengine.events.schedules.AnnounceTeleportEvent;
 import com.github.u3games.eventengine.events.schedules.ChangeToEndEvent;
 import com.github.u3games.eventengine.events.schedules.ChangeToFightEvent;
 import com.github.u3games.eventengine.events.schedules.ChangeToStartEvent;
+import com.github.u3games.eventengine.interfaces.IListenerSuscriber;
 import com.github.u3games.eventengine.util.EventUtil;
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.instancemanager.InstanceManager;
@@ -70,7 +74,7 @@ import com.l2jserver.util.Rnd;
 /**
  * @author fissban
  */
-public abstract class AbstractEvent
+public abstract class AbstractEvent implements IListenerSuscriber
 {
 	// Logger
 	private static final Logger LOGGER = Logger.getLogger(AbstractEvent.class.getName());
@@ -113,6 +117,7 @@ public abstract class AbstractEvent
 				onEventFight();
 				break;
 			case END:
+				ListenerDispatcher.getInstance().removeSuscriber(this);
 				onEventEnd();
 				prepareToEnd();
 				break;
@@ -226,11 +231,14 @@ public abstract class AbstractEvent
 	
 	// LISTENERS ------------------------------------------------------------------------------------ //
 	/**
-	 * @param player
-	 * @param target
+	 * @param event
 	 */
-	public void listenerOnInteract(L2PcInstance player, L2Npc target)
+	@Override
+	public final void listenerOnInteract(OnInteractEvent event)
 	{
+		L2PcInstance player = event.getPlayer();
+		L2Npc target = event.getNpc();
+
 		if (!getPlayerEventManager().isPlayableInEvent(player) || !getSpawnManager().isNpcInEvent(target))
 		{
 			return;
@@ -242,24 +250,23 @@ public abstract class AbstractEvent
 		{
 			getAntiAfkManager().excludePlayer(activePlayer);
 		}
-		onInteract(activePlayer, getSpawnManager().getEventNpc(target));
+		onInteract(event);
 	}
+
+	/**
+	 * @param event
+	 */
+	protected void onInteract(OnInteractEvent event) {}
 	
 	/**
-	 * @param ph
-	 * @param npc
+	 * @param event
 	 */
-	public void onInteract(PlayerHolder ph, NpcHolder npc)
+	@Override
+	public final void listenerOnKill(OnKillEvent event)
 	{
-		// Nothing
-	}
-	
-	/**
-	 * @param playable
-	 * @param target
-	 */
-	public void listenerOnKill(L2Playable playable, L2Character target)
-	{
+		L2Playable playable = event.getAttacker();
+		L2Character target = event.getTarget();
+
 		if (!getPlayerEventManager().isPlayableInEvent(playable))
 		{
 			return;
@@ -277,43 +284,44 @@ public abstract class AbstractEvent
 		{
 			getAntiAfkManager().excludePlayer(activePlayer);
 		}
-		onKill(activePlayer, target);
+		onKill(event);
 	}
+
+	/**
+	 * @param event
+	 */
+	protected void onKill(OnKillEvent event) {}
 	
 	/**
-	 * @param ph
-	 * @param target
+	 * @param event
 	 */
-	public void onKill(PlayerHolder ph, L2Character target)
+	@Override
+	public final void listenerOnDeath(OnDeathEvent event)
 	{
-		// Nothing
-	}
-	
-	/**
-	 * @param player
-	 */
-	public void listenerOnDeath(L2PcInstance player)
-	{
+		L2PcInstance player = event.getTarget();
+
 		if (!getPlayerEventManager().isPlayableInEvent(player))
 		{
 			return;
 		}
-		onDeath(getPlayerEventManager().getEventPlayer(player));
+		onDeath(event);
 	}
-	
+
 	/**
-	 * @param ph
+	 * @param event
 	 */
-	public void onDeath(PlayerHolder ph)
+	protected void onDeath(OnDeathEvent event) {}
+
+	@Override
+	public final void listenerOnAttack(OnAttackEvent event)
 	{
-		// Nothing
-	}
-	
-	public boolean listenerOnAttack(L2Playable playable, L2Character target)
-	{
+		L2Playable playable = event.getAttacker();
+		L2Character target = event.getTarget();
+
 		if (!getPlayerEventManager().isPlayableInEvent(playable))
 		{
-			return false;
+			event.setCancel(true);
+			return;
 		}
 		// We get the player involved in our event
 		PlayerHolder activePlayer = getPlayerEventManager().getEventPlayer(playable);
@@ -339,7 +347,7 @@ public abstract class AbstractEvent
 			if (activeTarget.isProtected())
 			{
 				activePlayer.sendMessage(MessageData.getInstance().getMsgByLang(activePlayer, "spawnprotection_protected", false));
-				return true;
+				return;
 			}
 			// Check Friendly Fire
 			if (!getConfig().isFriendlyFireEnabled())
@@ -348,46 +356,47 @@ public abstract class AbstractEvent
 				{
 					if ((activePlayer.getTeamType() != TeamType.WHITE) || (activeTarget.getTeamType() != TeamType.WHITE))
 					{
-						return true;
+						return;
 					}
 				}
 			}
 		}
-		return onAttack(activePlayer, target);
+		onAttack(event);
 	}
-	
+
 	/**
-	 * @param ph
-	 * @param target
-	 * @return true only in the event that an attack not want that continue its normal progress.
+	 * @param event
 	 */
-	public boolean onAttack(PlayerHolder ph, L2Character target)
-	{
-		return false;
-	}
+	protected void onAttack(OnAttackEvent event) {}
 	
 	/**
-	 * @param playable
-	 * @param target
-	 * @param skill
+	 * @param event
 	 * @return true only in the event that an skill not want that continue its normal progress.
 	 */
-	public boolean listenerOnUseSkill(L2Playable playable, L2Character target, Skill skill)
+	@Override
+	public final void listenerOnUseSkill(OnUseSkillEvent event)
 	{
+		L2Playable playable = event.getCaster();
+		L2Character target = event.getTarget();
+		Skill skill = event.getSkill();
+
 		if (!getPlayerEventManager().isPlayableInEvent(playable))
 		{
-			return false;
+			event.setCancel(true);
+			return;
 		}
 		// If the character has no target to finish the listener.
 		// XXX Perhaps in any event it is required to use skills without target... check!
 		if (target == null)
 		{
-			return false;
+			event.setCancel(true);
+			return;
 		}
 		// If the character is using a skill on itself end the listener
 		if (playable.equals(target))
 		{
-			return false;
+			event.setCancel(true);
+			return;
 		}
 		// We get the player involved in our event
 		PlayerHolder activePlayer = getPlayerEventManager().getEventPlayer(playable);
@@ -403,7 +412,7 @@ public abstract class AbstractEvent
 			if (activeTarget.isProtected())
 			{
 				activePlayer.sendMessage(MessageData.getInstance().getMsgByLang(activePlayer, "spawnprotection_protected", false));
-				return true;
+				return;
 			}
 			
 			if ((skill.isDamage() || skill.isDebuff()))
@@ -420,41 +429,39 @@ public abstract class AbstractEvent
 				{
 					if ((activePlayer.getTeamType() != TeamType.WHITE) || (activeTarget.getTeamType() != TeamType.WHITE))
 					{
-						return true;
+						return;
 					}
 				}
 			}
 		}
-		return onUseSkill(activePlayer, target, skill);
+		onUseSkill(event);
 	}
-	
+
 	/**
-	 * @param ph
-	 * @param target
-	 * @param skill
-	 * @return true only in the event that an item not want that continue its normal progress.
+	 * @param event
 	 */
-	public boolean onUseSkill(PlayerHolder ph, L2Character target, Skill skill)
-	{
-		return false;
-	}
+	protected void onUseSkill(OnUseSkillEvent event) {}
 	
 	/**
-	 * @param player
-	 * @param item
+	 * @param event
 	 * @return Only in the event that an skill not want that continue its normal progress.
 	 */
-	public boolean listenerOnUseItem(L2PcInstance player, L2Item item)
+	@Override
+	public final void listenerOnUseItem(OnUseItemEvent event)
 	{
+		L2PcInstance player = event.getPlayer();
+		L2Item item = event.getItem();
+
 		if (!getPlayerEventManager().isPlayableInEvent(player))
 		{
-			return false;
+			event.setCancel(true);
+			return;
 		}
 		// We will not allow the use of pots or scroll
 		// XXX It could be set as a theme config pots
 		if (item.isScroll() || item.isPotion())
 		{
-			return true;
+			return;
 		}
 		PlayerHolder activePlayer = getPlayerEventManager().getEventPlayer(player);
 		// Exclude the player from the next Anti Afk control
@@ -462,28 +469,38 @@ public abstract class AbstractEvent
 		{
 			getAntiAfkManager().excludePlayer(activePlayer);
 		}
-		return onUseItem(activePlayer, item);
+		onUseItem(event);
 	}
-	
+
 	/**
-	 * @param player
-	 * @param item
-	 * @return true only in the event that an skill not want that continue its normal progress.
+	 * @param event
 	 */
-	public boolean onUseItem(PlayerHolder player, L2Item item)
-	{
-		return false;
+	protected void onUseItem(OnUseItemEvent event) {}
+
+	@Override
+	public void listenerOnLogin(OnLogInEvent event) {
+		L2PcInstance player = event.getPlayer();
+
+		if (getPlayerEventManager().isPlayableInEvent(player))
+		{
+			onLogin(event);
+		}
 	}
-	
-	public void listenerOnLogout(L2PcInstance player)
+
+	protected void onLogin(OnLogInEvent event) {}
+
+	@Override
+	public final void listenerOnLogout(OnLogOutEvent event)
 	{
+		L2PcInstance player = event.getPlayer();
+
 		if (getPlayerEventManager().isPlayableInEvent(player))
 		{
 			try
 			{
 				PlayerHolder activePlayer = getPlayerEventManager().getEventPlayer(player);
 				// Listener
-				onLogout(activePlayer);
+				onLogout(event);
 				removePlayerFromEvent(activePlayer, true);
 				EventEngineManager.getInstance().addPlayerDisconnected(activePlayer);
 			}
@@ -494,11 +511,8 @@ public abstract class AbstractEvent
 			}
 		}
 	}
-	
-	public void onLogout(PlayerHolder ph)
-	{
-		// Nothing
-	}
+
+	protected void onLogout(OnLogOutEvent event) {}
 	
 	// VARIOUS METHODS. -------------------------------------------------------------------------------- //
 	protected void initTeleportAllPlayers()
@@ -814,5 +828,29 @@ public abstract class AbstractEvent
 			getPlayerEventManager().getAllEventPlayers().remove(ph);
 		}
 		ph.getPcInstance().teleToLocation(ph.getReturnLoc());
+	}
+
+	/**
+	 * <ul>
+	 * <b>Actions:</b>
+	 * </ul>
+	 * <li>Add a suscription to one type of events</li>
+	 * @param type: ListenerType
+	 */
+	protected final void addSuscription(ListenerType type)
+	{
+		ListenerDispatcher.getInstance().addSuscription(type, this);
+	}
+
+	/**
+	 * <ul>
+	 * <b>Actions:</b>
+	 * </ul>
+	 * <li>Remove the suscription to one type of events</li>
+	 * @param type: ListenerType
+     */
+	protected final void removeSuscription(ListenerType type)
+	{
+		ListenerDispatcher.getInstance().removeSuscription(type, this);
 	}
 }

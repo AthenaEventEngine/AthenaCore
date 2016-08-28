@@ -26,7 +26,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.github.u3games.eventengine.builders.TeamsBuilder;
 import com.github.u3games.eventengine.config.BaseConfigLoader;
 import com.github.u3games.eventengine.datatables.MessageData;
+import com.github.u3games.eventengine.dispatcher.events.*;
 import com.github.u3games.eventengine.enums.CollectionTarget;
+import com.github.u3games.eventengine.enums.ListenerType;
 import com.github.u3games.eventengine.enums.ScoreType;
 import com.github.u3games.eventengine.enums.TeamType;
 import com.github.u3games.eventengine.events.handler.AbstractEvent;
@@ -66,6 +68,7 @@ public class CaptureTheFlag extends AbstractEvent
 	private final Map<NpcHolder, TeamType> _flagSpawn = new ConcurrentHashMap<>();
 	private final Map<NpcHolder, TeamType> _holderSpawn = new ConcurrentHashMap<>();
 	private final Map<PlayerHolder, TeamType> _flagHasPlayer = new ConcurrentHashMap<>();
+	private final Map<String, Location> _flagsLoc = new HashMap<>();
 	
 	public CaptureTheFlag()
 	{
@@ -88,6 +91,12 @@ public class CaptureTheFlag extends AbstractEvent
 	@Override
 	protected void onEventStart()
 	{
+		addSuscription(ListenerType.ON_INTERACT);
+		addSuscription(ListenerType.ON_KILL);
+		addSuscription(ListenerType.ON_DEATH);
+		addSuscription(ListenerType.ON_USE_ITEM);
+		addSuscription(ListenerType.ON_LOG_OUT);
+
 		spawnFlagsAndHolders();
 		for (PlayerHolder ph : getPlayerEventManager().getAllEventPlayers())
 		{
@@ -109,8 +118,11 @@ public class CaptureTheFlag extends AbstractEvent
 	}
 	
 	@Override
-	public void onInteract(PlayerHolder ph, NpcHolder npcHolder)
+	public void onInteract(OnInteractEvent event)
 	{
+		PlayerHolder ph = getPlayerEventManager().getEventPlayer(event.getPlayer());
+		NpcHolder npcHolder = getSpawnManager().getEventNpc(event.getNpc());
+
 		if (npcHolder.getNpcInstance().getId() == FLAG)
 		{
 			if (hasFlag(ph))
@@ -149,7 +161,7 @@ public class CaptureTheFlag extends AbstractEvent
 					unequiFlag(ph);
 					TeamHolder th = getTeamsManager().getTeam(_flagHasPlayer.remove(ph));
 					// Spawn the flag again
-					_flagSpawn.put(getSpawnManager().addEventNpc(FLAG, th.getSpawn().getX(), th.getSpawn().getY(), th.getSpawn().getZ(), 0, Team.NONE, th.getName(), false, getInstanceWorldManager().getAllInstancesWorlds().get(0).getInstanceId()), th.getTeamType());
+					_flagSpawn.put(getSpawnManager().addEventNpc(FLAG, _flagsLoc.get(th.getName()).getX(), _flagsLoc.get(th.getName()).getY(), _flagsLoc.get(th.getName()).getZ(), 0, Team.NONE, th.getName(), false, getInstanceWorldManager().getAllInstancesWorlds().get(0).getInstanceId()), th.getTeamType());
 					// Announce the flag was taken
 					EventUtil.announceTo(Say2.BATTLEFIELD, "ctf_conquered_the_flag", "%holder%", ph.getTeam().getName(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
 					// Show team points
@@ -160,8 +172,11 @@ public class CaptureTheFlag extends AbstractEvent
 	}
 	
 	@Override
-	public void onKill(PlayerHolder ph, L2Character target)
+	public void onKill(OnKillEvent event)
 	{
+		PlayerHolder ph = getPlayerEventManager().getEventPlayer(event.getAttacker());
+		L2Character target = event.getTarget();
+
 		PlayerHolder targetEvent = getPlayerEventManager().getEventPlayer(target);
 		if (hasFlag(targetEvent))
 		{
@@ -199,28 +214,34 @@ public class CaptureTheFlag extends AbstractEvent
 	}
 	
 	@Override
-	public void onDeath(PlayerHolder ph)
+	public void onDeath(OnDeathEvent event)
 	{
-		giveResurrectPlayer(ph, TIME_RES_PLAYER);
+		giveResurrectPlayer(getPlayerEventManager().getEventPlayer(event.getTarget()), TIME_RES_PLAYER);
 	}
 	
 	@Override
-	public boolean onUseItem(PlayerHolder ph, L2Item item)
+	public void onUseItem(OnUseItemEvent event)
 	{
+		PlayerHolder ph = getPlayerEventManager().getEventPlayer(event.getPlayer());
+		L2Item item = event.getItem();
+
 		if (item.getId() == FLAG_ITEM)
 		{
-			return true;
+			return;
 		}
-		if (hasFlag(ph) && (item instanceof L2Weapon))
+		else if (hasFlag(ph) && (item instanceof L2Weapon))
 		{
-			return true;
+			return;
 		}
-		return false;
+
+		event.setCancel(true);
 	}
 	
 	@Override
-	public void onLogout(PlayerHolder ph)
+	public void onLogout(OnLogOutEvent event)
 	{
+		PlayerHolder ph = getPlayerEventManager().getEventPlayer(event.getPlayer());
+
 		if (hasFlag(ph))
 		{
 			// Remove the flag character
@@ -255,6 +276,8 @@ public class CaptureTheFlag extends AbstractEvent
 				int flagX = flagLocation.getX();
 				int flagY = flagLocation.getY();
 				int flagZ = flagLocation.getZ();
+
+				_flagsLoc.put(th.getName(), flagLocation);
 
 				Location holderLocation = mapHolders.get(th.getName());
 				int holderX = holderLocation.getX();
