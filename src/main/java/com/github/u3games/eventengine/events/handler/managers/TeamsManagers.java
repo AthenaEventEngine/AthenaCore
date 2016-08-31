@@ -89,7 +89,7 @@ public class TeamsManagers
 	/**
 	 * Get the team spawn.
 	 * @param team
-	 * @return Location
+	 * @return ELocation
 	 */
 	public Location getTeamSpawn(TeamType team)
 	{

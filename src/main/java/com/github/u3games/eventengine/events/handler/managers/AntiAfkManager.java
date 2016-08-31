@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 
 import com.github.u3games.eventengine.EventEngineManager;
-import com.github.u3games.eventengine.datatables.ConfigData;
+import com.github.u3games.eventengine.config.BaseConfigLoader;
 import com.github.u3games.eventengine.enums.CollectionTarget;
 import com.github.u3games.eventengine.events.handler.AbstractEvent;
 import com.github.u3games.eventengine.events.holders.PlayerHolder;
@@ -59,6 +59,8 @@ public class AntiAfkManager
 	 */
 	public void startTask()
 	{
+		int checkTime = BaseConfigLoader.getInstance().getMainConfig().getAntiAfkCheckTime();
+
 		_taskAntiAfk = ThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(() ->
 		{
 			AbstractEvent currentEvent = EventEngineManager.getInstance().getCurrentEvent();
@@ -87,7 +89,7 @@ public class AntiAfkManager
 			_playersAfkCheck.clear();
 			_playersAfkCheck.putAll(newMap);
 			newMap.clear();
-		}, ConfigData.getInstance().AFK_CHECK_TIME * 1000, ConfigData.getInstance().AFK_CHECK_TIME * 1000);
+		}, checkTime * 1000, checkTime * 1000);
 	}
 	
 	/**

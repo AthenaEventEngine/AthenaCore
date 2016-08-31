@@ -1,22 +1,38 @@
+group 'com.github.u3games.eventengine'
+version '0.1-SNAPSHOT'
+
 apply plugin: 'java'
 
 repositories {
-    jcenter()
+	mavenCentral()
+	maven { url "https://jitpack.io" }
 }
 
 sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
-dependencies {
-    compile 'org.slf4j:slf4j-api:1.7.21'
-    compile 'com.google.code.gson:gson:2.7'
-    compile project(':L2J_Server')
-
-    testCompile 'junit:junit:4.12'
-}
 
 jar {
-	archiveName = 'L2J_EventEngine.jar'
+	from {
+		configurations.compile.collect {
+			it.isDirectory() ? it : zipTree(it)
+		}
+	}
+	manifest {
+        attributes 'Implementation-Version': '0.1.0',
+                'Built-By': System.getProperty('user.name'),
+                'Built-Date': new Date(),
+                'Built-JDK': System.getProperty('java.version'),
+                'Main-Class': 'com.github.u3games.eventengine.EventEngineManager'
+    }
+    archiveName = 'L2J_EventEngine.jar'
+}
+
+dependencies {
+    compile 'org.slf4j:slf4j-api:1.7.13'
+    compile 'com.google.code.gson:gson:2.2.4'
+	compile 'com.github.typesafehub:config:v1.3.0'
+	compile fileTree(dir: './libs', include: '*.jar')
+
+    testCompile 'junit:junit:4.12'
 }
 
 task zip(type: Zip) {

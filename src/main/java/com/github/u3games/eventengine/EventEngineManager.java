@@ -29,10 +29,12 @@ import java.util.logging.Logger;
 
 import com.github.u3games.eventengine.adapter.EventEngineAdapter;
 import com.github.u3games.eventengine.ai.NpcManager;
+import com.github.u3games.eventengine.config.BaseConfigLoader;
 import com.github.u3games.eventengine.datatables.BuffListData;
-import com.github.u3games.eventengine.datatables.ConfigData;
 import com.github.u3games.eventengine.datatables.EventData;
 import com.github.u3games.eventengine.datatables.MessageData;
+import com.github.u3games.eventengine.dispatcher.events.OnLogInEvent;
+import com.github.u3games.eventengine.dispatcher.events.OnLogOutEvent;
 import com.github.u3games.eventengine.enums.EventEngineState;
 import com.github.u3games.eventengine.events.handler.AbstractEvent;
 import com.github.u3games.eventengine.events.holders.PlayerHolder;
@@ -76,8 +78,8 @@ public class EventEngineManager
 			EventEngineAdapter.class.newInstance();
 			LOGGER.info(EventEngineManager.class.getSimpleName() + ": Adapter loaded.");
 			// Load event configs
-			ConfigData.getInstance();
-			LOGGER.info(EventEngineManager.class.getSimpleName() + ": Configs loaded.");
+			BaseConfigLoader.getInstance();
+			LOGGER.info(EventEngineManager.class.getSimpleName() + ": New Configs loaded.");
 			EventData.getInstance();
 			LOGGER.info(EventEngineManager.class.getSimpleName() + ": Events loaded.");
 			initVotes();
@@ -165,172 +167,32 @@ public class EventEngineManager
 	
 	// XXX LISTENERS -------------------------------------------------------------------------------------
 	/**
-	 * @param playable Character or Summon.
-	 * @param target Can't be null.
-	 * @return true Just in case we do not want an attack continue their normal progress.
-	 */
-	public boolean listenerOnAttack(L2Playable playable, L2Character target)
-	{
-		if (_currentEvent != null)
-		{
-			try
-			{
-				return _currentEvent.listenerOnAttack(playable, target);
-			}
-			catch (Exception e)
-			{
-				LOGGER.warning(EventEngineManager.class.getSimpleName() + ": listenerOnAttack() " + e);
-				e.printStackTrace();
-			}
-		}
-		return false;
-	}
-	
-	/**
-	 * @param playable Character or Summon.
-	 * @param target Can be null.
-	 * @param skill
-	 * @return true Just in case we do not want a skill not continue its normal progress.
-	 */
-	public boolean listenerOnUseSkill(L2Playable playable, L2Character target, Skill skill)
-	{
-		// If it is not running, not continue the listener
-		if (_currentEvent != null)
-		{
-			try
-			{
-				return _currentEvent.listenerOnUseSkill(playable, target, skill);
-			}
-			catch (Exception e)
-			{
-				LOGGER.warning(EventEngineManager.class.getSimpleName() + ": listenerOnUseSkill() " + e);
-				e.printStackTrace();
-			}
-		}
-		return false;
-	}
-	
-	/**
-	 * @param playable Character or summon.
-	 * @param target Can't be null.
-	 */
-	public void listenerOnKill(L2Playable playable, L2Character target)
-	{
-		if (_currentEvent != null)
-		{
-			try
-			{
-				_currentEvent.listenerOnKill(playable, target);
-			}
-			catch (Exception e)
-			{
-				LOGGER.warning(EventEngineManager.class.getSimpleName() + ": listenerOnKill() " + e);
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	/**
-	 * @param player
-	 * @param target
-	 */
-	public void listenerOnInteract(L2PcInstance player, L2Npc target)
-	{
-		if (_currentEvent != null)
-		{
-			try
-			{
-				_currentEvent.listenerOnInteract(player, target);
-			}
-			catch (Exception e)
-			{
-				LOGGER.warning(EventEngineManager.class.getSimpleName() + ": listenerOnInteract() " + e);
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	/**
-	 * @param player
-	 */
-	public void listenerOnDeath(L2PcInstance player)
-	{
-		// If it is not running, not continue the listener
-		if (_currentEvent != null)
-		{
-			try
-			{
-				_currentEvent.listenerOnDeath(player);
-			}
-			catch (Exception e)
-			{
-				LOGGER.warning(EventEngineManager.class.getSimpleName() + ": listenerOnDeath() " + e);
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	/**
 	 * Listener when the player logout.
-	 * @param player
+	 * @param event
 	 */
-	public void listenerOnLogout(L2PcInstance player)
+	public void listenerOnLogout(OnLogOutEvent event)
 	{
 		if (_currentEvent == null)
 		{
 			if ((_state == EventEngineState.REGISTER) || (_state == EventEngineState.VOTING))
 			{
+				L2PcInstance player = event.getPlayer();
 				DualBoxProtection.getInstance().removeConnection(player.getClient());
 				removeVote(player);
 				unRegisterPlayer(player);
-				return;
-			}
-		}
-		else
-		{
-			try
-			{
-				_currentEvent.listenerOnLogout(player);
-			}
-			catch (Exception e)
-			{
-				LOGGER.warning(EventEngineManager.class.getSimpleName() + ": listenerOnLogout() " + e);
-				e.printStackTrace();
 			}
 		}
 	}
 	
 	/**
-	 * @param player
+	 * @param event
 	 */
-	public void listenerOnLogin(L2PcInstance player)
+	public void listenerOnLogin(OnLogInEvent event)
 	{
+		L2PcInstance player = event.getPlayer();
 		returnPlayerDisconnected(player);
 		player.sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", MessageData.getInstance().getMsgByLang(player, "event_login_participate", true)));
 		player.sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", MessageData.getInstance().getMsgByLang(player, "event_login_vote", true)));
-	}
-	
-	/**
-	 * @param player
-	 * @param item
-	 * @return boolean True only if we do not want that you can not use an item.
-	 */
-	public boolean listenerOnUseItem(L2PcInstance player, L2Item item)
-	{
-		// If it is not running, not continue the listener
-		if (_currentEvent != null)
-		{
-			try
-			{
-				return _currentEvent.listenerOnUseItem(player, item);
-			}
-			catch (Exception e)
-			{
-				LOGGER.warning(EventEngineManager.class.getSimpleName() + ": listenerOnUseItem() " + e);
-				e.printStackTrace();
-			}
-		}
-		return false;
 	}
 	
 	// XXX EVENT VOTE ------------------------------------------------------------------------------------

@@ -22,8 +22,9 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import com.github.u3games.eventengine.EventEngineManager;
+import com.github.u3games.eventengine.config.BaseConfigLoader;
+import com.github.u3games.eventengine.config.model.MainEventConfig;
 import com.github.u3games.eventengine.datatables.BuffListData;
-import com.github.u3games.eventengine.datatables.ConfigData;
 import com.github.u3games.eventengine.datatables.EventData;
 import com.github.u3games.eventengine.datatables.MessageData;
 import com.github.u3games.eventengine.events.handler.AbstractEvent;
@@ -47,9 +48,14 @@ public class NpcManager extends Quest
 	public NpcManager()
 	{
 		super(-1, NpcManager.class.getSimpleName(), "EventEngine");
-		addStartNpc(ConfigData.getInstance().NPC_MANAGER_ID);
-		addFirstTalkId(ConfigData.getInstance().NPC_MANAGER_ID);
-		addTalkId(ConfigData.getInstance().NPC_MANAGER_ID);
+
+		addStartNpc(getConfig().getNpcId());
+		addFirstTalkId(getConfig().getNpcId());
+		addTalkId(getConfig().getNpcId());
+	}
+
+	private static MainEventConfig getConfig() {
+		return BaseConfigLoader.getInstance().getMainConfig();
 	}
 	
 	@Override
@@ -101,7 +107,7 @@ public class NpcManager extends Quest
 						DualBoxProtection.getInstance().registerConnection(player.getClient());
 						
 						// Check player size
-						if (EventEngineManager.getInstance().getAllRegisteredPlayers().size() >= ConfigData.getInstance().MAX_PLAYERS_IN_EVENT)
+						if (EventEngineManager.getInstance().getAllRegisteredPlayers().size() >= getConfig().getMaxPlayers())
 						{
 							player.sendMessage(MessageData.getInstance().getMsgByLang(player, "registering_maxPlayers", true));
 						}
@@ -189,13 +195,13 @@ public class NpcManager extends Quest
 			html.replace("%textLevelMax%", MessageData.getInstance().getMsgByLang(player, "text_level_max", false));
 			html.replace("%textLevelMin%", MessageData.getInstance().getMsgByLang(player, "text_level_min", false));
 			// TODO: replace for max and min from event
-			html.replace("%levelMax%", ConfigData.getInstance().MAX_LVL_IN_EVENT);
-			html.replace("%levelMin%", ConfigData.getInstance().MIN_LVL_IN_EVENT);
+			html.replace("%levelMax%", getConfig().getMaxPlayerLevel());
+			html.replace("%levelMin%", getConfig().getMinPlayerLevel());
 			// Configuration
 			html.replace("%textConfiguration%", MessageData.getInstance().getMsgByLang(player, "text_configuration", false));
 			html.replace("%textTimeEvent%", MessageData.getInstance().getMsgByLang(player, "text_time_event", false));
 			// TODO: replace for duration from event
-			html.replace("%timeEvent%", ConfigData.getInstance().EVENT_DURATION);
+			html.replace("%timeEvent%", getConfig().getRunningTime());
 			html.replace("%timeMinutes%", MessageData.getInstance().getMsgByLang(player, "time_minutes", false));
 			// Rewards
 			html.replace("%textRewards%", MessageData.getInstance().getMsgByLang(player, "text_rewards", false));
@@ -241,7 +247,7 @@ public class NpcManager extends Quest
 		html.replace("%buffTextCount%", MessageData.getInstance().getMsgByLang(player, "buff_text_count", false));
 		html.replace("%buffTextMax%", MessageData.getInstance().getMsgByLang(player, "buff_text_max", false));
 		html.replace("%buffCount%", " <font color=LEVEL>" + BuffListData.getInstance().getBuffsPlayer(player).size() + "</font>");
-		html.replace("%buffMax%", " <font color=LEVEL>" + ConfigData.MAX_BUFF_COUNT + "</font>");
+		html.replace("%buffMax%", " <font color=LEVEL>" + getConfig().getMaxBuffCount() + "</font>");
 		html.replace("%buttonMain%", MessageData.getInstance().getMsgByLang(player, "button_main", false));
 		StringBuilder sb = new StringBuilder();
 		sb.append("<table>");
@@ -253,7 +259,7 @@ public class NpcManager extends Quest
 			sb.append("<td width=130><font color=LEVEL>" + sh.getSkill().getName() + "</font><br></td>");
 			if (!BuffListData.getInstance().getBuffPlayer(player, sh))
 			{
-				if (BuffListData.getInstance().getBuffsPlayer(player).size() >= ConfigData.MAX_BUFF_COUNT)
+				if (BuffListData.getInstance().getBuffsPlayer(player).size() >= getConfig().getMaxBuffCount())
 				{
 					sb.append("<td width=32 height=32></td>");
 				}
@@ -357,13 +363,13 @@ public class NpcManager extends Quest
 	private static boolean checkPlayerCondition(L2PcInstance player)
 	{
 		// Check level min
-		if (player.getLevel() < ConfigData.getInstance().MIN_LVL_IN_EVENT)
+		if (player.getLevel() < getConfig().getMinPlayerLevel())
 		{
 			player.sendMessage(MessageData.getInstance().getMsgByLang(player, "lowLevel", true));
 			return false;
 		}
 		// Check level max
-		else if (player.getLevel() > ConfigData.getInstance().MAX_LVL_IN_EVENT)
+		else if (player.getLevel() > getConfig().getMaxPlayerLevel())
 		{
 			player.sendMessage(MessageData.getInstance().getMsgByLang(player, "highLevel", true));
 			return false;
@@ -408,7 +414,7 @@ public class NpcManager extends Quest
 		else if ((player.getPvpFlag() > 0) || (player.isInCombat()) || (player.isInDuel()) || (player.getKarma() > 0) || (player.isCursedWeaponEquipped()))
 		{
 			// Check properties
-			if (!ConfigData.getInstance().EVENT_CHAOTIC_PLAYER_REGISTER)
+			if (!getConfig().isChaoticPlayerRegisterAllowed())
 			{
 				player.sendMessage(MessageData.getInstance().getMsgByLang(player, "chaoticPlayer", true));
 				return false;
