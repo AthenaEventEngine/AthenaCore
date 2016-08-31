@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.github.u3games.eventengine.EventEngineManager;
-import com.github.u3games.eventengine.datatables.ConfigData;
+import com.github.u3games.eventengine.config.BaseConfigLoader;
 import com.github.u3games.eventengine.datatables.MessageData;
 import com.github.u3games.eventengine.enums.CollectionTarget;
 import com.github.u3games.eventengine.events.holders.PlayerHolder;
@@ -219,7 +219,7 @@ public class EventUtil
 				if (npcs == null)
 				{
 					// Use by default the Npc Manager
-					npcs = getNpcSpawned(ConfigData.getInstance().NPC_MANAGER_ID);
+					npcs = getNpcSpawned(BaseConfigLoader.getInstance().getMainConfig().getNpcId());
 				}
 				
 				Map<L2Npc, Collection<L2PcInstance>> npcPlayerMap = getNpcPlayerCollection(type, npcs);

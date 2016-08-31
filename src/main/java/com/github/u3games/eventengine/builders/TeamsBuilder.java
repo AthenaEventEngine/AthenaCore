@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 
+import com.github.u3games.eventengine.config.model.TeamConfig;
 import com.github.u3games.eventengine.enums.DistributionType;
 import com.github.u3games.eventengine.enums.TeamType;
 import com.github.u3games.eventengine.events.holders.PlayerHolder;
@@ -32,100 +33,58 @@ import com.l2jserver.gameserver.model.Location;
 public class TeamsBuilder
 {
 	private static final Logger LOGGER = Logger.getLogger(TeamsBuilder.class.getName());
-	private int _teamsAmount;
-	private final List<List<Location>> _locations = new ArrayList<>();
-	private DistributionType _distribution = DistributionType.DEFAULT;
-	private final Collection<PlayerHolder> _players = new ArrayList<>();
-	
-	public TeamsBuilder addTeams(int amount, List<Location> locations)
-	{
-		_teamsAmount = amount;
-		for (Location loc : locations)
-		{
-			List<Location> list = new ArrayList<>();
-			list.add(loc);
-			_locations.add(list);
+
+	private DistributionType mDistribution = DistributionType.DEFAULT;
+	private final Collection<PlayerHolder> mPlayers = new ArrayList<>();
+
+	private final List<TeamHolder> mTeams = new ArrayList<>();
+
+	public TeamsBuilder addTeam(List<Location> locations) {
+		mTeams.add(new TeamHolder("", TeamType.WHITE, locations));
+		return this;
+	}
+
+	public TeamsBuilder addTeams(Collection<? extends TeamConfig> teamsConfig) {
+		for (TeamConfig config : teamsConfig) {
+			mTeams.add(new TeamHolder(config.getName(), config.getColor(), config.getLocations()));
 		}
+
 		return this;
 	}
 	
-	public TeamsBuilder setPlayers(Collection<PlayerHolder> list)
-	{
-		_players.addAll(list);
+	public TeamsBuilder setPlayers(Collection<PlayerHolder> list) {
+		mPlayers.addAll(list);
 		return this;
 	}
 	
-	public TeamsBuilder setDistribution(DistributionType type)
-	{
-		_distribution = type;
+	public TeamsBuilder setDistribution(DistributionType type) {
+		mDistribution = type;
 		return this;
 	}
 	
-	public List<TeamHolder> build()
-	{
-		List<TeamHolder> teams = createTeams();
-		if (teams == null)
-		{
-			return null;
-		}
-		return distributePlayers(teams);
-	}
-	
-	private List<TeamHolder> createTeams()
-	{
-		List<TeamHolder> teams = new ArrayList<>();
-		if (_teamsAmount != _locations.size())
-		{
-			LOGGER.warning(TeamsBuilder.class.getSimpleName() + ": The count of teams and locations doesn't match. Event cancelled!");
-			LOGGER.warning(TeamsBuilder.class.getSimpleName() + ": Count of teams: " + teams.size());
-			LOGGER.warning(TeamsBuilder.class.getSimpleName() + ": Count of locations: " + _locations.size());
-			return null;
-		}
-		if (_teamsAmount == 1)
-		{
-			TeamType type = TeamType.WHITE;
-			teams.add(newTeam(type, _locations.get(0).get(0))); // TODO: change when we have multiple locations
-		}
-		else
-		{
-			for (int i = 1; i <= _teamsAmount; i++)
-			{
-				TeamType type = TeamType.values()[i];
-				teams.add(newTeam(type, _locations.get(i - 1).get(0))); // TODO: change when we have multiple locations
-			}
-		}
-		return teams;
-	}
-	
-	private TeamHolder newTeam(TeamType type, Location loc)
-	{
-		TeamHolder team = new TeamHolder(type);
-		team.setSpawn(loc);
-		return team;
-	}
-	
-	private List<TeamHolder> distributePlayers(List<TeamHolder> teams)
-	{
-		switch (_distribution)
-		{
+	private List<TeamHolder> distributePlayers(List<TeamHolder> teams) {
+		switch (mDistribution) {
 			case DEFAULT:
 			default:
 				int i = 0;
-				for (PlayerHolder player : _players)
-				{
-					player.setTeam(teams.get(i).getTeamType());
-					
-					if (teams.size() <= (i + 1))
-					{
-						i = 0;
-					}
-					else
-					{
-						i++;
-					}
+				for (PlayerHolder player : mPlayers) {
+					player.setTeam(teams.get(i));
+
+					if (teams.size() <= (i + 1)) i = 0;
+					else i++;
 				}
 				break;
 		}
 		return teams;
+	}
+
+	public List<TeamHolder> build() {
+		if (mTeams.size() <= 0)
+		{
+			LOGGER.warning(TeamsBuilder.class.getSimpleName() + ": The count of teams can't be zero!");
+			return null;
+		}
+
+		return distributePlayers(mTeams);
 	}
 }

@@ -23,10 +23,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import com.github.u3games.eventengine.events.AllVsAll;
-import com.github.u3games.eventengine.events.CaptureTheFlag;
-import com.github.u3games.eventengine.events.Survive;
-import com.github.u3games.eventengine.events.TeamVsTeam;
+import com.github.u3games.eventengine.config.BaseConfigLoader;
+import com.github.u3games.eventengine.events.types.allvsall.AllVsAll;
+import com.github.u3games.eventengine.events.types.capturetheflag.CaptureTheFlag;
+import com.github.u3games.eventengine.events.types.survive.Survive;
+import com.github.u3games.eventengine.events.types.teamvsteam.TeamVsTeam;
 import com.github.u3games.eventengine.events.handler.AbstractEvent;
 import com.l2jserver.util.Rnd;
 
@@ -46,22 +47,22 @@ public class EventData
 	
 	private void load()
 	{
-		if (ConfigData.getInstance().AVA_EVENT_ENABLED)
+		if (BaseConfigLoader.getInstance().getAllVsAllConfig().isEnabled())
 		{
 			_eventList.add(AllVsAll.class);
 			_eventMap.put(AllVsAll.class.getSimpleName(), AllVsAll.class);
 		}
-		if (ConfigData.getInstance().SURVIVE_EVENT_ENABLED)
+		if (BaseConfigLoader.getInstance().getSurviveConfig().isEnabled())
 		{
 			_eventList.add(Survive.class);
 			_eventMap.put(Survive.class.getSimpleName(), Survive.class);
 		}
-		if (ConfigData.getInstance().TVT_EVENT_ENABLED)
+		if (BaseConfigLoader.getInstance().getTvTConfig().isEnabled())
 		{
 			_eventList.add(TeamVsTeam.class);
 			_eventMap.put(TeamVsTeam.class.getSimpleName(), TeamVsTeam.class);
 		}
-		if (ConfigData.getInstance().CTF_EVENT_ENABLED)
+		if (BaseConfigLoader.getInstance().getCtfConfig().isEnabled())
 		{
 			_eventList.add(CaptureTheFlag.class);
 			_eventMap.put(CaptureTheFlag.class.getSimpleName(), CaptureTheFlag.class);
