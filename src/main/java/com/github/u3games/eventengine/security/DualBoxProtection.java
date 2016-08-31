@@ -66,15 +66,18 @@ public final class DualBoxProtection
 		{
 			try
 			{
-				IpPack pack = new IpPack(client.getConnection().getInetAddress().getHostAddress(), client.getTrace());
-				Integer count = _address.get(pack) != null ? _address.get(pack) : 0;
-				if (count > 0)
+				if ((client.getConnection().getInetAddress().getHostAddress() != null) || (client.getTrace() != null))
 				{
-					_address.put(pack, count -= 1);
-				}
-				else
-				{
-					_address.remove(pack);
+					IpPack pack = new IpPack(client.getConnection().getInetAddress().getHostAddress(), client.getTrace());
+					Integer count = _address.get(pack) != null ? _address.get(pack) : 0;
+					if (count > 0)
+					{
+						_address.put(pack, count -= 1);
+					}
+					else
+					{
+						_address.remove(pack);
+					}
 				}
 			}
 			catch (Exception e)
