@@ -1,14 +1,14 @@
 /*
- * Copyright (C) 2004-2016 L2J EventEngine
+ * Copyright (C) 2004-2016 Athena Event Engine.
  * 
- * This file is part of L2J EventEngine.
+ * This file is part of Athena Event Engine.
  * 
- * L2J EventEngine is free software: you can redistribute it and/or modify
+ * Athena Event Engine is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  * 
- * L2J EventEngine is distributed in the hope that it will be useful,
+ * Athena Event Engine is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.

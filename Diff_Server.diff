@@ -15,7 +15,7 @@ index 14354b1..dbc234a 100644
  			return SystemMessage.getSystemMessage(SystemMessageId.THE_GAME_HAS_BEEN_CANCELLED_BECAUSE_THE_OTHER_PARTY_ENDS_THE_GAME);
  		}
  		
-+		// L2J EventEngine
++		// Athena Event Engine
 +		if (EventEngineManager.getInstance().isPlayableInEvent(player))
 +		{
 +			return SystemMessage.getSystemMessage(SystemMessageId.THE_GAME_HAS_BEEN_CANCELLED_BECAUSE_THE_OTHER_PARTY_DOES_NOT_MEET_THE_REQUIREMENTS_FOR_JOINING_THE_GAME);
@@ -41,7 +41,7 @@ index 640e695..263f1d7 100644
  			}
  		}
  		
-+		// L2J EventEngine
++		// Athena Event Engine
 +		if (EventEngineManager.getInstance().listenerOnUseItem(activeChar, item.getItem()))
 +		{
 +			return;
