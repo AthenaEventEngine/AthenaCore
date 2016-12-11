@@ -2,7 +2,7 @@ package com.github.u3games.eventengine.datatables;
 
 import com.github.u3games.eventengine.config.model.EventsListConfig;
 import com.github.u3games.eventengine.config.model.MainEventConfig;
-import com.github.u3games.eventengine.events.handler.AbstractEvent;
+import com.github.u3games.eventengine.interfaces.EventContainer;
 import com.github.u3games.eventengine.util.GsonUtils;
 import com.l2jserver.util.Rnd;
 
@@ -10,9 +10,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,42 +21,28 @@ public class EventLoader {
     private static final String EVENTS_CONFIG_PATH = "./data/eventengine/Events.conf";
     private static final String EVENT_JAR_PATH = "./data/eventengine/events/";
 
-    private final ArrayList<Class<? extends AbstractEvent>> _eventList = new ArrayList<>();
-    private final Map<String, Class<? extends AbstractEvent>> _eventMap = new HashMap<>();
+    private final ArrayList<EventContainer> _eventList = new ArrayList<>();
+    private final Map<String, EventContainer> _eventMap = new HashMap<>();
     private MainEventConfig mMainConfig;
-    private EventsListConfig mEventsListConfig;
 
     private EventLoader()
     {
         loadEvents();
     }
 
-    public Class<? extends AbstractEvent> getEvent(String name)
+    public EventContainer getEvent(String name)
     {
         return _eventMap.get(name);
     }
 
-    public Class<? extends AbstractEvent> getRandomEventType()
+    public EventContainer getRandomEventType()
     {
         return _eventList.get(Rnd.get(_eventList.size() - 1));
     }
 
-    public ArrayList<Class<? extends AbstractEvent>> getEnabledEvents()
+    public ArrayList<EventContainer> getEnabledEvents()
     {
         return _eventList;
-    }
-
-    public AbstractEvent getNewEventInstance(Class<? extends AbstractEvent> type)
-    {
-        try
-        {
-            return type.newInstance();
-        }
-        catch (Exception e)
-        {
-            LOGGER.log(Level.WARNING, e.getMessage());
-        }
-        return null;
     }
 
     private void loadEvents()
@@ -68,17 +52,17 @@ public class EventLoader {
 
         for (EventsListConfig.Event event : eventsListConfig.getEvents())
         {
-            Class<? extends AbstractEvent> eventClass = loadJar(new File(EVENT_JAR_PATH + event.getJarName()), event.getClassPath());
-            
-            if (eventClass != null)
+            EventContainer container = (EventContainer) loadJar(new File(EVENT_JAR_PATH + event.getJarName() + ".jar"), event.getClassPath());
+
+            if (container != null)
             {
-                _eventList.add(eventClass);
-                _eventMap.put(eventClass.getSimpleName(), eventClass);
+                _eventList.add(container);
+                _eventMap.put(container.getEventName(), container);
             }
         }
     }
 
-    private Class<? extends AbstractEvent> loadJar(File jarPath, String classPath)
+    private Object loadJar(File jarPath, String classPath)
     {
         try {
             URL classUrl;
@@ -100,11 +84,17 @@ public class EventLoader {
                 throw new InvalidJarLoadException("Cannot find main class " + classPath);
             }
 
-            if (!classToLoad.getSuperclass().getSimpleName().equalsIgnoreCase("AbstractEvent")) {
+            if (!classToLoad.getSuperclass().getSimpleName().equalsIgnoreCase("BaseEventContainer")) {
                 throw new InvalidJarLoadException("Wrong inheritance for " + classToLoad.getSimpleName());
             }
 
-            return classToLoad;
+            try {
+                return classToLoad.newInstance();
+            } catch (InstantiationException ex) {
+                throw new InvalidJarLoadException("The class " + classToLoad.getSimpleName() + " cannot be instantiated");
+            } catch (IllegalAccessException ex) {
+                throw new InvalidJarLoadException("The class " + classToLoad.getSimpleName() + " cannot be accessed");
+            }
         } catch (InvalidJarLoadException ex) {
             LOGGER.log(Level.SEVERE, ex.getMessage());
         }
