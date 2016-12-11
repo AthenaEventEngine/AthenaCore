@@ -21,7 +21,7 @@ package com.github.u3games.eventengine.task;
 import com.github.u3games.eventengine.EventEngineManager;
 import com.github.u3games.eventengine.config.BaseConfigLoader;
 import com.github.u3games.eventengine.config.model.MainEventConfig;
-import com.github.u3games.eventengine.datatables.EventData;
+import com.github.u3games.eventengine.datatables.EventLoader;
 import com.github.u3games.eventengine.enums.CollectionTarget;
 import com.github.u3games.eventengine.enums.EventEngineState;
 import com.github.u3games.eventengine.events.handler.AbstractEvent;
@@ -59,7 +59,7 @@ public class EventEngineTask implements Runnable
 					}
 					else
 					{
-						EventEngineManager.getInstance().setNextEvent(EventData.getInstance().getRandomEventType());
+						EventEngineManager.getInstance().setNextEvent(EventLoader.getInstance().getRandomEventType());
 						EventEngineManager.getInstance().setTime(getConfig().getRegisterTime() * 60);
 						String eventName = EventEngineManager.getInstance().getNextEvent().getSimpleName();
 						EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "event_register_started", "%event%", eventName, _type);
@@ -113,7 +113,7 @@ public class EventEngineTask implements Runnable
 			}
 			case RUN_EVENT:
 			{
-				AbstractEvent event = EventData.getInstance().getNewEventInstance(EventEngineManager.getInstance().getNextEvent());
+				AbstractEvent event = EventLoader.getInstance().getNewEventInstance(EventEngineManager.getInstance().getNextEvent());
 				
 				if (event == null)
 				{
