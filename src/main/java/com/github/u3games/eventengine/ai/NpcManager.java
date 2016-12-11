@@ -25,7 +25,7 @@ import com.github.u3games.eventengine.EventEngineManager;
 import com.github.u3games.eventengine.config.BaseConfigLoader;
 import com.github.u3games.eventengine.config.model.MainEventConfig;
 import com.github.u3games.eventengine.datatables.BuffListData;
-import com.github.u3games.eventengine.datatables.EventData;
+import com.github.u3games.eventengine.datatables.EventLoader;
 import com.github.u3games.eventengine.datatables.MessageData;
 import com.github.u3games.eventengine.events.handler.AbstractEvent;
 import com.github.u3games.eventengine.security.DualBoxProtection;
@@ -85,7 +85,7 @@ public class NpcManager extends Quest
 				if (checkPlayerCondition(player))
 				{
 					// Add vote event
-					Class<? extends AbstractEvent> type = EventData.getInstance().getEvent(st.nextToken());
+					Class<? extends AbstractEvent> type = EventLoader.getInstance().getEvent(st.nextToken());
 					if (type != null)
 					{
 						EventEngineManager.getInstance().increaseVote(player, type);
@@ -184,7 +184,7 @@ public class NpcManager extends Quest
 		final NpcHtmlMessage html = new NpcHtmlMessage();
 		html.setFile(player.getHtmlPrefix(), "data/html/events/event_info.htm");
 		// Avoid a vulnerability
-		if (EventData.getInstance().getEvent(eventName) != null)
+		if (EventLoader.getInstance().getEvent(eventName) != null)
 		{
 			// Info event
 			html.replace("%eventName%", MessageData.getInstance().getMsgByLang(player, "event_" + eventName.toLowerCase() + "_name", false));
@@ -311,7 +311,7 @@ public class NpcManager extends Quest
 		else if (EventEngineManager.getInstance().isOpenVote())
 		{
 			final StringBuilder eventList = new StringBuilder(500);
-			for (Class<? extends AbstractEvent> event : EventData.getInstance().getEnabledEvents())
+			for (Class<? extends AbstractEvent> event : EventLoader.getInstance().getEnabledEvents())
 			{
 				StringUtil.append(eventList, "<tr>");
 				StringUtil.append(eventList, "<td align=center width=30% height=30><button value=\"" + MessageData.getInstance().getMsgByLang(player, "event_" + event.getSimpleName().toLowerCase() + "_name", false) + "\" action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " vote "

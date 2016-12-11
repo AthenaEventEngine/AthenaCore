@@ -31,7 +31,7 @@ import com.github.u3games.eventengine.adapter.EventEngineAdapter;
 import com.github.u3games.eventengine.ai.NpcManager;
 import com.github.u3games.eventengine.config.BaseConfigLoader;
 import com.github.u3games.eventengine.datatables.BuffListData;
-import com.github.u3games.eventengine.datatables.EventData;
+import com.github.u3games.eventengine.datatables.EventLoader;
 import com.github.u3games.eventengine.datatables.MessageData;
 import com.github.u3games.eventengine.dispatcher.events.OnLogInEvent;
 import com.github.u3games.eventengine.dispatcher.events.OnLogOutEvent;
@@ -80,7 +80,7 @@ public class EventEngineManager
 			// Load event configs
 			BaseConfigLoader.getInstance();
 			LOGGER.info(EventEngineManager.class.getSimpleName() + ": New Configs loaded.");
-			EventData.getInstance();
+			EventLoader.getInstance();
 			LOGGER.info(EventEngineManager.class.getSimpleName() + ": Events loaded.");
 			initVotes();
 			// Load buff list
@@ -206,7 +206,7 @@ public class EventEngineManager
 	 */
 	public void initVotes()
 	{
-		for (Class<? extends AbstractEvent> type : EventData.getInstance().getEnabledEvents())
+		for (Class<? extends AbstractEvent> type : EventLoader.getInstance().getEnabledEvents())
 		{
 			_currentEventVotes.put(type, ConcurrentHashMap.newKeySet());
 		}
