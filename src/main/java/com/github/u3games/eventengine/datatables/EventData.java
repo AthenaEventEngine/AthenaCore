@@ -18,16 +18,20 @@
  */
 package com.github.u3games.eventengine.datatables;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.github.u3games.eventengine.config.BaseConfigLoader;
 import com.github.u3games.eventengine.events.types.allvsall.AllVsAll;
 import com.github.u3games.eventengine.events.types.capturetheflag.CaptureTheFlag;
 import com.github.u3games.eventengine.events.types.survive.Survive;
-import com.github.u3games.eventengine.events.types.teamvsteam.TeamVsTeam;
 import com.github.u3games.eventengine.events.handler.AbstractEvent;
 import com.l2jserver.util.Rnd;
 
@@ -40,7 +44,7 @@ public class EventData
 	private final ArrayList<Class<? extends AbstractEvent>> _eventList = new ArrayList<>();
 	private final Map<String, Class<? extends AbstractEvent>> _eventMap = new HashMap<>();
 	
-	public EventData()
+	private EventData()
 	{
 		load();
 	}
@@ -59,8 +63,14 @@ public class EventData
 		}
 		if (BaseConfigLoader.getInstance().getTvTConfig().isEnabled())
 		{
-			_eventList.add(TeamVsTeam.class);
-			_eventMap.put(TeamVsTeam.class.getSimpleName(), TeamVsTeam.class);
+			Description descr = new Description(new File("./events/TeamVsTeam.jar"), "com.github.athenaeventengine.events.TeamVsTeam");
+			Class<? extends AbstractEvent> classToLoad = loadJar(descr);
+
+			if (classToLoad != null)
+			{
+				_eventList.add(classToLoad);
+				_eventMap.put(classToLoad.getSimpleName(), classToLoad);
+			}
 		}
 		if (BaseConfigLoader.getInstance().getCtfConfig().isEnabled())
 		{
@@ -96,6 +106,40 @@ public class EventData
 		}
 		return null;
 	}
+
+	private Class<? extends AbstractEvent> loadJar(Description descr)
+	{
+		try {
+			URL classUrl;
+			URL[] classUrls;
+
+			try {
+				classUrl = descr.getFile().toURI().toURL();
+				classUrls = new URL[] { classUrl };
+			} catch (MalformedURLException ex) {
+				throw new InvalidJarLoadException("File URL malformed " + descr.getFile().getName());
+			}
+
+			URLClassLoader child = new URLClassLoader(classUrls, this.getClass().getClassLoader());
+			Class classToLoad;
+
+			try {
+				classToLoad = Class.forName(descr.getClassName(), true, child);
+			} catch (ClassNotFoundException ex) {
+				throw new InvalidJarLoadException("Cannot find main class " + descr.getClassName());
+			}
+
+			if (!classToLoad.getSuperclass().getSimpleName().equalsIgnoreCase("AbstractEvent")) {
+				throw new InvalidJarLoadException("Wrong inheritance for " + classToLoad.getSimpleName());
+			}
+
+			return classToLoad;
+		} catch (InvalidJarLoadException ex) {
+			LOGGER.log(Level.SEVERE, ex.getMessage());
+		}
+
+		return null;
+	}
 	
 	public static EventData getInstance()
 	{
@@ -105,5 +149,39 @@ public class EventData
 	private static class SingletonHolder
 	{
 		protected static final EventData _instance = new EventData();
+	}
+
+	private class Description {
+
+		private final File mFile;
+		private final String mClassPath;
+
+		private Description(File file, String classPath) {
+			mFile = file;
+			mClassPath = classPath;
+		}
+
+		public File getFile() {
+			return mFile;
+		}
+
+		private String getClassName() {
+			return mClassPath;
+		}
+	}
+
+	private class InvalidJarLoadException extends Exception {
+
+		private final String mMessage;
+
+		private InvalidJarLoadException(String message) {
+			super();
+			mMessage = message;
+		}
+
+		@Override
+		public final String getMessage() {
+			return InvalidJarLoadException.class.getSimpleName() + mMessage;
+		}
 	}
 }
