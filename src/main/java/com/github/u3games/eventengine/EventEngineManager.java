@@ -209,7 +209,7 @@ public class EventEngineManager
 	{
 		for (EventContainer container : EventLoader.getInstance().getEnabledEvents())
 		{
-			_currentEventVotes.put(container.getEventName(), ConcurrentHashMap.newKeySet());
+			_currentEventVotes.put(container.getSimpleEventName(), ConcurrentHashMap.newKeySet());
 		}
 	}
 	

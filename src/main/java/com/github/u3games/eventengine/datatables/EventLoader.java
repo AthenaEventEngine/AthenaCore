@@ -1,25 +1,26 @@
 package com.github.u3games.eventengine.datatables;
 
-import com.github.u3games.eventengine.config.model.EventsListConfig;
 import com.github.u3games.eventengine.config.model.MainEventConfig;
 import com.github.u3games.eventengine.interfaces.EventContainer;
 import com.github.u3games.eventengine.util.GsonUtils;
 import com.l2jserver.util.Rnd;
 
-import java.io.File;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class EventLoader {
 
     private static final Logger LOGGER = Logger.getLogger(EventLoader.class.getName());
-    private static final String MAIN_CONFIG_PATH = "./data/eventengine/EventEngine.conf";
-    private static final String EVENTS_CONFIG_PATH = "./data/eventengine/Events.conf";
-    private static final String EVENT_JAR_PATH = "./data/eventengine/events/";
+    private static final String MAIN_CONFIG_PATH = "./eventengine/EventEngine.conf";
+    private static final String EVENT_JAR_PATH = "./eventengine/events/";
 
     private final ArrayList<EventContainer> _eventList = new ArrayList<>();
     private final Map<String, EventContainer> _eventMap = new HashMap<>();
@@ -48,31 +49,67 @@ public class EventLoader {
     private void loadEvents()
     {
         mMainConfig = (MainEventConfig) GsonUtils.loadConfig(MAIN_CONFIG_PATH, MainEventConfig.class);
-        EventsListConfig eventsListConfig = (EventsListConfig) GsonUtils.loadConfig(EVENTS_CONFIG_PATH, EventsListConfig.class);
 
-        for (EventsListConfig.Event event : eventsListConfig.getEvents())
-        {
-            EventContainer container = (EventContainer) loadJar(new File(EVENT_JAR_PATH + event.getJarName() + ".jar"), event.getClassPath());
+        File files = new File(EVENT_JAR_PATH);
+        File[] matchingFiles = files.listFiles(new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".jar");
+            }
+        });
 
-            if (container != null)
-            {
-                _eventList.add(container);
-                _eventMap.put(container.getEventName(), container);
+        if (matchingFiles != null) {
+            for (File jar : matchingFiles) {
+                EventContainer container = (EventContainer) loadJar((jar), getMainClass(jar));
+
+                if (container != null)
+                {
+                    _eventList.add(container);
+                    _eventMap.put(container.getSimpleEventName(), container);
+                }
             }
         }
     }
 
-    private Object loadJar(File jarPath, String classPath)
+    private String getMainClass(File file)
+    {
+        try {
+            // Open the JAR file
+            JarFile jarfile = new JarFile(file);
+
+            // Get the manifest
+            Manifest manifest = jarfile.getManifest();
+
+            // Get the main attributes in the manifest
+            Attributes attrs = manifest.getMainAttributes();
+
+            // Enumerate each attribute
+            for (Iterator it=attrs.keySet().iterator(); it.hasNext(); ) {
+                // Get attribute name
+                Attributes.Name attrName = (Attributes.Name)it.next();
+
+                if (attrName.toString().equalsIgnoreCase("Main-Class")) {
+                    return attrs.getValue(attrName);
+                }
+            }
+        }
+        catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return null;
+    }
+
+    private Object loadJar(File jar, String classPath)
     {
         try {
             URL classUrl;
             URL[] classUrls;
 
             try {
-                classUrl = jarPath.toURI().toURL();
+                classUrl = jar.toURI().toURL();
                 classUrls = new URL[] { classUrl };
             } catch (MalformedURLException ex) {
-                throw new InvalidJarLoadException("File URL malformed " + jarPath.getName());
+                throw new InvalidJarLoadException("File URL malformed " + jar.getName());
             }
 
             URLClassLoader child = new URLClassLoader(classUrls, this.getClass().getClassLoader());
@@ -124,6 +161,6 @@ public class EventLoader {
 
     private static class SingletonHolder
     {
-        protected static final EventLoader _instance = new EventLoader();
+        private static final EventLoader _instance = new EventLoader();
     }
 }
