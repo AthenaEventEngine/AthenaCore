@@ -6,9 +6,9 @@ public interface EventContainer {
 
     Class<? extends AbstractEvent> getEventClass();
 
-    String getBaseConfigPath();
-
     String getEventName();
+
+    String getSimpleEventName();
 
     String getDescription();
 

@@ -89,7 +89,7 @@ public class NpcManager extends Quest
 					EventContainer container = EventLoader.getInstance().getEvent(st.nextToken());
 					if (container != null)
 					{
-						EventEngineManager.getInstance().increaseVote(player, container.getEventName());
+						EventEngineManager.getInstance().increaseVote(player, container.getSimpleEventName());
 						player.sendMessage(MessageData.getInstance().getMsgByLang(player, "event_vote_done", true));
 					}
 				}
@@ -315,9 +315,9 @@ public class NpcManager extends Quest
 			for (EventContainer container : EventLoader.getInstance().getEnabledEvents())
 			{
 				StringUtil.append(eventList, "<tr>");
-				StringUtil.append(eventList, "<td align=center width=30% height=30><button value=\"" + MessageData.getInstance().getMsgByLang(player, "event_" + container.getEventName() + "_name", false) + "\" action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " vote "
-					+ container.getEventName() + "\" width=110 height=21 back=L2UI_CT1.Button_DF_Down fore=L2UI_CT1.Button_DF></td>");
-				StringUtil.append(eventList, "<td width=40%><font color=LEVEL>" + MessageData.getInstance().getMsgByLang(player, "button_votes", false) + ": </font>" + EventEngineManager.getInstance().getCurrentVotesInEvent(container.getEventName()) + "</td>");
+				StringUtil.append(eventList, "<td align=center width=30% height=30><button value=\"" + container.getEventName() + "\" action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " vote "
+					+ container.getSimpleEventName() + "\" width=110 height=21 back=L2UI_CT1.Button_DF_Down fore=L2UI_CT1.Button_DF></td>");
+				StringUtil.append(eventList, "<td width=40%><font color=LEVEL>" + MessageData.getInstance().getMsgByLang(player, "button_votes", false) + ": </font>" + EventEngineManager.getInstance().getCurrentVotesInEvent(container.getSimpleEventName()) + "</td>");
 				StringUtil.append(eventList, "<td width=30%><font color=7898AF><a action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " info " + container.getEventName() + "\">" + MessageData.getInstance().getMsgByLang(player, "button_info", false) + "</a></font></td>");
 				StringUtil.append(eventList, "</tr>");
 			}
