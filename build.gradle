@@ -6,13 +6,31 @@ apply plugin: 'java'
 repositories {
 	mavenCentral()
 	maven { url "https://jitpack.io" }
+	flatDir {
+		dirs 'libs'
+	}
 }
 
 sourceCompatibility = 1.8
 
+configurations {
+	provided
+	compile.extendsFrom provided
+}
+
+dependencies {
+	compile 'com.google.code.gson:gson:2.2.4'
+	compile 'com.github.typesafehub:config:v1.3.0'
+	provided 'org.slf4j:slf4j-api:1.7.13'
+	provided name: 'l2jserver'
+	provided name: 'mmocore'
+
+	testCompile 'junit:junit:4.12'
+}
+
 jar {
 	from {
-		configurations.compile.collect {
+		(configurations.compile - configurations.provided).collect {
 			it.isDirectory() ? it : zipTree(it)
 		}
 	}
@@ -24,15 +42,6 @@ jar {
                 'Main-Class': 'com.github.u3games.eventengine.EventEngineManager'
     }
     archiveName = 'L2J_EventEngine.jar'
-}
-
-dependencies {
-    compile 'org.slf4j:slf4j-api:1.7.13'
-    compile 'com.google.code.gson:gson:2.2.4'
-	compile 'com.github.typesafehub:config:v1.3.0'
-	compile fileTree(dir: './libs', include: '*.jar')
-
-    testCompile 'junit:junit:4.12'
 }
 
 task zip(type: Zip) {
