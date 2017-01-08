@@ -27,6 +27,7 @@ import java.util.logging.Logger;
 import com.github.u3games.eventengine.EventEngineManager;
 import com.github.u3games.eventengine.builders.TeamsBuilder;
 import com.github.u3games.eventengine.config.BaseConfigLoader;
+import com.github.u3games.eventengine.config.interfaces.EventConfig;
 import com.github.u3games.eventengine.config.model.MainEventConfig;
 import com.github.u3games.eventengine.datatables.BuffListData;
 import com.github.u3games.eventengine.datatables.MessageData;
@@ -49,6 +50,7 @@ import com.github.u3games.eventengine.events.schedules.AnnounceTeleportEvent;
 import com.github.u3games.eventengine.events.schedules.ChangeToEndEvent;
 import com.github.u3games.eventengine.events.schedules.ChangeToFightEvent;
 import com.github.u3games.eventengine.events.schedules.ChangeToStartEvent;
+import com.github.u3games.eventengine.interfaces.EventContainer;
 import com.github.u3games.eventengine.interfaces.IListenerSuscriber;
 import com.github.u3games.eventengine.util.EventUtil;
 import com.l2jserver.gameserver.ThreadPoolManager;
@@ -74,28 +76,44 @@ import com.l2jserver.util.Rnd;
 /**
  * @author fissban
  */
-public abstract class AbstractEvent implements IListenerSuscriber
+public abstract class AbstractEvent<T extends EventConfig> implements IListenerSuscriber
 {
 	// Logger
 	private static final Logger LOGGER = Logger.getLogger(AbstractEvent.class.getName());
 	// Max delay time for reuse skill
 	private static final int MAX_DELAY_TIME_SKILL = 900000;
-	
-	public AbstractEvent(String instanceFile)
+
+	private T _config;
+
+	protected abstract String getInstanceFile();
+
+	public void initialize()
 	{
 		// Add every player registered for the event
 		getPlayerEventManager().createEventPlayers();
-		if (getConfig().isAntiAfkEnabled())
+
+		if (getMainConfig().isAntiAfkEnabled())
 		{
 			_antiAfkManager = new AntiAfkManager();
 		}
 		initScheduledEvents();
 		// Starts the clock to control the sequence of internal events of the event
 		getScheduledEventsManager().startTaskControlTime();
-		getInstanceWorldManager().setInstanceFile(instanceFile);
+		getInstanceWorldManager().setInstanceFile(getInstanceFile());
 	}
 
-	private static MainEventConfig getConfig() {
+	public void setConfig(T config)
+	{
+		_config = config;
+	}
+
+	protected T getConfig()
+	{
+		return _config;
+	}
+
+	private MainEventConfig getMainConfig()
+	{
 		return BaseConfigLoader.getInstance().getMainConfig();
 	}
 	
@@ -192,12 +210,12 @@ public abstract class AbstractEvent implements IListenerSuscriber
 		getScheduledEventsManager().addScheduledEvent(new ChangeToStartEvent(time));
 		time += 1000;
 		getScheduledEventsManager().addScheduledEvent(new ChangeToFightEvent(time));
-		time += getConfig().getRunningTime() * 60 * 1000;
+		time += getMainConfig().getRunningTime() * 60 * 1000;
 		getScheduledEventsManager().addScheduledEvent(new ChangeToEndEvent(time));
 		// Announce near end event
-		int timeLeftAnnounce = getConfig().getTextTimeForEnd() * 1000;
-		getScheduledEventsManager().addScheduledEvent(new AnnounceNearEndEvent(time - timeLeftAnnounce, getConfig().getTextTimeForEnd()));
-		getScheduledEventsManager().addScheduledEvent(new AnnounceNearEndEvent(time - (timeLeftAnnounce / 2), getConfig().getTextTimeForEnd() / 2));
+		int timeLeftAnnounce = getMainConfig().getTextTimeForEnd() * 1000;
+		getScheduledEventsManager().addScheduledEvent(new AnnounceNearEndEvent(time - timeLeftAnnounce, getMainConfig().getTextTimeForEnd()));
+		getScheduledEventsManager().addScheduledEvent(new AnnounceNearEndEvent(time - (timeLeftAnnounce / 2), getMainConfig().getTextTimeForEnd() / 2));
 	}
 	
 	// REVIVE --------------------------------------------------------------------------------------- //
@@ -350,7 +368,7 @@ public abstract class AbstractEvent implements IListenerSuscriber
 				return;
 			}
 			// Check Friendly Fire
-			if (!getConfig().isFriendlyFireEnabled())
+			if (!getMainConfig().isFriendlyFireEnabled())
 			{
 				if (activePlayer.getTeamType() == activeTarget.getTeamType())
 				{
@@ -425,7 +443,7 @@ public abstract class AbstractEvent implements IListenerSuscriber
 				}
 				
 				// Check Friendly Fire
-				if (!getConfig().isFriendlyFireEnabled() && (activePlayer.getTeamType() == activeTarget.getTeamType()))
+				if (!getMainConfig().isFriendlyFireEnabled() && (activePlayer.getTeamType() == activeTarget.getTeamType()))
 				{
 					if ((activePlayer.getTeamType() != TeamType.WHITE) || (activeTarget.getTeamType() != TeamType.WHITE))
 					{
@@ -525,7 +543,7 @@ public abstract class AbstractEvent implements IListenerSuscriber
 			// We add the character to the world and then be teleported
 			world.addAllowed(ph.getPcInstance().getObjectId());
 			teleportPlayer(ph, _radius);
-			ph.setProtectionTimeEnd(System.currentTimeMillis() + (getConfig().getSpawnProtectionTime() * 1000)); // Milliseconds
+			ph.setProtectionTimeEnd(System.currentTimeMillis() + (getMainConfig().getSpawnProtectionTime() * 1000)); // Milliseconds
 		}
 	}
 	
@@ -692,7 +710,7 @@ public abstract class AbstractEvent implements IListenerSuscriber
 			ph.getPcInstance().setCurrentCp(ph.getPcInstance().getMaxCp());
 			ph.getPcInstance().setCurrentHp(ph.getPcInstance().getMaxHp());
 			ph.getPcInstance().setCurrentMp(ph.getPcInstance().getMaxMp());
-			ph.setProtectionTimeEnd(System.currentTimeMillis() + (getConfig().getSpawnProtectionTime() * 1000)); // Milliseconds
+			ph.setProtectionTimeEnd(System.currentTimeMillis() + (getMainConfig().getSpawnProtectionTime() * 1000)); // Milliseconds
 		}
 	}
 	

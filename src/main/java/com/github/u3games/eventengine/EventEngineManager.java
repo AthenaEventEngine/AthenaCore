@@ -31,13 +31,14 @@ import com.github.u3games.eventengine.adapter.EventEngineAdapter;
 import com.github.u3games.eventengine.ai.NpcManager;
 import com.github.u3games.eventengine.config.BaseConfigLoader;
 import com.github.u3games.eventengine.datatables.BuffListData;
-import com.github.u3games.eventengine.datatables.EventData;
+import com.github.u3games.eventengine.datatables.EventLoader;
 import com.github.u3games.eventengine.datatables.MessageData;
 import com.github.u3games.eventengine.dispatcher.events.OnLogInEvent;
 import com.github.u3games.eventengine.dispatcher.events.OnLogOutEvent;
 import com.github.u3games.eventengine.enums.EventEngineState;
 import com.github.u3games.eventengine.events.handler.AbstractEvent;
 import com.github.u3games.eventengine.events.holders.PlayerHolder;
+import com.github.u3games.eventengine.interfaces.EventContainer;
 import com.github.u3games.eventengine.security.DualBoxProtection;
 import com.github.u3games.eventengine.task.EventEngineTask;
 import com.l2jserver.gameserver.ThreadPoolManager;
@@ -80,7 +81,7 @@ public class EventEngineManager
 			// Load event configs
 			BaseConfigLoader.getInstance();
 			LOGGER.info(EventEngineManager.class.getSimpleName() + ": New Configs loaded.");
-			EventData.getInstance();
+			EventLoader.getInstance();
 			LOGGER.info(EventEngineManager.class.getSimpleName() + ": Events loaded.");
 			initVotes();
 			// Load buff list
@@ -123,24 +124,24 @@ public class EventEngineManager
 	}
 	
 	// XXX NEXT EVENT ---------------------------------------------------------------------------------
-	private Class<? extends AbstractEvent> _nextEvent;
+	private EventContainer _nextEvent;
 	
 	/**
 	 * Get the next event type.
 	 * @return
 	 */
-	public Class<? extends AbstractEvent> getNextEvent()
+	public EventContainer getNextEvent()
 	{
 		return _nextEvent;
 	}
 	
 	/**
 	 * Set the next event type.
-	 * @param event
+	 * @param container
 	 */
-	public void setNextEvent(Class<? extends AbstractEvent> event)
+	public void setNextEvent(EventContainer container)
 	{
-		_nextEvent = event;
+		_nextEvent = container;
 	}
 	
 	// XXX CURRENT EVENT ---------------------------------------------------------------------------------
@@ -199,16 +200,16 @@ public class EventEngineManager
 	// Id's list of characters who voted
 	private final Set<Integer> _playersAlreadyVoted = ConcurrentHashMap.newKeySet();
 	// Map of the Id's of the characters who voted
-	private final Map<Class<? extends AbstractEvent>, Set<Integer>> _currentEventVotes = new HashMap<>();
+	private final Map<String, Set<Integer>> _currentEventVotes = new HashMap<>();
 	
 	/**
 	 * Init votes
 	 */
 	public void initVotes()
 	{
-		for (Class<? extends AbstractEvent> type : EventData.getInstance().getEnabledEvents())
+		for (EventContainer container : EventLoader.getInstance().getEnabledEvents())
 		{
-			_currentEventVotes.put(type, ConcurrentHashMap.newKeySet());
+			_currentEventVotes.put(container.getSimpleEventName(), ConcurrentHashMap.newKeySet());
 		}
 	}
 	
@@ -218,9 +219,9 @@ public class EventEngineManager
 	public void clearVotes()
 	{
 		// The map is restarted
-		for (Class<? extends AbstractEvent> event : _currentEventVotes.keySet())
+		for (String eventName : _currentEventVotes.keySet())
 		{
-			_currentEventVotes.get(event).clear();
+			_currentEventVotes.get(eventName).clear();
 		}
 		// The list of players who voted cleaned
 		_playersAlreadyVoted.clear();
@@ -229,16 +230,16 @@ public class EventEngineManager
 	/**
 	 * Increase by 1, the number of votes.
 	 * @param player The character who is voting.
-	 * @param event Event voting.
+	 * @param eventName Event voting.
 	 */
-	public void increaseVote(L2PcInstance player, Class<? extends AbstractEvent> event)
+	public void increaseVote(L2PcInstance player, String eventName)
 	{
 		// Add character at the list of those who voted
 		// If it was, continue
 		// If it wasn't, adds a vote to the event
 		if (_playersAlreadyVoted.add(player.getObjectId()))
 		{
-			_currentEventVotes.get(event).add(player.getObjectId());
+			_currentEventVotes.get(eventName).add(player.getObjectId());
 		}
 	}
 	
@@ -252,21 +253,21 @@ public class EventEngineManager
 		if (_playersAlreadyVoted.remove(player.getObjectId()))
 		{
 			// If he was on the list, start looking for which event voted
-			for (Class<? extends AbstractEvent> event : _currentEventVotes.keySet())
+			for (String eventName : _currentEventVotes.keySet())
 			{
-				_currentEventVotes.get(event).remove(player.getObjectId());
+				_currentEventVotes.get(eventName).remove(player.getObjectId());
 			}
 		}
 	}
 	
 	/**
 	 * Get the number of votes it has a certain event.
-	 * @param event AVA, TVT, CFT.
+	 * @param eventName AVA, TVT, CFT.
 	 * @return int
 	 */
-	public int getCurrentVotesInEvent(Class<? extends AbstractEvent> event)
+	public int getCurrentVotesInEvent(String eventName)
 	{
-		return _currentEventVotes.get(event).size();
+		return _currentEventVotes.get(eventName).size();
 	}
 	
 	/**
@@ -287,31 +288,30 @@ public class EventEngineManager
 	 * Get the event with more votes. In case all have the same amount of votes, it will make a random among those most votes have.
 	 * @return
 	 */
-	public Class<? extends AbstractEvent> getEventMoreVotes()
+	public EventContainer getEventMoreVotes()
 	{
 		int maxVotes = 0;
-		List<Class<? extends AbstractEvent>> topEvents = new ArrayList<>();
-		for (Class<? extends AbstractEvent> event : _currentEventVotes.keySet())
+		List<String> topEvents = new ArrayList<>();
+		for (String eventName : _currentEventVotes.keySet())
 		{
-			int eventVotes = _currentEventVotes.get(event).size();
+			int eventVotes = _currentEventVotes.get(eventName).size();
 			if (eventVotes > maxVotes)
 			{
 				topEvents.clear();
-				topEvents.add(event);
+				topEvents.add(eventName);
 				maxVotes = eventVotes;
 			}
 			else if (eventVotes == maxVotes)
 			{
-				topEvents.add(event);
+				topEvents.add(eventName);
 			}
 		}
 		
 		int topEventsSize = topEvents.size();
-		if (topEventsSize > 1)
-		{
-			return topEvents.get(Rnd.get(0, topEventsSize - 1));
-		}
-		return topEvents.get(0);
+		String topEventName;
+		topEventName = topEventsSize > 1 ? topEvents.get(Rnd.get(0, topEventsSize - 1)) : topEvents.get(0);
+
+		return EventLoader.getInstance().getEvent(topEventName);
 	}
 	
 	// XXX EVENT STATE -----------------------------------------------------------------------------------

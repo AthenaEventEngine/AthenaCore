@@ -21,10 +21,11 @@ package com.github.u3games.eventengine.task;
 import com.github.u3games.eventengine.EventEngineManager;
 import com.github.u3games.eventengine.config.BaseConfigLoader;
 import com.github.u3games.eventengine.config.model.MainEventConfig;
-import com.github.u3games.eventengine.datatables.EventData;
+import com.github.u3games.eventengine.datatables.EventLoader;
 import com.github.u3games.eventengine.enums.CollectionTarget;
 import com.github.u3games.eventengine.enums.EventEngineState;
 import com.github.u3games.eventengine.events.handler.AbstractEvent;
+import com.github.u3games.eventengine.interfaces.EventContainer;
 import com.github.u3games.eventengine.util.EventUtil;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
 
@@ -59,9 +60,9 @@ public class EventEngineTask implements Runnable
 					}
 					else
 					{
-						EventEngineManager.getInstance().setNextEvent(EventData.getInstance().getRandomEventType());
+						EventEngineManager.getInstance().setNextEvent(EventLoader.getInstance().getRandomEventType());
 						EventEngineManager.getInstance().setTime(getConfig().getRegisterTime() * 60);
-						String eventName = EventEngineManager.getInstance().getNextEvent().getSimpleName();
+						String eventName = EventEngineManager.getInstance().getNextEvent().getEventName();
 						EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "event_register_started", "%event%", eventName, _type);
 						EventEngineManager.getInstance().setEventEngineState(EventEngineState.REGISTER);
 					}
@@ -76,11 +77,11 @@ public class EventEngineTask implements Runnable
 				}
 				else
 				{
-					Class<? extends AbstractEvent> nextEvent = EventEngineManager.getInstance().getEventMoreVotes();
+					EventContainer nextEvent = EventEngineManager.getInstance().getEventMoreVotes();
 					EventEngineManager.getInstance().setNextEvent(nextEvent);
 					EventEngineManager.getInstance().setTime(getConfig().getRegisterTime() * 60);
 					EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "event_voting_ended", _type);
-					EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "event_register_started", "%event%", nextEvent.getSimpleName(), _type);
+					EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "event_register_started", "%event%", nextEvent.getEventName(), _type);
 					EventEngineManager.getInstance().setEventEngineState(EventEngineState.REGISTER);
 				}
 				break;
@@ -90,7 +91,7 @@ public class EventEngineTask implements Runnable
 				if (EventEngineManager.getInstance().getTime() > 0)
 				{
 					int time = EventEngineManager.getInstance().getTime();
-					String eventName = EventEngineManager.getInstance().getNextEvent().getSimpleName();
+					String eventName = EventEngineManager.getInstance().getNextEvent().getEventName();
 					EventUtil.announceTime(time, "event_register_state", Say2.CRITICAL_ANNOUNCE, "%event%", eventName, _type);
 				}
 				else
@@ -113,7 +114,7 @@ public class EventEngineTask implements Runnable
 			}
 			case RUN_EVENT:
 			{
-				AbstractEvent event = EventData.getInstance().getNewEventInstance(EventEngineManager.getInstance().getNextEvent());
+				AbstractEvent event = EventEngineManager.getInstance().getNextEvent().newEventInstance();
 				
 				if (event == null)
 				{
