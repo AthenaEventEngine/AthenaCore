@@ -27,6 +27,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
+import com.github.u3games.eventengine.model.entities.Player;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -88,7 +89,7 @@ public class BuffListData implements IXmlReader
 	 * @param player
 	 * @return List<SkillHolder>
 	 */
-	public Set<SkillHolder> getBuffsPlayer(L2PcInstance player)
+	public Set<SkillHolder> getBuffsPlayer(Player player)
 	{
 		if (_buffsPlayers.containsKey(player.getObjectId()))
 		{

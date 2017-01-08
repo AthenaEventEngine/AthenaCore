@@ -27,7 +27,6 @@ import com.github.u3games.eventengine.config.model.MainEventConfig;
 import com.github.u3games.eventengine.datatables.BuffListData;
 import com.github.u3games.eventengine.datatables.EventLoader;
 import com.github.u3games.eventengine.datatables.MessageData;
-import com.github.u3games.eventengine.events.handler.AbstractEvent;
 import com.github.u3games.eventengine.interfaces.EventContainer;
 import com.github.u3games.eventengine.security.DualBoxProtection;
 import com.l2jserver.gameserver.model.actor.L2Npc;

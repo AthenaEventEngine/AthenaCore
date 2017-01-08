@@ -25,7 +25,7 @@ import java.util.Map;
 
 import com.github.u3games.eventengine.builders.TeamsBuilder;
 import com.github.u3games.eventengine.enums.TeamType;
-import com.github.u3games.eventengine.events.holders.PlayerHolder;
+import com.github.u3games.eventengine.model.entities.Player;
 import com.github.u3games.eventengine.events.holders.TeamHolder;
 import com.l2jserver.gameserver.model.Location;
 
@@ -71,7 +71,7 @@ public class TeamsManagers
 	 * @param player
 	 * @return
 	 */
-	public TeamHolder getPlayerTeam(PlayerHolder player)
+	public TeamHolder getPlayerTeam(Player player)
 	{
 		return _teams.get(player.getTeamType());
 	}

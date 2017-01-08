@@ -26,8 +26,8 @@ import java.util.concurrent.ScheduledFuture;
 import com.github.u3games.eventengine.EventEngineManager;
 import com.github.u3games.eventengine.config.BaseConfigLoader;
 import com.github.u3games.eventengine.enums.CollectionTarget;
-import com.github.u3games.eventengine.events.handler.AbstractEvent;
-import com.github.u3games.eventengine.events.holders.PlayerHolder;
+import com.github.u3games.eventengine.model.base.BaseEvent;
+import com.github.u3games.eventengine.model.entities.Player;
 import com.github.u3games.eventengine.util.EventUtil;
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.model.Location;
@@ -42,14 +42,14 @@ import com.l2jserver.gameserver.network.clientpackets.Say2;
  */
 public class AntiAfkManager
 {
-	private final Map<PlayerHolder, Location> _playersAfkCheck = new ConcurrentHashMap<>();
+	private final Map<Player, Location> _playersAfkCheck = new ConcurrentHashMap<>();
 	private ScheduledFuture<?> _taskAntiAfk;
 	
 	/**
 	 * Add a character to the list of "excluded" from the next control system.
 	 * @param ph
 	 */
-	public void excludePlayer(PlayerHolder ph)
+	public void excludePlayer(Player ph)
 	{
 		_playersAfkCheck.remove(ph);
 	}
@@ -63,10 +63,10 @@ public class AntiAfkManager
 
 		_taskAntiAfk = ThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(() ->
 		{
-			AbstractEvent currentEvent = EventEngineManager.getInstance().getCurrentEvent();
-			Map<PlayerHolder, Location> newMap = new HashMap<>();
+			BaseEvent currentEvent = EventEngineManager.getInstance().getCurrentEvent();
+			Map<Player, Location> newMap = new HashMap<>();
 			
-			for (PlayerHolder ph : currentEvent.getPlayerEventManager().getAllEventPlayers())
+			for (Player ph : currentEvent.getPlayerEventManager().getAllEventPlayers())
 			{
 				Location currentLoc = ph.getPcInstance().getLocation();
 				if (_playersAfkCheck.containsKey(ph))

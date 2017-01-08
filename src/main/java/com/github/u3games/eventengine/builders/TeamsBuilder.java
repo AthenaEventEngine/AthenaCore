@@ -26,7 +26,7 @@ import java.util.logging.Logger;
 import com.github.u3games.eventengine.config.model.TeamConfig;
 import com.github.u3games.eventengine.enums.DistributionType;
 import com.github.u3games.eventengine.enums.TeamType;
-import com.github.u3games.eventengine.events.holders.PlayerHolder;
+import com.github.u3games.eventengine.model.entities.Player;
 import com.github.u3games.eventengine.events.holders.TeamHolder;
 import com.l2jserver.gameserver.model.Location;
 
@@ -35,7 +35,7 @@ public class TeamsBuilder
 	private static final Logger LOGGER = Logger.getLogger(TeamsBuilder.class.getName());
 
 	private DistributionType mDistribution = DistributionType.DEFAULT;
-	private final Collection<PlayerHolder> mPlayers = new ArrayList<>();
+	private final Collection<Player> mPlayers = new ArrayList<>();
 
 	private final List<TeamHolder> mTeams = new ArrayList<>();
 
@@ -52,7 +52,7 @@ public class TeamsBuilder
 		return this;
 	}
 	
-	public TeamsBuilder setPlayers(Collection<PlayerHolder> list) {
+	public TeamsBuilder setPlayers(Collection<Player> list) {
 		mPlayers.addAll(list);
 		return this;
 	}
@@ -67,7 +67,7 @@ public class TeamsBuilder
 			case DEFAULT:
 			default:
 				int i = 0;
-				for (PlayerHolder player : mPlayers) {
+				for (Player player : mPlayers) {
 					player.setTeam(teams.get(i));
 
 					if (teams.size() <= (i + 1)) i = 0;

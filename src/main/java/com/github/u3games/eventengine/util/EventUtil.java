@@ -30,7 +30,7 @@ import com.github.u3games.eventengine.EventEngineManager;
 import com.github.u3games.eventengine.config.BaseConfigLoader;
 import com.github.u3games.eventengine.datatables.MessageData;
 import com.github.u3games.eventengine.enums.CollectionTarget;
-import com.github.u3games.eventengine.events.holders.PlayerHolder;
+import com.github.u3games.eventengine.model.entities.Player;
 import com.l2jserver.gameserver.datatables.SpawnTable;
 import com.l2jserver.gameserver.model.L2Spawn;
 import com.l2jserver.gameserver.model.L2World;
@@ -286,7 +286,7 @@ public class EventUtil
 				break;
 			case ALL_PLAYERS_IN_EVENT:
 				players = new ArrayList<>();
-				for (PlayerHolder ph : EventEngineManager.getInstance().getCurrentEvent().getPlayerEventManager().getAllEventPlayers())
+				for (Player ph : EventEngineManager.getInstance().getCurrentEvent().getPlayerEventManager().getAllEventPlayers())
 				{
 					players.add(ph.getPcInstance());
 				}
@@ -340,7 +340,7 @@ public class EventUtil
 	 * @param player
 	 * @param text
 	 */
-	public static void sendEventMessage(PlayerHolder player, String text)
+	public static void sendEventMessage(Player player, String text)
 	{
 		player.getPcInstance().sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", text));
 	}
@@ -351,7 +351,7 @@ public class EventUtil
 	 * @param type 0 - gm, 1 - finish, 2 - start, 3 - game over, 4 - 1, 5 - 2, 6 - 3, 7 - 4, 8 - 5
 	 * @param msg
 	 */
-	public static void sendEventSpecialMessage(PlayerHolder player, int type, String msg)
+	public static void sendEventSpecialMessage(Player player, int type, String msg)
 	{
 		player.getPcInstance().sendPacket(new ExEventMatchMessage(type, msg));
 	}
@@ -361,7 +361,7 @@ public class EventUtil
 	 * @param player
 	 * @param text
 	 */
-	public static void sendEventScreenMessage(PlayerHolder player, String text)
+	public static void sendEventScreenMessage(Player player, String text)
 	{
 		player.getPcInstance().sendPacket(new ExShowScreenMessage(text, 2000));
 	}
@@ -372,7 +372,7 @@ public class EventUtil
 	 * @param text
 	 * @param time
 	 */
-	public static void sendEventScreenMessage(PlayerHolder player, String text, int time)
+	public static void sendEventScreenMessage(Player player, String text, int time)
 	{
 		player.getPcInstance().sendPacket(new ExShowScreenMessage(text, time));
 	}
@@ -401,7 +401,7 @@ public class EventUtil
 	 * @param player
 	 * @param target
 	 */
-	public static void messageKill(PlayerHolder player, L2Character target)
+	public static void messageKill(Player player, L2Character target)
 	{
 		Map<String, String> map = new HashMap<>();
 		map.put("%killer%", player.getPcInstance().getName());
@@ -414,7 +414,7 @@ public class EventUtil
 	 * @param ph
 	 * @param textId
 	 */
-	public static void sendMessageToPlayer(PlayerHolder ph, String textId)
+	public static void sendMessageToPlayer(Player ph, String textId)
 	{
 		L2PcInstance player = ph.getPcInstance();
 		player.sendMessage(MessageData.getInstance().getMsgByLang(player, textId, true));

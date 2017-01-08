@@ -24,7 +24,7 @@ import com.github.u3games.eventengine.config.model.MainEventConfig;
 import com.github.u3games.eventengine.datatables.EventLoader;
 import com.github.u3games.eventengine.enums.CollectionTarget;
 import com.github.u3games.eventengine.enums.EventEngineState;
-import com.github.u3games.eventengine.events.handler.AbstractEvent;
+import com.github.u3games.eventengine.model.base.BaseEvent;
 import com.github.u3games.eventengine.interfaces.EventContainer;
 import com.github.u3games.eventengine.util.EventUtil;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
@@ -114,7 +114,7 @@ public class EventEngineTask implements Runnable
 			}
 			case RUN_EVENT:
 			{
-				AbstractEvent event = EventEngineManager.getInstance().getNextEvent().newEventInstance();
+				BaseEvent event = EventEngineManager.getInstance().getNextEvent().newEventInstance();
 				
 				if (event == null)
 				{

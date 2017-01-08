@@ -146,7 +146,7 @@ public class SpawnManager
 	
 	/**
 	 * We get the complete list of all the NPC during the event.
-	 * @return Collection<PlayerHolder>
+	 * @return Collection<Player>
 	 */
 	public Collection<NpcHolder> getAllEventNpc()
 	{
