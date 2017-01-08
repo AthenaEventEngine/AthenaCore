@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.github.u3games.eventengine.EventEngineManager;
-import com.github.u3games.eventengine.events.holders.PlayerHolder;
+import com.github.u3games.eventengine.model.entities.Player;
 import com.github.u3games.eventengine.events.listeners.EventEngineListener;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Playable;
@@ -35,13 +35,13 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
  */
 public class PlayersManager
 {
-	private final Map<Integer, PlayerHolder> _eventPlayers = new ConcurrentHashMap<>();
+	private final Map<Integer, Player> _eventPlayers = new ConcurrentHashMap<>();
 	
 	/**
 	 * We obtain the full list of all players within an event.
-	 * @return Collection<PlayerHolder>
+	 * @return Collection<Player>
 	 */
-	public Collection<PlayerHolder> getAllEventPlayers()
+	public Collection<Player> getAllEventPlayers()
 	{
 		return _eventPlayers.values();
 	}
@@ -74,7 +74,7 @@ public class PlayersManager
 				player.sendMessage("You can not attend the event being in the Observer mode.");
 				continue;
 			}
-			_eventPlayers.put(player.getObjectId(), new PlayerHolder(player));
+			_eventPlayers.put(player.getObjectId(), new Player(player));
 			player.addEventListener(new EventEngineListener(player));
 		}
 		// We clean the list, no longer we need it
@@ -103,9 +103,9 @@ public class PlayersManager
 	/**
 	 * Check if a player is participating in any event. In the case of dealing with a summon, verify the owner. For an event not participated returns <u>null.</u>
 	 * @param character
-	 * @return PlayerHolder
+	 * @return Player
 	 */
-	public PlayerHolder getEventPlayer(L2Character character)
+	public Player getEventPlayer(L2Character character)
 	{
 		if (character.isSummon())
 		{

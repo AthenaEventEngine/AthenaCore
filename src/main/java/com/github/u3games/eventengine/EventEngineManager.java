@@ -36,19 +36,15 @@ import com.github.u3games.eventengine.datatables.MessageData;
 import com.github.u3games.eventengine.dispatcher.events.OnLogInEvent;
 import com.github.u3games.eventengine.dispatcher.events.OnLogOutEvent;
 import com.github.u3games.eventengine.enums.EventEngineState;
-import com.github.u3games.eventengine.events.handler.AbstractEvent;
-import com.github.u3games.eventengine.events.holders.PlayerHolder;
+import com.github.u3games.eventengine.model.base.BaseEvent;
+import com.github.u3games.eventengine.model.entities.Player;
 import com.github.u3games.eventengine.interfaces.EventContainer;
 import com.github.u3games.eventengine.security.DualBoxProtection;
 import com.github.u3games.eventengine.task.EventEngineTask;
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.model.Location;
-import com.l2jserver.gameserver.model.actor.L2Character;
-import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.L2Playable;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
-import com.l2jserver.gameserver.model.items.L2Item;
-import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
 import com.l2jserver.gameserver.network.serverpackets.CreatureSay;
 import com.l2jserver.util.Rnd;
@@ -146,13 +142,13 @@ public class EventEngineManager
 	
 	// XXX CURRENT EVENT ---------------------------------------------------------------------------------
 	// Event that is running
-	private AbstractEvent _currentEvent;
+	private BaseEvent _currentEvent;
 	
 	/**
 	 * Get the event currently running.
 	 * @return
 	 */
-	public AbstractEvent getCurrentEvent()
+	public BaseEvent getCurrentEvent()
 	{
 		return _currentEvent;
 	}
@@ -161,7 +157,7 @@ public class EventEngineManager
 	 * Define the event that shall begin to run.
 	 * @param event
 	 */
-	public void setCurrentEvent(AbstractEvent event)
+	public void setCurrentEvent(BaseEvent event)
 	{
 		_currentEvent = event;
 	}
@@ -450,7 +446,7 @@ public class EventEngineManager
 	 * When the player is disconnected inside event. It adds him to a list saving the original location.
 	 * @param ph
 	 */
-	public void addPlayerDisconnected(PlayerHolder ph)
+	public void addPlayerDisconnected(Player ph)
 	{
 		_playersDisconnected.put(ph.getPcInstance().getObjectId(), ph.getReturnLoc());
 		

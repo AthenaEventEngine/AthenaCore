@@ -1,10 +1,10 @@
 package com.github.u3games.eventengine.interfaces;
 
-import com.github.u3games.eventengine.events.handler.AbstractEvent;
+import com.github.u3games.eventengine.model.base.BaseEvent;
 
 public interface EventContainer {
 
-    Class<? extends AbstractEvent> getEventClass();
+    Class<? extends BaseEvent> getEventClass();
 
     String getEventName();
 
@@ -12,5 +12,5 @@ public interface EventContainer {
 
     String getDescription();
 
-    AbstractEvent newEventInstance();
+    BaseEvent newEventInstance();
 }

@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.github.u3games.eventengine.EventEngineManager;
-import com.github.u3games.eventengine.events.holders.PlayerHolder;
+import com.github.u3games.eventengine.model.entities.Player;
 import com.l2jserver.gameserver.network.serverpackets.L2GameServerPacket;
 
 /**
@@ -33,8 +33,8 @@ public class EventParticipantStatus extends L2GameServerPacket
 	private EventState _eventState = null;
 	private int _pointsBlue = 0;
 	private int _pointsRed = 0;
-	private List<PlayerHolder> _teamBlue = new ArrayList<>();
-	private List<PlayerHolder> _teamRed = new ArrayList<>();
+	private List<Player> _teamBlue = new ArrayList<>();
+	private List<Player> _teamRed = new ArrayList<>();
 	
 	// TODO for the moment only it enabled the state "PVP KILL"
 	public enum EventState
@@ -65,7 +65,7 @@ public class EventParticipantStatus extends L2GameServerPacket
 	 * @param pointsBlue
 	 * @param teamRed
 	 */
-	public EventParticipantStatus(int pointsRed, List<PlayerHolder> teamBlue, int pointsBlue, List<PlayerHolder> teamRed)
+	public EventParticipantStatus(int pointsRed, List<Player> teamBlue, int pointsBlue, List<Player> teamRed)
 	{
 		_pointsRed = pointsRed;
 		_teamRed = teamRed;
@@ -97,7 +97,7 @@ public class EventParticipantStatus extends L2GameServerPacket
 				writeS("Red Team");
 				
 				writeD(_teamBlue.size());
-				for (PlayerHolder info : _teamBlue)
+				for (Player info : _teamBlue)
 				{
 					writeD(info.getPcInstance().getObjectId());
 					writeD(info.getKills());
@@ -106,7 +106,7 @@ public class EventParticipantStatus extends L2GameServerPacket
 				}
 				
 				writeD(_teamRed.size());
-				for (PlayerHolder info : _teamRed)
+				for (Player info : _teamRed)
 				{
 					writeD(info.getPcInstance().getObjectId());
 					writeD(info.getKills());

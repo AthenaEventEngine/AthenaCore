@@ -21,8 +21,8 @@ package com.github.u3games.eventengine.events.schedules;
 import com.github.u3games.eventengine.EventEngineManager;
 import com.github.u3games.eventengine.enums.EventEngineState;
 import com.github.u3games.eventengine.enums.EventState;
-import com.github.u3games.eventengine.events.handler.AbstractEvent;
-import com.github.u3games.eventengine.events.holders.PlayerHolder;
+import com.github.u3games.eventengine.model.base.BaseEvent;
+import com.github.u3games.eventengine.model.entities.Player;
 import com.github.u3games.eventengine.events.schedules.interfaces.EventScheduled;
 import com.github.u3games.eventengine.util.EventUtil;
 
@@ -48,7 +48,7 @@ public class ChangeToEndEvent implements EventScheduled
 	@Override
 	public void run()
 	{
-		AbstractEvent currentEvent = EventEngineManager.getInstance().getCurrentEvent();
+		BaseEvent currentEvent = EventEngineManager.getInstance().getCurrentEvent();
 		currentEvent.runEventState(EventState.END);
 		// Clear all the npcs spawned
 		currentEvent.getSpawnManager().removeAllEventNpc();
@@ -59,7 +59,7 @@ public class ChangeToEndEvent implements EventScheduled
 		}
 		
 		// Send a special message to the participants
-		for (PlayerHolder player : currentEvent.getPlayerEventManager().getAllEventPlayers())
+		for (Player player : currentEvent.getPlayerEventManager().getAllEventPlayers())
 		{
 			EventUtil.sendEventSpecialMessage(player, 1, "status_finished");
 		}

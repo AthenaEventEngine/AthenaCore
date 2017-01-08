@@ -1,7 +1,6 @@
-package com.github.u3games.eventengine.model;
+package com.github.u3games.eventengine.model.base;
 
 import com.github.u3games.eventengine.config.interfaces.EventConfig;
-import com.github.u3games.eventengine.events.handler.AbstractEvent;
 import com.github.u3games.eventengine.interfaces.EventContainer;
 import com.github.u3games.eventengine.util.GsonUtils;
 
@@ -33,7 +32,7 @@ public abstract class BaseEventContainer implements EventContainer {
         return _config;
     }
 
-    public AbstractEvent newEventInstance()
+    public BaseEvent newEventInstance()
     {
         EventBuilder builder = new EventBuilder();
         builder.setEventClass(getEventClass());
@@ -45,10 +44,10 @@ public abstract class BaseEventContainer implements EventContainer {
 
         private final Logger LOGGER = Logger.getLogger(EventBuilder.class.getName());
 
-        private Class<? extends AbstractEvent> _eventClass;
+        private Class<? extends BaseEvent> _eventClass;
         private EventConfig _config;
 
-        private EventBuilder setEventClass(Class<? extends AbstractEvent> eventClass)
+        private EventBuilder setEventClass(Class<? extends BaseEvent> eventClass)
         {
             _eventClass = eventClass;
             return this;
@@ -60,9 +59,9 @@ public abstract class BaseEventContainer implements EventContainer {
             return this;
         }
 
-        private AbstractEvent build()
+        private BaseEvent build()
         {
-            AbstractEvent event;
+            BaseEvent event;
 
             try
             {

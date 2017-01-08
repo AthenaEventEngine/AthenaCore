@@ -18,11 +18,11 @@
  */
 package com.github.u3games.eventengine.interfaces;
 
+import com.github.u3games.eventengine.enums.ScoreType;
+
 public interface ParticipantHolder
 {
-	public int getKills();
-	
-	public int getPoints();
-	
-	public int getDeaths();
+	int getPoints(ScoreType type);
+
+	void increasePoints(ScoreType type, int points);
 }

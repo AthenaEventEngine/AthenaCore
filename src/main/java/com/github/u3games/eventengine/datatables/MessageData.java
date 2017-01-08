@@ -27,11 +27,11 @@ import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import com.github.u3games.eventengine.model.entities.Player;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
-import com.github.u3games.eventengine.events.holders.PlayerHolder;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 
 /**
@@ -180,7 +180,7 @@ public final class MessageData
 		return tag + msg.toString();
 	}
 	
-	public String getMsgByLang(PlayerHolder player, String text, boolean addTag)
+	public String getMsgByLang(Player player, String text, boolean addTag)
 	{
 		return getMsgByLang(player.getPcInstance(), text, addTag);
 	}
