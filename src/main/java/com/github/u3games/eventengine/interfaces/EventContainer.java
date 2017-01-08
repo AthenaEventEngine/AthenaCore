@@ -13,6 +13,4 @@ public interface EventContainer {
     String getDescription();
 
     AbstractEvent newEventInstance();
-
-    boolean checkStructure();
 }
