@@ -61,7 +61,7 @@ public class EventLoader {
             for (File jar : matchingFiles) {
                 EventContainer container = (EventContainer) loadJar((jar), getMainClass(jar));
 
-                if (container != null)
+                if (container != null && container.checkStructure())
                 {
                     _eventList.add(container);
                     _eventMap.put(container.getSimpleEventName(), container);
