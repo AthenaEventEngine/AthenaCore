@@ -23,19 +23,20 @@ import java.util.*;
 import com.github.athenaengine.core.cache.CacheManager;
 import com.github.athenaengine.core.config.BaseConfigLoader;
 import com.github.athenaengine.core.datatables.MessageData;
+import com.github.athenaengine.core.enums.MessageType;
+import com.github.athenaengine.core.model.entity.Character;
 import com.github.athenaengine.core.model.entity.Player;
 import com.github.athenaengine.core.EventEngineManager;
 import com.github.athenaengine.core.enums.CollectionTarget;
+import com.github.athenaengine.core.model.packet.CreatureSayPacket;
+import com.github.athenaengine.core.model.packet.EventMatchMessagePacket;
+import com.github.athenaengine.core.model.packet.ShowScreenMessagePacket;
 import com.l2jserver.gameserver.datatables.SpawnTable;
 import com.l2jserver.gameserver.model.L2Spawn;
 import com.l2jserver.gameserver.model.L2World;
-import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
-import com.l2jserver.gameserver.network.clientpackets.Say2;
 import com.l2jserver.gameserver.network.serverpackets.CreatureSay;
-import com.l2jserver.gameserver.network.serverpackets.ExEventMatchMessage;
-import com.l2jserver.gameserver.network.serverpackets.ExShowScreenMessage;
 
 /**
  * @author fissban, Zephyr
@@ -70,7 +71,7 @@ public class EventUtil
 	 * @param say2
 	 * @param type
 	 */
-	public static void announceTime(int time, String textId, int say2, CollectionTarget type)
+	public static void announceTime(int time, String textId, MessageType say2, CollectionTarget type)
 	{
 		announce(say2, textId, null, type, null, time);
 	}
@@ -84,7 +85,7 @@ public class EventUtil
 	 * @param replace
 	 * @param type
 	 */
-	public static void announceTime(int time, String textId, int say2, String target, String replace, CollectionTarget type)
+	public static void announceTime(int time, String textId, MessageType say2, String target, String replace, CollectionTarget type)
 	{
 		Map<String, String> map = new HashMap<>();
 		map.put(target, replace);
@@ -99,7 +100,7 @@ public class EventUtil
 	 * @param mapToReplace
 	 * @param type
 	 */
-	public static void announceTime(int time, String textId, int say2, Map<String, String> mapToReplace, CollectionTarget type)
+	public static void announceTime(int time, String textId, MessageType say2, Map<String, String> mapToReplace, CollectionTarget type)
 	{
 		announce(say2, textId, mapToReplace, type, null, time);
 	}
@@ -110,7 +111,7 @@ public class EventUtil
 	 * @param text
 	 * @param type
 	 */
-	public static void announceTo(int say2, String text, CollectionTarget type)
+	public static void announceTo(MessageType say2, String text, CollectionTarget type)
 	{
 		announce(say2, text, null, type, null, -1);
 	}
@@ -124,7 +125,7 @@ public class EventUtil
 	 * @parm replace
 	 * @param type
 	 */
-	public static void announceTo(int say2, String text, String replace, String textReplace, CollectionTarget type)
+	public static void announceTo(MessageType say2, String text, String replace, String textReplace, CollectionTarget type)
 	{
 		Map<String, String> map = new HashMap<>();
 		map.put(replace, textReplace);
@@ -138,7 +139,7 @@ public class EventUtil
 	 * @param map
 	 * @param type
 	 */
-	public static void announceTo(int say2, String text, Map<String, String> map, CollectionTarget type)
+	public static void announceTo(MessageType say2, String text, Map<String, String> map, CollectionTarget type)
 	{
 		announce(say2, text, map, type, null, -1);
 	}
@@ -150,7 +151,7 @@ public class EventUtil
 	 * @param type
 	 * @param npcId
 	 */
-	public static void npcAnnounceTo(int say2, String text, CollectionTarget type, int npcId)
+	public static void npcAnnounceTo(MessageType say2, String text, CollectionTarget type, int npcId)
 	{
 		announce(say2, text, null, type, getNpcSpawned(npcId), -1);
 	}
@@ -164,7 +165,7 @@ public class EventUtil
 	 * @param type
 	 * @param npcId
 	 */
-	public static void npcAnnounceTo(int say2, String text, String replace, String textReplace, CollectionTarget type, int npcId)
+	public static void npcAnnounceTo(MessageType say2, String text, String replace, String textReplace, CollectionTarget type, int npcId)
 	{
 		Map<String, String> map = new HashMap<>();
 		map.put(replace, textReplace);
@@ -179,21 +180,21 @@ public class EventUtil
 	 * @param type
 	 * @param npcId
 	 */
-	public static void npcAnnounceTo(int say2, String text, Map<String, String> map, CollectionTarget type, int npcId)
+	public static void npcAnnounceTo(MessageType say2, String text, Map<String, String> map, CollectionTarget type, int npcId)
 	{
 		announce(say2, text, map, type, getNpcSpawned(npcId), -1);
 	}
 	
 	/**
 	 * Announce the proper message for each player.
-	 * @param say2
+	 * @param messageType
 	 * @param textId
 	 * @param mapToReplace
 	 * @param type
 	 * @param npcs
 	 * @param time
 	 */
-	private static void announce(int say2, String textId, Map<String, String> mapToReplace, CollectionTarget type, Set<L2Npc> npcs, int time)
+	private static void announce(MessageType messageType, String textId, Map<String, String> mapToReplace, CollectionTarget type, Set<L2Npc> npcs, int time)
 	{
 		if ((time > -1) && !TIME_LEFT_TO_ANNOUNCE.contains(time))
 		{
@@ -206,7 +207,7 @@ public class EventUtil
 			case ALL_PLAYERS_IN_EVENT:
 				for (L2PcInstance player : getPlayersCollection(type))
 				{
-					player.sendPacket(new CreatureSay(0, say2, "", getAnnounce(player, textId, mapToReplace, time)));
+					player.sendPacket(new CreatureSay(0, messageType.getValue(), "", getAnnounce(player, textId, mapToReplace, time)));
 				}
 				break;
 			case ALL_NEAR_PLAYERS:
@@ -342,7 +343,7 @@ public class EventUtil
 	 */
 	public static void sendEventMessage(Player player, String text)
 	{
-		player.getPcInstance().sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", text));
+		player.sendPacket(new CreatureSayPacket(0, MessageType.PARTYMATCH_ROOM, "", text));
 	}
 	
 	/**
@@ -353,7 +354,7 @@ public class EventUtil
 	 */
 	public static void sendEventSpecialMessage(Player player, int type, String msg)
 	{
-		player.getPcInstance().sendPacket(new ExEventMatchMessage(type, msg));
+		player.sendPacket(new EventMatchMessagePacket(type, msg));
 	}
 	
 	/**
@@ -363,7 +364,7 @@ public class EventUtil
 	 */
 	public static void sendEventScreenMessage(Player player, String text)
 	{
-		player.getPcInstance().sendPacket(new ExShowScreenMessage(text, 2000));
+		player.sendPacket(new ShowScreenMessagePacket(text, 2000));
 	}
 	
 	/**
@@ -374,7 +375,7 @@ public class EventUtil
 	 */
 	public static void sendEventScreenMessage(Player player, String text, int time)
 	{
-		player.getPcInstance().sendPacket(new ExShowScreenMessage(text, time));
+		player.sendPacket(new ShowScreenMessagePacket(text, time));
 	}
 	
 	/**
@@ -401,12 +402,12 @@ public class EventUtil
 	 * @param player
 	 * @param target
 	 */
-	public static void messageKill(Player player, L2Character target)
+	public static void messageKill(Player player, Character target)
 	{
 		Map<String, String> map = new HashMap<>();
 		map.put("%killer%", player.getPcInstance().getName());
 		map.put("%target%", target.getName());
-		EventUtil.announceTo(Say2.TRADE, "event_player_killer", map, CollectionTarget.ALL_PLAYERS_IN_EVENT);
+		EventUtil.announceTo(MessageType.TRADE, "event_player_killer", map, CollectionTarget.ALL_PLAYERS_IN_EVENT);
 	}
 	
 	/**

@@ -19,6 +19,7 @@
 package com.github.athenaengine.core.task;
 
 import com.github.athenaengine.core.config.BaseConfigLoader;
+import com.github.athenaengine.core.enums.MessageType;
 import com.github.athenaengine.core.model.base.BaseEvent;
 import com.github.athenaengine.core.EventEngineManager;
 import com.github.athenaengine.core.config.model.MainEventConfig;
@@ -27,7 +28,6 @@ import com.github.athenaengine.core.enums.CollectionTarget;
 import com.github.athenaengine.core.enums.EventEngineState;
 import com.github.athenaengine.core.interfaces.EventContainer;
 import com.github.athenaengine.core.util.EventUtil;
-import com.l2jserver.gameserver.network.clientpackets.Say2;
 
 /**
  * It handles the different state's behavior of EventEngineManager.
@@ -54,7 +54,7 @@ public class EventEngineTask implements Runnable
 				{
 					if (getConfig().isVotingEnabled())
 					{
-						EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "event_voting_started", _type);
+						EventUtil.announceTo(MessageType.CRITICAL_ANNOUNCE, "event_voting_started", _type);
 						EventEngineManager.getInstance().setTime(getConfig().getVotingTime() * 60);
 						EventEngineManager.getInstance().setEventEngineState(EventEngineState.VOTING);
 					}
@@ -63,7 +63,7 @@ public class EventEngineTask implements Runnable
 						EventEngineManager.getInstance().setNextEvent(EventLoader.getInstance().getRandomEventType());
 						EventEngineManager.getInstance().setTime(getConfig().getRegisterTime() * 60);
 						String eventName = EventEngineManager.getInstance().getNextEvent().getEventName();
-						EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "event_register_started", "%event%", eventName, _type);
+						EventUtil.announceTo(MessageType.CRITICAL_ANNOUNCE, "event_register_started", "%event%", eventName, _type);
 						EventEngineManager.getInstance().setEventEngineState(EventEngineState.REGISTER);
 					}
 				}
@@ -73,15 +73,15 @@ public class EventEngineTask implements Runnable
 			{
 				if (EventEngineManager.getInstance().getTime() > 0)
 				{
-					EventUtil.announceTime(EventEngineManager.getInstance().getTime(), "event_voting_state", Say2.CRITICAL_ANNOUNCE, _type);
+					EventUtil.announceTime(EventEngineManager.getInstance().getTime(), "event_voting_state", MessageType.CRITICAL_ANNOUNCE, _type);
 				}
 				else
 				{
 					EventContainer nextEvent = EventEngineManager.getInstance().getEventMoreVotes();
 					EventEngineManager.getInstance().setNextEvent(nextEvent);
 					EventEngineManager.getInstance().setTime(getConfig().getRegisterTime() * 60);
-					EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "event_voting_ended", _type);
-					EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "event_register_started", "%event%", nextEvent.getEventName(), _type);
+					EventUtil.announceTo(MessageType.CRITICAL_ANNOUNCE, "event_voting_ended", _type);
+					EventUtil.announceTo(MessageType.CRITICAL_ANNOUNCE, "event_register_started", "%event%", nextEvent.getEventName(), _type);
 					EventEngineManager.getInstance().setEventEngineState(EventEngineState.REGISTER);
 				}
 				break;
@@ -92,7 +92,7 @@ public class EventEngineTask implements Runnable
 				{
 					int time = EventEngineManager.getInstance().getTime();
 					String eventName = EventEngineManager.getInstance().getNextEvent().getEventName();
-					EventUtil.announceTime(time, "event_register_state", Say2.CRITICAL_ANNOUNCE, "%event%", eventName, _type);
+					EventUtil.announceTime(time, "event_register_state", MessageType.CRITICAL_ANNOUNCE, "%event%", eventName, _type);
 				}
 				else
 				{
@@ -100,13 +100,13 @@ public class EventEngineTask implements Runnable
 					{
 						EventEngineManager.getInstance().cleanUp();
 						EventEngineManager.getInstance().setTime(getConfig().getInterval() * 60);
-						EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "event_aborted", _type);
-						EventUtil.announceTime(EventEngineManager.getInstance().getTime(), "event_next", Say2.CRITICAL_ANNOUNCE, _type);
+						EventUtil.announceTo(MessageType.CRITICAL_ANNOUNCE, "event_aborted", _type);
+						EventUtil.announceTime(EventEngineManager.getInstance().getTime(), "event_next", MessageType.CRITICAL_ANNOUNCE, _type);
 						EventEngineManager.getInstance().setEventEngineState(EventEngineState.WAITING);
 					}
 					else
 					{
-						EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "event_register_ended", _type);
+						EventUtil.announceTo(MessageType.CRITICAL_ANNOUNCE, "event_register_ended", _type);
 						EventEngineManager.getInstance().setEventEngineState(EventEngineState.RUN_EVENT);
 					}
 				}
@@ -119,14 +119,14 @@ public class EventEngineTask implements Runnable
 				if (event == null)
 				{
 					EventEngineManager.getInstance().cleanUp();
-					EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "wrong_run", _type);
-					EventUtil.announceTime(EventEngineManager.getInstance().getTime(), "event_next", Say2.CRITICAL_ANNOUNCE, _type);
+					EventUtil.announceTo(MessageType.CRITICAL_ANNOUNCE, "wrong_run", _type);
+					EventUtil.announceTime(EventEngineManager.getInstance().getTime(), "event_next", MessageType.CRITICAL_ANNOUNCE, _type);
 					EventEngineManager.getInstance().setEventEngineState(EventEngineState.WAITING);
 					return;
 				}
 				EventEngineManager.getInstance().setCurrentEvent(event);
 				EventEngineManager.getInstance().setEventEngineState(EventEngineState.RUNNING_EVENT);
-				EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "event_started", _type);
+				EventUtil.announceTo(MessageType.CRITICAL_ANNOUNCE, "event_started", _type);
 				break;
 			}
 			case RUNNING_EVENT:
@@ -138,8 +138,8 @@ public class EventEngineTask implements Runnable
 			{
 				EventEngineManager.getInstance().cleanUp();
 				EventEngineManager.getInstance().setTime(getConfig().getInterval() * 60);
-				EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "event_end", _type);
-				EventUtil.announceTime(EventEngineManager.getInstance().getTime(), "event_next", Say2.CRITICAL_ANNOUNCE, _type);
+				EventUtil.announceTo(MessageType.CRITICAL_ANNOUNCE, "event_end", _type);
+				EventUtil.announceTime(EventEngineManager.getInstance().getTime(), "event_next", MessageType.CRITICAL_ANNOUNCE, _type);
 				EventEngineManager.getInstance().setEventEngineState(EventEngineState.WAITING);
 				break;
 			}
