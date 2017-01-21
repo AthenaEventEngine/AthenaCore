@@ -1,4 +1,4 @@
-group 'com.github.u3games.eventengine'
+group 'com.github.athenaengine.core'
 version '0.1-SNAPSHOT'
 
 apply plugin: 'java'
@@ -39,7 +39,7 @@ jar {
                 'Built-By': System.getProperty('user.name'),
                 'Built-Date': new Date(),
                 'Built-JDK': System.getProperty('java.version'),
-                'Main-Class': 'com.github.u3games.eventengine.EventEngineManager'
+                'Main-Class': 'com.github.athenaengine.core.EventEngineManager'
     }
     archiveName = 'L2J_EventEngine.jar'
 }
