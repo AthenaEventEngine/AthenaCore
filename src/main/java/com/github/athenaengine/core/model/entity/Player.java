@@ -21,6 +21,7 @@ package com.github.athenaengine.core.model.entity;
 import com.github.athenaengine.core.enums.ScoreType;
 import com.github.athenaengine.core.events.holders.TeamHolder;
 import com.github.athenaengine.core.events.listeners.EventEngineListener;
+import com.github.athenaengine.core.interfaces.IGamePacket;
 import com.github.athenaengine.core.model.ELocation;
 import com.github.athenaengine.core.enums.TeamType;
 import com.github.athenaengine.core.interfaces.ParticipantHolder;
@@ -309,6 +310,10 @@ public class Player extends Playable implements ParticipantHolder
 		// Check Skills
 		getPcInstance().sendSkillList();
 		getPcInstance().sendPacket(new SkillCoolTime(getPcInstance()));
+	}
+
+	public void sendPacket(IGamePacket packet) {
+		getPcInstance().sendPacket(packet.getL2Packet());
 	}
 
 	public long getProtectionTimeEnd() {

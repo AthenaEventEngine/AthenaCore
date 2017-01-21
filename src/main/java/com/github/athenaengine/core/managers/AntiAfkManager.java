@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.athenaengine.core.events.handler.managers;
+package com.github.athenaengine.core.managers;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 
 import com.github.athenaengine.core.config.BaseConfigLoader;
+import com.github.athenaengine.core.enums.MessageType;
 import com.github.athenaengine.core.model.base.BaseEvent;
 import com.github.athenaengine.core.EventEngineManager;
 import com.github.athenaengine.core.enums.CollectionTarget;
@@ -31,7 +32,6 @@ import com.github.athenaengine.core.model.entity.Player;
 import com.github.athenaengine.core.util.EventUtil;
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.model.Location;
-import com.l2jserver.gameserver.network.clientpackets.Say2;
 
 /**
  * System that runs for every x time if the players are afk.<br>
@@ -78,7 +78,7 @@ public class AntiAfkManager
 						ph.cancelAllEffects();
 						currentEvent.removePlayerFromEvent(ph, true);
 						EventUtil.sendMessageToPlayer(ph, "antiafk_player_kicked");
-						EventUtil.announceTo(Say2.SHOUT, "antiafk_player_kicked_announce", "%player%", ph.getPcInstance().getName(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
+						EventUtil.announceTo(MessageType.SHOUT, "antiafk_player_kicked_announce", "%player%", ph.getPcInstance().getName(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
 						continue;
 					}
 				}

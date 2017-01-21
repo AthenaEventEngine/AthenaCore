@@ -18,10 +18,10 @@
  */
 package com.github.athenaengine.core.events.schedules;
 
+import com.github.athenaengine.core.enums.MessageType;
 import com.github.athenaengine.core.events.schedules.interfaces.EventScheduled;
 import com.github.athenaengine.core.enums.CollectionTarget;
 import com.github.athenaengine.core.util.EventUtil;
-import com.l2jserver.gameserver.network.clientpackets.Say2;
 
 /**
  * @author Zephyr
@@ -47,6 +47,6 @@ public class AnnounceNearEndEvent implements EventScheduled
 	@Override
 	public void run()
 	{
-		EventUtil.announceTo(Say2.CRITICAL_ANNOUNCE, "event_end_soon", "%time%", String.valueOf(_timeAnnounce), CollectionTarget.ALL_PLAYERS_IN_EVENT);
+		EventUtil.announceTo(MessageType.CRITICAL_ANNOUNCE, "event_end_soon", "%time%", String.valueOf(_timeAnnounce), CollectionTarget.ALL_PLAYERS_IN_EVENT);
 	}
 }
