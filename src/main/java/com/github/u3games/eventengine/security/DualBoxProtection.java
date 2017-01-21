@@ -19,8 +19,8 @@
 package com.github.u3games.eventengine.security;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.github.u3games.eventengine.datatables.ConfigData;
 import com.l2jserver.gameserver.network.L2GameClient;
@@ -31,7 +31,7 @@ import com.l2jserver.gameserver.network.L2GameClient;
  */
 public final class DualBoxProtection
 {
-	private final Map<IpPack, Integer> _address = new HashMap<>();
+	private final Map<IpPack, Integer> _address = new ConcurrentHashMap<>();
 	
 	public DualBoxProtection()
 	{
@@ -57,26 +57,24 @@ public final class DualBoxProtection
 				e.printStackTrace();
 			}
 		}
+		
 		return false;
 	}
 	
-	public synchronized void removeConnection(L2GameClient client)
+	public synchronized boolean removeConnection(L2GameClient client)
 	{
 		if (ConfigData.DUALBOX_PROTECTION_ENABLED)
 		{
 			try
 			{
-				if ((client.getConnection().getInetAddress().getHostAddress() != null) || (client.getTrace() != null))
+				if (client != null)
 				{
 					IpPack pack = new IpPack(client.getConnection().getInetAddress().getHostAddress(), client.getTrace());
 					Integer count = _address.get(pack) != null ? _address.get(pack) : 0;
 					if (count > 0)
 					{
 						_address.put(pack, count -= 1);
-					}
-					else
-					{
-						_address.remove(pack);
+						return true;
 					}
 				}
 			}
@@ -85,6 +83,8 @@ public final class DualBoxProtection
 				e.printStackTrace();
 			}
 		}
+		
+		return false;
 	}
 	
 	public int getConnectionCount(String address)
