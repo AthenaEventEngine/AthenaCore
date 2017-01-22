@@ -18,7 +18,7 @@
  */
 package custom.events.EventEngine;
 
-import com.github.u3games.eventengine.EventEngineManager;
+import com.github.athenaengine.core.EventEngineManager;
 import ai.npc.AbstractNpcAI;
 
 /**
