@@ -80,7 +80,7 @@ public class NpcManager extends Quest
 			case "engine":
 				final NpcHtmlMessage html = new NpcHtmlMessage();
 				html.setFile(l2PcInstance.getHtmlPrefix(), "data/html/events/event_engine.htm");
-				html.replace("%buttonMain%", MessageData.getInstance().getMsgByLang(l2PcInstance, "button_main", false));
+				html.replace("%buttonMain%", MessageData.getInstance().getMsgByLang(player, "button_main", false));
 				l2PcInstance.sendPacket(html);
 				break;
 			case "vote":
@@ -92,14 +92,14 @@ public class NpcManager extends Quest
 					if (container != null)
 					{
 						EventEngineManager.getInstance().increaseVote(player, container.getSimpleEventName());
-						l2PcInstance.sendMessage(MessageData.getInstance().getMsgByLang(l2PcInstance, "event_vote_done", true));
+						l2PcInstance.sendMessage(MessageData.getInstance().getMsgByLang(player, "event_vote_done", true));
 					}
 				}
 				sendHtmlIndex(player);
 				break;
 			case "info":
 				String eventName = st.nextToken();
-				sendHtmlInfo(l2PcInstance, eventName);
+				sendHtmlInfo(player, eventName);
 				break;
 			case "register":
 				if (!EventEngineManager.getInstance().isRegistered(player))
@@ -112,18 +112,18 @@ public class NpcManager extends Quest
 						// Check player size
 						if (EventEngineManager.getInstance().getAllRegisteredPlayers().size() >= getConfig().getMaxPlayers())
 						{
-							l2PcInstance.sendMessage(MessageData.getInstance().getMsgByLang(l2PcInstance, "registering_maxPlayers", true));
+							l2PcInstance.sendMessage(MessageData.getInstance().getMsgByLang(player, "registering_maxPlayers", true));
 						}
 						else
 						{
 							EventEngineManager.getInstance().registerPlayer(player);
-							l2PcInstance.sendMessage(MessageData.getInstance().getMsgByLang(l2PcInstance, "registering_registered", true));
+							l2PcInstance.sendMessage(MessageData.getInstance().getMsgByLang(player, "registering_registered", true));
 						}
 					}
 				}
 				else
 				{
-					l2PcInstance.sendMessage(MessageData.getInstance().getMsgByLang(l2PcInstance, "registering_already_registered", true));
+					l2PcInstance.sendMessage(MessageData.getInstance().getMsgByLang(player, "registering_already_registered", true));
 				}
 				sendHtmlIndex(player);
 				break;
@@ -134,28 +134,28 @@ public class NpcManager extends Quest
 					
 					if (EventEngineManager.getInstance().unRegisterPlayer(player))
 					{
-						l2PcInstance.sendMessage(MessageData.getInstance().getMsgByLang(l2PcInstance, "unregistering_unregistered", true));
+						l2PcInstance.sendMessage(MessageData.getInstance().getMsgByLang(player, "unregistering_unregistered", true));
 					}
 					else
 					{
-						l2PcInstance.sendMessage(MessageData.getInstance().getMsgByLang(l2PcInstance, "unregistering_notRegistered", true));
+						l2PcInstance.sendMessage(MessageData.getInstance().getMsgByLang(player, "unregistering_notRegistered", true));
 					}
 				}
 				else
 				{
-					l2PcInstance.sendMessage(MessageData.getInstance().getMsgByLang(l2PcInstance, "event_registration_notUnRegState", true));
+					l2PcInstance.sendMessage(MessageData.getInstance().getMsgByLang(player, "event_registration_notUnRegState", true));
 				}
 				sendHtmlIndex(player);
 				break;
 			// Multi-Language System menu
 			case "menulang":
-				sendHtmlLang(l2PcInstance);
+				sendHtmlLang(player);
 				break;
 			// Multi-Language System set language
 			case "setlang":
 				String lang = st.nextToken();
-				MessageData.getInstance().setLanguage(l2PcInstance, lang);
-				l2PcInstance.sendMessage(MessageData.getInstance().getMsgByLang(l2PcInstance, "lang_current_successfully", false) + " " + lang);
+				MessageData.getInstance().setLanguage(player, lang);
+				l2PcInstance.sendMessage(MessageData.getInstance().getMsgByLang(player, "lang_current_successfully", false) + " " + lang);
 				sendHtmlIndex(player);
 				break;
 			case "buffs":
@@ -182,10 +182,10 @@ public class NpcManager extends Quest
 		return "";
 	}
 	
-	private static void sendHtmlInfo(L2PcInstance player, String eventName)
+	private static void sendHtmlInfo(Player player, String eventName)
 	{
 		final NpcHtmlMessage html = new NpcHtmlMessage();
-		html.setFile(player.getHtmlPrefix(), "data/html/events/event_info.htm");
+		html.setFile(player.getPcInstance().getHtmlPrefix(), "data/html/events/event_info.htm");
 		// Avoid a vulnerability
 		if (EventLoader.getInstance().getEvent(eventName) != null)
 		{
@@ -212,13 +212,13 @@ public class NpcManager extends Quest
 			html.replace("%buttonMain%", MessageData.getInstance().getMsgByLang(player, "button_main", false));
 		}
 		// Send html
-		player.sendPacket(html);
+		player.getPcInstance().sendPacket(html);
 	}
 	
-	private static void sendHtmlLang(L2PcInstance player)
+	private static void sendHtmlLang(Player player)
 	{
 		final NpcHtmlMessage html = new NpcHtmlMessage();
-		html.setFile(player.getHtmlPrefix(), "data/html/events/event_lang.htm");
+		html.setFile(player.getPcInstance().getHtmlPrefix(), "data/html/events/event_lang.htm");
 		// Info menu
 		html.replace("%settingTitle%", MessageData.getInstance().getMsgByLang(player, "lang_menu_title", false));
 		html.replace("%languageTitle%", MessageData.getInstance().getMsgByLang(player, "lang_language_title", false));
@@ -238,7 +238,7 @@ public class NpcManager extends Quest
 		// Button
 		html.replace("%buttonMain%", MessageData.getInstance().getMsgByLang(player, "button_main", false));
 		// Send html
-		player.sendPacket(html);
+		player.getPcInstance().sendPacket(html);
 	}
 	
 	private static void sendHtmlBuffList(Player player, int page)
@@ -363,63 +363,65 @@ public class NpcManager extends Quest
 		player.getPcInstance().sendPacket(html);
 	}
 	
-	private static boolean checkPlayerCondition(L2PcInstance player)
+	private static boolean checkPlayerCondition(L2PcInstance l2PcInstance)
 	{
+		Player player = CacheManager.getInstance().getPlayer(l2PcInstance, true);
+
 		// Check level min
-		if (player.getLevel() < getConfig().getMinPlayerLevel())
+		if (l2PcInstance.getLevel() < getConfig().getMinPlayerLevel())
 		{
-			player.sendMessage(MessageData.getInstance().getMsgByLang(player, "lowLevel", true));
+			l2PcInstance.sendMessage(MessageData.getInstance().getMsgByLang(player, "lowLevel", true));
 			return false;
 		}
 		// Check level max
-		else if (player.getLevel() > getConfig().getMaxPlayerLevel())
+		else if (l2PcInstance.getLevel() > getConfig().getMaxPlayerLevel())
 		{
-			player.sendMessage(MessageData.getInstance().getMsgByLang(player, "highLevel", true));
+			l2PcInstance.sendMessage(MessageData.getInstance().getMsgByLang(player, "highLevel", true));
 			return false;
 		}
 		// Check dead mode player
-		else if (player.isDead() || player.isAlikeDead())
+		else if (l2PcInstance.isDead() || l2PcInstance.isAlikeDead())
 		{
-			player.sendMessage(MessageData.getInstance().getMsgByLang(player, "deadMode", true));
+			l2PcInstance.sendMessage(MessageData.getInstance().getMsgByLang(player, "deadMode", true));
 			return false;
 		}
 		// Check Olympiad Mode
-		else if (player.isInOlympiadMode())
+		else if (l2PcInstance.isInOlympiadMode())
 		{
-			player.sendMessage(MessageData.getInstance().getMsgByLang(player, "olympiadMode", true));
+			l2PcInstance.sendMessage(MessageData.getInstance().getMsgByLang(player, "olympiadMode", true));
 			return false;
 		}
 		// Check Observer Mode
-		else if (player.inObserverMode())
+		else if (l2PcInstance.inObserverMode())
 		{
-			player.sendMessage(MessageData.getInstance().getMsgByLang(player, "observerMode", true));
+			l2PcInstance.sendMessage(MessageData.getInstance().getMsgByLang(player, "observerMode", true));
 			return false;
 		}
 		// Check in festival
-		else if (player.isFestivalParticipant())
+		else if (l2PcInstance.isFestivalParticipant())
 		{
-			player.sendMessage(MessageData.getInstance().getMsgByLang(player, "festivalMode", true));
+			l2PcInstance.sendMessage(MessageData.getInstance().getMsgByLang(player, "festivalMode", true));
 			return false;
 		}
 		// Check in Events
-		else if (L2Event.isParticipant(player))
+		else if (L2Event.isParticipant(l2PcInstance))
 		{
-			player.sendMessage(MessageData.getInstance().getMsgByLang(player, "eventMode", true));
+			l2PcInstance.sendMessage(MessageData.getInstance().getMsgByLang(player, "eventMode", true));
 			return false;
 		}
 		// Check in TvT Event
-		else if (TvTEvent.isPlayerParticipant(player.getObjectId()))
+		else if (TvTEvent.isPlayerParticipant(l2PcInstance.getObjectId()))
 		{
-			player.sendMessage(MessageData.getInstance().getMsgByLang(player, "tvtEvent", true));
+			l2PcInstance.sendMessage(MessageData.getInstance().getMsgByLang(player, "tvtEvent", true));
 			return false;
 		}
 		// Check player state
-		else if ((player.getPvpFlag() > 0) || (player.isInCombat()) || (player.isInDuel()) || (player.getKarma() > 0) || (player.isCursedWeaponEquipped()))
+		else if ((l2PcInstance.getPvpFlag() > 0) || (l2PcInstance.isInCombat()) || (l2PcInstance.isInDuel()) || (l2PcInstance.getKarma() > 0) || (l2PcInstance.isCursedWeaponEquipped()))
 		{
 			// Check properties
 			if (!getConfig().isChaoticPlayerRegisterAllowed())
 			{
-				player.sendMessage(MessageData.getInstance().getMsgByLang(player, "chaoticPlayer", true));
+				l2PcInstance.sendMessage(MessageData.getInstance().getMsgByLang(player, "chaoticPlayer", true));
 				return false;
 			}
 		}

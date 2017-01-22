@@ -101,6 +101,7 @@ public class TeamHolder implements ParticipantHolder
 	 */
 	@Override
 	public int getPoints(ScoreType type) {
+		if (!_points.containsKey(type)) _points.put(type, 0);
 		return _points.get(type);
 	}
 

@@ -207,7 +207,7 @@ public class EventUtil
 			case ALL_PLAYERS_IN_EVENT:
 				for (L2PcInstance player : getPlayersCollection(type))
 				{
-					player.sendPacket(new CreatureSay(0, messageType.getValue(), "", getAnnounce(player, textId, mapToReplace, time)));
+					player.sendPacket(new CreatureSay(0, messageType.getValue(), "", getAnnounce(CacheManager.getInstance().getPlayer(player, true), textId, mapToReplace, time)));
 				}
 				break;
 			case ALL_NEAR_PLAYERS:
@@ -223,7 +223,7 @@ public class EventUtil
 				{
 					for (L2PcInstance player : npcPlayerMap.get(npc))
 					{
-						player.sendPacket(new CreatureSay(npc.getObjectId(), 18, npc.getName(), getAnnounce(player, textId, mapToReplace, time)));
+						player.sendPacket(new CreatureSay(npc.getObjectId(), 18, npc.getName(), getAnnounce(CacheManager.getInstance().getPlayer(player, true), textId, mapToReplace, time)));
 					}
 				}
 				break;
@@ -238,7 +238,7 @@ public class EventUtil
 	 * @param time
 	 * @return announce
 	 */
-	private static String getAnnounce(L2PcInstance player, String textId, Map<String, String> map, int time)
+	private static String getAnnounce(Player player, String textId, Map<String, String> map, int time)
 	{
 		String announce = MessageData.getInstance().getMsgByLang(player, textId, true);
 		if (time > -1)
@@ -417,7 +417,6 @@ public class EventUtil
 	 */
 	public static void sendMessageToPlayer(Player ph, String textId)
 	{
-		L2PcInstance player = ph.getPcInstance();
-		player.sendMessage(MessageData.getInstance().getMsgByLang(player, textId, true));
+		ph.sendMessage(MessageData.getInstance().getMsgByLang(ph, textId, true));
 	}
 }
