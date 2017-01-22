@@ -43,7 +43,7 @@ public final class MessageData
 	private static final String DIRECTORY = "config/EventEngine/language";
 	private static final String DEFAULT_LANG = "en";
 	// Map to identify the language of each character
-	private final Map<L2PcInstance, String> _playerCurrentLang = new HashMap<>();
+	private final Map<Player, String> _playerCurrentLang = new HashMap<>();
 	private final Map<String, String> _msgMap = new HashMap<>();
 	private final Map<String, String> _languages = new HashMap<>();
 	
@@ -135,7 +135,7 @@ public final class MessageData
 	 * @param addTag Used for screen or chat messages.
 	 * @return String
 	 */
-	public String getMsgByLang(L2PcInstance player, String text, boolean addTag)
+	public String getMsgByLang(Player player, String text, boolean addTag)
 	{
 		// Get the language by which the user chooses
 		String lang = getLanguage(player);
@@ -180,17 +180,12 @@ public final class MessageData
 		return tag + msg.toString();
 	}
 	
-	public String getMsgByLang(Player player, String text, boolean addTag)
-	{
-		return getMsgByLang(player.getPcInstance(), text, addTag);
-	}
-	
 	/**
 	 * Define the language a character wants.
 	 * @param player
 	 * @param lang
 	 */
-	public void setLanguage(L2PcInstance player, String lang)
+	public void setLanguage(Player player, String lang)
 	{
 		_playerCurrentLang.put(player, lang);
 	}
@@ -200,7 +195,7 @@ public final class MessageData
 	 * @param player
 	 * @return String
 	 */
-	public String getLanguage(L2PcInstance player)
+	public String getLanguage(Player player)
 	{
 		if (_playerCurrentLang.containsKey(player))
 		{

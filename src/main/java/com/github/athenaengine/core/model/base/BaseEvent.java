@@ -606,7 +606,7 @@ public abstract class BaseEvent<T extends EventConfig> implements IListenerSuscr
 	{
 		try
 		{
-			EventUtil.sendEventMessage(player, MessageData.getInstance().getMsgByLang(player.getPcInstance(), "revive_in", true).replace("%time%", time + ""));
+			EventUtil.sendEventMessage(player, MessageData.getInstance().getMsgByLang(player, "revive_in", true).replace("%time%", time + ""));
 			_revivePending.add(ThreadPoolManager.getInstance().scheduleGeneral(() ->
 			{
 				player.revive(getMainConfig().getSpawnProtectionTime());

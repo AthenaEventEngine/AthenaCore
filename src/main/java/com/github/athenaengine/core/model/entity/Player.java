@@ -22,6 +22,7 @@ import com.github.athenaengine.core.enums.ScoreType;
 import com.github.athenaengine.core.events.holders.TeamHolder;
 import com.github.athenaengine.core.events.listeners.EventEngineListener;
 import com.github.athenaengine.core.interfaces.IGamePacket;
+import com.github.athenaengine.core.model.EItemHolder;
 import com.github.athenaengine.core.model.ELocation;
 import com.github.athenaengine.core.enums.TeamType;
 import com.github.athenaengine.core.interfaces.ParticipantHolder;
@@ -31,7 +32,6 @@ import com.l2jserver.gameserver.model.L2World;
 import com.l2jserver.gameserver.model.actor.L2Summon;
 import com.l2jserver.gameserver.model.actor.instance.L2CubicInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
-import com.l2jserver.gameserver.model.holders.ItemHolder;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 import com.l2jserver.gameserver.model.skills.Skill;
@@ -76,7 +76,8 @@ public class Player extends Playable implements ParticipantHolder
 	}
 
 	public void addToEvent(TeamHolder team) {
-		mEventPlayerStatus = new EventPlayerStatus();
+		if (mEventPlayerStatus == null) mEventPlayerStatus = new EventPlayerStatus();
+
 		mEventPlayerStatus._oriColorTitle = getPcInstance().getAppearance().getTitleColor();
 		mEventPlayerStatus._oriTitle = getPcInstance().getTitle();
 		mEventPlayerStatus._returnLocation = new ELocation(getPcInstance().getLocation());
@@ -130,8 +131,9 @@ public class Player extends Playable implements ParticipantHolder
 	}
 
 	public void setTeam(TeamHolder team) {
-		mEventPlayerStatus._team = team;
+		if (mEventPlayerStatus == null) mEventPlayerStatus = new EventPlayerStatus();
 
+		mEventPlayerStatus._team = team;
 		getPcInstance().setTitle(team.getName());
 		getPcInstance().getAppearance().setTitleColor(team.getTeamType().getColor());
 	}
@@ -159,6 +161,7 @@ public class Player extends Playable implements ParticipantHolder
 	 */
 	@Override
 	public int getPoints(ScoreType type) {
+		if (!mEventPlayerStatus._points.containsKey(type)) mEventPlayerStatus._points.put(type, 0);
 		return mEventPlayerStatus._points.get(type);
 	}
 
@@ -236,20 +239,17 @@ public class Player extends Playable implements ParticipantHolder
 	 * We deliver the items in a list defined as. Created in order to deliver rewards in the events.
 	 * @param items
 	 */
-	public void giveItems(Collection<ItemHolder> items)
+	public void giveItems(Collection<EItemHolder> items)
 	{
-		for (ItemHolder reward : items)
+		for (EItemHolder reward : items)
 		{
-			getPcInstance().addItem("eventReward", reward.getId(), reward.getCount(), null, true);
+			getPcInstance().addItem("eventReward", reward.getId(), reward.getAmount(), null, true);
 		}
 	}
 
-	public void removeItems(Collection<ItemHolder> items)
+	public void removeItems(Collection<EItemHolder> items)
 	{
-		for (ItemHolder reward : items)
-		{
-			getPcInstance().addItem("eventReward", reward.getId(), reward.getCount(), null, true);
-		}
+		// TODO: implement it
 	}
 
 	/**
@@ -310,6 +310,22 @@ public class Player extends Playable implements ParticipantHolder
 		// Check Skills
 		getPcInstance().sendSkillList();
 		getPcInstance().sendPacket(new SkillCoolTime(getPcInstance()));
+	}
+
+	public int getPvpKills() {
+		return getPcInstance().getPvpKills();
+	}
+
+	public void setPvpKills(int value) {
+		getPcInstance().setPvpKills(value);
+	}
+
+	public int getFame() {
+		return getPcInstance().getFame();
+	}
+
+	public void setFame(int value) {
+		getPcInstance().setFame(value);
 	}
 
 	public void sendPacket(IGamePacket packet) {

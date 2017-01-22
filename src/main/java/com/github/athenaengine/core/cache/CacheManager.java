@@ -30,6 +30,7 @@ public class CacheManager {
         return summon;
     }
 
+
     public Playable getPlayable(L2Playable l2Playable, boolean initialize) {
         if (l2Playable instanceof L2PcInstance) return getPlayer((L2PcInstance) l2Playable, initialize);
         return getSummon((L2Summon) l2Playable, initialize);
@@ -47,16 +48,27 @@ public class CacheManager {
     }
 
     public Player addPlayer(L2PcInstance l2PcInstance) {
-        return mPlayers.put(l2PcInstance.getObjectId(), new Player(l2PcInstance.getObjectId()));
+        Player player = new Player(l2PcInstance.getObjectId());
+        mPlayers.put(l2PcInstance.getObjectId(), player);
+        return player;
     }
 
     public Summon addSummon(L2Summon l2Summon) {
-        return mSummons.put(l2Summon.getObjectId(), new Summon(l2Summon.getObjectId()));
+        Summon summon = new Summon(l2Summon.getObjectId());
+        mSummons.put(l2Summon.getObjectId(), new Summon(l2Summon.getObjectId()));
+        return summon;
     }
 
     public Npc addNpc(L2Npc l2Npc) {
-        if (l2Npc instanceof L2MonsterInstance) return mNpcs.put(l2Npc.getObjectId(), new Monster(l2Npc.getObjectId()));
-        return mNpcs.put(l2Npc.getObjectId(), new FriendlyNpc(l2Npc.getObjectId()));
+        if (l2Npc instanceof L2MonsterInstance) {
+            Monster monster = new Monster(l2Npc.getObjectId());
+            mNpcs.put(l2Npc.getObjectId(), new Monster(l2Npc.getObjectId()));
+            return monster;
+        }
+
+        FriendlyNpc friendlyNpc = new FriendlyNpc(l2Npc.getObjectId());
+        mNpcs.put(l2Npc.getObjectId(), new FriendlyNpc(l2Npc.getObjectId()));
+        return friendlyNpc;
     }
 
     public void removePlayer(int objectId) {
