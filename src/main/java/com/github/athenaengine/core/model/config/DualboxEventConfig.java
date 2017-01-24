@@ -1,15 +1,17 @@
 package com.github.athenaengine.core.model.config;
 
+import com.google.gson.annotations.SerializedName;
+
 public class DualboxEventConfig {
 
-    private boolean enabled;
-    private int maxAllowed;
+    @SerializedName("enabled") private boolean mEnabled;
+    @SerializedName("maxAllowed") private int mMaxAllowed;
 
     public boolean isEnabled() {
-        return enabled;
+        return mEnabled;
     }
 
     public int getMaxAllowed() {
-        return maxAllowed;
+        return mMaxAllowed;
     }
 }

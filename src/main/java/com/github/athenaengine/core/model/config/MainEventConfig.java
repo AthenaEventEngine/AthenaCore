@@ -1,107 +1,108 @@
 package com.github.athenaengine.core.model.config;
 
 import com.github.athenaengine.core.interfaces.IEventConfig;
+import com.google.gson.annotations.SerializedName;
 
 public class MainEventConfig implements IEventConfig {
 
-    private int npcId;
-    private boolean globalMessage;
-    private int interval;
-    private boolean votingEnabled;
-    private int votingTime;
-    private int registerTime;
-    private int runningTime;
-    private int textTimeForEnd;
-    private boolean chaoticPlayerRegister;
-    private boolean killerMessage;
-    private boolean friendlyFire;
-    private int minPlayers;
-    private int maxPlayers;
-    private int minPlayerLevel;
-    private int maxPlayerLevel;
-    private int maxBuffCount;
-    private boolean antiAfkEnabled;
-    private int antiAfkCheckTime;
-    private int spawnProtectionTime;
-    private DualboxEventConfig dualbox;
+    @SerializedName("npcId") private int mNpcId;
+    @SerializedName("globalMessage") private boolean mGlobalMessage;
+    @SerializedName("interval") private int mInterval;
+    @SerializedName("votingEnabled") private boolean mVotingEnabled;
+    @SerializedName("votingTime") private int mVotingTime;
+    @SerializedName("registerTime") private int mRegisterTime;
+    @SerializedName("runningTime") private int mRunningTime;
+    @SerializedName("textTimeForEnd") private int mTextTimeForEnd;
+    @SerializedName("chaoticPlayerRegister") private boolean mChaoticPlayerRegister;
+    @SerializedName("killerMessage") private boolean mKillerMessage;
+    @SerializedName("friendlyFire") private boolean mFriendlyFire;
+    @SerializedName("minPlayers") private int mMinPlayers;
+    @SerializedName("maxPlayers") private int mMaxPlayers;
+    @SerializedName("minPlayerLevel") private int mMinPlayerLevel;
+    @SerializedName("maxPlayerLevel") private int mMaxPlayerLevel;
+    @SerializedName("maxBuffCount") private int mMaxBuffCount;
+    @SerializedName("antiAfkEnabled") private boolean mAntiAfkEnabled;
+    @SerializedName("antiAfkCheckTime") private int mAntiAfkCheckTime;
+    @SerializedName("spawnProtectionTime") private int mSpawnProtectionTime;
+    @SerializedName("dualbox") private DualboxEventConfig mDualbox;
 
     public int getNpcId() {
-        return npcId;
+        return mNpcId;
     }
 
     public boolean getGlobalMessage() {
-        return globalMessage;
+        return mGlobalMessage;
     }
 
     public int getInterval() {
-        return interval;
+        return mInterval;
     }
 
     public boolean isVotingEnabled() {
-        return votingEnabled;
+        return mVotingEnabled;
     }
 
     public int getVotingTime() {
-        return votingTime;
+        return mVotingTime;
     }
 
     public int getRegisterTime() {
-        return registerTime;
+        return mRegisterTime;
     }
 
     public int getRunningTime() {
-        return runningTime;
+        return mRunningTime;
     }
 
     public int getTextTimeForEnd() {
-        return textTimeForEnd;
+        return mTextTimeForEnd;
     }
 
     public boolean isChaoticPlayerRegisterAllowed() {
-        return chaoticPlayerRegister;
+        return mChaoticPlayerRegister;
     }
 
     public boolean isKillerMessageEnabled() {
-        return killerMessage;
+        return mKillerMessage;
     }
 
     public boolean isFriendlyFireEnabled() {
-        return friendlyFire;
+        return mFriendlyFire;
     }
 
     public int getMinPlayers() {
-        return minPlayers;
+        return mMinPlayers;
     }
 
     public int getMaxPlayers() {
-        return maxPlayers;
+        return mMaxPlayers;
     }
 
     public int getMinPlayerLevel() {
-        return minPlayerLevel;
+        return mMinPlayerLevel;
     }
 
     public int getMaxPlayerLevel() {
-        return maxPlayerLevel;
+        return mMaxPlayerLevel;
     }
 
     public int getMaxBuffCount() {
-        return maxBuffCount;
+        return mMaxBuffCount;
     }
 
     public boolean isAntiAfkEnabled() {
-        return antiAfkEnabled;
+        return mAntiAfkEnabled;
     }
 
     public int getAntiAfkCheckTime() {
-        return antiAfkCheckTime;
+        return mAntiAfkCheckTime;
     }
 
     public int getSpawnProtectionTime() {
-        return spawnProtectionTime;
+        return mSpawnProtectionTime;
     }
 
     public DualboxEventConfig getDualbox() {
-        return dualbox;
+        return mDualbox;
     }
 }
