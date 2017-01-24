@@ -23,10 +23,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.github.athenaengine.core.events.holders.TeamHolder;
+import com.github.athenaengine.core.model.entity.Team;
 import com.github.athenaengine.core.builders.TeamsBuilder;
 import com.github.athenaengine.core.enums.TeamType;
-import com.github.athenaengine.core.model.ELocation;
+import com.github.athenaengine.core.model.holder.LocationHolder;
 import com.github.athenaengine.core.model.entity.Player;
 
 /**
@@ -34,13 +34,13 @@ import com.github.athenaengine.core.model.entity.Player;
  */
 public class TeamsManagers
 {
-	private final Map<TeamType, TeamHolder> _teams = new HashMap<>();
+	private final Map<TeamType, Team> _teams = new HashMap<>();
 	
 	public void createTeams(TeamsBuilder builder, int instanceId)
 	{
 		// TODO: do something if the teams object is null
-		List<TeamHolder> teams = builder.build();
-		for (TeamHolder team : teams)
+		List<Team> teams = builder.build();
+		for (Team team : teams)
 		{
 			_teams.put(team.getTeamType(), team);
 			team.addInstanceIdToSpawns(instanceId);
@@ -52,7 +52,7 @@ public class TeamsManagers
 	 * Get the collection of created teams.
 	 * @return
 	 */
-	public Collection<TeamHolder> getAllTeams()
+	public Collection<Team> getAllTeams()
 	{
 		return _teams.values();
 	}
@@ -62,7 +62,7 @@ public class TeamsManagers
 	 * @param type
 	 * @return
 	 */
-	public TeamHolder getTeam(TeamType type)
+	public Team getTeam(TeamType type)
 	{
 		return _teams.get(type);
 	}
@@ -72,7 +72,7 @@ public class TeamsManagers
 	 * @param player
 	 * @return
 	 */
-	public TeamHolder getPlayerTeam(Player player)
+	public Team getPlayerTeam(Player player)
 	{
 		return _teams.get(player.getTeamType());
 	}
@@ -80,9 +80,9 @@ public class TeamsManagers
 	/**
 	 * Get the team spawn.
 	 * @param team
-	 * @return ELocation
+	 * @return LocationHolder
 	 */
-	public ELocation getTeamSpawn(TeamType team)
+	public LocationHolder getTeamSpawn(TeamType team)
 	{
 		return _teams.get(team).getRndSpawn();
 	}

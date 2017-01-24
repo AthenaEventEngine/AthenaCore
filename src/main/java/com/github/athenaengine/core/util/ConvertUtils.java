@@ -1,7 +1,7 @@
 package com.github.athenaengine.core.util;
 
-import com.github.athenaengine.core.model.EItemHolder;
-import com.github.athenaengine.core.model.ELocation;
+import com.github.athenaengine.core.model.holder.EItemHolder;
+import com.github.athenaengine.core.model.holder.LocationHolder;
 import com.l2jserver.gameserver.model.Location;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
 
@@ -10,9 +10,9 @@ import java.util.List;
 
 public class ConvertUtils {
 
-    public static List<Location> convertToListLocations(List<ELocation> list) {
+    public static List<Location> convertToListLocations(List<LocationHolder> list) {
         List<Location> locations = new ArrayList<>();
-        for (ELocation loc : list) {
+        for (LocationHolder loc : list) {
             locations.add(new Location(loc.getX(), loc.getY(), loc.getZ()));
         }
 

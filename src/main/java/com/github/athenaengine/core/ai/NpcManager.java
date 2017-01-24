@@ -21,16 +21,16 @@ package com.github.athenaengine.core.ai;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import com.github.athenaengine.core.cache.CacheManager;
+import com.github.athenaengine.core.managers.CacheManager;
 import com.github.athenaengine.core.config.BaseConfigLoader;
 import com.github.athenaengine.core.model.entity.Player;
 import com.github.athenaengine.core.security.DualBoxProtection;
 import com.github.athenaengine.core.EventEngineManager;
-import com.github.athenaengine.core.config.model.MainEventConfig;
+import com.github.athenaengine.core.model.config.MainEventConfig;
 import com.github.athenaengine.core.datatables.BuffListData;
 import com.github.athenaengine.core.datatables.EventLoader;
 import com.github.athenaengine.core.datatables.MessageData;
-import com.github.athenaengine.core.interfaces.EventContainer;
+import com.github.athenaengine.core.interfaces.IEventContainer;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.entity.L2Event;
@@ -88,7 +88,7 @@ public class NpcManager extends Quest
 				if (checkPlayerCondition(l2PcInstance))
 				{
 					// Add vote event
-					EventContainer container = EventLoader.getInstance().getEvent(st.nextToken());
+					IEventContainer container = EventLoader.getInstance().getEvent(st.nextToken());
 					if (container != null)
 					{
 						EventEngineManager.getInstance().increaseVote(player, container.getSimpleEventName());
@@ -314,7 +314,7 @@ public class NpcManager extends Quest
 		else if (EventEngineManager.getInstance().isOpenVote())
 		{
 			final StringBuilder eventList = new StringBuilder(500);
-			for (EventContainer container : EventLoader.getInstance().getEnabledEvents())
+			for (IEventContainer container : EventLoader.getInstance().getEnabledEvents())
 			{
 				StringUtil.append(eventList, "<tr>");
 				StringUtil.append(eventList, "<td align=center width=30% height=30><button value=\"" + container.getEventName() + "\" action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " vote "

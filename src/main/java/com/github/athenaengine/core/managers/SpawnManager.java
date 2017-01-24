@@ -22,7 +22,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.github.athenaengine.core.events.holders.NpcHolder;
+import com.github.athenaengine.core.model.holder.NpcHolder;
 import com.github.athenaengine.core.model.entity.Npc;
 import com.l2jserver.gameserver.data.xml.impl.NpcData;
 import com.l2jserver.gameserver.datatables.SpawnTable;

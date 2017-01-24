@@ -1,8 +1,8 @@
-package com.github.athenaengine.core.config.model;
+package com.github.athenaengine.core.model.config;
 
-import com.github.athenaengine.core.config.interfaces.EventConfig;
+import com.github.athenaengine.core.interfaces.IEventConfig;
 
-public class MainEventConfig implements EventConfig {
+public class MainEventConfig implements IEventConfig {
 
     private int npcId;
     private boolean globalMessage;

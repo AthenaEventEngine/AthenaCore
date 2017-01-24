@@ -36,8 +36,8 @@ import com.github.athenaengine.core.datatables.MessageData;
 import com.github.athenaengine.core.dispatcher.events.OnLogInEvent;
 import com.github.athenaengine.core.dispatcher.events.OnLogOutEvent;
 import com.github.athenaengine.core.enums.EventEngineState;
-import com.github.athenaengine.core.interfaces.EventContainer;
-import com.github.athenaengine.core.model.ELocation;
+import com.github.athenaengine.core.interfaces.IEventContainer;
+import com.github.athenaengine.core.model.holder.LocationHolder;
 import com.github.athenaengine.core.model.base.BaseEvent;
 import com.github.athenaengine.core.model.entity.Player;
 import com.github.athenaengine.core.security.DualBoxProtection;
@@ -118,13 +118,13 @@ public class EventEngineManager
 	}
 	
 	// XXX NEXT EVENT ---------------------------------------------------------------------------------
-	private EventContainer _nextEvent;
+	private IEventContainer _nextEvent;
 	
 	/**
 	 * Get the next event type.
 	 * @return
 	 */
-	public EventContainer getNextEvent()
+	public IEventContainer getNextEvent()
 	{
 		return _nextEvent;
 	}
@@ -133,7 +133,7 @@ public class EventEngineManager
 	 * Set the next event type.
 	 * @param container
 	 */
-	public void setNextEvent(EventContainer container)
+	public void setNextEvent(IEventContainer container)
 	{
 		_nextEvent = container;
 	}
@@ -201,7 +201,7 @@ public class EventEngineManager
 	 */
 	public void initVotes()
 	{
-		for (EventContainer container : EventLoader.getInstance().getEnabledEvents())
+		for (IEventContainer container : EventLoader.getInstance().getEnabledEvents())
 		{
 			_currentEventVotes.put(container.getSimpleEventName(), ConcurrentHashMap.newKeySet());
 		}
@@ -282,7 +282,7 @@ public class EventEngineManager
 	 * Get the event with more votes. In case all have the same amount of votes, it will make a random among those most votes have.
 	 * @return
 	 */
-	public EventContainer getEventMoreVotes()
+	public IEventContainer getEventMoreVotes()
 	{
 		int maxVotes = 0;
 		List<String> topEvents = new ArrayList<>();
@@ -438,7 +438,7 @@ public class EventEngineManager
 	
 	// XXX MISC ---------------------------------------------------------------------------------------
 	
-	private final Map<Integer, ELocation> _playersDisconnected = new ConcurrentHashMap<>();
+	private final Map<Integer, LocationHolder> _playersDisconnected = new ConcurrentHashMap<>();
 	
 	/**
 	 * When the player is disconnected inside event. It adds him to a list saving the original location.
@@ -456,7 +456,7 @@ public class EventEngineManager
 	 */
 	public void returnPlayerDisconnected(Player player)
 	{
-		ELocation returnLoc = _playersDisconnected.get(player.getObjectId());
+		LocationHolder returnLoc = _playersDisconnected.get(player.getObjectId());
 		if (returnLoc != null)
 		{
 			player.teleportTo(returnLoc);

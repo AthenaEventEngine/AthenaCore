@@ -16,25 +16,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.athenaengine.core.events.holders;
+package com.github.athenaengine.core.model.entity;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.github.athenaengine.core.enums.ScoreType;
 import com.github.athenaengine.core.enums.TeamType;
-import com.github.athenaengine.core.interfaces.ParticipantHolder;
-import com.github.athenaengine.core.model.ELocation;
+import com.github.athenaengine.core.interfaces.IParticipant;
+import com.github.athenaengine.core.model.holder.LocationHolder;
 import com.l2jserver.util.Rnd;
 
 /**
  * @author fissban
  */
-public class TeamHolder implements ParticipantHolder
+public class Team implements IParticipant
 {
 	private String _teamName;
 	private final TeamType _teamType;
-	private final List<ELocation> _teamSpawns = new ArrayList<>();
+	private final List<LocationHolder> _teamSpawns = new ArrayList<>();
 	private final Map<ScoreType, Integer> _points = new ConcurrentHashMap<>();
 	private int _instanceId;
 	
@@ -42,7 +42,7 @@ public class TeamHolder implements ParticipantHolder
 	 * Constructor.
 	 * @param teamColor
 	 */
-	public TeamHolder(String teamName, TeamType teamColor, Collection<ELocation> spawns)
+	public Team(String teamName, TeamType teamColor, Collection<LocationHolder> spawns)
 	{
 		_teamName = teamName;
 		_teamType = teamColor;
@@ -56,18 +56,18 @@ public class TeamHolder implements ParticipantHolder
 
 	/**
 	 * Get the spawn of a team.
-	 * @return ELocation
+	 * @return LocationHolder
 	 */
-	public ELocation getRndSpawn()
+	public LocationHolder getRndSpawn()
 	{
 		return _teamSpawns.size() <= 0 ? null : _teamSpawns.get(Rnd.get(_teamSpawns.size() - 1));
 	}
 
-	public List<ELocation> getSpawns() {
+	public List<LocationHolder> getSpawns() {
 		return _teamSpawns;
 	}
 
-	public void setSpawns(Collection<ELocation> locs)
+	public void setSpawns(Collection<LocationHolder> locs)
 	{
 		_teamSpawns.addAll(locs);
 	}
@@ -81,7 +81,7 @@ public class TeamHolder implements ParticipantHolder
 	{
 		_instanceId = instanceId;
 
-		for (ELocation loc : getSpawns()) {
+		for (LocationHolder loc : getSpawns()) {
 			loc.setInstanceId(instanceId);
 		}
 	}

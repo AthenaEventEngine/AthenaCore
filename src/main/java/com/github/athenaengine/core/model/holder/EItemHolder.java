@@ -1,4 +1,4 @@
-package com.github.athenaengine.core.model;
+package com.github.athenaengine.core.model.holder;
 
 public class EItemHolder {
 

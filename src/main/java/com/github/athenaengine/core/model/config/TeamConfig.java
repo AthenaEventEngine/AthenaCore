@@ -1,7 +1,7 @@
-package com.github.athenaengine.core.config.model;
+package com.github.athenaengine.core.model.config;
 
 import com.github.athenaengine.core.enums.TeamType;
-import com.github.athenaengine.core.model.ELocation;
+import com.github.athenaengine.core.model.holder.LocationHolder;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ public class TeamConfig {
 
     private String name;
     private String color;
-    private List<ELocation> locations;
+    private List<LocationHolder> locations;
 
     public String getName() {
         return name;
@@ -19,7 +19,7 @@ public class TeamConfig {
         return TeamType.getType(color);
     }
 
-    public List<ELocation> getLocations() {
+    public List<LocationHolder> getLocations() {
         return locations;
     }
 }

@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.github.athenaengine.core.config.BaseConfigLoader;
-import com.github.athenaengine.core.config.model.DualboxEventConfig;
+import com.github.athenaengine.core.model.config.DualboxEventConfig;
 import com.github.athenaengine.core.model.entity.Player;
 import com.l2jserver.gameserver.network.L2GameClient;
 

@@ -1,4 +1,4 @@
-package com.github.athenaengine.core.config.model;
+package com.github.athenaengine.core.model.config;
 
 import java.util.List;
 
