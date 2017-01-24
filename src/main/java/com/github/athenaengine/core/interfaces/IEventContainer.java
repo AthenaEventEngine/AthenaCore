@@ -2,7 +2,7 @@ package com.github.athenaengine.core.interfaces;
 
 import com.github.athenaengine.core.model.base.BaseEvent;
 
-public interface EventContainer {
+public interface IEventContainer {
 
     Class<? extends BaseEvent> getEventClass();
 

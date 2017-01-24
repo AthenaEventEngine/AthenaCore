@@ -1,6 +1,6 @@
 package com.github.athenaengine.core.config;
 
-import com.github.athenaengine.core.config.model.MainEventConfig;
+import com.github.athenaengine.core.model.config.MainEventConfig;
 import com.github.athenaengine.core.util.GsonUtils;
 
 public class BaseConfigLoader {

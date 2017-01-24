@@ -18,14 +18,15 @@
  */
 package com.github.athenaengine.core.model.entity;
 
+import com.github.athenaengine.core.enums.InventoryItemType;
 import com.github.athenaengine.core.enums.ScoreType;
-import com.github.athenaengine.core.events.holders.TeamHolder;
 import com.github.athenaengine.core.events.listeners.EventEngineListener;
 import com.github.athenaengine.core.interfaces.IGamePacket;
-import com.github.athenaengine.core.model.EItemHolder;
-import com.github.athenaengine.core.model.ELocation;
+import com.github.athenaengine.core.model.holder.LocationHolder;
+import com.github.athenaengine.core.model.holder.EItemHolder;
 import com.github.athenaengine.core.enums.TeamType;
-import com.github.athenaengine.core.interfaces.ParticipantHolder;
+import com.github.athenaengine.core.interfaces.IParticipant;
+import com.github.athenaengine.core.model.instance.ItemInstance;
 import com.l2jserver.gameserver.instancemanager.InstanceManager;
 import com.l2jserver.gameserver.model.L2Party;
 import com.l2jserver.gameserver.model.L2World;
@@ -34,6 +35,7 @@ import com.l2jserver.gameserver.model.actor.instance.L2CubicInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
+import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.network.serverpackets.SkillCoolTime;
 import com.l2jserver.gameserver.taskmanager.DecayTaskManager;
@@ -45,7 +47,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * It manages player's info that participates in an event.
  */
-public class Player extends Playable implements ParticipantHolder
+public class Player extends Playable implements IParticipant
 {
 	private EventPlayerStatus mEventPlayerStatus;
 
@@ -71,16 +73,16 @@ public class Player extends Playable implements ParticipantHolder
 		return L2World.getInstance().getPlayer(getObjectId());
 	}
 
-	public void teleportTo(ELocation location) {
+	public void teleportTo(LocationHolder location) {
 		getPcInstance().teleToLocation(location.getLocation());
 	}
 
-	public void addToEvent(TeamHolder team) {
+	public void addToEvent(Team team) {
 		if (mEventPlayerStatus == null) mEventPlayerStatus = new EventPlayerStatus();
 
 		mEventPlayerStatus._oriColorTitle = getPcInstance().getAppearance().getTitleColor();
 		mEventPlayerStatus._oriTitle = getPcInstance().getTitle();
-		mEventPlayerStatus._returnLocation = new ELocation(getPcInstance().getLocation());
+		mEventPlayerStatus._returnLocation = new LocationHolder(getPcInstance().getLocation());
 		setTeam(team);
 	}
 
@@ -118,7 +120,7 @@ public class Player extends Playable implements ParticipantHolder
 	 * Get the player's team.
 	 * @return TeamType
 	 */
-	public TeamHolder getTeam() {
+	public Team getTeam() {
 		return mEventPlayerStatus._team;
 	}
 
@@ -130,7 +132,7 @@ public class Player extends Playable implements ParticipantHolder
 		return mEventPlayerStatus._team.getTeamType();
 	}
 
-	public void setTeam(TeamHolder team) {
+	public void setTeam(Team team) {
 		if (mEventPlayerStatus == null) mEventPlayerStatus = new EventPlayerStatus();
 
 		mEventPlayerStatus._team = team;
@@ -138,7 +140,7 @@ public class Player extends Playable implements ParticipantHolder
 		getPcInstance().getAppearance().setTitleColor(team.getTeamType().getColor());
 	}
 
-	public ELocation getReturnLocation() {
+	public LocationHolder getReturnLocation() {
 		return mEventPlayerStatus._returnLocation;
 	}
 	
@@ -191,10 +193,8 @@ public class Player extends Playable implements ParticipantHolder
 	 * <li>Set max cp, hp and mp.</li>
 	 * @param spawnProtectionTime
 	 */
-	public void revive(int spawnProtectionTime)
-	{
-		if (getPcInstance().isDead())
-		{
+	public void revive(int spawnProtectionTime) {
+		if (getPcInstance().isDead()) {
 			DecayTaskManager.getInstance().cancel(getPcInstance());
 			getPcInstance().doRevive();
 			// heal to max
@@ -213,8 +213,7 @@ public class Player extends Playable implements ParticipantHolder
 	 * <li>Cancel cast.</li>
 	 * <li>Cancel attack.</li>
 	 */
-	public void cancelAllActions()
-	{
+	public void cancelAllActions() {
 		// Cancel target
 		getPcInstance().setTarget(null);
 		// Cancel any attack in progress
@@ -227,10 +226,8 @@ public class Player extends Playable implements ParticipantHolder
 	 * We give you the buff to a player set within configs.
 	 * @param buffs
 	 */
-	public void giveBuffs(Collection<SkillHolder> buffs)
-	{
-		for (SkillHolder sh : buffs)
-		{
+	public void giveBuffs(Collection<SkillHolder> buffs) {
+		for (SkillHolder sh : buffs) {
 			sh.getSkill().applyEffects(getPcInstance(), getPcInstance());
 		}
 	}
@@ -239,17 +236,28 @@ public class Player extends Playable implements ParticipantHolder
 	 * We deliver the items in a list defined as. Created in order to deliver rewards in the events.
 	 * @param items
 	 */
-	public void giveItems(Collection<EItemHolder> items)
-	{
-		for (EItemHolder reward : items)
-		{
+	public void giveItems(Collection<EItemHolder> items) {
+		for (EItemHolder reward : items) {
 			getPcInstance().addItem("eventReward", reward.getId(), reward.getAmount(), null, true);
 		}
 	}
 
-	public void removeItems(Collection<EItemHolder> items)
-	{
+	public void removeItems(Collection<EItemHolder> items) {
 		// TODO: implement it
+	}
+
+	public boolean containsItem(int itemId) {
+		return getPcInstance().getInventory().getItemByItemId(itemId) != null;
+	}
+
+	public void equipItem(ItemInstance item) {
+		L2ItemInstance l2Item = getPcInstance().getInventory().getItemByObjectId(item.getObjectId());
+		if (l2Item != null) getPcInstance().useEquippableItem(l2Item, true);
+	}
+
+	public void unequipItem(InventoryItemType type) {
+		L2ItemInstance l2Item = getPcInstance().getInventory().getPaperdollItem(type.getValue());
+		if (l2Item != null) getPcInstance().useEquippableItem(l2Item, true);
 	}
 
 	/**
@@ -258,18 +266,13 @@ public class Player extends Playable implements ParticipantHolder
 	 * </ul>
 	 * <li>Stop all effects from player and summon.</li>
 	 */
-	public void cancelAllEffects()
-	{
+	public void cancelAllEffects() {
 		// Stop all effects
 		getPcInstance().stopAllEffects();
 		// Check Transform
-		if (getPcInstance().isTransformed())
-		{
-			getPcInstance().untransform();
-		}
+		if (getPcInstance().isTransformed()) getPcInstance().untransform();
 		// Check Summon's and pets
-		if (getPcInstance().hasSummon())
-		{
+		if (getPcInstance().hasSummon()) {
 			final L2Summon summon = getPcInstance().getSummon();
 			summon.stopAllEffectsExceptThoseThatLastThroughDeath();
 			summon.abortAttack();
@@ -279,8 +282,7 @@ public class Player extends Playable implements ParticipantHolder
 		}
 
 		// Cancel all character cubics
-		for (L2CubicInstance cubic : getPcInstance().getCubics().values())
-		{
+		for (L2CubicInstance cubic : getPcInstance().getCubics().values()) {
 			cubic.stopAction();
 			cubic.cancelDisappear();
 		}
@@ -289,21 +291,16 @@ public class Player extends Playable implements ParticipantHolder
 
 		// Remove player from his party
 		final L2Party party = getPcInstance().getParty();
-		if (party != null)
-		{
-			party.removePartyMember(getPcInstance(), L2Party.messageType.Expelled);
-		}
+		if (party != null) party.removePartyMember(getPcInstance(), L2Party.messageType.Expelled);
 
 		// Remove Agathion
-		if (getPcInstance().getAgathionId() > 0)
-		{
+		if (getPcInstance().getAgathionId() > 0) {
 			getPcInstance().setAgathionId(0);
 			getPcInstance().broadcastUserInfo();
 		}
 
 		// Remove reuse delay skills
-		for (Skill skill : getPcInstance().getAllSkills())
-		{
+		for (Skill skill : getPcInstance().getAllSkills()) {
 			getPcInstance().enableSkill(skill);
 		}
 
@@ -353,8 +350,8 @@ public class Player extends Playable implements ParticipantHolder
 		// Original title before teleporting to the event
 		private String _oriTitle;
 		// Player's team in the event
-		private TeamHolder _team;
+		private Team _team;
 		// Previous location before participating in the event
-		private ELocation _returnLocation;
+		private LocationHolder _returnLocation;
 	}
 }

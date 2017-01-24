@@ -23,11 +23,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 
-import com.github.athenaengine.core.config.model.TeamConfig;
+import com.github.athenaengine.core.model.config.TeamConfig;
 import com.github.athenaengine.core.enums.DistributionType;
 import com.github.athenaengine.core.enums.TeamType;
-import com.github.athenaengine.core.events.holders.TeamHolder;
-import com.github.athenaengine.core.model.ELocation;
+import com.github.athenaengine.core.model.holder.LocationHolder;
+import com.github.athenaengine.core.model.entity.Team;
 import com.github.athenaengine.core.model.entity.Player;
 
 public class TeamsBuilder
@@ -37,16 +37,16 @@ public class TeamsBuilder
 	private DistributionType mDistribution = DistributionType.DEFAULT;
 	private final Collection<Player> mPlayers = new ArrayList<>();
 
-	private final List<TeamHolder> mTeams = new ArrayList<>();
+	private final List<Team> mTeams = new ArrayList<>();
 
-	public TeamsBuilder addTeam(List<ELocation> locations) {
-		mTeams.add(new TeamHolder("", TeamType.WHITE, locations));
+	public TeamsBuilder addTeam(List<LocationHolder> locations) {
+		mTeams.add(new Team("", TeamType.WHITE, locations));
 		return this;
 	}
 
 	public TeamsBuilder addTeams(Collection<? extends TeamConfig> teamsConfig) {
 		for (TeamConfig config : teamsConfig) {
-			mTeams.add(new TeamHolder(config.getName(), config.getColor(), config.getLocations()));
+			mTeams.add(new Team(config.getName(), config.getColor(), config.getLocations()));
 		}
 
 		return this;
@@ -62,7 +62,7 @@ public class TeamsBuilder
 		return this;
 	}
 	
-	private List<TeamHolder> distributePlayers(List<TeamHolder> teams) {
+	private List<Team> distributePlayers(List<Team> teams) {
 		switch (mDistribution) {
 			case DEFAULT:
 			default:
@@ -78,7 +78,7 @@ public class TeamsBuilder
 		return teams;
 	}
 
-	public List<TeamHolder> build() {
+	public List<Team> build() {
 		if (mTeams.size() <= 0)
 		{
 			LOGGER.warning(TeamsBuilder.class.getSimpleName() + ": The count of teams can't be zero!");

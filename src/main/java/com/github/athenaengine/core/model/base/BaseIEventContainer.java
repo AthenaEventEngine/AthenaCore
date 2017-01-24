@@ -1,20 +1,20 @@
 package com.github.athenaengine.core.model.base;
 
-import com.github.athenaengine.core.config.interfaces.EventConfig;
-import com.github.athenaengine.core.interfaces.EventContainer;
+import com.github.athenaengine.core.interfaces.IEventConfig;
+import com.github.athenaengine.core.interfaces.IEventContainer;
 import com.github.athenaengine.core.util.GsonUtils;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public abstract class BaseEventContainer implements EventContainer {
+public abstract class BaseIEventContainer implements IEventContainer {
 
-    private static final Logger LOGGER = Logger.getLogger(BaseEventContainer.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(BaseIEventContainer.class.getName());
     private static final String EVENTS_PATH = "./eventengine/events/";
 
-    private EventConfig _config;
+    private IEventConfig _config;
 
-    public BaseEventContainer()
+    public BaseIEventContainer()
     {
 
     }
@@ -24,11 +24,11 @@ public abstract class BaseEventContainer implements EventContainer {
         return getEventName().toLowerCase().replace(" ", "");
     }
 
-    protected abstract Class<? extends EventConfig> getConfigClass();
+    protected abstract Class<? extends IEventConfig> getConfigClass();
 
-    protected EventConfig getConfig()
+    protected IEventConfig getConfig()
     {
-        if (_config == null) _config = (EventConfig) GsonUtils.loadConfig(EVENTS_PATH + getSimpleEventName() + "/config.conf", getConfigClass());
+        if (_config == null) _config = (IEventConfig) GsonUtils.loadConfig(EVENTS_PATH + getSimpleEventName() + "/config.conf", getConfigClass());
         return _config;
     }
 
@@ -45,7 +45,7 @@ public abstract class BaseEventContainer implements EventContainer {
         private final Logger LOGGER = Logger.getLogger(EventBuilder.class.getName());
 
         private Class<? extends BaseEvent> _eventClass;
-        private EventConfig _config;
+        private IEventConfig _config;
 
         private EventBuilder setEventClass(Class<? extends BaseEvent> eventClass)
         {
@@ -53,7 +53,7 @@ public abstract class BaseEventContainer implements EventContainer {
             return this;
         }
 
-        public EventBuilder setConfig(EventConfig config)
+        public EventBuilder setConfig(IEventConfig config)
         {
             _config = config;
             return this;

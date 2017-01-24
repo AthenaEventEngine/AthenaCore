@@ -20,13 +20,13 @@ package com.github.athenaengine.core.task;
 
 import com.github.athenaengine.core.config.BaseConfigLoader;
 import com.github.athenaengine.core.enums.MessageType;
+import com.github.athenaengine.core.interfaces.IEventContainer;
 import com.github.athenaengine.core.model.base.BaseEvent;
 import com.github.athenaengine.core.EventEngineManager;
-import com.github.athenaengine.core.config.model.MainEventConfig;
+import com.github.athenaengine.core.model.config.MainEventConfig;
 import com.github.athenaengine.core.datatables.EventLoader;
 import com.github.athenaengine.core.enums.CollectionTarget;
 import com.github.athenaengine.core.enums.EventEngineState;
-import com.github.athenaengine.core.interfaces.EventContainer;
 import com.github.athenaengine.core.util.EventUtil;
 
 /**
@@ -77,7 +77,7 @@ public class EventEngineTask implements Runnable
 				}
 				else
 				{
-					EventContainer nextEvent = EventEngineManager.getInstance().getEventMoreVotes();
+					IEventContainer nextEvent = EventEngineManager.getInstance().getEventMoreVotes();
 					EventEngineManager.getInstance().setNextEvent(nextEvent);
 					EventEngineManager.getInstance().setTime(getConfig().getRegisterTime() * 60);
 					EventUtil.announceTo(MessageType.CRITICAL_ANNOUNCE, "event_voting_ended", _type);

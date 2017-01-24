@@ -20,7 +20,7 @@ package com.github.athenaengine.core.util;
 
 import java.util.*;
 
-import com.github.athenaengine.core.cache.CacheManager;
+import com.github.athenaengine.core.managers.CacheManager;
 import com.github.athenaengine.core.config.BaseConfigLoader;
 import com.github.athenaengine.core.datatables.MessageData;
 import com.github.athenaengine.core.enums.MessageType;

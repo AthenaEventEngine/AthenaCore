@@ -1,7 +1,7 @@
 package com.github.athenaengine.core.datatables;
 
-import com.github.athenaengine.core.config.model.MainEventConfig;
-import com.github.athenaengine.core.interfaces.EventContainer;
+import com.github.athenaengine.core.model.config.MainEventConfig;
+import com.github.athenaengine.core.interfaces.IEventContainer;
 import com.github.athenaengine.core.util.GsonUtils;
 import com.github.athenaengine.core.util.JarUtils;
 import com.l2jserver.util.Rnd;
@@ -18,8 +18,8 @@ public class EventLoader {
     private static final String EVENT_JAR_PATH = "./eventengine/events/";
     private static final String EVENT_CONFIG_NAME = "config.conf";
 
-    private final ArrayList<EventContainer> _eventList = new ArrayList<>();
-    private final Map<String, EventContainer> _eventMap = new HashMap<>();
+    private final ArrayList<IEventContainer> _eventList = new ArrayList<>();
+    private final Map<String, IEventContainer> _eventMap = new HashMap<>();
     private MainEventConfig mMainConfig;
 
     private EventLoader()
@@ -27,17 +27,17 @@ public class EventLoader {
         loadEvents();
     }
 
-    public EventContainer getEvent(String name)
+    public IEventContainer getEvent(String name)
     {
         return _eventMap.get(name);
     }
 
-    public EventContainer getRandomEventType()
+    public IEventContainer getRandomEventType()
     {
         return _eventList.get(Rnd.get(_eventList.size() - 1));
     }
 
-    public ArrayList<EventContainer> getEnabledEvents()
+    public ArrayList<IEventContainer> getEnabledEvents()
     {
         return _eventList;
     }
@@ -55,7 +55,7 @@ public class EventLoader {
 
         if (matchingFiles != null) {
             for (File jar : matchingFiles) {
-                EventContainer container = (EventContainer) JarUtils.loadJar(getClass().getClassLoader(), jar);
+                IEventContainer container = (IEventContainer) JarUtils.loadJar(getClass().getClassLoader(), jar);
 
                 if (container != null)
                 {

@@ -27,8 +27,8 @@ import java.util.logging.Logger;
 import com.github.athenaengine.core.EventEngineManager;
 import com.github.athenaengine.core.builders.TeamsBuilder;
 import com.github.athenaengine.core.config.BaseConfigLoader;
-import com.github.athenaengine.core.config.interfaces.EventConfig;
-import com.github.athenaengine.core.config.model.MainEventConfig;
+import com.github.athenaengine.core.interfaces.IEventConfig;
+import com.github.athenaengine.core.model.config.MainEventConfig;
 import com.github.athenaengine.core.datatables.BuffListData;
 import com.github.athenaengine.core.datatables.MessageData;
 import com.github.athenaengine.core.dispatcher.ListenerDispatcher;
@@ -48,18 +48,18 @@ import com.github.athenaengine.core.events.schedules.ChangeToEndEvent;
 import com.github.athenaengine.core.events.schedules.ChangeToFightEvent;
 import com.github.athenaengine.core.events.schedules.ChangeToStartEvent;
 import com.github.athenaengine.core.interfaces.IListenerSuscriber;
+import com.github.athenaengine.core.model.template.ItemTemplate;
+import com.github.athenaengine.core.model.template.SkillTemplate;
 import com.github.athenaengine.core.model.entity.*;
 import com.github.athenaengine.core.model.entity.Character;
 import com.github.athenaengine.core.util.EventUtil;
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
-import com.l2jserver.gameserver.model.items.L2Item;
-import com.l2jserver.gameserver.model.skills.Skill;
 
 /**
  * @author fissban
  */
-public abstract class BaseEvent<T extends EventConfig> implements IListenerSuscriber
+public abstract class BaseEvent<T extends IEventConfig> implements IListenerSuscriber
 {
 	// Logger
 	private static final Logger LOGGER = Logger.getLogger(BaseEvent.class.getName());
@@ -376,7 +376,7 @@ public abstract class BaseEvent<T extends EventConfig> implements IListenerSuscr
 	{
 		Playable playable = event.getCaster();
 		Character target = event.getTarget();
-		Skill skill = event.getSkill();
+		SkillTemplate skill = event.getSkill();
 
 		if (!getPlayerEventManager().isPlayableInEvent(playable))
 		{
@@ -448,7 +448,7 @@ public abstract class BaseEvent<T extends EventConfig> implements IListenerSuscr
 	public final void listenerOnUseItem(OnUseItemEvent event)
 	{
 		Player player = event.getPlayer();
-		L2Item item = event.getItem();
+		ItemTemplate item = event.getItem();
 
 		if (!getPlayerEventManager().isPlayableInEvent(player))
 		{

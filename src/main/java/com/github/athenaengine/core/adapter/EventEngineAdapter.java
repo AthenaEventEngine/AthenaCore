@@ -20,9 +20,11 @@
 package com.github.athenaengine.core.adapter;
 
 import com.github.athenaengine.core.ai.NpcManager;
-import com.github.athenaengine.core.cache.CacheManager;
+import com.github.athenaengine.core.managers.CacheManager;
 import com.github.athenaengine.core.dispatcher.events.*;
 import com.github.athenaengine.core.dispatcher.ListenerDispatcher;
+import com.github.athenaengine.core.model.template.ItemTemplate;
+import com.github.athenaengine.core.model.template.SkillTemplate;
 import com.github.athenaengine.core.model.entity.Character;
 import com.github.athenaengine.core.model.entity.Npc;
 import com.github.athenaengine.core.model.entity.Playable;
@@ -46,6 +48,7 @@ import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerLogin
 import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerLogout;
 import com.l2jserver.gameserver.model.events.returns.TerminateReturn;
 import com.l2jserver.gameserver.model.quest.Quest;
+import com.l2jserver.gameserver.model.skills.Skill;
 
 /**
  * This is an adapter to communicate the L2J Core with Event Engine
@@ -90,7 +93,16 @@ public class EventEngineAdapter extends Quest
 			Playable caster1 = CacheManager.getInstance().getPlayable((L2Playable) event.getCaster(), true);
 			Character target1 = CacheManager.getInstance().getCharacter(event.getCaster(), true);
 
-			OnUseSkillEvent mainTargetEvent = new OnUseSkillEvent(caster1, event.getSkill(), target1);
+			Skill l2Skill = event.getSkill();
+
+			SkillTemplate skill = SkillTemplate.Builder.newInstance()
+					.setId(l2Skill.getId())
+					.setLevel(l2Skill.getLevel())
+					.setIsDebuff(l2Skill.isDebuff())
+					.setIsDamage(l2Skill.isDamage())
+					.build();
+
+			OnUseSkillEvent mainTargetEvent = new OnUseSkillEvent(caster1, skill, target1);
 
 			ListenerDispatcher.getInstance().notifyEvent(mainTargetEvent);
 
@@ -107,7 +119,7 @@ public class EventEngineAdapter extends Quest
 					Playable caster2 = CacheManager.getInstance().getPlayable((L2Playable) event.getCaster(), true);
 					Character target2 = CacheManager.getInstance().getCharacter(event.getCaster(), true);
 
-					OnUseSkillEvent otherTargetEvent = new OnUseSkillEvent(caster2, event.getSkill(), target2);
+					OnUseSkillEvent otherTargetEvent = new OnUseSkillEvent(caster2, skill, target2);
 
 					ListenerDispatcher.getInstance().notifyEvent(otherTargetEvent);
 
@@ -171,7 +183,8 @@ public class EventEngineAdapter extends Quest
 	public void onUseItem(OnPlayerEquipItem event)
 	{
 		Player player = CacheManager.getInstance().getPlayer(event.getActiveChar(), true);
-		ListenerDispatcher.getInstance().notifyEvent(new OnUseItemEvent(player, event.getItem().getItem()));
+		ItemTemplate item = ItemTemplate.newInstance(event.getItem().getId());
+		ListenerDispatcher.getInstance().notifyEvent(new OnUseItemEvent(player, item));
 	}
 	
 	// When a player talks with npc

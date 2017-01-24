@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.github.athenaengine.core.enums.ScoreType;
-import com.github.athenaengine.core.interfaces.ParticipantHolder;
+import com.github.athenaengine.core.interfaces.IParticipant;
 
 /**
  * @author Zephyr
@@ -38,26 +38,26 @@ public class SortUtils
 	}
 	
 	/**
-	 * Get a list of ParticipantHolder sorted by ScoreType (kills, Points, etc). By default, it uses descendent order.
+	 * Get a list of IParticipant sorted by ScoreType (kills, Points, etc). By default, it uses descendent order.
 	 * @param <T>
 	 * @param list
 	 * @param type
 	 * @return
 	 */
-	public static <T extends ParticipantHolder> ArrayList<List<T>> getOrdered(Collection<T> list, ScoreType type)
+	public static <T extends IParticipant> ArrayList<List<T>> getOrdered(Collection<T> list, ScoreType type)
 	{
 		return getOrdered(list, type, Order.DESCENDENT);
 	}
 	
 	/**
-	 * Get a list of ParticipantHolder sorted by ScoreType (Kills, Points, etc).
+	 * Get a list of IParticipant sorted by ScoreType (Kills, Points, etc).
 	 * @param <T>
 	 * @param list
 	 * @param type
 	 * @param order
 	 * @return
 	 */
-	public static <T extends ParticipantHolder> ArrayList<List<T>> getOrdered(Collection<T> list, ScoreType type, Order order)
+	public static <T extends IParticipant> ArrayList<List<T>> getOrdered(Collection<T> list, ScoreType type, Order order)
 	{
 		ArrayList<Holder> holderList = adaptList(list, type, order);
 		Collections.sort(holderList);
@@ -72,10 +72,10 @@ public class SortUtils
 	 * @param order
 	 * @return
 	 */
-	private static <T extends ParticipantHolder> ArrayList<Holder> adaptList(Collection<T> list, ScoreType type, Order order)
+	private static <T extends IParticipant> ArrayList<Holder> adaptList(Collection<T> list, ScoreType type, Order order)
 	{
 		ArrayList<Holder> listAdapted = new ArrayList<>();
-		for (ParticipantHolder participant : list)
+		for (IParticipant participant : list)
 		{
 			listAdapted.add(new Holder(participant, participant.getPoints(type), order));
 		}
@@ -89,7 +89,7 @@ public class SortUtils
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private static <T extends ParticipantHolder> ArrayList<List<T>> unadaptList(ArrayList<Holder> holderList)
+	private static <T extends IParticipant> ArrayList<List<T>> unadaptList(ArrayList<Holder> holderList)
 	{
 		ArrayList<List<T>> finalList = new ArrayList<>();
 		int index = -1;

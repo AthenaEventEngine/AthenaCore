@@ -1,8 +1,8 @@
-package com.github.athenaengine.core.model;
+package com.github.athenaengine.core.model.holder;
 
 import com.l2jserver.gameserver.model.Location;
 
-public class ELocation {
+public class LocationHolder {
 
     private int x;
     private int y;
@@ -10,7 +10,7 @@ public class ELocation {
     private int heading;
     private int instanceId;
 
-    public ELocation(Location location) {
+    public LocationHolder(Location location) {
         x = location.getX();
         y = location.getY();
         z = location.getZ();

@@ -1,6 +1,6 @@
 package com.github.athenaengine.core.model.entity;
 
-import com.github.athenaengine.core.model.ELocation;
+import com.github.athenaengine.core.model.holder.LocationHolder;
 import com.l2jserver.gameserver.model.L2Spawn;
 import com.l2jserver.gameserver.model.L2World;
 import com.l2jserver.gameserver.model.Location;
@@ -13,11 +13,11 @@ public abstract class Npc extends Character {
         super(objectId);
     }
 
-    public void moveTo(ELocation location, int offset) {
+    public void moveTo(LocationHolder location, int offset) {
         ((L2Npc) L2World.getInstance().findObject(getObjectId())).moveToLocation(location.getX(), location.getY(), location.getZ(), offset);
     }
 
-    public void moveTo(ELocation location) {
+    public void moveTo(LocationHolder location) {
         moveTo(location, 0);
     }
 
@@ -25,12 +25,12 @@ public abstract class Npc extends Character {
         L2World.getInstance().findObject(getObjectId()).spawnMe();
     }
 
-    public ELocation getSpawn() {
+    public LocationHolder getSpawn() {
         Location location = ((L2Npc) L2World.getInstance().findObject(getObjectId())).getSpawn().getLocation();
-        return location != null ? new ELocation(location) : null;
+        return location != null ? new LocationHolder(location) : null;
     }
 
-    public void setSpawn(ELocation location) {
+    public void setSpawn(LocationHolder location) {
         L2Spawn spawn = ((L2Npc) L2World.getInstance().findObject(getObjectId())).getSpawn();
         if (spawn != null) spawn.setLocation(location.getLocation());
     }

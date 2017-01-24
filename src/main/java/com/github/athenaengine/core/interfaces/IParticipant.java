@@ -16,44 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.athenaengine.core.events.holders;
+package com.github.athenaengine.core.interfaces;
 
-import com.l2jserver.gameserver.model.actor.L2Npc;
+import com.github.athenaengine.core.enums.ScoreType;
 
-/**
- * Class responsible for administering all the information of npc events.
- * @author fissban
- */
-public class NpcHolder
+public interface IParticipant
 {
-	private final L2Npc _npc;
-	private String _customTitle;
-	
-	public NpcHolder(L2Npc npc)
-	{
-		_npc = npc;
-	}
-	
-	/**
-	 * Direct access to all methods of L2Npc.
-	 * @return
-	 */
-	public L2Npc getNpcInstance()
-	{
-		return _npc;
-	}
-	
-	public String getTitle()
-	{
-		if (_customTitle != null)
-		{
-			return _customTitle;
-		}
-		return _npc.getTitle();
-	}
-	
-	public void setTitle(String customTitle)
-	{
-		_customTitle = customTitle;
-	}
+	int getPoints(ScoreType type);
+
+	void increasePoints(ScoreType type, int points);
 }

@@ -80,7 +80,7 @@ public class JarUtils {
                 throw new InvalidJarLoadException("Cannot find main class " + classPath);
             }
 
-            if (!classToLoad.getSuperclass().getSimpleName().equalsIgnoreCase("BaseEventContainer")) {
+            if (!classToLoad.getSuperclass().getSimpleName().equalsIgnoreCase("BaseIEventContainer")) {
                 throw new InvalidJarLoadException("Wrong inheritance for " + classToLoad.getSimpleName());
             }
 
