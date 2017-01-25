@@ -1,14 +1,16 @@
-# L2J-Event Engine Project Gitter: [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/u3games/L2J_EventEngine?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+# Athena Event Engine Project Gitter: [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/AthenaEventEngineChat/Lobby?utm_source=share-link&utm_medium=link&utm_campaign=share-link)
 
-L2J-EventEngine is a professional Lineage II Java Event Engine, fully written in Java.<br>
-Authors: Zephyr, Sacrifice78, Fissban and U3Games.
+Athena Event Engine is a project that aims to create a general system events for all kind of L2J servers (fork or not).
+The project is based on L2J Event Engine made by fissban, u3games and Zephyr.<br><br>
+Our focus is not gain money but make a modern and useful piece of software to help the L2J community to keep alive.<br><br>
+Feel free to give us feedback and share your ideas. We will be happy to discuss them.<br><br>
 
 ## Links:
 
-For the detailed information about building and developing L2J-EventEngine, please visit the developers forums. This page only gives very basic information.
+For the detailed information about building and developing, please visit the developers forums.
 
 L2J-Server: http://www.l2jserver.com<br>
-Github: https://github.com/u3games/L2J_EventEngine<br>
+Github: https://github.com/AthenaEventEngine/AthenaCore/<br>
 Chat: https://gitter.im/u3games/L2J_EventEngine<br>
 <br>
 **Support Forums**<br>
@@ -16,4 +18,4 @@ L2J-Server: http://www.l2jserver.com/forum (English)<br>
 U3Games: http://l2.united-extreme.com (Spanish)<br>
 <br>
 **Current tasks**<br>
-Trello: https://trello.com/b/zUl9DMGI/l2j-event-engine<br>
+Tasks: https://github.com/AthenaEventEngine/AthenaCore/projects/2<br>
