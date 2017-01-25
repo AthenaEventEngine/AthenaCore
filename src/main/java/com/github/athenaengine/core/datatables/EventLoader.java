@@ -1,8 +1,6 @@
 package com.github.athenaengine.core.datatables;
 
-import com.github.athenaengine.core.model.config.MainEventConfig;
 import com.github.athenaengine.core.interfaces.IEventContainer;
-import com.github.athenaengine.core.util.GsonUtils;
 import com.github.athenaengine.core.util.JarUtils;
 import com.l2jserver.util.Rnd;
 
@@ -14,13 +12,11 @@ import java.util.Map;
 
 public class EventLoader {
 
-    private static final String MAIN_CONFIG_PATH = "./eventengine/EventEngine.conf";
     private static final String EVENT_JAR_PATH = "./eventengine/events/";
     private static final String EVENT_CONFIG_NAME = "config.conf";
 
     private final ArrayList<IEventContainer> _eventList = new ArrayList<>();
     private final Map<String, IEventContainer> _eventMap = new HashMap<>();
-    private MainEventConfig mMainConfig;
 
     private EventLoader()
     {
@@ -44,8 +40,6 @@ public class EventLoader {
 
     private void loadEvents()
     {
-        mMainConfig = (MainEventConfig) GsonUtils.loadConfig(MAIN_CONFIG_PATH, MainEventConfig.class);
-
         File files = new File(EVENT_JAR_PATH);
         File[] matchingFiles = files.listFiles(new FilenameFilter() {
             public boolean accept(File dir, String name) {

@@ -32,15 +32,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
-import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
-
 /**
  * @author swarlog, fissban
  */
 public final class MessageData
 {
 	private static final Logger LOGGER = Logger.getLogger(MessageData.class.getName());
-	private static final String DIRECTORY = "config/EventEngine/language";
+	private static final String DIRECTORY = "eventengine/language";
 	private static final String DEFAULT_LANG = "en";
 	// Map to identify the language of each character
 	private final Map<Player, String> _playerCurrentLang = new HashMap<>();
