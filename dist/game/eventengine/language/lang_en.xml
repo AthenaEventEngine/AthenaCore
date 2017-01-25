@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<localization lang="English">
+	<!-- author swarlog -->
+	<!-- Event Engine Tag -->
+	<message id="event_engine_tag" text="[EventEngine]"/>
+	
+	<!-- Events -->
+	<message id="event_waiting" text="In this moment, there is not an event running. Try again later." />
+	<message id="event_aborted" text="The event has been aborted due to lack of participants."/>
+	<message id="event_registration_on" text="Registration for event has been opened!. Register now!." />
+	<message id="event_registration_notRegState" text="The event is not in the registration state, you cannot register now. Try the spectator mode, go!." />
+	<message id="event_registration_notUnRegState" text="The event is not in the registration state, you cannot unregister now." />
+	<message id="event_vote_notVoteState" text="The event is not in the vote state, you cannot vote now." />
+	<message id="event_reloading" text="Reloading." />
+	
+	<!-- login -->
+	<message id="event_login_participate" text="Come on and participate!." />
+	<message id="event_login_vote" text="Vote for the next event!." />
+	<message id="event_vote_done" text="Thanks, event successfully voted!." />
+	<message id="event_vote_info" text="Vote for the desired event. The event with the most votes, will start!." />
+	<message id="event_started" text="The event has started!." />
+	<message id="event_end" text="The event has ended!." />
+	<message id="event_start_time" text="Event starts in"/>
+	<message id="event_voting_started" text="The voting time has started." />
+	<message id="event_text_votes" text="Total votes:" />
+	<message id="event_text_records" text="Signed up:" />
+	<message id="event_register_started" text="The register time to %event% has started." />
+	<message id="event_voting_state" text="The voting time will end in %time%." />
+	<message id="event_register_state" text="The register time to %event% will end in %time%." />
+	<message id="event_voting_ended" text="The voting time has ended." />
+	<message id="event_register_ended" text="The register time has ended." />
+	<message id="event_next" text="The next event will start in %time%." />
+	
+	<!-- Check for vote and register -->
+	<message id="lowLevel" text="Your level is lower than the min required level." />
+	<message id="highLevel" text="Your level is higher than the max allowed level." />
+	<message id="deadMode" text="You can not use this function while you are in dead mode." />
+	<message id="olympiadMode" text="You can not use this function while you are in Olympiads." />
+	<message id="observerMode" text="You can not use this function while you are in Observer Mode." />
+	<message id="festivalMode" text="You can not use this function while you are in a Festival." />
+	<message id="eventMode" text="You can not use this function while you are in a Event." />
+	<message id="tvtEvent" text="You can not use this function while you are in TvT Event." />
+	<message id="chaoticPlayer" text="You can not use this function while you are in flag, karma or combat mode." />
+	
+	<!-- Register -->
+	<message id="registering_registered" text="You have successfully registered!." />
+	<message id="registering_already_registered" text="You are already registered." />
+	<message id="unregistering_unregistered" text="You have been unregistered." />
+	<message id="unregistering_notRegistered" text="You are not registered!." />
+	<message id="registering_maxPlayers" text="Sorry, the maximum amount of players registered has been exceeded." />
+	
+	<!-- Events Info -->
+	<message id="event_allvsall_name" text="All vs All." />
+	<message id="event_allvsall_description" text="Here information of event!." />
+	<message id="event_teamvsteam_name" text="Team vs Team." />
+	<message id="event_teamvsteam_description" text="Here information of event!." />
+	<message id="event_capturetheflag_name" text="Capture the Flag." />
+	<message id="event_capturetheflag_description" text="Here information of event!." />
+	<message id="event_onevsone_name" text="One vs One." />
+	<message id="event_onevsone_description" text="Here information of event!." />
+	<message id="event_survive_name" text="Survive." />
+	<message id="event_survive_description" text="Here information of event!." />
+	<message id="event_presentarms_name" text="Present Arms." />
+	<message id="event_presentarms_description" text="Here information of event!." />
+	
+	<!-- General Text -->
+	<message id="text_description" text="Description"/>
+	<message id="text_requirements" text="Requirements"/>
+	<message id="text_level_max" text="Max Level"/>
+	<message id="text_level_min" text="Min Level"/>
+	<message id="text_rewards" text="Rewards" />
+	<message id="text_configuration" text="Configurations" />
+	<message id="text_time_event" text="Event Time" />
+	<message id="revive_in" text="You will be revived within %time% seconds." />
+	<message id="team_winner" text="The team winner is the %holder%."/>
+	<message id="teams_tie" text="Tie."/>
+	
+	<!-- HTML: Lang Setting -->
+	<message id="lang_menu_title" text="Menu Setting"/>
+	<message id="lang_language_title" text="Language Setting"/>
+	<message id="lang_language_description" text="If you want to change the default language of the event engine, you only have to specify it. Choose your first language, come on!."/>
+	<message id="lang_current_language" text="Current language:"/>
+	<message id="lang_current_successfully" text="Language successfully set to:"/>
+	
+	<!-- Teleport -->
+	<message id="teleport_seconds" text="You will be teleported to the event in seconds." />
+	
+	<!-- Status -->
+	<message id="status_started" text="STARTED" />
+	<message id="status_finished" text="FINISHED" />
+	
+	<!-- Titles -->
+	<message id="event_title_pvppk" text="Kills: %i, Deaths: %i." />
+	<message id="event_title_scoredeath" text="Score: %i, Deaths: %i." />
+	
+	<!-- Buttons -->
+	<message id="button_votes" text="VOTES"/>
+	<message id="button_info" text="INFO"/>
+	<message id="button_register" text="Register"/>
+	<message id="button_unregister" text="Unregister"/>
+	<message id="button_spectator" text="Spectator Mode"/>
+	<message id="button_main" text="Main"/>
+	
+	<!-- Time -->
+	<message id="time_hours" text="hour(s)."/>
+	<message id="time_minutes" text="minute(s)."/>
+	<message id="time_seconds" text="second(s)."/>
+	
+	<!-- Buff -->
+	<message id="buff_title" text="Buff List"/>
+	<message id="buff_description" text="Select from the list 5 buff skills to start with them at the next event."/>
+	<message id="buff_text_count" text="Get Buff:"/>
+	<message id="buff_text_max" text="Max Buff:"/>
+	
+	<!-- Capture the flag -->
+	<message id="ctf_captured_the_flag" text="The %holder% team just take the enemy flag."/>
+	<message id="ctf_conquered_the_flag" text="The %holder% team conquered the enemy flag."/>
+	<message id="player_dropped_flag" text="The player %holder% has dropped the %flag% flag."/>
+	
+	<!-- All vs All -->
+	<message id="ava_first_place" text="First place: %holder%."/>
+	
+	<!-- Survive -->
+	<message id="survive_spawns_mobs" text="Come here, get ready!."/>
+	
+	<!-- Custom events scheduled - Example -->
+	<message id="event_end_soon" text="The event will ends in %time% seconds." />
+	
+	<!-- Rewards -->
+	<message id="reward_text_fame" text="You have won %count% fame point!."/>
+	<message id="reward_text_pvp" text="You have won %count% pvp point!."/>
+	
+	<!-- Others -->
+	<message id="event_player_killer" text="%killer% has defeated %target%!."/>
+	
+	<!-- Anti Afk -->
+	<message id="antiafk_player_kicked" text="You have been kicked by remain inactive."/>
+	<message id="antiafk_player_kicked_announce" text="The player %player% was kicked by remain inactive."/>
+	
+	<!-- Spawn protection -->
+	<message id="spawnprotection_protected" text="The target has spawn protection."/>
+	<message id="spawnprotection_ended" text="The spawn protection has ended."/>
+</localization>

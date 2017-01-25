@@ -7,14 +7,14 @@ import com.github.athenaengine.core.util.GsonUtils;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public abstract class BaseIEventContainer implements IEventContainer {
+public abstract class BaseEventContainer implements IEventContainer {
 
-    private static final Logger LOGGER = Logger.getLogger(BaseIEventContainer.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(BaseEventContainer.class.getName());
     private static final String EVENTS_PATH = "./eventengine/events/";
 
     private IEventConfig _config;
 
-    public BaseIEventContainer()
+    public BaseEventContainer()
     {
 
     }

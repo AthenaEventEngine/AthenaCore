@@ -5,9 +5,7 @@ import com.github.athenaengine.core.util.GsonUtils;
 
 public class BaseConfigLoader {
 
-    private static final String MAIN_CONFIG_PATH = "./config/EventEngine/EventEngine.conf";
-
-    private static BaseConfigLoader sInstance;
+    private static final String MAIN_CONFIG_PATH = "./eventengine/EventEngine.conf";
 
     private MainEventConfig mMainConfig;
 
@@ -20,7 +18,10 @@ public class BaseConfigLoader {
     }
 
     public static BaseConfigLoader getInstance() {
-        if (sInstance == null) sInstance = new BaseConfigLoader();
-        return sInstance;
+        return BaseConfigLoader.SingletonHolder._instance;
+    }
+
+    private static class SingletonHolder {
+        private static final BaseConfigLoader _instance = new BaseConfigLoader();
     }
 }

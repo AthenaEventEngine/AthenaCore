@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../xsd/buff_list.xsd">
+	<!-- author fissban -->
+	<!-- SONGS -->
+	<buff id="264" lvl="1" /> <!-- Song of Earth -->
+	<buff id="265" lvl="1" /> <!-- Song of Life -->
+	<buff id="266" lvl="1" /> <!-- Song of Water -->
+	<buff id="267" lvl="1" /> <!-- Song of Warding -->
+	<buff id="268" lvl="1" /> <!-- Song of Wind -->
+	<buff id="269" lvl="1" /> <!-- Song of Hunter -->
+	<buff id="270" lvl="1" /> <!-- Song of Invocation -->
+	<buff id="304" lvl="1" /> <!-- Song of Vitality -->
+	<buff id="305" lvl="1" /> <!-- Song of Vengeance -->
+	<buff id="306" lvl="1" /> <!-- Song of Flame Guard -->
+	<buff id="308" lvl="1" /> <!-- Song of Storm Guard -->
+	
+	<!-- DANCES -->
+	<buff id="271" lvl="1" /> <!-- Dance of the Warrior -->
+	<buff id="272" lvl="1" /> <!-- Dance of Inspiration -->
+	<buff id="273" lvl="1" /> <!-- Dance of the Mystic -->
+	<buff id="274" lvl="1" /> <!-- Dance of Fire -->
+	<buff id="275" lvl="1" /> <!-- Dance of Fury -->
+	<buff id="276" lvl="1" /> <!-- Dance of Concentration -->
+	<buff id="277" lvl="1" /> <!-- Dance of Light -->
+	<buff id="307" lvl="1" /> <!-- Dance of Aqua Guard -->
+	<buff id="309" lvl="1" /> <!-- Dance of Earth Guard -->
+	<buff id="310" lvl="1" /> <!-- Dance of the Vampire -->
+	<buff id="311" lvl="1" /> <!-- Dance of Protection -->
+	
+	<!-- BUFFS -->
+	<buff id="1036" lvl="2" /> <!-- Magic Barrier -->
+	<buff id="1040" lvl="3" /> <!-- Shield -->
+	<buff id="1043" lvl="1" /> <!-- Holy Weapon -->
+	<buff id="1044" lvl="3" /> <!-- Regeneration -->
+	<buff id="1045" lvl="6" /> <!-- Blessed Body -->
+	<buff id="1048" lvl="6" /> <!-- Blessed Soul -->
+	<buff id="1059" lvl="3" /> <!-- Empower -->
+	<buff id="1062" lvl="2" /> <!-- Berserker Spirit -->
+	<buff id="1068" lvl="3" /> <!-- Might -->
+	<buff id="1077" lvl="3" /> <!-- Focus -->
+	<buff id="1078" lvl="6" /> <!-- Concentration -->
+	<buff id="1085" lvl="3" /> <!-- Acumen -->
+	<buff id="1086" lvl="2" /> <!-- Haste -->
+	<buff id="1087" lvl="3" /> <!-- Agility -->
+	<buff id="1204" lvl="2" /> <!-- Wind Walk -->
+	<buff id="1240" lvl="3" /> <!-- Guidance -->
+	<buff id="1242" lvl="3" /> <!-- Death Whisper -->
+	<buff id="1243" lvl="6" /> <!-- Bless Shield -->
+	<buff id="1257" lvl="3" /> <!-- Decrease Weight -->
+	<buff id="1259" lvl="4" /> <!-- Resist Shock -->
+	<buff id="1268" lvl="4" /> <!-- Vampiric Rage -->
+	<buff id="1499" lvl="1" /> <!-- Improved Combat -->
+	<buff id="1500" lvl="1" /> <!-- Improved Magic -->
+	<buff id="1501" lvl="1" /> <!-- Improved Condition -->
+	<buff id="1502" lvl="1" /> <!-- Improved Critical Attack -->
+	<buff id="1503" lvl="1" /> <!-- Improved Shield Defense -->
+	<buff id="1504" lvl="1" /> <!-- Improved Movement -->
+	
+	<!-- SPECIAL -->
+	<buff id="1355" lvl="1" /> <!-- Prophecy of Water -->
+	<buff id="1356" lvl="1" /> <!-- Prophecy of Fire -->
+	<buff id="1357" lvl="1" /> <!-- Prophecy of Wind -->
+	<buff id="1363" lvl="1" /> <!-- Chant of Victory -->
+	<buff id="1413" lvl="1" /> <!-- Magnus' Chant -->
+</list>
