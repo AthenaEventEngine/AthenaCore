@@ -24,6 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.github.athenaengine.core.enums.ScoreType;
 import com.github.athenaengine.core.enums.TeamType;
 import com.github.athenaengine.core.interfaces.IParticipant;
+import com.github.athenaengine.core.model.holder.EItemHolder;
 import com.github.athenaengine.core.model.holder.LocationHolder;
 import com.l2jserver.util.Rnd;
 
@@ -36,6 +37,7 @@ public class Team implements IParticipant
 	private final TeamType _teamType;
 	private final List<LocationHolder> _teamSpawns = new ArrayList<>();
 	private final Map<ScoreType, Integer> _points = new ConcurrentHashMap<>();
+	private final List<Player> _players = new ArrayList<>();
 	private int _instanceId;
 	
 	/**
@@ -112,5 +114,20 @@ public class Team implements IParticipant
 	public void increasePoints(ScoreType type, int points) {
 		if (!_points.containsKey(type)) _points.put(type, 0);
 		_points.put(type, getPoints(type) + points);
+	}
+
+	@Override
+	public void giveItems(Collection<EItemHolder> items) {
+		for (Player player : _players) {
+			player.giveItems(items);
+		}
+	}
+
+	public void addMember(Player player) {
+		_players.add(player);
+	}
+
+	public void removeMember(Player player) {
+		_players.remove(player);
 	}
 }
