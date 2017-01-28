@@ -39,25 +39,23 @@ public class SortUtils
 	
 	/**
 	 * Get a list of IParticipant sorted by ScoreType (kills, Points, etc). By default, it uses descendent order.
-	 * @param <T>
 	 * @param list
 	 * @param type
 	 * @return
 	 */
-	public static <T extends IParticipant> ArrayList<List<T>> getOrdered(Collection<T> list, ScoreType type)
+	public static ArrayList<List<IParticipant>> getOrdered(Collection<IParticipant> list, ScoreType type)
 	{
 		return getOrdered(list, type, Order.DESCENDENT);
 	}
 	
 	/**
 	 * Get a list of IParticipant sorted by ScoreType (Kills, Points, etc).
-	 * @param <T>
 	 * @param list
 	 * @param type
 	 * @param order
 	 * @return
 	 */
-	public static <T extends IParticipant> ArrayList<List<T>> getOrdered(Collection<T> list, ScoreType type, Order order)
+	public static ArrayList<List<IParticipant>> getOrdered(Collection<IParticipant> list, ScoreType type, Order order)
 	{
 		ArrayList<Holder> holderList = adaptList(list, type, order);
 		Collections.sort(holderList);
@@ -66,13 +64,12 @@ public class SortUtils
 	
 	/**
 	 * Adapt the list to use Comparator.
-	 * @param <T>
 	 * @param list
 	 * @param type
 	 * @param order
 	 * @return
 	 */
-	private static <T extends IParticipant> ArrayList<Holder> adaptList(Collection<T> list, ScoreType type, Order order)
+	private static ArrayList<Holder> adaptList(Collection<IParticipant> list, ScoreType type, Order order)
 	{
 		ArrayList<Holder> listAdapted = new ArrayList<>();
 		for (IParticipant participant : list)
@@ -84,14 +81,13 @@ public class SortUtils
 	
 	/**
 	 * Transform the adapted list to the original format to be returned Also, it groups the objects with equals value into the same list.
-	 * @param <T>
 	 * @param holderList
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private static <T extends IParticipant> ArrayList<List<T>> unadaptList(ArrayList<Holder> holderList)
+	private static ArrayList<List<IParticipant>> unadaptList(ArrayList<Holder> holderList)
 	{
-		ArrayList<List<T>> finalList = new ArrayList<>();
+		ArrayList<List<IParticipant>> finalList = new ArrayList<>();
 		int index = -1;
 		int lastValue = -1000;
 		for (Holder holder : holderList)
@@ -102,7 +98,7 @@ public class SortUtils
 				index++;
 				finalList.add(index, new ArrayList<>());
 			}
-			finalList.get(index).add((T) holder.getObject());
+			finalList.get(index).add((IParticipant) holder.getObject());
 		}
 		return finalList;
 	}
