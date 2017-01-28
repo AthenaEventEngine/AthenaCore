@@ -640,6 +640,7 @@ public abstract class BaseEvent<T extends IEventConfig> implements IListenerSusc
 	{
 		if (forceRemove) getPlayerEventManager().getAllEventPlayers().remove(ph);
 		ph.teleportTo(ph.getReturnLocation());
+		ph.getTeam().removeMember(ph);
 		ph.removeFromEvent();
 	}
 
