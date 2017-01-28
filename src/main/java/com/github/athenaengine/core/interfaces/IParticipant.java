@@ -32,4 +32,7 @@ public interface IParticipant {
 	void increasePoints(ScoreType type, int points);
 
 	void giveItems(Collection<EItemHolder> items);
+
+	void sendPacket(IGamePacket packet);
+
 }
