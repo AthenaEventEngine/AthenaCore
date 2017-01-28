@@ -69,6 +69,7 @@ public class TeamsBuilder
 				int i = 0;
 				for (Player player : mPlayers) {
 					player.setTeam(teams.get(i));
+					teams.get(i).addMember(player);
 
 					if (teams.size() <= (i + 1)) i = 0;
 					else i++;

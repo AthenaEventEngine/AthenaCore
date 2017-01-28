@@ -19,10 +19,17 @@
 package com.github.athenaengine.core.interfaces;
 
 import com.github.athenaengine.core.enums.ScoreType;
+import com.github.athenaengine.core.model.holder.EItemHolder;
 
-public interface IParticipant
-{
+import java.util.Collection;
+
+public interface IParticipant {
+
+	String getName();
+
 	int getPoints(ScoreType type);
 
 	void increasePoints(ScoreType type, int points);
+
+	void giveItems(Collection<EItemHolder> items);
 }
