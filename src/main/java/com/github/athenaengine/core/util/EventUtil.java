@@ -20,6 +20,7 @@ package com.github.athenaengine.core.util;
 
 import java.util.*;
 
+import com.github.athenaengine.core.interfaces.IParticipant;
 import com.github.athenaengine.core.managers.CacheManager;
 import com.github.athenaengine.core.config.BaseConfigLoader;
 import com.github.athenaengine.core.datatables.MessageData;
@@ -376,6 +377,11 @@ public class EventUtil
 	public static void sendEventScreenMessage(Player player, String text, int time)
 	{
 		player.sendPacket(new ShowScreenMessagePacket(text, time));
+	}
+
+	public static void sendEventScreenMessage(IParticipant participant, String text, int time)
+	{
+		participant.sendPacket(new ShowScreenMessagePacket(text, time));
 	}
 	
 	/**

@@ -1,5 +1,6 @@
 package com.github.athenaengine.core.helper;
 
+import com.github.athenaengine.core.enums.AnnounceType;
 import com.github.athenaengine.core.enums.CollectionTarget;
 import com.github.athenaengine.core.enums.MessageType;
 import com.github.athenaengine.core.enums.ScoreType;
@@ -54,7 +55,7 @@ public class RewardHelper {
         return this;
     }
 
-    public void distribute(boolean announce) {
+    public void distribute(AnnounceType announceType) {
         try {
             int index = 0;
 
@@ -76,13 +77,21 @@ public class RewardHelper {
                     }
                 }
 
-                if (index == 1) {
-                    if (participants.size() == 1) {
-                        EventUtil.announceTo(MessageType.BATTLEFIELD, "team_winner", "%holder%", participants.get(0).getName(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
-                    } else {
-                        EventUtil.announceTo(MessageType.BATTLEFIELD, "teams_tie", CollectionTarget.ALL_PLAYERS_IN_EVENT);
-                    }
+                switch (announceType) {
+                    case WINNER:
+                        if (index == 1) {
+                            if (participants.size() == 1) {
+                                EventUtil.announceTo(MessageType.BATTLEFIELD, "team_winner", "%holder%", participants.get(0).getName(), CollectionTarget.ALL_PLAYERS_IN_EVENT);
+                            } else {
+                                EventUtil.announceTo(MessageType.BATTLEFIELD, "teams_tie", CollectionTarget.ALL_PLAYERS_IN_EVENT);
+                            }
+                        }
+                        break;
+                    case TOP_3: case TOP_10: case RANKING:
+                        // TODO: Implement them
+                        break;
                 }
+
             }
         } catch (Exception e) {
             LOGGER.warning("Something went wrong on distribute");
