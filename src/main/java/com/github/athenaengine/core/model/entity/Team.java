@@ -23,6 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.github.athenaengine.core.enums.ScoreType;
 import com.github.athenaengine.core.enums.TeamType;
+import com.github.athenaengine.core.interfaces.IGamePacket;
 import com.github.athenaengine.core.interfaces.IParticipant;
 import com.github.athenaengine.core.model.holder.EItemHolder;
 import com.github.athenaengine.core.model.holder.LocationHolder;
@@ -123,11 +124,22 @@ public class Team implements IParticipant
 		}
 	}
 
+	public Collection<Player> getMembers() {
+		return _players;
+	}
+
 	public void addMember(Player player) {
 		_players.add(player);
 	}
 
 	public void removeMember(Player player) {
 		_players.remove(player);
+	}
+
+	@Override
+	public void sendPacket(IGamePacket packet) {
+		for (Player player : _players) {
+			player.sendPacket(packet);
+		}
 	}
 }
