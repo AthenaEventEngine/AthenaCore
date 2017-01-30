@@ -14,13 +14,13 @@ public class Monster extends Npc {
     }
 
     public Monster getBoss() {
-        L2MonsterInstance leader = ((L2MonsterInstance) L2World.getInstance().findObject(getObjectId())).getLeader();
+        L2MonsterInstance leader = getL2MonsterInstance().getLeader();
         return leader != null ? new Monster(leader.getObjectId()) : null;
     }
 
     public Collection<Monster> getMinions() {
         Collection<Monster> list = null;
-        MinionList minions = ((L2MonsterInstance) L2World.getInstance().findObject(getObjectId())).getMinionList();
+        MinionList minions = getL2MonsterInstance().getMinionList();
 
         if (minions.getSpawnedMinions() != null) {
             list = new LinkedList<>();
@@ -31,5 +31,9 @@ public class Monster extends Npc {
         }
 
         return list;
+    }
+
+    private L2MonsterInstance getL2MonsterInstance() {
+        return ((L2MonsterInstance) L2World.getInstance().findObject(getObjectId()));
     }
 }
