@@ -16,16 +16,20 @@ public class Summon extends Playable {
     }
 
     public Player getOwner() {
-        L2PcInstance l2PcInstance = ((L2Summon) L2World.getInstance().findObject(getObjectId())).getOwner();
+        L2PcInstance l2PcInstance = getL2SummonInstance().getOwner();
         return l2PcInstance != null ? new Player(l2PcInstance.getObjectId()) : null;
     }
 
     public void unsummon() {
-        L2Summon l2Summon = ((L2Summon) L2World.getInstance().findObject(getObjectId()));
+        L2Summon l2Summon = getL2SummonInstance();
         if (l2Summon != null) l2Summon.unSummon(l2Summon.getOwner());
     }
 
     public void returnToOwner() {
-        ((L2Summon) L2World.getInstance().findObject(getObjectId())).followOwner();
+        getL2SummonInstance().followOwner();
+    }
+
+    private L2Summon getL2SummonInstance() {
+        return ((L2Summon) L2World.getInstance().findObject(getObjectId()));
     }
 }
