@@ -29,7 +29,6 @@ import com.github.athenaengine.core.enums.TeamType;
 import com.github.athenaengine.core.interfaces.IParticipant;
 import com.github.athenaengine.core.model.instance.ItemInstance;
 import com.github.athenaengine.core.model.instance.WorldInstance;
-import com.l2jserver.gameserver.datatables.ItemTable;
 import com.l2jserver.gameserver.instancemanager.InstanceManager;
 import com.l2jserver.gameserver.model.L2Party;
 import com.l2jserver.gameserver.model.L2World;
@@ -37,7 +36,6 @@ import com.l2jserver.gameserver.model.actor.L2Summon;
 import com.l2jserver.gameserver.model.actor.instance.L2CubicInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
-import com.l2jserver.gameserver.model.items.L2Item;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.network.serverpackets.SkillCoolTime;
@@ -89,6 +87,7 @@ public class Player extends Playable implements IParticipant
 	@Override
 	public void setTitle(String title) {
 		getPcInstance().setTitle(title);
+		getPcInstance().updateAndBroadcastStatus(2);
 	}
 
 	public void teleportTo(LocationHolder location) {

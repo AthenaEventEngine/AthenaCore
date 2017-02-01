@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.github.athenaengine.core.events.listeners.EventEngineListener;
+import com.github.athenaengine.core.interfaces.IParticipant;
 import com.github.athenaengine.core.model.entity.Character;
 import com.github.athenaengine.core.model.entity.Playable;
 import com.github.athenaengine.core.model.entity.Player;
@@ -40,6 +41,15 @@ public class PlayersManager
 	 */
 	public Collection<Player> getAllEventPlayers() {
 		Collection<Player> players = new LinkedList<>();
+		for (int playerId : _eventPlayers) {
+			players.add(CacheManager.getInstance().getPlayer(playerId));
+		}
+
+		return players;
+	}
+
+	public Collection<IParticipant> getAllEventParticipants() {
+		Collection<IParticipant> players = new LinkedList<>();
 		for (int playerId : _eventPlayers) {
 			players.add(CacheManager.getInstance().getPlayer(playerId));
 		}
