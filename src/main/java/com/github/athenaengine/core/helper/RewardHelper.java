@@ -21,6 +21,7 @@ public class RewardHelper {
     private final Map<Integer, Collection<EItemHolder>> mRewards = new HashMap<>();
     private final Map<Integer, Collection<EItemHolder>> mTieRewards = new HashMap<>();
     private ScoreType mScoreType = ScoreType.POINT;
+    private SortUtils.Order mOrder = SortUtils.Order.DESCENDENT;
 
     public static RewardHelper newInstance() {
         return new RewardHelper();
@@ -28,8 +29,13 @@ public class RewardHelper {
 
     private RewardHelper() {}
 
-    public RewardHelper setParticipants(Collection<? extends IParticipant> participants) {
+    public RewardHelper setParticipants(Collection<IParticipant> participants) {
         mParticipants.addAll(participants);
+        return this;
+    }
+
+    public RewardHelper setOrder(SortUtils.Order order) {
+        mOrder = order;
         return this;
     }
 
@@ -59,7 +65,7 @@ public class RewardHelper {
         try {
             int index = 0;
 
-            for (List<IParticipant> participants : SortUtils.getOrdered(mParticipants, mScoreType)) {
+            for (List<IParticipant> participants : SortUtils.getOrdered(mParticipants, mScoreType, mOrder)) {
                 index++;
                 Collection<EItemHolder> reward = null;
 

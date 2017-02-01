@@ -19,30 +19,42 @@
 package com.github.athenaengine.core.managers;
 
 import java.util.Collection;
-import java.util.Map;
+import java.util.LinkedList;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.github.athenaengine.core.events.listeners.EventEngineListener;
+import com.github.athenaengine.core.interfaces.IParticipant;
 import com.github.athenaengine.core.model.entity.Character;
 import com.github.athenaengine.core.model.entity.Playable;
 import com.github.athenaengine.core.model.entity.Player;
 import com.github.athenaengine.core.EventEngineManager;
 import com.github.athenaengine.core.model.entity.Summon;
 
-/**
- * @author fissban
- */
 public class PlayersManager
 {
-	private final Map<Integer, Player> _eventPlayers = new ConcurrentHashMap<>();
+	private final Set<Integer> _eventPlayers = ConcurrentHashMap.newKeySet();
 	
 	/**
 	 * We obtain the full list of all players within an event.
 	 * @return Collection<Player>
 	 */
-	public Collection<Player> getAllEventPlayers()
-	{
-		return _eventPlayers.values();
+	public Collection<Player> getAllEventPlayers() {
+		Collection<Player> players = new LinkedList<>();
+		for (int playerId : _eventPlayers) {
+			players.add(CacheManager.getInstance().getPlayer(playerId));
+		}
+
+		return players;
+	}
+
+	public Collection<IParticipant> getAllEventParticipants() {
+		Collection<IParticipant> players = new LinkedList<>();
+		for (int playerId : _eventPlayers) {
+			players.add(CacheManager.getInstance().getPlayer(playerId));
+		}
+
+		return players;
 	}
 	
 	/**
@@ -73,7 +85,7 @@ public class PlayersManager
 				player.sendMessage("You can not attend the event being in the Observer mode.");
 				continue;
 			}
-			_eventPlayers.put(player.getObjectId(), new Player(player.getObjectId()));
+			_eventPlayers.add(player.getObjectId());
 			player.getPcInstance().addEventListener(new EventEngineListener(player.getPcInstance()));
 		}
 		// We clean the list, no longer we need it
@@ -89,12 +101,12 @@ public class PlayersManager
 	{
 		if (playable.isPlayer())
 		{
-			return _eventPlayers.containsKey(playable.getObjectId());
+			return _eventPlayers.contains(playable.getObjectId());
 		}
 		
 		if (playable.isSummon())
 		{
-			return _eventPlayers.containsKey(((Summon) playable).getOwner().getObjectId());
+			return _eventPlayers.contains(((Summon) playable).getOwner().getObjectId());
 		}
 		return false;
 	}
@@ -106,14 +118,15 @@ public class PlayersManager
 	 */
 	public Player getEventPlayer(Character character)
 	{
-		if (character instanceof Summon)
-		{
-			return _eventPlayers.get(((Summon) character).getOwner().getObjectId());
+		if (character instanceof Playable && isPlayableInEvent((Playable) character)) {
+			int objectId = character instanceof Summon ? ((Summon) character).getOwner().getObjectId() : character.getObjectId();
+			return CacheManager.getInstance().getPlayer(objectId);
 		}
-		if (character instanceof Player)
-		{
-			return _eventPlayers.get(character.getObjectId());
-		}
+
 		return null;
+	}
+
+	public Player getEventPlayer(int playerId) {
+		return _eventPlayers.contains(playerId) ? CacheManager.getInstance().getPlayer(playerId) : null;
 	}
 }

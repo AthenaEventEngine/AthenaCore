@@ -20,81 +20,31 @@ package com.github.athenaengine.core.managers;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
-import com.github.athenaengine.core.EventEngineManager;
-import com.github.athenaengine.core.EventEngineWorld;
-import com.l2jserver.gameserver.instancemanager.InstanceManager;
-import com.l2jserver.gameserver.model.actor.instance.L2DoorInstance;
-import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
+import com.github.athenaengine.core.model.instance.WorldInstance;
 
-/**
- * @author fissban
- */
-public class InstanceWorldManager
-{
-	private static final Logger LOGGER = Logger.getLogger(InstanceWorldManager.class.getName());
-	private String _instanceFile = "";
-	private final List<InstanceWorld> _instanceWorlds = new ArrayList<>();
-	
-	/**
-	 * Constructor
-	 */
-	public InstanceWorldManager()
-	{
-		
+public class InstanceWorldManager {
+	private final List<WorldInstance> _instanceWorlds = new ArrayList<>();
+
+	public static InstanceWorldManager newInstance() {
+		return new InstanceWorldManager();
+	}
+
+	private InstanceWorldManager() {}
+
+	public WorldInstance createNewInstanceWorld(String instanceFile) {
+		WorldInstance instance = WorldInstance.newInstance(instanceFile);
+		_instanceWorlds.add(instance);
+		return instance;
 	}
 	
-	public void setInstanceFile(String instanceFile)
-	{
-		_instanceFile = instanceFile;
-	}
-	
-	/**
-	 * Create dynamic instances and a world for her.
-	 * @return InstanceWorld
-	 */
-	public InstanceWorld createNewInstanceWorld()
-	{
-		InstanceWorld world = null;
-		try
-		{
-			int instanceId = InstanceManager.getInstance().createDynamicInstance(_instanceFile);
-			InstanceManager.getInstance().getInstance(instanceId).setAllowSummon(false);
-			InstanceManager.getInstance().getInstance(instanceId).setPvPInstance(true);
-			InstanceManager.getInstance().getInstance(instanceId).setEjectTime(10 * 60 * 1000); // Prevent eject death players
-			InstanceManager.getInstance().getInstance(instanceId).setEmptyDestroyTime(1000 + 60000L);
-			
-			// We closed the doors of the instance if there
-			for (L2DoorInstance door : InstanceManager.getInstance().getInstance(instanceId).getDoors())
-			{
-				door.closeMe();
-			}
-			world = new EventEngineWorld();
-			world.setInstanceId(instanceId);
-			world.setTemplateId(100); // TODO hardcode
-			world.setStatus(0);
-			InstanceManager.getInstance().addWorld(world);
-			_instanceWorlds.add(world);
-		}
-		catch (Exception e)
-		{
-			LOGGER.warning(EventEngineManager.class.getSimpleName() + ": createNewInstanceWorld() " + e);
-			e.printStackTrace();
-		}
-		return world;
-	}
-	
-	public List<InstanceWorld> getAllInstancesWorlds()
-	{
+	public List<WorldInstance> getAllInstances() {
 		return _instanceWorlds;
 	}
 	
-	public void destroyWorldInstances()
-	{
-		for (InstanceWorld instance : _instanceWorlds)
-		{
-			InstanceManager.getInstance().destroyInstance(instance.getInstanceId());
+	public void destroyAllInstances() {
+		for (WorldInstance instance : _instanceWorlds) {
+			instance.destroy();
 		}
 	}
 }

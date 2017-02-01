@@ -24,6 +24,10 @@ public class CacheManager {
         return player;
     }
 
+    public Player getPlayer(int objectId) {
+        return mPlayers.get(objectId);
+    }
+
     public Summon getSummon(L2Summon l2Summon, boolean initialize) {
         Summon summon = mSummons.get(l2Summon.getObjectId());
         if (summon == null && initialize) summon = addSummon(l2Summon);
@@ -40,6 +44,10 @@ public class CacheManager {
         Npc npc = mNpcs.get(l2Npc.getObjectId());
         if (npc == null && initialize) npc = addNpc(l2Npc);
         return npc;
+    }
+
+    public Npc getNpc(int objectId) {
+        return mNpcs.get(objectId);
     }
 
     public Character getCharacter(L2Character l2Character, boolean initialize) {
@@ -83,13 +91,11 @@ public class CacheManager {
         mNpcs.remove(objectId);
     }
 
-    public static CacheManager getInstance()
-    {
+    public static CacheManager getInstance() {
         return SingletonHolder._instance;
     }
 
-    private static class SingletonHolder
-    {
+    private static class SingletonHolder {
         protected static final CacheManager _instance = new CacheManager();
     }
 }
