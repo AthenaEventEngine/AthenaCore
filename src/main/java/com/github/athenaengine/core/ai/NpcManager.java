@@ -40,9 +40,6 @@ import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
 import com.l2jserver.util.StringUtil;
 
-/**
- * @author swarlog, Zephyr, fissban
- */
 public class NpcManager extends Quest
 {
 	private static final int MAX_BUFF_PAGE = 12;
@@ -85,7 +82,7 @@ public class NpcManager extends Quest
 				break;
 			case "vote":
 				// Check for vote
-				if (checkPlayerCondition(l2PcInstance))
+				if (checkPlayerCondition(l2PcInstance, null))
 				{
 					// Add vote event
 					IEventContainer container = EventLoader.getInstance().getEvent(st.nextToken());
@@ -105,7 +102,7 @@ public class NpcManager extends Quest
 				if (!EventEngineManager.getInstance().isRegistered(player))
 				{
 					// Check for register
-					if (checkPlayerCondition(l2PcInstance))
+					if (checkPlayerCondition(l2PcInstance, EventEngineManager.getInstance().getNextEvent()))
 					{
 						DualBoxProtection.getInstance().registerConnection(player);
 						
@@ -186,33 +183,33 @@ public class NpcManager extends Quest
 	{
 		final NpcHtmlMessage html = new NpcHtmlMessage();
 		html.setFile(player.getPcInstance().getHtmlPrefix(), "data/html/events/event_info.htm");
+		IEventContainer container = EventLoader.getInstance().getEvent(eventName);
 		// Avoid a vulnerability
-		if (EventLoader.getInstance().getEvent(eventName) != null)
+		if (container != null)
 		{
 			// Info event
-			html.replace("%eventName%", MessageData.getInstance().getMsgByLang(player, "event_" + eventName.toLowerCase() + "_name", false));
+			html.replace("%eventName%", container.getEventName());
 			html.replace("%textDescription%", MessageData.getInstance().getMsgByLang(player, "text_description", false));
-			html.replace("%eventDescription%", MessageData.getInstance().getMsgByLang(player, "event_" + eventName.toLowerCase() + "_description", false));
+			html.replace("%eventDescription%", container.getDescription());
 			// Requirements
 			html.replace("%textRequirements%", MessageData.getInstance().getMsgByLang(player, "text_requirements", false));
 			html.replace("%textLevelMax%", MessageData.getInstance().getMsgByLang(player, "text_level_max", false));
 			html.replace("%textLevelMin%", MessageData.getInstance().getMsgByLang(player, "text_level_min", false));
-			// TODO: replace for max and min from event
-			html.replace("%levelMax%", getConfig().getMaxPlayerLevel());
-			html.replace("%levelMin%", getConfig().getMinPlayerLevel());
+			html.replace("%levelMax%", container.getMaxLevel());
+			html.replace("%levelMin%", container.getMinLevel());
 			// Configuration
 			html.replace("%textConfiguration%", MessageData.getInstance().getMsgByLang(player, "text_configuration", false));
 			html.replace("%textTimeEvent%", MessageData.getInstance().getMsgByLang(player, "text_time_event", false));
-			// TODO: replace for duration from event
-			html.replace("%timeEvent%", getConfig().getRunningTime());
+			html.replace("%timeEvent%", container.getRunningTime());
 			html.replace("%timeMinutes%", MessageData.getInstance().getMsgByLang(player, "time_minutes", false));
-			// Rewards
+			// Rewards rewardList
 			html.replace("%textRewards%", MessageData.getInstance().getMsgByLang(player, "text_rewards", false));
+			html.replace("%rewardList%", container.getRewards());
 			// Button
 			html.replace("%buttonMain%", MessageData.getInstance().getMsgByLang(player, "button_main", false));
+
+			player.getPcInstance().sendPacket(html);
 		}
-		// Send html
-		player.getPcInstance().sendPacket(html);
 	}
 	
 	private static void sendHtmlLang(Player player)
@@ -295,11 +292,7 @@ public class NpcManager extends Quest
 		// Send html
 		player.getPcInstance().sendPacket(html);
 	}
-	
-	/**
-	 * Generamos el html index del npc.
-	 * @param player
-	 */
+
 	private static void sendHtmlIndex(Player player)
 	{
 		final NpcHtmlMessage html = new NpcHtmlMessage();
@@ -320,7 +313,7 @@ public class NpcManager extends Quest
 				StringUtil.append(eventList, "<td align=center width=30% height=30><button value=\"" + container.getEventName() + "\" action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " vote "
 					+ container.getSimpleEventName() + "\" width=110 height=21 back=L2UI_CT1.Button_DF_Down fore=L2UI_CT1.Button_DF></td>");
 				StringUtil.append(eventList, "<td width=40%><font color=LEVEL>" + MessageData.getInstance().getMsgByLang(player, "button_votes", false) + ": </font>" + EventEngineManager.getInstance().getCurrentVotesInEvent(container.getSimpleEventName()) + "</td>");
-				StringUtil.append(eventList, "<td width=30%><font color=7898AF><a action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " info " + container.getEventName() + "\">" + MessageData.getInstance().getMsgByLang(player, "button_info", false) + "</a></font></td>");
+				StringUtil.append(eventList, "<td width=30%><font color=7898AF><a action=\"bypass -h Quest " + NpcManager.class.getSimpleName() + " info " + container.getSimpleEventName() + "\">" + MessageData.getInstance().getMsgByLang(player, "button_info", false) + "</a></font></td>");
 				StringUtil.append(eventList, "</tr>");
 			}
 			html.replace("%menuInfo%", MessageData.getInstance().getMsgByLang(player, "event_vote_info", false));
@@ -363,24 +356,35 @@ public class NpcManager extends Quest
 		player.getPcInstance().sendPacket(html);
 	}
 	
-	private static boolean checkPlayerCondition(L2PcInstance l2PcInstance)
+	private static boolean checkPlayerCondition(L2PcInstance l2PcInstance, IEventContainer container)
 	{
 		Player player = CacheManager.getInstance().getPlayer(l2PcInstance, true);
 
-		// Check level min
-		if (l2PcInstance.getLevel() < getConfig().getMinPlayerLevel())
+		if (EventEngineManager.getInstance().isOpenRegister())
 		{
-			l2PcInstance.sendMessage(MessageData.getInstance().getMsgByLang(player, "lowLevel", true));
-			return false;
+			if (container != null)
+			{
+				// Check level min
+				if (l2PcInstance.getLevel() < container.getMinLevel())
+				{
+					l2PcInstance.sendMessage(MessageData.getInstance().getMsgByLang(player, "lowLevel", true));
+					return false;
+				}
+				// Check level max
+				else if (l2PcInstance.getLevel() > container.getMaxLevel())
+				{
+					l2PcInstance.sendMessage(MessageData.getInstance().getMsgByLang(player, "highLevel", true));
+					return false;
+				}
+			}
+			else
+			{
+				return false;
+			}
 		}
-		// Check level max
-		else if (l2PcInstance.getLevel() > getConfig().getMaxPlayerLevel())
-		{
-			l2PcInstance.sendMessage(MessageData.getInstance().getMsgByLang(player, "highLevel", true));
-			return false;
-		}
+
 		// Check dead mode player
-		else if (l2PcInstance.isDead() || l2PcInstance.isAlikeDead())
+		if (l2PcInstance.isDead() || l2PcInstance.isAlikeDead())
 		{
 			l2PcInstance.sendMessage(MessageData.getInstance().getMsgByLang(player, "deadMode", true));
 			return false;
