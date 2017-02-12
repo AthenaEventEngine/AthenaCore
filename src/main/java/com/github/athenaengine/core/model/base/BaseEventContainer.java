@@ -1,5 +1,6 @@
 package com.github.athenaengine.core.model.base;
 
+import com.github.athenaengine.core.config.BaseConfigLoader;
 import com.github.athenaengine.core.interfaces.IEventConfig;
 import com.github.athenaengine.core.interfaces.IEventContainer;
 import com.github.athenaengine.core.util.GsonUtils;
@@ -12,28 +13,52 @@ public abstract class BaseEventContainer implements IEventContainer {
     private static final Logger LOGGER = Logger.getLogger(BaseEventContainer.class.getName());
     private static final String EVENTS_PATH = "./eventengine/events/";
 
-    private IEventConfig _config;
+    private IEventConfig mConfig;
 
-    public BaseEventContainer()
-    {
+    public BaseEventContainer() {}
 
+    public String getSimpleEventName() {
+        return getEventName().toLowerCase().replace(" ", "");
     }
 
-    public String getSimpleEventName()
-    {
-        return getEventName().toLowerCase().replace(" ", "");
+    @Override
+    public int getMinLevel() {
+        return BaseConfigLoader.getInstance().getMainConfig().getMinPlayerLevel();
+    }
+
+    @Override
+    public int getMaxLevel() {
+        return BaseConfigLoader.getInstance().getMainConfig().getMaxPlayerLevel();
+    }
+
+    @Override
+    public int getMinParticipants() {
+        return BaseConfigLoader.getInstance().getMainConfig().getMinPlayers();
+    }
+
+    @Override
+    public int getMaxParticipants() {
+        return BaseConfigLoader.getInstance().getMainConfig().getMaxPlayers();
+    }
+
+    @Override
+    public int getRunningTime() {
+        return BaseConfigLoader.getInstance().getMainConfig().getRunningTime();
+    }
+
+    @Override
+    public String getRewards() {
+        return "-";
     }
 
     protected abstract Class<? extends IEventConfig> getConfigClass();
 
-    protected IEventConfig getConfig()
-    {
-        if (_config == null) _config = (IEventConfig) GsonUtils.loadConfig(EVENTS_PATH + getSimpleEventName() + "/config.conf", getConfigClass());
-        return _config;
+    protected IEventConfig getConfig() {
+        if (mConfig == null) mConfig = (IEventConfig) GsonUtils.loadConfig(EVENTS_PATH + getSimpleEventName() + "/config.conf", getConfigClass());
+        return mConfig;
     }
 
-    public BaseEvent newEventInstance()
-    {
+    public BaseEvent newEventInstance() {
         EventBuilder builder = new EventBuilder();
         builder.setEventClass(getEventClass());
         builder.setConfig(getConfig());
@@ -44,34 +69,28 @@ public abstract class BaseEventContainer implements IEventContainer {
 
         private final Logger LOGGER = Logger.getLogger(EventBuilder.class.getName());
 
-        private Class<? extends BaseEvent> _eventClass;
-        private IEventConfig _config;
+        private Class<? extends BaseEvent> mEventClass;
+        private IEventConfig mConfig;
 
-        private EventBuilder setEventClass(Class<? extends BaseEvent> eventClass)
-        {
-            _eventClass = eventClass;
+        private EventBuilder setEventClass(Class<? extends BaseEvent> eventClass) {
+            mEventClass = eventClass;
             return this;
         }
 
-        public EventBuilder setConfig(IEventConfig config)
-        {
-            _config = config;
+        public EventBuilder setConfig(IEventConfig config) {
+            mConfig = config;
             return this;
         }
 
-        private BaseEvent build()
-        {
+        private BaseEvent build() {
             BaseEvent event;
 
-            try
-            {
-                event = _eventClass.newInstance();
-                event.setConfig(_config);
+            try {
+                event = mEventClass.newInstance();
+                event.setConfig(mConfig);
                 event.initialize();
                 return event;
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 LOGGER.log(Level.WARNING, e.getMessage());
             }
 

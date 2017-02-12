@@ -12,5 +12,17 @@ public interface IEventContainer {
 
     String getDescription();
 
+    int getMinLevel();
+
+    int getMaxLevel();
+
+    int getMinParticipants();
+
+    int getMaxParticipants();
+
+    int getRunningTime();
+
+    String getRewards();
+
     BaseEvent newEventInstance();
 }
