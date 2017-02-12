@@ -1,5 +1,5 @@
 group 'com.github.athenaengine.core'
-version '0.1-SNAPSHOT'
+version 'Alpha-v3.2'
 
 apply plugin: 'java'
 
@@ -41,11 +41,11 @@ jar {
                 'Built-JDK': System.getProperty('java.version'),
                 'Main-Class': 'com.github.athenaengine.core.EventEngineManager'
     }
-    archiveName = 'L2J_EventEngine.jar'
+    archiveName = 'AthenaCore.jar'
 }
 
 task zip(type: Zip) {
-	def fileName = 'L2J_EventEngine_' + new Date().format("yyyy-MM-dd")
+	def fileName = 'AthenaCore_' + new Date().format("yyyy-MM-dd")
 	baseName = fileName
 	from('dist')
 	into('libs') {

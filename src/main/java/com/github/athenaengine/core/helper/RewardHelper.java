@@ -29,7 +29,7 @@ public class RewardHelper {
 
     private RewardHelper() {}
 
-    public RewardHelper setParticipants(Collection<IParticipant> participants) {
+    public RewardHelper setParticipants(Collection<? extends IParticipant> participants) {
         mParticipants.addAll(participants);
         return this;
     }
