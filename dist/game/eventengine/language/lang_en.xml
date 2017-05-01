@@ -48,6 +48,7 @@
 	<message id="unregistering_unregistered" text="You have been unregistered." />
 	<message id="unregistering_notRegistered" text="You are not registered!." />
 	<message id="registering_maxPlayers" text="Sorry, the maximum amount of players registered has been exceeded." />
+	<message id="registering_dualbox_limit" text="Sorry, you exceeded the dualbox limit." />
 	
 	<!-- Events Info -->
 	<message id="event_allvsall_name" text="All vs All." />

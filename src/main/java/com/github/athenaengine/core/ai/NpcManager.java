@@ -104,10 +104,13 @@ public class NpcManager extends Quest
 					// Check for register
 					if (checkPlayerCondition(l2PcInstance, EventEngineManager.getInstance().getNextEvent()))
 					{
-						DualBoxProtection.getInstance().registerConnection(player);
-						
-						// Check player size
-						if (EventEngineManager.getInstance().getAllRegisteredPlayers().size() >= getConfig().getMaxPlayers())
+						boolean dualboxProtection = DualBoxProtection.getInstance().registerConnection(player);
+
+						if (!dualboxProtection)
+						{
+							l2PcInstance.sendMessage(MessageData.getInstance().getMsgByLang(player, "registering_dualbox_limit", true));
+						}
+						else if (EventEngineManager.getInstance().getAllRegisteredPlayers().size() >= getConfig().getMaxPlayers())
 						{
 							l2PcInstance.sendMessage(MessageData.getInstance().getMsgByLang(player, "registering_maxPlayers", true));
 						}

@@ -70,7 +70,7 @@ public class SpawnManager {
 				spawn.init();
 				// animation
 				spawn.getLastSpawn().broadcastPacket(new MagicSkillUse(spawn.getLastSpawn(), spawn.getLastSpawn(), 1034, 1, 1, 1));
-				Npc npc = CacheManager.getInstance().getNpc(l2Npc, true);
+				Npc npc = (Npc) CacheManager.getInstance().getCharacter(l2Npc, true);
 				_eventNpcs.add(npc.getObjectId());
 				return npc;
 			}
