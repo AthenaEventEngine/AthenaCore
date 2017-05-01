@@ -48,6 +48,7 @@ import com.github.athenaengine.core.events.schedules.ChangeToEndEvent;
 import com.github.athenaengine.core.events.schedules.ChangeToFightEvent;
 import com.github.athenaengine.core.events.schedules.ChangeToStartEvent;
 import com.github.athenaengine.core.interfaces.IListenerSuscriber;
+import com.github.athenaengine.core.model.instance.WorldInstance;
 import com.github.athenaengine.core.model.template.ItemTemplate;
 import com.github.athenaengine.core.model.template.SkillTemplate;
 import com.github.athenaengine.core.model.entity.*;
@@ -80,7 +81,6 @@ public abstract class BaseEvent<T extends IEventConfig> implements IListenerSusc
 		initScheduledEvents();
 		// Starts the clock to control the sequence of internal events of the event
 		getScheduledEventsManager().startTaskControlTime();
-		getInstanceWorldManager().setInstanceFile(getInstanceFile());
 	}
 
 	public void setConfig(T config)
@@ -147,7 +147,7 @@ public abstract class BaseEvent<T extends IEventConfig> implements IListenerSusc
 	}
 	
 	// XXX DINAMIC INSTANCE ------------------------------------------------------------------------------
-	private final InstanceWorldManager _instanceWorldManager = new InstanceWorldManager();
+	private final InstanceWorldManager _instanceWorldManager = InstanceWorldManager.newInstance();
 	
 	public InstanceWorldManager getInstanceWorldManager()
 	{
@@ -531,7 +531,7 @@ public abstract class BaseEvent<T extends IEventConfig> implements IListenerSusc
 	 */
 	public void prepareToStart()
 	{
-		InstanceWorld world = _instanceWorldManager.createNewInstanceWorld();
+		WorldInstance world = _instanceWorldManager.createNewInstanceWorld(getInstanceFile());
 		_teamsManagers.createTeams(onCreateTeams(), world.getInstanceId());
 
 		for (Player player : getPlayerEventManager().getAllEventPlayers())
@@ -584,7 +584,7 @@ public abstract class BaseEvent<T extends IEventConfig> implements IListenerSusc
 			removePlayerFromEvent(ph, false);
 		}
 		getScheduledEventsManager().cancelTaskControlTime();
-		getInstanceWorldManager().destroyWorldInstances();
+		getInstanceWorldManager().destroyAllInstances();
 	}
 	
 	/**
@@ -640,6 +640,7 @@ public abstract class BaseEvent<T extends IEventConfig> implements IListenerSusc
 	{
 		if (forceRemove) getPlayerEventManager().getAllEventPlayers().remove(ph);
 		ph.teleportTo(ph.getReturnLocation());
+		ph.getTeam().removeMember(ph);
 		ph.removeFromEvent();
 	}
 

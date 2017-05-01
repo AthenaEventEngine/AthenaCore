@@ -172,6 +172,9 @@ public class EventEngineAdapter extends Quest
 			Player targetPlayer = CacheManager.getInstance().getPlayer((L2PcInstance) event.getTarget(), true);
 			ListenerDispatcher.getInstance().notifyEvent(new OnDeathEvent(targetPlayer));
 		}
+
+		// TODO: When we hook L2World instance, this won't be necessary
+		CacheManager.getInstance().removeCharacter(event.getTarget().getObjectId());
 		return null;
 	}
 	
@@ -196,7 +199,7 @@ public class EventEngineAdapter extends Quest
 	public void onNpcInteract(OnNpcFirstTalk event)
 	{
 		Player player = CacheManager.getInstance().getPlayer(event.getActiveChar(), true);
-		Npc npc = CacheManager.getInstance().getNpc(event.getNpc(), true);
+		Npc npc = (Npc) CacheManager.getInstance().getCharacter(event.getNpc(), true);
 		ListenerDispatcher.getInstance().notifyEvent(new OnInteractEvent(player, npc));
 	}
 

@@ -11,9 +11,10 @@ For the detailed information about building and developing, please visit the dev
 
 L2J-Server: http://www.l2jserver.com<br>
 Github: https://github.com/AthenaEventEngine/AthenaCore/<br>
-Chat: https://gitter.im/u3games/L2J_EventEngine<br>
+Chat: https://gitter.im/AthenaEventEngineChat/Lobby<br>
 <br>
 **Support Forums**<br>
+Official forum: http://www.athena-engine.com/ (English-Spanish)<br>
 L2J-Server: http://www.l2jserver.com/forum (English)<br>
 U3Games: http://l2.united-extreme.com (Spanish)<br>
 <br>
