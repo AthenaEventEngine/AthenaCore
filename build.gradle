@@ -1,5 +1,5 @@
 group 'com.github.athenaengine.core'
-version 'Alpha-v3.2'
+version 'Alpha-v3.3'
 
 apply plugin: 'java'
 
