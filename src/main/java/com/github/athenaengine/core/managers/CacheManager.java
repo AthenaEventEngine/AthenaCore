@@ -17,6 +17,7 @@ public class CacheManager {
     private final Map<Integer, Player> mPlayers = new ConcurrentHashMap<>();
     private final Map<Integer, Summon> mSummons = new ConcurrentHashMap<>();
     private final Map<Integer, Npc> mNpcs = new ConcurrentHashMap<>();
+    private final Map<Integer, Character> mOtherCharacters = new ConcurrentHashMap<>();
 
     public Player getPlayer(L2PcInstance l2PcInstance, boolean initialize) {
         Player player = mPlayers.get(l2PcInstance.getObjectId());
@@ -24,51 +25,66 @@ public class CacheManager {
         return player;
     }
 
-    public Summon getSummon(L2Summon l2Summon, boolean initialize) {
+    public Player getPlayer(int objectId) {
+        return mPlayers.get(objectId);
+    }
+
+    private Summon getSummon(L2Summon l2Summon, boolean initialize) {
         Summon summon = mSummons.get(l2Summon.getObjectId());
         if (summon == null && initialize) summon = addSummon(l2Summon);
         return summon;
     }
-
 
     public Playable getPlayable(L2Playable l2Playable, boolean initialize) {
         if (l2Playable instanceof L2PcInstance) return getPlayer((L2PcInstance) l2Playable, initialize);
         return getSummon((L2Summon) l2Playable, initialize);
     }
 
-    public Npc getNpc(L2Npc l2Npc, boolean initialize) {
+    public Character getCharacter(L2Character l2Character) {
+        return getCharacter(l2Character, false);
+    }
+
+    public Character getCharacter(L2Character l2Character, boolean initialize) {
+        if (l2Character instanceof L2Playable) return getPlayable((L2Playable) l2Character, initialize);
+        if (l2Character instanceof L2Npc) return getNpc((L2Npc) l2Character, initialize);
+
+        return getOtherCharacter(l2Character, initialize);
+    }
+
+    public Npc getNpc(int npcId) {
+        return mNpcs.get(npcId);
+    }
+
+    private Npc getNpc(L2Npc l2Npc, boolean initialize) {
         Npc npc = mNpcs.get(l2Npc.getObjectId());
         if (npc == null && initialize) npc = addNpc(l2Npc);
         return npc;
     }
 
-    public Character getCharacter(L2Character l2Character, boolean initialize) {
-        if (l2Character instanceof L2Playable) return getPlayable((L2Playable) l2Character, initialize);
-        return getNpc((L2Npc) l2Character, initialize);
+    private Character getOtherCharacter(L2Character l2Character, boolean initialize) {
+        Character character = mOtherCharacters.get(l2Character.getObjectId());
+        if (character == null && initialize) character = addOtherCharacter(l2Character);
+        return character;
     }
 
-    public Player addPlayer(L2PcInstance l2PcInstance) {
-        Player player = new Player(l2PcInstance.getObjectId());
-        mPlayers.put(l2PcInstance.getObjectId(), player);
-        return player;
+    private Player addPlayer(L2PcInstance l2PcInstance) {
+        return mPlayers.computeIfAbsent(l2PcInstance.getObjectId(), p -> new Player(l2PcInstance.getObjectId()));
     }
 
-    public Summon addSummon(L2Summon l2Summon) {
-        Summon summon = new Summon(l2Summon.getObjectId());
-        mSummons.put(l2Summon.getObjectId(), new Summon(l2Summon.getObjectId()));
-        return summon;
+    private Summon addSummon(L2Summon l2Summon) {
+        return mSummons.computeIfAbsent(l2Summon.getObjectId(), s -> new Summon(l2Summon.getObjectId()));
     }
 
-    public Npc addNpc(L2Npc l2Npc) {
+    private Npc addNpc(L2Npc l2Npc) {
         if (l2Npc instanceof L2MonsterInstance) {
-            Monster monster = new Monster(l2Npc.getObjectId());
-            mNpcs.put(l2Npc.getObjectId(), new Monster(l2Npc.getObjectId()));
-            return monster;
+            return mNpcs.computeIfAbsent(l2Npc.getObjectId(), m -> new Monster(l2Npc.getObjectId()));
         }
 
-        FriendlyNpc friendlyNpc = new FriendlyNpc(l2Npc.getObjectId());
-        mNpcs.put(l2Npc.getObjectId(), new FriendlyNpc(l2Npc.getObjectId()));
-        return friendlyNpc;
+        return mNpcs.computeIfAbsent(l2Npc.getObjectId(), f -> new FriendlyNpc(l2Npc.getObjectId()));
+    }
+
+    private Character addOtherCharacter(L2Character l2Character) {
+        return mOtherCharacters.computeIfAbsent(l2Character.getObjectId(), c -> new Character(l2Character.getObjectId()));
     }
 
     public void removePlayer(int objectId) {
@@ -79,17 +95,25 @@ public class CacheManager {
         mSummons.remove(objectId);
     }
 
+    public void removeCharacter(int objectId) {
+        removeNpc(objectId);
+        removeOtherCharacter(objectId);
+        removeSummon(objectId);
+    }
+
     public void removeNpc(int objectId) {
         mNpcs.remove(objectId);
     }
 
-    public static CacheManager getInstance()
-    {
+    public void removeOtherCharacter(int objectId) {
+        mOtherCharacters.remove(objectId);
+    }
+
+    public static CacheManager getInstance() {
         return SingletonHolder._instance;
     }
 
-    private static class SingletonHolder
-    {
+    private static class SingletonHolder {
         protected static final CacheManager _instance = new CacheManager();
     }
 }

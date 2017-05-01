@@ -22,11 +22,13 @@ import com.github.athenaengine.core.enums.InventoryItemType;
 import com.github.athenaengine.core.enums.ScoreType;
 import com.github.athenaengine.core.events.listeners.EventEngineListener;
 import com.github.athenaengine.core.interfaces.IGamePacket;
+import com.github.athenaengine.core.managers.ItemInstanceManager;
 import com.github.athenaengine.core.model.holder.LocationHolder;
 import com.github.athenaengine.core.model.holder.EItemHolder;
 import com.github.athenaengine.core.enums.TeamType;
 import com.github.athenaengine.core.interfaces.IParticipant;
 import com.github.athenaengine.core.model.instance.ItemInstance;
+import com.github.athenaengine.core.model.instance.WorldInstance;
 import com.l2jserver.gameserver.instancemanager.InstanceManager;
 import com.l2jserver.gameserver.model.L2Party;
 import com.l2jserver.gameserver.model.L2World;
@@ -34,7 +36,6 @@ import com.l2jserver.gameserver.model.actor.L2Summon;
 import com.l2jserver.gameserver.model.actor.instance.L2CubicInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
-import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.network.serverpackets.SkillCoolTime;
@@ -51,7 +52,7 @@ public class Player extends Playable implements IParticipant
 {
 	private EventPlayerStatus mEventPlayerStatus;
 
-	private int mWorldInstance = 0;
+	private int mWorldInstanceId = 0;
 	
 	// Variable used to know the protection time inside events
 	private long mProtectionTimeEnd = 0;
@@ -71,6 +72,22 @@ public class Player extends Playable implements IParticipant
 	 */
 	public L2PcInstance getPcInstance() {
 		return L2World.getInstance().getPlayer(getObjectId());
+	}
+
+	@Override
+	public String getName() {
+		return getPcInstance().getName();
+	}
+
+	@Override
+	public String getTitle() {
+		return getPcInstance().getTitle();
+	}
+
+	@Override
+	public void setTitle(String title) {
+		getPcInstance().setTitle(title);
+		getPcInstance().updateAndBroadcastStatus(2);
 	}
 
 	public void teleportTo(LocationHolder location) {
@@ -94,7 +111,7 @@ public class Player extends Playable implements IParticipant
 		// Remove the player from world instance
 		InstanceManager.getInstance().getPlayerWorld(getPcInstance()).removeAllowed(getPcInstance().getObjectId());
 		getPcInstance().setInstanceId(0);
-		mWorldInstance = 0;
+		mWorldInstanceId = 0;
 
 		// Remove the player from event listener (it's used to deny the manual res)
 		getPcInstance().removeEventListener(EventEngineListener.class);
@@ -149,12 +166,12 @@ public class Player extends Playable implements IParticipant
 	 * @return
 	 */
 	public int getWorldInstanceId() {
-		return mWorldInstance;
+		return mWorldInstanceId;
 	}
 
-	public void setInstanceWorld(InstanceWorld instanceWorld) {
-		instanceWorld.addAllowed(getObjectId());
-		mWorldInstance = instanceWorld.getInstanceId();
+	public void setInstanceWorld(WorldInstance instanceWorld) {
+		instanceWorld.addPlayer(this);
+		mWorldInstanceId = instanceWorld.getInstanceId();
 	}
 	
 	/**
@@ -251,7 +268,7 @@ public class Player extends Playable implements IParticipant
 	}
 
 	public void equipItem(ItemInstance item) {
-		L2ItemInstance l2Item = getPcInstance().getInventory().getItemByObjectId(item.getObjectId());
+		L2ItemInstance l2Item = ItemInstanceManager.getInstance().getL2ItemInstance(item);
 		if (l2Item != null) getPcInstance().useEquippableItem(l2Item, true);
 	}
 

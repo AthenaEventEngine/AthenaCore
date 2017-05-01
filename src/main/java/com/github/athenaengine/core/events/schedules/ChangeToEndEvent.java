@@ -51,7 +51,7 @@ public class ChangeToEndEvent implements EventScheduled
 		BaseEvent currentEvent = EventEngineManager.getInstance().getCurrentEvent();
 		currentEvent.runEventState(EventState.END);
 		// Clear all the npcs spawned
-		currentEvent.getSpawnManager().removeAllEventNpc();
+		currentEvent.getSpawnManager().removeAllNpcs();
 		// Finish antiAfkTask
 		if (currentEvent.getAntiAfkManager() != null)
 		{
