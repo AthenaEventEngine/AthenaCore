@@ -33,6 +33,7 @@ import com.l2jserver.gameserver.network.L2GameClient;
  */
 public final class DualBoxProtection
 {
+	private final Map<Integer, IpPack> _playerConnections = new HashMap<>();
 	private final Map<IpPack, Integer> _address = new HashMap<>();
 	
 	private DualBoxProtection() {}
@@ -51,9 +52,11 @@ public final class DualBoxProtection
 			{
 				IpPack pack = new IpPack(client.getConnection().getInetAddress().getHostAddress(), client.getTrace());
 				Integer count = _address.get(pack) == null ? 0 : _address.get(pack);
+
 				if (count < getConfig().getMaxAllowed())
 				{
-					_address.put(pack, count += 1);
+					_playerConnections.put(player.getObjectId(), pack);
+					_address.put(pack, count + 1);
 					return true;
 				}
 			}
@@ -67,20 +70,19 @@ public final class DualBoxProtection
 	
 	public synchronized void removeConnection(Player player)
 	{
-		L2GameClient client = player.getPcInstance().getClient();
-
 		if (getConfig().isEnabled())
 		{
 			try
 			{
-				IpPack pack = new IpPack(client.getConnection().getInetAddress().getHostAddress(), client.getTrace());
+				IpPack pack = _playerConnections.get(player.getObjectId());
 				Integer count = _address.get(pack) != null ? _address.get(pack) : 0;
 				if (count > 0)
 				{
-					_address.put(pack, count -= 1);
+					_address.put(pack, count - 1);
 				}
 				else
 				{
+					_playerConnections.remove(player.getObjectId());
 					_address.remove(pack);
 				}
 			}
@@ -91,17 +93,9 @@ public final class DualBoxProtection
 		}
 	}
 	
-	public int getConnectionCount(String address)
-	{
-		if (_address.containsKey(address))
-		{
-			return _address.get(address);
-		}
-		return 0;
-	}
-	
 	public synchronized void clearAllConnections()
 	{
+		_playerConnections.clear();
 		_address.clear();
 	}
 	
@@ -112,20 +106,20 @@ public final class DualBoxProtection
 	
 	private static class SingletonHolder
 	{
-		protected static final DualBoxProtection _instance = new DualBoxProtection();
+		private static final DualBoxProtection _instance = new DualBoxProtection();
 	}
 	
 	private final static class IpPack
 	{
-		String ip;
-		int[][] tracert;
+		private String ip;
+		private int[][] tracert;
 		
 		private IpPack(String ip, int[][] tracert)
 		{
 			this.ip = ip;
 			this.tracert = tracert;
 		}
-		
+
 		@Override
 		public int hashCode()
 		{
