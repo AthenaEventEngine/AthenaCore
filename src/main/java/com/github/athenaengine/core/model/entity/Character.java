@@ -5,7 +5,7 @@ import com.l2jserver.gameserver.model.L2World;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.network.serverpackets.MagicSkillUse;
 
-public abstract class Character extends Entity {
+public class Character extends Entity {
 
     public Character(int objectId) {
         super(objectId);
