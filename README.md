@@ -7,7 +7,7 @@ Feel free to give us feedback and share your ideas. We will be happy to discuss 
 
 ## Support us!
 
-Become a Patron! 
+Become a Patron. It'll help us a lot to keep working on Athena Engine.
 
 <a href="https://patreon.com/user?u=6145458&utm_medium=social&utm_source=github&utm_campaign=creatorshare2" target="_blank" class="externalLink"><img src="https://s3.amazonaws.com/patreon_public_assets/toolbox/patreon.png" width="426" height="97"></a>
 
