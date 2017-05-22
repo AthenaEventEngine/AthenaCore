@@ -16,26 +16,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.athenaengine.core.events.schedules;
+package com.github.athenaengine.core.events.scheduledtasks;
 
-import com.github.athenaengine.core.enums.MessageType;
-import com.github.athenaengine.core.events.schedules.interfaces.EventScheduled;
 import com.github.athenaengine.core.enums.CollectionTarget;
+import com.github.athenaengine.core.enums.MessageType;
+import com.github.athenaengine.core.interfaces.tasks.IScheduledTask;
 import com.github.athenaengine.core.util.EventUtil;
 
 /**
  * @author Zephyr
  */
 
-public class AnnounceNearEndEvent implements EventScheduled
+public class AnnounceTeleportEvent implements IScheduledTask
 {
 	int _time;
-	int _timeAnnounce;
 	
-	public AnnounceNearEndEvent(int time, int timeAnnounce)
+	public AnnounceTeleportEvent(int time)
 	{
 		_time = time;
-		_timeAnnounce = timeAnnounce;
 	}
 	
 	@Override
@@ -47,6 +45,6 @@ public class AnnounceNearEndEvent implements EventScheduled
 	@Override
 	public void run()
 	{
-		EventUtil.announceTo(MessageType.CRITICAL_ANNOUNCE, "event_end_soon", "%time%", String.valueOf(_timeAnnounce), CollectionTarget.ALL_PLAYERS_IN_EVENT);
+		EventUtil.announceTo(MessageType.CRITICAL_ANNOUNCE, "teleport_seconds", CollectionTarget.ALL_PLAYERS_IN_EVENT);
 	}
 }

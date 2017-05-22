@@ -39,14 +39,14 @@ import com.github.athenaengine.core.enums.TeamType;
 import com.github.athenaengine.core.managers.AntiAfkManager;
 import com.github.athenaengine.core.managers.InstanceWorldManager;
 import com.github.athenaengine.core.managers.PlayersManager;
-import com.github.athenaengine.core.managers.ScheduledEventsManager;
+import com.github.athenaengine.core.managers.ScheduleManager;
 import com.github.athenaengine.core.managers.SpawnManager;
 import com.github.athenaengine.core.managers.TeamsManagers;
-import com.github.athenaengine.core.events.schedules.AnnounceNearEndEvent;
-import com.github.athenaengine.core.events.schedules.AnnounceTeleportEvent;
-import com.github.athenaengine.core.events.schedules.ChangeToEndEvent;
-import com.github.athenaengine.core.events.schedules.ChangeToFightEvent;
-import com.github.athenaengine.core.events.schedules.ChangeToStartEvent;
+import com.github.athenaengine.core.events.scheduledtasks.AnnounceNearEndEvent;
+import com.github.athenaengine.core.events.scheduledtasks.AnnounceTeleportEvent;
+import com.github.athenaengine.core.events.scheduledtasks.ChangeToEndEvent;
+import com.github.athenaengine.core.events.scheduledtasks.ChangeToFightEvent;
+import com.github.athenaengine.core.events.scheduledtasks.ChangeToStartEvent;
 import com.github.athenaengine.core.interfaces.IListenerSuscriber;
 import com.github.athenaengine.core.model.instance.WorldInstance;
 import com.github.athenaengine.core.model.template.ItemTemplate;
@@ -55,11 +55,7 @@ import com.github.athenaengine.core.model.entity.*;
 import com.github.athenaengine.core.model.entity.Character;
 import com.github.athenaengine.core.util.EventUtil;
 import com.l2jserver.gameserver.ThreadPoolManager;
-import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 
-/**
- * @author fissban
- */
 public abstract class BaseEvent<T extends IEventConfig> implements IListenerSuscriber
 {
 	// Logger
@@ -80,7 +76,7 @@ public abstract class BaseEvent<T extends IEventConfig> implements IListenerSusc
 		}
 		initScheduledEvents();
 		// Starts the clock to control the sequence of internal events of the event
-		getScheduledEventsManager().startTaskControlTime();
+		getSchedulerManager().startTaskControlTime();
 	}
 
 	public void setConfig(T config)
@@ -155,11 +151,11 @@ public abstract class BaseEvent<T extends IEventConfig> implements IListenerSusc
 	}
 	
 	// XXX SCHEDULED AND UNSCHEDULED EVENTS --------------------------------------------------------------
-	private final ScheduledEventsManager _scheduledEventsManager = new ScheduledEventsManager();
+	private final ScheduleManager _scheduleManager = new ScheduleManager();
 	
-	public ScheduledEventsManager getScheduledEventsManager()
+	public ScheduleManager getSchedulerManager()
 	{
-		return _scheduledEventsManager;
+		return _scheduleManager;
 	}
 	
 	// XXX TELEPORT --------------------------------------------------------------
@@ -185,17 +181,17 @@ public abstract class BaseEvent<T extends IEventConfig> implements IListenerSusc
 	private void initScheduledEvents()
 	{
 		int time = 1000;
-		getScheduledEventsManager().addScheduledEvent(new AnnounceTeleportEvent(time));
+		getSchedulerManager().addSchedule(new AnnounceTeleportEvent(time));
 		time += 3000;
-		getScheduledEventsManager().addScheduledEvent(new ChangeToStartEvent(time));
+		getSchedulerManager().addSchedule(new ChangeToStartEvent(time));
 		time += 1000;
-		getScheduledEventsManager().addScheduledEvent(new ChangeToFightEvent(time));
+		getSchedulerManager().addSchedule(new ChangeToFightEvent(time));
 		time += getMainConfig().getRunningTime() * 60 * 1000;
-		getScheduledEventsManager().addScheduledEvent(new ChangeToEndEvent(time));
+		getSchedulerManager().addSchedule(new ChangeToEndEvent(time));
 		// Announce near end event
 		int timeLeftAnnounce = getMainConfig().getTextTimeForEnd() * 1000;
-		getScheduledEventsManager().addScheduledEvent(new AnnounceNearEndEvent(time - timeLeftAnnounce, getMainConfig().getTextTimeForEnd()));
-		getScheduledEventsManager().addScheduledEvent(new AnnounceNearEndEvent(time - (timeLeftAnnounce / 2), getMainConfig().getTextTimeForEnd() / 2));
+		getSchedulerManager().addSchedule(new AnnounceNearEndEvent(time - timeLeftAnnounce, getMainConfig().getTextTimeForEnd()));
+		getSchedulerManager().addSchedule(new AnnounceNearEndEvent(time - (timeLeftAnnounce / 2), getMainConfig().getTextTimeForEnd() / 2));
 	}
 	
 	// REVIVE --------------------------------------------------------------------------------------- //
@@ -583,7 +579,7 @@ public abstract class BaseEvent<T extends IEventConfig> implements IListenerSusc
 			ph.cancelAllEffects();
 			removePlayerFromEvent(ph, false);
 		}
-		getScheduledEventsManager().cancelTaskControlTime();
+		getSchedulerManager().clean();
 		getInstanceWorldManager().destroyAllInstances();
 	}
 	
