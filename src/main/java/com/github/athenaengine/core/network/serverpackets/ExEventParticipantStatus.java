@@ -29,7 +29,7 @@ import com.l2jserver.gameserver.network.serverpackets.L2GameServerPacket;
 /**
  * @author Synerge
  */
-public class EventParticipantStatus extends L2GameServerPacket
+public class ExEventParticipantStatus extends L2GameServerPacket
 {
 	private EventState _eventState = null;
 	private int _pointsBlue = 0;
@@ -52,7 +52,7 @@ public class EventParticipantStatus extends L2GameServerPacket
 	 * @param pointsRed
 	 * @param pointsBlue
 	 */
-	public EventParticipantStatus(int pointsRed, int pointsBlue)
+	public ExEventParticipantStatus(int pointsRed, int pointsBlue)
 	{
 		_pointsRed = pointsRed;
 		_pointsBlue = pointsBlue;
@@ -66,7 +66,7 @@ public class EventParticipantStatus extends L2GameServerPacket
 	 * @param pointsBlue
 	 * @param teamRed
 	 */
-	public EventParticipantStatus(int pointsRed, List<Player> teamBlue, int pointsBlue, List<Player> teamRed)
+	public ExEventParticipantStatus(int pointsRed, List<Player> teamBlue, int pointsBlue, List<Player> teamRed)
 	{
 		_pointsRed = pointsRed;
 		_teamRed = teamRed;
@@ -75,7 +75,7 @@ public class EventParticipantStatus extends L2GameServerPacket
 		_eventState = EventState.TOTAL;
 	}
 	
-	public EventParticipantStatus()
+	public ExEventParticipantStatus()
 	{
 		_eventState = EventState.TOTAL;
 	}
