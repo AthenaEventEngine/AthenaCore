@@ -16,11 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.athenaengine.core.events.schedules.interfaces;
+package com.github.athenaengine.core.interfaces.tasks;
 
-public interface EventScheduled
-{
-	public int getTime();
+public interface IScheduledTask {
+
+	int getTime();
 	
-	public void run();
+	void run();
 }

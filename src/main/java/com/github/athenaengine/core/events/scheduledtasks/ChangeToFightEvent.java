@@ -16,25 +16,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.athenaengine.core.events.schedules;
+package com.github.athenaengine.core.events.scheduledtasks;
 
-import com.github.athenaengine.core.events.schedules.interfaces.EventScheduled;
-import com.github.athenaengine.core.model.base.BaseEvent;
-import com.github.athenaengine.core.EventEngineManager;
-import com.github.athenaengine.core.enums.EventEngineState;
 import com.github.athenaengine.core.enums.EventState;
+import com.github.athenaengine.core.interfaces.tasks.IScheduledTask;
+import com.github.athenaengine.core.model.base.BaseEvent;
 import com.github.athenaengine.core.model.entity.Player;
 import com.github.athenaengine.core.util.EventUtil;
+import com.github.athenaengine.core.EventEngineManager;
 
 /**
  * @author Zephyr
  */
 
-public class ChangeToEndEvent implements EventScheduled
+public class ChangeToFightEvent implements IScheduledTask
 {
 	int _time;
 	
-	public ChangeToEndEvent(int time)
+	public ChangeToFightEvent(int time)
 	{
 		_time = time;
 	}
@@ -49,20 +48,14 @@ public class ChangeToEndEvent implements EventScheduled
 	public void run()
 	{
 		BaseEvent currentEvent = EventEngineManager.getInstance().getCurrentEvent();
-		currentEvent.runEventState(EventState.END);
-		// Clear all the npcs spawned
-		currentEvent.getSpawnManager().removeAllNpcs();
-		// Finish antiAfkTask
+		currentEvent.runEventState(EventState.FIGHT);
+		
+		// Start antiAfk task
 		if (currentEvent.getAntiAfkManager() != null)
 		{
-			currentEvent.getAntiAfkManager().finish();
+			currentEvent.getAntiAfkManager().startTask();
 		}
-		
-		// Send a special message to the participants
-		for (Player player : currentEvent.getPlayerEventManager().getAllEventPlayers())
-		{
-			EventUtil.sendEventSpecialMessage(player, 1, "status_finished");
-		}
-		EventEngineManager.getInstance().setEventEngineState(EventEngineState.EVENT_ENDED);
+
+
 	}
 }

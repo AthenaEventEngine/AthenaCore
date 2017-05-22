@@ -16,23 +16,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.athenaengine.core.events.schedules;
+package com.github.athenaengine.core.events.scheduledtasks;
 
-import com.github.athenaengine.core.enums.EventState;
-import com.github.athenaengine.core.events.schedules.interfaces.EventScheduled;
-import com.github.athenaengine.core.EventEngineManager;
+import com.github.athenaengine.core.enums.MessageType;
+import com.github.athenaengine.core.interfaces.tasks.IScheduledTask;
+import com.github.athenaengine.core.enums.CollectionTarget;
+import com.github.athenaengine.core.util.EventUtil;
 
 /**
  * @author Zephyr
  */
 
-public class ChangeToStartEvent implements EventScheduled
+public class AnnounceNearEndEvent implements IScheduledTask
 {
 	int _time;
+	int _timeAnnounce;
 	
-	public ChangeToStartEvent(int time)
+	public AnnounceNearEndEvent(int time, int timeAnnounce)
 	{
 		_time = time;
+		_timeAnnounce = timeAnnounce;
 	}
 	
 	@Override
@@ -44,6 +47,6 @@ public class ChangeToStartEvent implements EventScheduled
 	@Override
 	public void run()
 	{
-		EventEngineManager.getInstance().getCurrentEvent().runEventState(EventState.START);
+		EventUtil.announceTo(MessageType.CRITICAL_ANNOUNCE, "event_end_soon", "%time%", String.valueOf(_timeAnnounce), CollectionTarget.ALL_PLAYERS_IN_EVENT);
 	}
 }
