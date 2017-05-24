@@ -28,6 +28,7 @@ import com.github.athenaengine.core.datatables.EventLoader;
 import com.github.athenaengine.core.enums.CollectionTarget;
 import com.github.athenaengine.core.enums.EventEngineState;
 import com.github.athenaengine.core.util.EventUtil;
+import com.l2jserver.gameserver.model.events.impl.IBaseEvent;
 
 /**
  * It handles the different state's behavior of EventEngineManager.
@@ -45,7 +46,7 @@ public class EventEngineTask implements Runnable
 	@Override
 	public void run()
 	{
-		EventEngineState state = EventEngineManager.getInstance().getEventEngineState();
+		EventEngineState state = EventEngineManager.getInstance().getState();
 		switch (state)
 		{
 			case WAITING:
@@ -114,6 +115,7 @@ public class EventEngineTask implements Runnable
 			}
 			case RUN_EVENT:
 			{
+				IEventContainer container = EventEngineManager.getInstance().getNextEvent();
 				BaseEvent event = EventEngineManager.getInstance().getNextEvent().newEventInstance();
 				
 				if (event == null)
@@ -124,7 +126,7 @@ public class EventEngineTask implements Runnable
 					EventEngineManager.getInstance().setEventEngineState(EventEngineState.WAITING);
 					return;
 				}
-				EventEngineManager.getInstance().setCurrentEvent(event);
+				EventEngineManager.getInstance().setCurrentEvent(container, event);
 				EventEngineManager.getInstance().setEventEngineState(EventEngineState.RUNNING_EVENT);
 				EventUtil.announceTo(MessageType.CRITICAL_ANNOUNCE, "event_started", _type);
 				break;
