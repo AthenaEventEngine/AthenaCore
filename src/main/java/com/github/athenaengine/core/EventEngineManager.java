@@ -36,13 +36,14 @@ import com.github.athenaengine.core.datatables.MessageData;
 import com.github.athenaengine.core.dispatcher.events.OnLogInEvent;
 import com.github.athenaengine.core.dispatcher.events.OnLogOutEvent;
 import com.github.athenaengine.core.enums.EventEngineState;
+import com.github.athenaengine.core.handlers.AdminPanelHandler;
 import com.github.athenaengine.core.interfaces.IEventContainer;
+import com.github.athenaengine.core.managers.AutoSchedulerManager;
 import com.github.athenaengine.core.model.holder.LocationHolder;
 import com.github.athenaengine.core.model.base.BaseEvent;
 import com.github.athenaengine.core.model.entity.Player;
 import com.github.athenaengine.core.security.DualBoxProtection;
-import com.github.athenaengine.core.task.EventEngineTask;
-import com.l2jserver.gameserver.ThreadPoolManager;
+import com.l2jserver.gameserver.handler.AdminCommandHandler;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
 import com.l2jserver.gameserver.network.serverpackets.CreatureSay;
 import com.l2jserver.util.Rnd;
@@ -72,6 +73,9 @@ public class EventEngineManager
 			// Load the adapter to L2J Core
 			EventEngineAdapter.class.newInstance();
 			LOGGER.info(EventEngineManager.class.getSimpleName() + ": Adapter loaded.");
+			// Admin handler
+			AdminCommandHandler.getInstance().registerHandler(new AdminPanelHandler());
+			LOGGER.info(EventEngineManager.class.getSimpleName() + ": Admin handler loaded.");
 			// Load event configs
 			BaseConfigLoader.getInstance();
 			LOGGER.info(EventEngineManager.class.getSimpleName() + ": New Configs loaded.");
@@ -89,8 +93,8 @@ public class EventEngineManager
 			LOGGER.info(EventEngineManager.class.getSimpleName() + ": AI's loaded.");
 			// Launch main timer
 			_time = 0;
-			ThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(new EventEngineTask(), 10 * 1000, 1000);
-			LOGGER.info(EventEngineManager.class.getSimpleName() + ": Timer loaded.");
+			AutoSchedulerManager.getInstance().start();
+			LOGGER.info(EventEngineManager.class.getSimpleName() + ": Scheduler loaded.");
 		}
 		catch (Exception e)
 		{
@@ -140,7 +144,17 @@ public class EventEngineManager
 	
 	// XXX CURRENT EVENT ---------------------------------------------------------------------------------
 	// Event that is running
+	private IEventContainer _currentEventContainer;
 	private BaseEvent _currentEvent;
+
+	/**
+	 * Get the container of currently event.
+	 * @return
+	 */
+	public IEventContainer getCurrentEventContainer()
+	{
+		return _currentEventContainer;
+	}
 	
 	/**
 	 * Get the event currently running.
@@ -153,10 +167,12 @@ public class EventEngineManager
 	
 	/**
 	 * Define the event that shall begin to run.
+	 * @param container
 	 * @param event
 	 */
-	public void setCurrentEvent(BaseEvent event)
+	public void setCurrentEvent(IEventContainer container, BaseEvent event)
 	{
+		_currentEventContainer = container;
 		_currentEvent = event;
 	}
 	
@@ -316,7 +332,7 @@ public class EventEngineManager
 	 * Check what is the state that have the engine.
 	 * @return EventState
 	 */
-	public EventEngineState getEventEngineState()
+	public EventEngineState getState()
 	{
 		return _state;
 	}
@@ -469,7 +485,7 @@ public class EventEngineManager
 	public void cleanUp()
 	{
 		DualBoxProtection.getInstance().clearAllConnections();
-		setCurrentEvent(null);
+		setCurrentEvent(null,null);
 		clearVotes();
 		clearRegisteredPlayers();
 	}
