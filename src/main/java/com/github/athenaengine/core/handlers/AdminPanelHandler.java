@@ -3,7 +3,7 @@ package com.github.athenaengine.core.handlers;
 import com.github.athenaengine.core.EventEngineManager;
 import com.github.athenaengine.core.enums.EventEngineState;
 import com.github.athenaengine.core.interfaces.IEventContainer;
-import com.github.athenaengine.core.managers.AutoSchedulerManager;
+import com.github.athenaengine.core.managers.general.AutoSchedulerManager;
 import com.l2jserver.gameserver.handler.IAdminCommandHandler;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
@@ -64,12 +64,16 @@ public class AdminPanelHandler implements IAdminCommandHandler {
         }
     }
 
-    private void startScheduler() {
+    private void startAutoScheduler() {
         AutoSchedulerManager.getInstance().start();
     }
 
-    private void stopScheduler() {
-        AutoSchedulerManager.getInstance().stop();
+    private void cancelAutoScheduler() {
+        AutoSchedulerManager.getInstance().cancel();
+    }
+
+    private long getTimeForNextEvent() {
+        return AutoSchedulerManager.getInstance().getTimeForNextEvent();
     }
 
     @Override

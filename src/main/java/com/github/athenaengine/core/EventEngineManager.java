@@ -18,10 +18,7 @@
  */
 package com.github.athenaengine.core;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,7 +35,8 @@ import com.github.athenaengine.core.dispatcher.events.OnLogOutEvent;
 import com.github.athenaengine.core.enums.EventEngineState;
 import com.github.athenaengine.core.handlers.AdminPanelHandler;
 import com.github.athenaengine.core.interfaces.IEventContainer;
-import com.github.athenaengine.core.managers.AutoSchedulerManager;
+import com.github.athenaengine.core.managers.general.AutoSchedulerManager;
+import com.github.athenaengine.core.managers.general.VoteManager;
 import com.github.athenaengine.core.model.holder.LocationHolder;
 import com.github.athenaengine.core.model.base.BaseEvent;
 import com.github.athenaengine.core.model.entity.Player;
@@ -46,7 +44,6 @@ import com.github.athenaengine.core.security.DualBoxProtection;
 import com.l2jserver.gameserver.handler.AdminCommandHandler;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
 import com.l2jserver.gameserver.network.serverpackets.CreatureSay;
-import com.l2jserver.util.Rnd;
 
 /**
  * @author fissban
@@ -81,7 +78,7 @@ public class EventEngineManager
 			LOGGER.info(EventEngineManager.class.getSimpleName() + ": New Configs loaded.");
 			EventLoader.getInstance();
 			LOGGER.info(EventEngineManager.class.getSimpleName() + ": Events loaded.");
-			initVotes();
+			VoteManager.getInstance().initVotes();
 			// Load buff list
 			BuffListData.getInstance();
 			LOGGER.info(EventEngineManager.class.getSimpleName() + ": Buffs loaded.");
@@ -189,7 +186,7 @@ public class EventEngineManager
 			{
 				Player player = event.getPlayer();
 				DualBoxProtection.getInstance().removeConnection(player);
-				removeVote(player);
+				VoteManager.getInstance().removeVote(player);
 				unRegisterPlayer(player);
 			}
 		}
@@ -204,124 +201,6 @@ public class EventEngineManager
 		returnPlayerDisconnected(player);
 		player.getPcInstance().sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", MessageData.getInstance().getMsgByLang(player, "event_login_participate", true)));
 		player.getPcInstance().sendPacket(new CreatureSay(0, Say2.PARTYROOM_COMMANDER, "", MessageData.getInstance().getMsgByLang(player, "event_login_vote", true)));
-	}
-	
-	// XXX EVENT VOTE ------------------------------------------------------------------------------------
-	// Id's list of characters who voted
-	private final Set<Integer> _playersAlreadyVoted = ConcurrentHashMap.newKeySet();
-	// Map of the Id's of the characters who voted
-	private final Map<String, Set<Integer>> _currentEventVotes = new HashMap<>();
-	
-	/**
-	 * Init votes
-	 */
-	public void initVotes()
-	{
-		for (IEventContainer container : EventLoader.getInstance().getEnabledEvents())
-		{
-			_currentEventVotes.put(container.getSimpleEventName(), ConcurrentHashMap.newKeySet());
-		}
-	}
-	
-	/**
-	 * Method responsible of initializing the votes of each event.
-	 */
-	public void clearVotes()
-	{
-		// The map is restarted
-		for (String eventName : _currentEventVotes.keySet())
-		{
-			_currentEventVotes.get(eventName).clear();
-		}
-		// The list of players who voted cleaned
-		_playersAlreadyVoted.clear();
-	}
-	
-	/**
-	 * Increase by 1, the number of votes.
-	 * @param player The character who is voting.
-	 * @param eventName Event voting.
-	 */
-	public void increaseVote(Player player, String eventName)
-	{
-		// Add character at the list of those who voted
-		// If it was, continue
-		// If it wasn't, adds a vote to the event
-		if (_playersAlreadyVoted.add(player.getObjectId()))
-		{
-			_currentEventVotes.get(eventName).add(player.getObjectId());
-		}
-	}
-	
-	/**
-	 * Decrease the number of votes.
-	 * @param player Character that are voting.
-	 */
-	public void removeVote(Player player)
-	{
-		// Deletes it from the list of players who voted
-		if (_playersAlreadyVoted.remove(player.getObjectId()))
-		{
-			// If he was on the list, start looking for which event voted
-			for (String eventName : _currentEventVotes.keySet())
-			{
-				_currentEventVotes.get(eventName).remove(player.getObjectId());
-			}
-		}
-	}
-	
-	/**
-	 * Get the number of votes it has a certain event.
-	 * @param eventName AVA, TVT, CFT.
-	 * @return int
-	 */
-	public int getCurrentVotesInEvent(String eventName)
-	{
-		return _currentEventVotes.get(eventName).size();
-	}
-	
-	/**
-	 * Get the amount of total votes.
-	 * @return
-	 */
-	public int getAllCurrentVotesInEvents()
-	{
-		int count = 0;
-		for (Set<Integer> set : _currentEventVotes.values())
-		{
-			count += set.size();
-		}
-		return count;
-	}
-	
-	/**
-	 * Get the event with more votes. In case all have the same amount of votes, it will make a random among those most votes have.
-	 * @return
-	 */
-	public IEventContainer getEventMoreVotes()
-	{
-		int maxVotes = 0;
-		List<String> topEvents = new ArrayList<>();
-		for (String eventName : _currentEventVotes.keySet())
-		{
-			int eventVotes = _currentEventVotes.get(eventName).size();
-			if (eventVotes > maxVotes)
-			{
-				topEvents.clear();
-				topEvents.add(eventName);
-				maxVotes = eventVotes;
-			}
-			else if (eventVotes == maxVotes)
-			{
-				topEvents.add(eventName);
-			}
-		}
-		
-		int topEventsSize = topEvents.size();
-		String topEventName;
-		topEventName = topEventsSize > 1 ? topEvents.get(Rnd.get(0, topEventsSize - 1)) : topEvents.get(0);
-
-		return EventLoader.getInstance().getEvent(topEventName);
 	}
 	
 	// XXX EVENT STATE -----------------------------------------------------------------------------------
@@ -486,7 +365,7 @@ public class EventEngineManager
 	{
 		DualBoxProtection.getInstance().clearAllConnections();
 		setCurrentEvent(null,null);
-		clearVotes();
+		VoteManager.getInstance().clearVotes();
 		clearRegisteredPlayers();
 	}
 	

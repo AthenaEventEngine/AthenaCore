@@ -1,6 +1,6 @@
 package com.github.athenaengine.core.model.entity;
 
-import com.github.athenaengine.core.managers.CacheManager;
+import com.github.athenaengine.core.managers.general.CacheManager;
 import com.github.athenaengine.core.model.holder.LocationHolder;
 import com.l2jserver.gameserver.model.L2World;
 import com.l2jserver.gameserver.model.actor.L2Character;

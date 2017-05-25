@@ -22,7 +22,7 @@ import com.github.athenaengine.core.enums.InventoryItemType;
 import com.github.athenaengine.core.enums.ScoreType;
 import com.github.athenaengine.core.events.listeners.EventEngineListener;
 import com.github.athenaengine.core.interfaces.IGamePacket;
-import com.github.athenaengine.core.managers.ItemInstanceManager;
+import com.github.athenaengine.core.managers.general.ItemInstanceManager;
 import com.github.athenaengine.core.model.holder.LocationHolder;
 import com.github.athenaengine.core.model.holder.EItemHolder;
 import com.github.athenaengine.core.enums.TeamType;
