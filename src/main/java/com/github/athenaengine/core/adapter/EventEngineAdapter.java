@@ -20,7 +20,7 @@
 package com.github.athenaengine.core.adapter;
 
 import com.github.athenaengine.core.ai.NpcManager;
-import com.github.athenaengine.core.managers.CacheManager;
+import com.github.athenaengine.core.managers.general.CacheManager;
 import com.github.athenaengine.core.dispatcher.events.*;
 import com.github.athenaengine.core.dispatcher.ListenerDispatcher;
 import com.github.athenaengine.core.model.template.ItemTemplate;

@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.athenaengine.core.managers;
+package com.github.athenaengine.core.managers.events;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -25,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.github.athenaengine.core.events.listeners.EventEngineListener;
 import com.github.athenaengine.core.interfaces.IParticipant;
+import com.github.athenaengine.core.managers.general.CacheManager;
 import com.github.athenaengine.core.model.entity.Character;
 import com.github.athenaengine.core.model.entity.Playable;
 import com.github.athenaengine.core.model.entity.Player;

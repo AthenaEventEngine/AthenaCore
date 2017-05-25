@@ -1,4 +1,4 @@
-package com.github.athenaengine.core.managers;
+package com.github.athenaengine.core.managers.general;
 
 import com.github.athenaengine.core.model.entity.Player;
 import com.github.athenaengine.core.model.instance.ItemInstance;

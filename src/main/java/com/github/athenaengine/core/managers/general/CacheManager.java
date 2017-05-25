@@ -1,4 +1,4 @@
-package com.github.athenaengine.core.managers;
+package com.github.athenaengine.core.managers.general;
 
 import com.github.athenaengine.core.model.entity.*;
 import com.github.athenaengine.core.model.entity.Character;

@@ -7,6 +7,7 @@ import com.github.athenaengine.core.enums.CollectionTarget;
 import com.github.athenaengine.core.enums.EventEngineState;
 import com.github.athenaengine.core.enums.MessageType;
 import com.github.athenaengine.core.interfaces.IEventContainer;
+import com.github.athenaengine.core.managers.general.VoteManager;
 import com.github.athenaengine.core.model.config.MainEventConfig;
 import com.github.athenaengine.core.util.EventUtil;
 import com.l2jserver.gameserver.ThreadPoolManager;
@@ -92,7 +93,7 @@ public class EventAssistant {
         private void voting() {
             if (mTime > 0) EventUtil.announceTime(mTime, "event_voting_state", MessageType.CRITICAL_ANNOUNCE, mAnnounceType);
             else {
-                IEventContainer nextEvent = EventEngineManager.getInstance().getEventMoreVotes();
+                IEventContainer nextEvent = VoteManager.getInstance().getEventMoreVotes();
                 EventEngineManager.getInstance().setNextEvent(nextEvent);
                 EventUtil.announceTo(MessageType.CRITICAL_ANNOUNCE, "event_voting_ended", mAnnounceType);
                 EventUtil.announceTo(MessageType.CRITICAL_ANNOUNCE, "event_register_started", "%event%", nextEvent.getEventName(), mAnnounceType);
