@@ -1,8 +1,8 @@
 package com.github.athenaengine.core.datatables;
 
 import com.github.athenaengine.core.interfaces.IEventContainer;
-import com.github.athenaengine.core.util.JarUtils;
 import com.l2jserver.util.Rnd;
+import com.luksdlt92.winstonutils.JarHelper;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -49,13 +49,13 @@ public class EventLoader {
 
         if (matchingFiles != null) {
             for (File jar : matchingFiles) {
-                IEventContainer container = (IEventContainer) JarUtils.loadJar(getClass().getClassLoader(), jar);
+                IEventContainer container = (IEventContainer) JarHelper.loadJar(getClass().getClassLoader(), jar, "BaseEventContainer");
 
                 if (container != null)
                 {
                     String folderPath = EVENT_JAR_PATH + container.getSimpleEventName() + "/";
 
-                    if (JarUtils.writeFileFromResources(container.getClass().getClassLoader(), folderPath, EVENT_CONFIG_NAME)) {
+                    if (JarHelper.writeFileFromResources(container.getClass().getClassLoader(), folderPath, EVENT_CONFIG_NAME)) {
                         _eventList.add(container);
                         _eventMap.put(container.getSimpleEventName(), container);
                     }

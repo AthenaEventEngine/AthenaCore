@@ -1,7 +1,9 @@
 package com.github.athenaengine.core.config;
 
 import com.github.athenaengine.core.model.config.MainEventConfig;
-import com.github.athenaengine.core.util.GsonUtils;
+import com.luksdlt92.winstonutils.GsonHelper;
+
+import java.io.File;
 
 public class BaseConfigLoader {
 
@@ -10,7 +12,7 @@ public class BaseConfigLoader {
     private MainEventConfig mMainConfig;
 
     private BaseConfigLoader() {
-        mMainConfig = (MainEventConfig) GsonUtils.loadConfig(MAIN_CONFIG_PATH, MainEventConfig.class);
+        mMainConfig = (MainEventConfig) GsonHelper.load(new File(MAIN_CONFIG_PATH), new MainEventConfig());
     }
 
     public MainEventConfig getMainConfig() {

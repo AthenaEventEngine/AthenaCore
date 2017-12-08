@@ -3,8 +3,9 @@ package com.github.athenaengine.core.model.base;
 import com.github.athenaengine.core.config.BaseConfigLoader;
 import com.github.athenaengine.core.interfaces.IEventConfig;
 import com.github.athenaengine.core.interfaces.IEventContainer;
-import com.github.athenaengine.core.util.GsonUtils;
+import com.luksdlt92.winstonutils.GsonHelper;
 
+import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -54,7 +55,12 @@ public abstract class BaseEventContainer implements IEventContainer {
     protected abstract Class<? extends IEventConfig> getConfigClass();
 
     protected IEventConfig getConfig() {
-        if (mConfig == null) mConfig = (IEventConfig) GsonUtils.loadConfig(EVENTS_PATH + getSimpleEventName() + "/config.conf", getConfigClass());
+        try {
+            if (mConfig == null) mConfig = (IEventConfig) GsonHelper.load(new File(EVENTS_PATH + getSimpleEventName() + "/config.conf"), getConfigClass().newInstance());
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, e.getMessage());
+        }
+
         return mConfig;
     }
 

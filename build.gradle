@@ -19,8 +19,7 @@ configurations {
 }
 
 dependencies {
-	compile 'com.google.code.gson:gson:2.2.4'
-	compile 'com.github.typesafehub:config:v1.3.0'
+	compile 'com.github.luksdlt92:WinstonUtils:1.0.2'
 	provided 'org.slf4j:slf4j-api:1.7.13'
 	provided name: 'l2jserver'
 	provided name: 'mmocore'
