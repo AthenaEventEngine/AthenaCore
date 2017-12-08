@@ -41,11 +41,11 @@ jar {
                 'Built-JDK': System.getProperty('java.version'),
                 'Main-Class': 'com.github.athenaengine.core.EventEngineManager'
     }
-    archiveName = 'AthenaCore.jar'
+    archiveName = 'AthenaEngine_' + version + '.jar'
 }
 
 task zip(type: Zip) {
-	def fileName = 'AthenaCore_' + new Date().format("yyyy-MM-dd")
+	def fileName = 'AthenaEngine_' + new Date().format("yyyy-MM-dd")
 	baseName = fileName
 	from('dist')
 	into('libs') {
