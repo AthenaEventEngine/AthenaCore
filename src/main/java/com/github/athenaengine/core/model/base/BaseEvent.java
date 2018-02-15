@@ -27,35 +27,44 @@ import java.util.logging.Logger;
 import com.github.athenaengine.core.EventEngineManager;
 import com.github.athenaengine.core.builders.TeamsBuilder;
 import com.github.athenaengine.core.config.BaseConfigLoader;
-import com.github.athenaengine.core.interfaces.IEventConfig;
-import com.github.athenaengine.core.model.config.MainEventConfig;
 import com.github.athenaengine.core.datatables.BuffListData;
 import com.github.athenaengine.core.datatables.MessageData;
 import com.github.athenaengine.core.dispatcher.ListenerDispatcher;
-import com.github.athenaengine.core.dispatcher.events.*;
+import com.github.athenaengine.core.dispatcher.events.OnAttackEvent;
+import com.github.athenaengine.core.dispatcher.events.OnDeathEvent;
+import com.github.athenaengine.core.dispatcher.events.OnInteractEvent;
+import com.github.athenaengine.core.dispatcher.events.OnKillEvent;
+import com.github.athenaengine.core.dispatcher.events.OnLogInEvent;
+import com.github.athenaengine.core.dispatcher.events.OnLogOutEvent;
+import com.github.athenaengine.core.dispatcher.events.OnUseItemEvent;
+import com.github.athenaengine.core.dispatcher.events.OnUseSkillEvent;
 import com.github.athenaengine.core.enums.EventState;
 import com.github.athenaengine.core.enums.ListenerType;
 import com.github.athenaengine.core.enums.TeamType;
+import com.github.athenaengine.core.events.schedules.AnnounceNearEndEvent;
+import com.github.athenaengine.core.events.schedules.AnnounceTeleportEvent;
+import com.github.athenaengine.core.events.schedules.ChangeToEndEvent;
+import com.github.athenaengine.core.events.schedules.ChangeToFightEvent;
+import com.github.athenaengine.core.events.schedules.ChangeToStartEvent;
+import com.github.athenaengine.core.interfaces.IEventConfig;
+import com.github.athenaengine.core.interfaces.IListenerSuscriber;
 import com.github.athenaengine.core.managers.AntiAfkManager;
 import com.github.athenaengine.core.managers.InstanceWorldManager;
 import com.github.athenaengine.core.managers.PlayersManager;
 import com.github.athenaengine.core.managers.ScheduledEventsManager;
 import com.github.athenaengine.core.managers.SpawnManager;
 import com.github.athenaengine.core.managers.TeamsManagers;
-import com.github.athenaengine.core.events.schedules.AnnounceNearEndEvent;
-import com.github.athenaengine.core.events.schedules.AnnounceTeleportEvent;
-import com.github.athenaengine.core.events.schedules.ChangeToEndEvent;
-import com.github.athenaengine.core.events.schedules.ChangeToFightEvent;
-import com.github.athenaengine.core.events.schedules.ChangeToStartEvent;
-import com.github.athenaengine.core.interfaces.IListenerSuscriber;
+import com.github.athenaengine.core.model.config.MainEventConfig;
+import com.github.athenaengine.core.model.entity.Character;
+import com.github.athenaengine.core.model.entity.Npc;
+import com.github.athenaengine.core.model.entity.Playable;
+import com.github.athenaengine.core.model.entity.Player;
+import com.github.athenaengine.core.model.entity.Summon;
 import com.github.athenaengine.core.model.instance.WorldInstance;
 import com.github.athenaengine.core.model.template.ItemTemplate;
 import com.github.athenaengine.core.model.template.SkillTemplate;
-import com.github.athenaengine.core.model.entity.*;
-import com.github.athenaengine.core.model.entity.Character;
 import com.github.athenaengine.core.util.EventUtil;
 import com.l2jserver.gameserver.ThreadPoolManager;
-import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 
 /**
  * @author fissban
@@ -638,10 +647,15 @@ public abstract class BaseEvent<T extends IEventConfig> implements IListenerSusc
 	 */
 	public void removePlayerFromEvent(Player ph, boolean forceRemove)
 	{
-		if (forceRemove) getPlayerEventManager().getAllEventPlayers().remove(ph);
 		ph.teleportTo(ph.getReturnLocation());
 		ph.getTeam().removeMember(ph);
+		ph.getOriginalTitle();
 		ph.removeFromEvent();
+		
+		if (forceRemove)
+		{
+			getPlayerEventManager().getAllEventPlayers().remove(ph);
+		}
 	}
 
 	/**

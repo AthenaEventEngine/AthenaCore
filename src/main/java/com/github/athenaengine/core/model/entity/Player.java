@@ -102,12 +102,16 @@ public class Player extends Playable implements IParticipant
 		mEventPlayerStatus._returnLocation = new LocationHolder(getPcInstance().getLocation());
 		setTeam(team);
 	}
-
-	public void removeFromEvent() {
+	
+	public void getOriginalTitle()
+	{
 		// Recovers player's title and color
 		getPcInstance().setTitle(mEventPlayerStatus._oriTitle);
 		getPcInstance().getAppearance().setTitleColor(mEventPlayerStatus._oriColorTitle);
+		getPcInstance().broadcastUserInfo();
+	}
 
+	public void removeFromEvent() {
 		// Remove the player from world instance
 		InstanceManager.getInstance().getPlayerWorld(getPcInstance()).removeAllowed(getPcInstance().getObjectId());
 		getPcInstance().setInstanceId(0);
