@@ -30,7 +30,10 @@ public class EventEngineStarter extends AbstractNpcAI
 	private EventEngineStarter()
 	{
 		super(EventEngineStarter.class.getSimpleName(), "ai/npc");
-		EventEngineManager.getInstance();
+		if (getConfig().getEngineEnabled())
+		{
+			EventEngineManager.getInstance();
+		}
 	}
 	
 	public static void main(String[] args)

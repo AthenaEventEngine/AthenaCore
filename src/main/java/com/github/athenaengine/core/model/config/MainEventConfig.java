@@ -5,7 +5,8 @@ import com.google.gson.annotations.SerializedName;
 
 public class MainEventConfig implements IEventConfig {
 
-    @SerializedName("npcId") private int mNpcId;
+	@SerializedName("EngineEnabled") private boolean mEngineEnabled;
+	@SerializedName("npcId") private int mNpcId;
     @SerializedName("globalMessage") private boolean mGlobalMessage;
     @SerializedName("interval") private int mInterval;
     @SerializedName("votingEnabled") private boolean mVotingEnabled;
@@ -26,6 +27,10 @@ public class MainEventConfig implements IEventConfig {
     @SerializedName("spawnProtectionTime") private int mSpawnProtectionTime;
     @SerializedName("dualbox") private DualboxEventConfig mDualbox;
 
+    public boolean getEngineEnabled() {
+        return mEngineEnabled;
+    }
+    
     public int getNpcId() {
         return mNpcId;
     }
