@@ -22,7 +22,7 @@ import com.github.athenaengine.core.EventEngineManager;
 import ai.npc.AbstractNpcAI;
 
 /**
- * This is the starter to load the Event Engine
+ * This is the starter to load the Event Engine.
  *  * @author Zephyr
  */
 public class EventEngineStarter extends AbstractNpcAI
@@ -30,10 +30,7 @@ public class EventEngineStarter extends AbstractNpcAI
 	private EventEngineStarter()
 	{
 		super(EventEngineStarter.class.getSimpleName(), "ai/npc");
-		if (getConfig().getEngineEnabled())
-		{
-			EventEngineManager.getInstance();
-		}
+		EventEngineManager.getInstance();
 	}
 	
 	public static void main(String[] args)

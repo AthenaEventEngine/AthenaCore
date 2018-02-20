@@ -37,9 +37,9 @@ import com.github.athenaengine.core.dispatcher.events.OnLogInEvent;
 import com.github.athenaengine.core.dispatcher.events.OnLogOutEvent;
 import com.github.athenaengine.core.enums.EventEngineState;
 import com.github.athenaengine.core.interfaces.IEventContainer;
-import com.github.athenaengine.core.model.holder.LocationHolder;
 import com.github.athenaengine.core.model.base.BaseEvent;
 import com.github.athenaengine.core.model.entity.Player;
+import com.github.athenaengine.core.model.holder.LocationHolder;
 import com.github.athenaengine.core.security.DualBoxProtection;
 import com.github.athenaengine.core.task.EventEngineTask;
 import com.l2jserver.gameserver.ThreadPoolManager;
@@ -59,7 +59,19 @@ public class EventEngineManager
 	 */
 	public EventEngineManager()
 	{
-		load();
+		// Load config
+		BaseConfigLoader.getInstance();
+		LOGGER.info(EventEngineManager.class.getSimpleName() + ": Configs loaded.");
+		
+		// Check State
+		if (BaseConfigLoader.getInstance().getMainConfig().getEngineEnabled())
+		{
+			load();
+		}
+		else
+		{
+			LOGGER.info(EventEngineManager.class.getSimpleName() + ": Engine disabled, enabled in config!");
+		}
 	}
 	
 	/**
@@ -72,9 +84,7 @@ public class EventEngineManager
 			// Load the adapter to L2J Core
 			EventEngineAdapter.class.newInstance();
 			LOGGER.info(EventEngineManager.class.getSimpleName() + ": Adapter loaded.");
-			// Load event configs
-			BaseConfigLoader.getInstance();
-			LOGGER.info(EventEngineManager.class.getSimpleName() + ": New Configs loaded.");
+			// Load events
 			EventLoader.getInstance();
 			LOGGER.info(EventEngineManager.class.getSimpleName() + ": Events loaded.");
 			initVotes();
